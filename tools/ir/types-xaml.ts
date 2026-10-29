@@ -1,0 +1,71 @@
+// IR に書く型名（"String"、"List<String>"、"DataTable" など）を XAML の型表記にする。
+// 知らない型はエラーにする（推測で書かない）。
+
+export type XamlType = { text: string; xmlns: Record<string, string> };
+
+const S = "clr-namespace:System;assembly=System.Private.CoreLib";
+const SCG = "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib";
+const SD = "clr-namespace:System.Data;assembly=System.Data.Common";
+
+const simple: Record<string, [string, Record<string, string>]> = {
+  String: ["x:String", {}],
+  Int32: ["x:Int32", {}],
+  Int64: ["x:Int64", {}],
+  Boolean: ["x:Boolean", {}],
+  Double: ["x:Double", {}],
+  Decimal: ["x:Decimal", {}],
+  Object: ["x:Object", {}],
+  TimeSpan: ["x:TimeSpan", {}],
+  DateTime: ["s:DateTime", { s: S }],
+  Exception: ["s:Exception", { s: S }],
+  DataTable: ["sd:DataTable", { sd: SD }],
+  DataRow: ["sd:DataRow", { sd: SD }],
+};
+
+const generic: Record<string, [string, Record<string, string>]> = {
+  List: ["scg:List", { scg: SCG }],
+  Dictionary: ["scg:Dictionary", { scg: SCG }],
+  IEnumerable: ["scg:IEnumerable", { scg: SCG }],
+};
+
+// エイリアス（VB / C# の書き方も受ける）
+const alias: Record<string, string> = {
+  string: "String", int: "Int32", Integer: "Int32", long: "Int64", Long: "Int64",
+  bool: "Boolean", double: "Double", decimal: "Decimal", object: "Object",
+};
+
+export function toXamlType(t: string): XamlType | { error: string } {
+  const s = t.trim();
+  if (s.endsWith("[]")) {
+    const inner = toXamlType(s.slice(0, -2));
+    if ("error" in inner) return inner;
+    // 配列は x:TypeArguments では "s:String[]" の形
+    const text = inner.text.startsWith("x:") ? `s:${inner.text.slice(2)}[]` : `${inner.text}[]`;
+    return { text, xmlns: { ...inner.xmlns, s: S } };
+  }
+  const g = s.match(/^(\w+)\s*(?:<(.+)>|\(Of (.+)\))$/);
+  if (g) {
+    const base = generic[g[1]];
+    if (!base) return { error: `未知のジェネリック型 "${g[1]}"` };
+    const args = splitArgs(g[2] ?? g[3]).map(toXamlType);
+    const bad = args.find((a) => "error" in a);
+    if (bad) return bad;
+    const ok = args as XamlType[];
+    return { text: `${base[0]}(${ok.map((a) => a.text).join(", ")})`, xmlns: Object.assign({}, base[1], ...ok.map((a) => a.xmlns)) };
+  }
+  const hit = simple[alias[s] ?? s];
+  if (!hit) return { error: `未知の型 "${t}"（types-xaml.ts に足す）` };
+  return { text: hit[0], xmlns: hit[1] };
+}
+
+function splitArgs(s: string): string[] {
+  const out: string[] = [];
+  let depth = 0, cur = "";
+  for (const ch of s) {
+    if (ch === "<" || ch === "(") depth++;
+    if (ch === ">" || ch === ")") depth--;
+    if (ch === "," && depth === 0) { out.push(cur); cur = ""; } else cur += ch;
+  }
+  out.push(cur);
+  return out.map((x) => x.trim());
+}

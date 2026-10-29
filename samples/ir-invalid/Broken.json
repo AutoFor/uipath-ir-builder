@@ -1,0 +1,11 @@
+{
+  "workflow": "Broken",
+  "variables": [{ "name": "total", "type": "Int32" }],
+  "body": [
+    { "act": "LogMessage", "props": { "Level": "Information" } },
+    { "act": "LogMesage", "props": { "Message": "\"typo\"" } },
+    { "act": "Assign", "props": { "To": "undeclared", "Value": "1" } },
+    { "act": "ForEach", "typeArg": "String", "props": { "Values": "x", "Colour": "1" } },
+    { "act": "Sequence", "variables": [{ "name": "q", "type": "Queue<String>" }] }
+  ]
+}

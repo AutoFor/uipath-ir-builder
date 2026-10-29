@@ -1,0 +1,10 @@
+{
+  "workflow": "Greet",
+  "arguments": [
+    { "name": "in_Name", "dir": "In", "type": "String" },
+    { "name": "out_Message", "dir": "Out", "type": "String" }
+  ],
+  "body": [
+    { "act": "Assign", "name": "あいさつを組み立てる", "props": { "To": "out_Message", "Value": "\"こんにちは、\" & in_Name & \" さん\"" } }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "workflow": "Main",
+  "variables": [
+    { "name": "names", "type": "String[]", "default": "{\"太郎\", \"花子\", \"Al\"}" },
+    { "name": "count", "type": "Int32", "default": "0" },
+    { "name": "message", "type": "String" }
+  ],
+  "body": [
+    {
+      "act": "ForEach",
+      "name": "名前ごとに",
+      "typeArg": "String",
+      "item": "name",
+      "props": { "Values": "names" },
+      "body": [
+        {
+          "act": "If",
+          "name": "2文字以上か",
+          "props": { "Condition": "name.Length >= 2" },
+          "then": [
+            {
+              "act": "InvokeWorkflowFile",
+              "name": "あいさつを作る",
+              "props": { "WorkflowFileName": { "lit": "Greet.xaml" } },
+              "args": [
+                { "name": "in_Name", "dir": "In", "type": "String", "value": "name" },
+                { "name": "out_Message", "dir": "Out", "type": "String", "value": "message" }
+              ]
+            },
+            { "act": "LogMessage", "props": { "Level": "Info", "Message": "message" } },
+            { "act": "Assign", "name": "数える", "props": { "To": "count", "Value": "count + 1" } }
+          ],
+          "else": [
+            { "act": "LogMessage", "props": { "Level": "Warn", "Message": "\"短すぎる名前: \" & name" } }
+          ]
+        }
+      ]
+    },
+    { "act": "LogMessage", "name": "件数", "props": { "Level": "Info", "Message": "\"あいさつした人数: \" & count.ToString" } }
+  ]
+}

@@ -48,6 +48,35 @@ node tools/compare-default-xaml.mjs catalog/UiPath.System.Activities/26.10.0.jso
 
 `get-default-xaml` は UiPath プロジェクトの中で、`uip login` 済みの状態でないと動かない。初回は Studio 側（Helm）の起動に約10分かかり、2回目からは1件0.5秒ほど。ジェネリックのアクティビティはクラス名に `` `1 `` を付ける（例 ``UiPath.Core.Activities.ForEach`1``）。
 
+### IR → XAML 生成器（`tools/ir`）
+
+AI が書くのは IR（`samples/ir/*.json` の形の JSON）だけ。生成器がカタログで検証してから XAML を書く。Node 24 以上で、npm の依存なしに動く。
+
+```bash
+# 検証だけ
+node tools/ir/gen.ts samples/ir/Main.json samples/ir/Greet.json --check
+# 検証して UiPath プロジェクトに書き出す
+node tools/ir/gen.ts samples/ir/Main.json samples/ir/Greet.json --out <プロジェクトのフォルダ>
+```
+
+IR の例：
+
+```json
+{ "act": "ForEach", "typeArg": "String", "item": "name", "props": { "Values": "names" },
+  "body": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"こんにちは \" & name" } } ] }
+```
+
+- `props` の文字列は VB の式（`[...]` は生成器が付ける）。文字列リテラルは `{ "lit": "..." }`、enum はメンバー名をそのまま書く
+- 子は `body`（既定の置き場所）、`then` / `else`、それ以外は `slots`
+- XAML の xmlns、`x:TypeArguments`、`Assign` の型（代入先の変数の宣言から決める）、IdRef、imports は生成器が付ける
+- `get-default-xaml` で取った既定値（`Version=V5` など）は自動で足す
+
+検証で弾くもの：未知のアクティビティ・プロパティ・型、必須の欠け、enum 外の値、宣言されていない出力先、子を置けない場所への子。例は `samples/ir-invalid/Broken.json`。
+
+`samples/ir/Main.json` と `Greet.json`（ForEach / If / Assign / LogMessage / InvokeWorkflowFile）から生成した XAML（`samples/generated/`）は、`uip rpa build` を修正なしで通った（Studio 26.10、System 26.10.0）。実行（run）はまだ試していない。
+
+対応しているのは、属性と単純な子だけで書けるアクティビティ。UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`MultipleAssign` の `AssignOperations`、Try/Catch はまだ。
+
 ## わかっている穴
 
 - 既定値は `[DefaultValue]` 属性からしか取れない。コンストラクタで入れる既定値は見えない（`get-default-xaml` に出る `Version=V5` や `HealingAgentBehavior=SameAsCard` などは、カタログには既定値として入っていない）

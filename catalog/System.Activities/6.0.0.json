@@ -1,0 +1,6894 @@
+{
+  "package": "System.Activities",
+  "version": "6.0.0",
+  "assemblies": [
+    "System.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "Add",
+      "clrType": "System.Activities.Expressions.Add",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Checked",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Add"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Add"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Add"
+        }
+      ]
+    },
+    {
+      "className": "AddToCollection",
+      "clrType": "System.Activities.Statements.AddToCollection",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Collection",
+          "kind": "in",
+          "type": "ICollection<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddToCollection"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Item",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddToCollection"
+        }
+      ]
+    },
+    {
+      "className": "AddValidationError",
+      "clrType": "System.Activities.Validation.AddValidationError",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IsWarning",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddValidationError"
+        },
+        {
+          "name": "Message",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddValidationError"
+        },
+        {
+          "name": "PropertyName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddValidationError"
+        }
+      ]
+    },
+    {
+      "className": "And",
+      "clrType": "System.Activities.Expressions.And",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "And"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "And"
+        }
+      ]
+    },
+    {
+      "className": "AndAlso",
+      "clrType": "System.Activities.Expressions.AndAlso",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.Activity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AndAlso"
+        },
+        {
+          "name": "Right",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AndAlso"
+        }
+      ]
+    },
+    {
+      "className": "ArgumentReference",
+      "clrType": "System.Activities.Expressions.ArgumentReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationReference<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ArgumentName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArgumentReference"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArgumentReference"
+        }
+      ]
+    },
+    {
+      "className": "ArgumentValue",
+      "clrType": "System.Activities.Expressions.ArgumentValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationValue<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ArgumentName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArgumentValue"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArgumentValue"
+        }
+      ]
+    },
+    {
+      "className": "ArrayItemReference",
+      "clrType": "System.Activities.Expressions.ArrayItemReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<Location<TItem>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Array",
+          "kind": "in",
+          "type": "TItem[]",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArrayItemReference"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Index",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArrayItemReference"
+        }
+      ]
+    },
+    {
+      "className": "ArrayItemValue",
+      "clrType": "System.Activities.Expressions.ArrayItemValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TItem>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Array",
+          "kind": "in",
+          "type": "TItem[]",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArrayItemValue"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Index",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArrayItemValue"
+        }
+      ]
+    },
+    {
+      "className": "As",
+      "clrType": "System.Activities.Expressions.As",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "As"
+        }
+      ]
+    },
+    {
+      "className": "AssertValidation",
+      "clrType": "System.Activities.Validation.AssertValidation",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Assertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertValidation"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IsWarning",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertValidation"
+        },
+        {
+          "name": "Message",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertValidation"
+        },
+        {
+          "name": "PropertyName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertValidation"
+        }
+      ]
+    },
+    {
+      "className": "Assign",
+      "clrType": "System.Activities.Statements.Assign",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "To",
+          "kind": "out",
+          "type": "System.Activities.OutArgument",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Assign"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Assign"
+        }
+      ]
+    },
+    {
+      "className": "Assign",
+      "clrType": "System.Activities.Statements.Assign",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "To",
+          "kind": "out",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Assign"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Assign"
+        }
+      ]
+    },
+    {
+      "className": "CancellationScope",
+      "clrType": "System.Activities.Statements.CancellationScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CancellationScope"
+        },
+        {
+          "name": "CancellationHandler",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CancellationScope"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CancellationScope"
+        }
+      ]
+    },
+    {
+      "className": "Cast",
+      "clrType": "System.Activities.Expressions.Cast",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Checked",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Cast"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Cast"
+        }
+      ]
+    },
+    {
+      "className": "ClearCollection",
+      "clrType": "System.Activities.Statements.ClearCollection",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Collection",
+          "kind": "in",
+          "type": "ICollection<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClearCollection"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "CompensableActivity",
+      "clrType": "System.Activities.Statements.CompensableActivity",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity<System.Activities.Statements.CompensationToken>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompensableActivity"
+        },
+        {
+          "name": "CancellationHandler",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompensableActivity"
+        },
+        {
+          "name": "CompensationHandler",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompensableActivity"
+        },
+        {
+          "name": "ConfirmationHandler",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompensableActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompensableActivity"
+        }
+      ]
+    },
+    {
+      "className": "Compensate",
+      "clrType": "System.Activities.Statements.Compensate",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Target",
+          "kind": "in",
+          "type": "System.Activities.Statements.CompensationToken",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Compensate"
+        }
+      ]
+    },
+    {
+      "className": "Confirm",
+      "clrType": "System.Activities.Statements.Confirm",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Target",
+          "kind": "in",
+          "type": "System.Activities.Statements.CompensationToken",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Confirm"
+        }
+      ]
+    },
+    {
+      "className": "Constraint",
+      "clrType": "System.Activities.Validation.Constraint",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.Validation.Constraint",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "ActivityAction<T, System.Activities.Validation.ValidationContext>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Constraint"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "CreateBookmarkScope",
+      "clrType": "System.Activities.Statements.CreateBookmarkScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity<System.Activities.BookmarkScope>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "Delay",
+      "clrType": "System.Activities.Statements.Delay",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Duration",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Delay"
+        }
+      ]
+    },
+    {
+      "className": "DelegateArgumentReference",
+      "clrType": "System.Activities.Expressions.DelegateArgumentReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationReference<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DelegateArgument",
+          "kind": "prop",
+          "type": "System.Activities.DelegateArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DelegateArgumentReference"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DelegateArgumentReference"
+        }
+      ]
+    },
+    {
+      "className": "DelegateArgumentValue",
+      "clrType": "System.Activities.Expressions.DelegateArgumentValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationValue<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DelegateArgument",
+          "kind": "prop",
+          "type": "System.Activities.DelegateArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DelegateArgumentValue"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DelegateArgumentValue"
+        }
+      ]
+    },
+    {
+      "className": "DeleteBookmarkScope",
+      "clrType": "System.Activities.Statements.DeleteBookmarkScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Scope",
+          "kind": "in",
+          "type": "System.Activities.BookmarkScope",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteBookmarkScope"
+        }
+      ]
+    },
+    {
+      "className": "Divide",
+      "clrType": "System.Activities.Expressions.Divide",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Divide"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Divide"
+        }
+      ]
+    },
+    {
+      "className": "DoWhile",
+      "clrType": "System.Activities.Statements.DoWhile",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DoWhile"
+        },
+        {
+          "name": "Condition",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DoWhile"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DoWhile"
+        }
+      ]
+    },
+    {
+      "className": "DynamicActivity",
+      "clrType": "System.Activities.DynamicActivity",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.Activity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "DynamicActivity",
+      "clrType": "System.Activities.DynamicActivity",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "Activity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "EnvironmentLocationReference",
+      "clrType": "System.Activities.Expressions.EnvironmentLocationReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<Location<T>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "EnvironmentLocationReference"
+        }
+      ]
+    },
+    {
+      "className": "EnvironmentLocationValue",
+      "clrType": "System.Activities.Expressions.EnvironmentLocationValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "EnvironmentLocationValue"
+        }
+      ]
+    },
+    {
+      "className": "Equal",
+      "clrType": "System.Activities.Expressions.Equal",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Equal"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Equal"
+        }
+      ]
+    },
+    {
+      "className": "ExistsInCollection",
+      "clrType": "System.Activities.Statements.ExistsInCollection",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Collection",
+          "kind": "in",
+          "type": "ICollection<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExistsInCollection"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Item",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExistsInCollection"
+        }
+      ]
+    },
+    {
+      "className": "FieldReference",
+      "clrType": "System.Activities.Expressions.FieldReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TResult>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FieldName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FieldReference"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FieldReference"
+        }
+      ]
+    },
+    {
+      "className": "FieldValue",
+      "clrType": "System.Activities.Expressions.FieldValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FieldName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FieldValue"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FieldValue"
+        }
+      ]
+    },
+    {
+      "className": "Flowchart",
+      "clrType": "System.Activities.Statements.Flowchart",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Nodes",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Statements.FlowNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Flowchart"
+        },
+        {
+          "name": "StartNode",
+          "kind": "prop",
+          "type": "System.Activities.Statements.FlowNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Flowchart"
+        },
+        {
+          "name": "ValidateUnconnectedNodes",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Flowchart"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Flowchart"
+        }
+      ]
+    },
+    {
+      "className": "ForEach",
+      "clrType": "System.Activities.Statements.ForEach",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "ActivityAction<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEach"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Values",
+          "kind": "in",
+          "type": "IEnumerable<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEach"
+        }
+      ]
+    },
+    {
+      "className": "FuncReference",
+      "clrType": "System.Activities.FuncReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TResult>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "FuncValue",
+      "clrType": "System.Activities.FuncValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "GetChildSubtree",
+      "clrType": "System.Activities.Validation.GetChildSubtree",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity<System.Collections.Generic.IEnumerable<System.Activities.Activity>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ValidationContext",
+          "kind": "in",
+          "type": "System.Activities.Validation.ValidationContext",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetChildSubtree"
+        }
+      ]
+    },
+    {
+      "className": "GetParentChain",
+      "clrType": "System.Activities.Validation.GetParentChain",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity<System.Collections.Generic.IEnumerable<System.Activities.Activity>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ValidationContext",
+          "kind": "in",
+          "type": "System.Activities.Validation.ValidationContext",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetParentChain"
+        }
+      ]
+    },
+    {
+      "className": "GetWorkflowTree",
+      "clrType": "System.Activities.Validation.GetWorkflowTree",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity<System.Collections.Generic.IEnumerable<System.Activities.Activity>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ValidationContext",
+          "kind": "in",
+          "type": "System.Activities.Validation.ValidationContext",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetWorkflowTree"
+        }
+      ]
+    },
+    {
+      "className": "GreaterThan",
+      "clrType": "System.Activities.Expressions.GreaterThan",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GreaterThan"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GreaterThan"
+        }
+      ]
+    },
+    {
+      "className": "GreaterThanOrEqual",
+      "clrType": "System.Activities.Expressions.GreaterThanOrEqual",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GreaterThanOrEqual"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GreaterThanOrEqual"
+        }
+      ]
+    },
+    {
+      "className": "HandleScope",
+      "clrType": "System.Activities.Statements.HandleScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HandleScope"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Handle",
+          "kind": "in",
+          "type": "THandle",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HandleScope"
+        }
+      ]
+    },
+    {
+      "className": "If",
+      "clrType": "System.Activities.Statements.If",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Condition",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "If"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Else",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "If"
+        },
+        {
+          "name": "Then",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "If"
+        }
+      ]
+    },
+    {
+      "className": "IndexerReference",
+      "clrType": "System.Activities.Expressions.IndexerReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TItem>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Indices",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.InArgument>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "IndexerReference"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "IndexerReference"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 4,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 5,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 6,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 7,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 8,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 9,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 10,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 11,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 12,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 13,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 14,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 15,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument15",
+          "kind": "in",
+          "type": "T15",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeAction",
+      "clrType": "System.Activities.Statements.InvokeAction",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 16,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "delegate",
+          "type": "ActivityAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument15",
+          "kind": "in",
+          "type": "T15",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument16",
+          "kind": "in",
+          "type": "T16",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeDelegate",
+      "clrType": "System.Activities.Statements.InvokeDelegate",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Default",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeDelegate"
+        },
+        {
+          "name": "Delegate",
+          "kind": "prop",
+          "type": "System.Activities.ActivityDelegate",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeDelegate"
+        },
+        {
+          "name": "DelegateArguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IDictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeDelegate"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 4,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 5,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 6,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 7,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 8,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 9,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 10,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 11,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 12,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 13,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 14,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 15,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 16,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument15",
+          "kind": "in",
+          "type": "T15",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeFunc",
+      "clrType": "System.Activities.Expressions.InvokeFunc",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 17,
+      "baseType": "NativeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Argument1",
+          "kind": "in",
+          "type": "T1",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument10",
+          "kind": "in",
+          "type": "T10",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument11",
+          "kind": "in",
+          "type": "T11",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument12",
+          "kind": "in",
+          "type": "T12",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument13",
+          "kind": "in",
+          "type": "T13",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument14",
+          "kind": "in",
+          "type": "T14",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument15",
+          "kind": "in",
+          "type": "T15",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument16",
+          "kind": "in",
+          "type": "T16",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument2",
+          "kind": "in",
+          "type": "T2",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument3",
+          "kind": "in",
+          "type": "T3",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument4",
+          "kind": "in",
+          "type": "T4",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument5",
+          "kind": "in",
+          "type": "T5",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument6",
+          "kind": "in",
+          "type": "T6",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument7",
+          "kind": "in",
+          "type": "T7",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument8",
+          "kind": "in",
+          "type": "T8",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Argument9",
+          "kind": "in",
+          "type": "T9",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Func",
+          "kind": "delegate",
+          "type": "ActivityFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeFunc"
+        }
+      ]
+    },
+    {
+      "className": "InvokeMethod",
+      "clrType": "System.Activities.Statements.InvokeMethod",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.AsyncCodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "GenericTypeArguments",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Type>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "MethodName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "Parameters",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Activities.OutArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "RunAsynchronously",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "TargetObject",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "TargetType",
+          "kind": "prop",
+          "type": "System.Type",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        }
+      ]
+    },
+    {
+      "className": "InvokeMethod",
+      "clrType": "System.Activities.Expressions.InvokeMethod",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "AsyncCodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "GenericTypeArguments",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Type>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "MethodName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "Parameters",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "RunAsynchronously",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "TargetObject",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        },
+        {
+          "name": "TargetType",
+          "kind": "prop",
+          "type": "System.Type",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeMethod"
+        }
+      ]
+    },
+    {
+      "className": "LambdaReference",
+      "clrType": "System.Activities.Expressions.LambdaReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<Location<T>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "LambdaValue",
+      "clrType": "System.Activities.Expressions.LambdaValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "LessThan",
+      "clrType": "System.Activities.Expressions.LessThan",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "LessThan"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "LessThan"
+        }
+      ]
+    },
+    {
+      "className": "LessThanOrEqual",
+      "clrType": "System.Activities.Expressions.LessThanOrEqual",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "LessThanOrEqual"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "LessThanOrEqual"
+        }
+      ]
+    },
+    {
+      "className": "Literal",
+      "clrType": "System.Activities.Expressions.Literal",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Value",
+          "kind": "prop",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Literal"
+        }
+      ]
+    },
+    {
+      "className": "MultidimensionalArrayItemReference",
+      "clrType": "System.Activities.Expressions.MultidimensionalArrayItemReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<Location<TItem>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Array",
+          "kind": "in",
+          "type": "System.Array",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MultidimensionalArrayItemReference"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Indices",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.InArgument<System.Int32>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MultidimensionalArrayItemReference"
+        }
+      ]
+    },
+    {
+      "className": "Multiply",
+      "clrType": "System.Activities.Expressions.Multiply",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Checked",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Multiply"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Multiply"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Multiply"
+        }
+      ]
+    },
+    {
+      "className": "New",
+      "clrType": "System.Activities.Expressions.New",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Arguments",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "New"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "NewArray",
+      "clrType": "System.Activities.Expressions.NewArray",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Bounds",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewArray"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "NoPersistScope",
+      "clrType": "System.Activities.Statements.NoPersistScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NoPersistScope"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "Not",
+      "clrType": "System.Activities.Expressions.Not",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Not"
+        }
+      ]
+    },
+    {
+      "className": "NotEqual",
+      "clrType": "System.Activities.Expressions.NotEqual",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NotEqual"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NotEqual"
+        }
+      ]
+    },
+    {
+      "className": "Or",
+      "clrType": "System.Activities.Expressions.Or",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Or"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Or"
+        }
+      ]
+    },
+    {
+      "className": "OrElse",
+      "clrType": "System.Activities.Expressions.OrElse",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.Activity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "OrElse"
+        },
+        {
+          "name": "Right",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "OrElse"
+        }
+      ]
+    },
+    {
+      "className": "Parallel",
+      "clrType": "System.Activities.Statements.Parallel",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Branches",
+          "kind": "children",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Activity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Parallel"
+        },
+        {
+          "name": "CompletionCondition",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Parallel"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Parallel"
+        }
+      ]
+    },
+    {
+      "className": "ParallelForEach",
+      "clrType": "System.Activities.Statements.ParallelForEach",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "ActivityAction<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ParallelForEach"
+        },
+        {
+          "name": "CompletionCondition",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ParallelForEach"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Values",
+          "kind": "in",
+          "type": "IEnumerable<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ParallelForEach"
+        }
+      ]
+    },
+    {
+      "className": "Persist",
+      "clrType": "System.Activities.Statements.Persist",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "Pick",
+      "clrType": "System.Activities.Statements.Pick",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Branches",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Statements.PickBranch>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Pick"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "PropertyReference",
+      "clrType": "System.Activities.Expressions.PropertyReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TResult>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PropertyReference"
+        },
+        {
+          "name": "PropertyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PropertyReference"
+        }
+      ]
+    },
+    {
+      "className": "PropertyValue",
+      "clrType": "System.Activities.Expressions.PropertyValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Operand",
+          "kind": "in",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PropertyValue"
+        },
+        {
+          "name": "PropertyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PropertyValue"
+        }
+      ]
+    },
+    {
+      "className": "Reference",
+      "clrType": "System.Activities.Reference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<Location<TLocation>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "RemoveFromCollection",
+      "clrType": "System.Activities.Statements.RemoveFromCollection",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Collection",
+          "kind": "in",
+          "type": "ICollection<T>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RemoveFromCollection"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Item",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RemoveFromCollection"
+        }
+      ]
+    },
+    {
+      "className": "Rethrow",
+      "clrType": "System.Activities.Statements.Rethrow",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "Sequence",
+      "clrType": "System.Activities.Statements.Sequence",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Activities",
+          "kind": "children",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Activity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Sequence"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Sequence"
+        }
+      ]
+    },
+    {
+      "className": "StateMachine",
+      "clrType": "System.Activities.Statements.StateMachine",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "InitialState",
+          "kind": "prop",
+          "type": "System.Activities.Statements.State",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StateMachine"
+        },
+        {
+          "name": "States",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Statements.State>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StateMachine"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StateMachine"
+        }
+      ]
+    },
+    {
+      "className": "Subtract",
+      "clrType": "System.Activities.Expressions.Subtract",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 3,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Checked",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Subtract"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "TLeft",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Subtract"
+        },
+        {
+          "name": "Right",
+          "kind": "in",
+          "type": "TRight",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Subtract"
+        }
+      ]
+    },
+    {
+      "className": "Switch",
+      "clrType": "System.Activities.Statements.Switch",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cases",
+          "kind": "prop",
+          "type": "IDictionary<T, System.Activities.Activity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Switch"
+        },
+        {
+          "name": "Default",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Switch"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expression",
+          "kind": "in",
+          "type": "T",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Switch"
+        }
+      ]
+    },
+    {
+      "className": "TerminateWorkflow",
+      "clrType": "System.Activities.Statements.TerminateWorkflow",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Exception",
+          "kind": "in",
+          "type": "System.Exception",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TerminateWorkflow"
+        },
+        {
+          "name": "Reason",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TerminateWorkflow"
+        }
+      ]
+    },
+    {
+      "className": "Throw",
+      "clrType": "System.Activities.Statements.Throw",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Exception",
+          "kind": "in",
+          "type": "System.Exception",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Throw"
+        }
+      ]
+    },
+    {
+      "className": "TransactionScope",
+      "clrType": "System.Activities.Statements.TransactionScope",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AbortInstanceOnTransactionFailure",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TransactionScope"
+        },
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TransactionScope"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IsolationLevel",
+          "kind": "prop",
+          "type": "System.Transactions.IsolationLevel",
+          "required": false,
+          "enum": [
+            "Serializable",
+            "RepeatableRead",
+            "ReadCommitted",
+            "ReadUncommitted",
+            "Snapshot",
+            "Chaos",
+            "Unspecified"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TransactionScope"
+        },
+        {
+          "name": "Timeout",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TransactionScope"
+        }
+      ]
+    },
+    {
+      "className": "TryCatch",
+      "clrType": "System.Activities.Statements.TryCatch",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Catches",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Statements.Catch>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TryCatch"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Finally",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TryCatch"
+        },
+        {
+          "name": "Try",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TryCatch"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TryCatch"
+        }
+      ]
+    },
+    {
+      "className": "Value",
+      "clrType": "System.Activities.Value",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "CodeActivity<TResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "ValueTypeFieldReference",
+      "clrType": "System.Activities.Expressions.ValueTypeFieldReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TResult>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FieldName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypeFieldReference"
+        },
+        {
+          "name": "OperandLocation",
+          "kind": "inout",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypeFieldReference"
+        }
+      ]
+    },
+    {
+      "className": "ValueTypeIndexerReference",
+      "clrType": "System.Activities.Expressions.ValueTypeIndexerReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TItem>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Indices",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.InArgument>",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypeIndexerReference"
+        },
+        {
+          "name": "OperandLocation",
+          "kind": "inout",
+          "type": "TOperand",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypeIndexerReference"
+        }
+      ]
+    },
+    {
+      "className": "ValueTypePropertyReference",
+      "clrType": "System.Activities.Expressions.ValueTypePropertyReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 2,
+      "baseType": "CodeActivity<Location<TResult>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "OperandLocation",
+          "kind": "inout",
+          "type": "TOperand",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypePropertyReference"
+        },
+        {
+          "name": "PropertyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValueTypePropertyReference"
+        }
+      ]
+    },
+    {
+      "className": "VariableReference",
+      "clrType": "System.Activities.Expressions.VariableReference",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationReference<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VariableReference"
+        },
+        {
+          "name": "Variable",
+          "kind": "prop",
+          "type": "System.Activities.Variable",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VariableReference"
+        }
+      ]
+    },
+    {
+      "className": "VariableValue",
+      "clrType": "System.Activities.Expressions.VariableValue",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 1,
+      "baseType": "EnvironmentLocationValue<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LocationReference",
+          "kind": "prop",
+          "type": "System.Activities.LocationReference",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VariableValue"
+        },
+        {
+          "name": "Variable",
+          "kind": "prop",
+          "type": "System.Activities.Variable",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VariableValue"
+        }
+      ]
+    },
+    {
+      "className": "While",
+      "clrType": "System.Activities.Statements.While",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "While"
+        },
+        {
+          "name": "Condition",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "While"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "While"
+        }
+      ]
+    },
+    {
+      "className": "WriteLine",
+      "clrType": "System.Activities.Statements.WriteLine",
+      "assembly": "System.Activities",
+      "xmlns": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Text",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteLine"
+        },
+        {
+          "name": "TextWriter",
+          "kind": "in",
+          "type": "System.IO.TextWriter",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteLine"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
