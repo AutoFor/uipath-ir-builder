@@ -1,0 +1,8 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"NApplicationCard\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NApplicationCard AttachMode=\"ByInstance\" HealingAgentBehavior=\"Job\" IsDisplayNameAuto=\"True\" ScopeGuid=\"09b63a48-a2be-4408-8ca2-02d5950510b9\" Version=\"V2\">\r\n    <uix:NApplicationCard.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"WSSessionData\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </uix:NApplicationCard.Body>\r\n    <uix:NApplicationCard.TargetApp>\r\n      <uix:TargetApp Area=\"0, 0, 0, 0\" Version=\"V3\" />\r\n    </uix:NApplicationCard.TargetApp>\r\n  </uix:NApplicationCard>\r\n</Activity>"
+  }
+}
+

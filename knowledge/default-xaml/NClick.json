@@ -1,0 +1,8 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30af\u30ea\u30c3\u30af\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NClick ActivateBefore=\"True\" ClickType=\"Single\" DisplayName=\"\u30af\u30ea\u30c3\u30af\" HealingAgentBehavior=\"SameAsCard\" KeyModifiers=\"None\" MouseButton=\"Left\" Version=\"V5\" />\r\n</Activity>"
+  }
+}
+

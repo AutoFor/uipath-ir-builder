@@ -1,0 +1,8 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u6587\u5b57\u3092\u5165\u529b\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NTypeInto ActivateBefore=\"True\" ClickBeforeMode=\"Single\" DisplayName=\"\u6587\u5b57\u3092\u5165\u529b\" EmptyFieldMode=\"SingleLine\" HealingAgentBehavior=\"SameAsCard\" Version=\"V5\">\r\n    <uix:NTypeInto.VerifyOptions>\r\n      <uix:VerifyExecutionTypeIntoOptions Mode=\"Appears\">\r\n        <uix:VerifyExecutionTypeIntoOptions.Retry>\r\n          <InArgument x:TypeArguments=\"x:Boolean\" />\r\n        </uix:VerifyExecutionTypeIntoOptions.Retry>\r\n        <uix:VerifyExecutionTypeIntoOptions.Timeout>\r\n          <InArgument x:TypeArguments=\"x:Double\" />\r\n        </uix:VerifyExecutionTypeIntoOptions.Timeout>\r\n      </uix:VerifyExecutionTypeIntoOptions>\r\n    </uix:NTypeInto.VerifyOptions>\r\n  </uix:NTypeInto>\r\n</Activity>"
+  }
+}
+

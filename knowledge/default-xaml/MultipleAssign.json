@@ -1,0 +1,8 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"MultipleAssign\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:MultipleAssign>\r\n    <ui:MultipleAssign.AssignOperations>\r\n      <scg:List x:TypeArguments=\"ui:AssignOperation\" Capacity=\"4\">\r\n        <ui:AssignOperation To=\"{x:Null}\" Value=\"{x:Null}\" />\r\n      </scg:List>\r\n    </ui:MultipleAssign.AssignOperations>\r\n  </ui:MultipleAssign>\r\n</Activity>"
+  }
+}
+

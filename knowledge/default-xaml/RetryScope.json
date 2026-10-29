@@ -1,0 +1,8 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"RetryScope\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:RetryScope LogRetriedExceptions=\"{x:Null}\" RetriedExceptionsLogLevel=\"{x:Null}\">\r\n    <ui:RetryScope.ActivityBody>\r\n      <ActivityAction>\r\n        <Sequence DisplayName=\"\u30a2\u30af\u30b7\u30e7\u30f3\" />\r\n      </ActivityAction>\r\n    </ui:RetryScope.ActivityBody>\r\n    <ui:RetryScope.Condition>\r\n      <ActivityFunc x:TypeArguments=\"x:Boolean\" />\r\n    </ui:RetryScope.Condition>\r\n  </ui:RetryScope>\r\n</Activity>"
+  }
+}
+
