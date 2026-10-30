@@ -1,0 +1,34 @@
+{
+  "workflow": "SapSessionTrigger_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "SapSessionTrigger",
+            "props": {
+              "Attributes": "{ \"sapTransaction\", \"sapProgram\" }",
+              "Enabled": true,
+              "SchedulingMode": "Sequential",
+              "TriggerId": "16c80079-4c3c-4847-8a56-b0e027f08f52"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": "\"SAP セッションが発火した\""
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

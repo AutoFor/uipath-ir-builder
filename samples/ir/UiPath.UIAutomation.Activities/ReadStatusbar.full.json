@@ -1,0 +1,69 @@
+{
+  "workflow": "ReadStatusbar_Full",
+  "variables": [
+    {
+      "name": "msgText",
+      "type": "String"
+    },
+    {
+      "name": "msgType",
+      "type": "String"
+    },
+    {
+      "name": "msgId",
+      "type": "String"
+    },
+    {
+      "name": "msgNumber",
+      "type": "String"
+    },
+    {
+      "name": "msgData",
+      "type": "String[]"
+    }
+  ],
+  "body": [
+    {
+      "act": "OpenApplication",
+      "name": "SAP Logon を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": {
+          "lit": "saplogon.exe"
+        },
+        "Selector": {
+          "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />"
+        }
+      },
+      "body": [
+        {
+          "act": "ReadStatusbar",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<sap id='/app/con[0]/ses[0]/wnd[0]/sbar' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "MessageText": "msgText",
+            "MessageType": "msgType",
+            "MessageId": "msgId",
+            "MessageNumber": "msgNumber",
+            "MessageData": "msgData",
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"ステータスバー: \" & msgText & \" / \" & msgType & \" / \" & msgId & \" / \" & msgNumber & \" / \" & String.Join(\",\", msgData)"
+          }
+        }
+      ]
+    }
+  ]
+}

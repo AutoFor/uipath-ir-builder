@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"Login\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucas=\"clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucas:Login Client=\"{x:Null}\" Language=\"{x:Null}\" Password=\"{x:Null}\" SecurePassword=\"{x:Null}\" Username=\"{x:Null}\" Window=\"{x:Null}\" IsSecure=\"True\" MultiLogonOptionToChoose=\"Single\" Timeout=\"5000\">\r\n    <ucas:Login.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"4970964a-c569-4b6d-8786-22387503af42\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ucas:Login.Target>\r\n  </ucas:Login>\r\n</Activity>"
+  }
+}

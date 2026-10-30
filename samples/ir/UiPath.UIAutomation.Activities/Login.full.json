@@ -1,0 +1,55 @@
+{
+  "workflow": "Login_Full",
+  "variables": [
+    {
+      "name": "sapPassword",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "OpenApplication",
+      "name": "SAP Logon を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": {
+          "lit": "saplogon.exe"
+        },
+        "Selector": {
+          "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />"
+        }
+      },
+      "body": [
+        {
+          "act": "Login",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<sap id='/app/con[0]/ses[0]/wnd[0]' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "Client": {
+              "lit": "100"
+            },
+            "Language": {
+              "lit": "JA"
+            },
+            "Username": {
+              "lit": "sapuser"
+            },
+            "Password": "sapPassword",
+            "IsSecure": false,
+            "Timeout": 10000,
+            "MultiLogonOptionToChoose": "Terminate",
+            "ContinueOnError": false,
+            "SendTelemetryOnlyOnFailure": false
+          }
+        }
+      ]
+    }
+  ]
+}

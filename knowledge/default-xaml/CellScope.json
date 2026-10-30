@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CellScope\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:CellScope ColumnName=\"{x:Null}\" ColumnNames=\"{x:Null}\" RowNumber=\"{x:Null}\" TableRow=\"{x:Null}\" UiElement=\"{x:Null}\">\r\n    <ui:CellScope.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"ContextTarget\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </ui:CellScope.Body>\r\n    <ui:CellScope.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"959230ae-2035-4d26-8937-065433e640f5\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:CellScope.Target>\r\n  </ui:CellScope>\r\n</Activity>"
+  }
+}
