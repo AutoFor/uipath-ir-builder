@@ -17,9 +17,9 @@ namespace CatalogProbeNet8
             String r1 = default;
             String r2 = default;
             // 大文字小文字を区別しない
-            r1 = system.FindAndReplace(valueToFind: "HELLO", source: "Hello hello World", replaceWith: "bye", matchCase: false);
+            r1 = system.FindAndReplace(valueToFind: "Hello hello World", source: "HELLO", replaceWith: "bye", matchCase: false);
             // 大文字小文字を区別する
-            r2 = system.FindAndReplace(valueToFind: "hello", source: "Hello hello World", replaceWith: "bye", matchCase: true);
+            r2 = system.FindAndReplace(valueToFind: "Hello hello World", source: "hello", replaceWith: "bye", matchCase: true);
             Log(message: r1, level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: r2, level: UiPath.CodedWorkflows.LogLevel.Info);
         }

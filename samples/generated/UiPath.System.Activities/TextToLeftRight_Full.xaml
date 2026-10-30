@@ -67,7 +67,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="r2" />
     </Sequence.Variables>
     <ui:TextToLeftRight CaseSensitiveSeparator="True" CustomSeparatorEnabled="False" DisplayName="カンマで左右に分ける" FullText="left,right" Separator="," SeparatorKey="Comma" TextToLeft="[l]" TextToRight="[r]" sap2010:WorkflowViewState.IdRef="TextToLeftRight_1" />
-    <ui:TextToLeftRight CaseSensitiveSeparator="False" CustomSeparatorEnabled="True" DisplayName="大文字小文字を区別せずに分ける" FullText="leftXright" Separator="x" SeparatorKey="Custom" TextToLeft="[l2]" TextToRight="[r2]" sap2010:WorkflowViewState.IdRef="TextToLeftRight_2" />
+    <ui:TextToLeftRight CaseSensitiveSeparator="False" CustomSeparatorEnabled="True" DisplayName="大文字小文字を区別せずに分ける" FullText="leftxright" Separator="x" SeparatorKey="Custom" TextToLeft="[l2]" TextToRight="[r2]" sap2010:WorkflowViewState.IdRef="TextToLeftRight_2" />
     <ui:LogMessage Level="Info" Message="[l]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
     <ui:LogMessage Level="Info" Message="[r]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
     <ui:LogMessage Level="Info" Message="[l2]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />

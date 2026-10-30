@@ -5,13 +5,13 @@
     {
       "call": "system.FindAndReplace",
       "args": {
-        "valueToFind": "{ValueToFind:-\"\"}",
-        "source": "{Source}",
+        "valueToFind": "{Source}",
+        "source": "{ValueToFind:-\"\"}",
         "replaceWith": "{ReplaceWith:-\"\"}",
         "matchCase": "{MatchCase:-false}"
       },
       "returns": "Result"
     }
   ],
-  "notes": "ISystemService.FindAndReplace（matchCase は省略できないので、IR に無いときはアクティビティの既定の false）"
+  "notes": "ISystemService.FindAndReplace。実機で確かめた結果、引数名 valueToFind / source が実装と逆（先頭が対象の文字列、2つ目が検索語として動く）ので、名前を入れ替えて渡している（matchCase は省略できないので、IR に無いときはアクティビティの既定の false）"
 }
