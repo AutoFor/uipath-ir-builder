@@ -192,6 +192,10 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 - **run**：ロボット（Assistant）は1ユーザーに1つなので、`verify.mjs` は `C:\Users\Public\uipath-ir-probe.run.lock` でマシン全体の run を1つずつに並べる（待つ間「run の順番待ち」と出る）。同時に run したときの動きはまだ確かめていない。ロックを外さないこと
 - 同じ作業用プロジェクトを2つの `verify.mjs` で同時に使うと、`.verify.lock` で止まる。作業名を分ける
 
+### run は窓口（queue-run.mjs）を通す
+
+Claude のセッションは SSH 経由（管理者権限・セッション 0）なので、直接 `uip rpa run` すると落ちる。ユーザーが RDP 側の管理者なしターミナルで `node tools/verify/runner.mjs` を動かしているので、run は `node tools/verify/queue-run.mjs --name <作業名> <ファイル>` で頼む（引数は verify.mjs と同じ。順番待ちになる）。build は今までどおり `verify.mjs --build-only` でよい。
+
 ### run が「アクセスが拒否されました」で落ちる
 
 管理者権限（整合性レベル High）のシェルから `uip` を呼ぶと、Helm も管理者権限で起動し、中の権限で動いているロボットに実行を頼めない（`RegisterClientProcess` の `OpenProcess` で拒否される）。`UiRobot.exe execute` を直接呼んでも同じ。
