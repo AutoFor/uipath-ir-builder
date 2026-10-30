@@ -1,0 +1,9 @@
+<Activity mc:Ignorable="sap2010" x:Class="Machine" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Sequence DisplayName="Main">
+    <StateMachine DisplayName="中の状態遷移">
+      <StateMachine.InitialState>
+        <State DisplayName="Init" />
+      </StateMachine.InitialState>
+    </StateMachine>
+  </Sequence>
+</Activity>

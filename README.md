@@ -178,3 +178,17 @@ Linear のイシュー（1アクティビティ1件）の進め方、ファイ�
 - 既定値は `[DefaultValue]` 属性からしか取れない。コンストラクタで入れる既定値は見えない（`get-default-xaml` に出る `Version=V5` や `HealingAgentBehavior=SameAsCard` などは、カタログには既定値として入っていない）
 - 新しめのアクティビティは「必須」を ViewModel 側で持っていそうで、属性だけでは漏れる
 - xmlns 定義が見つからないアクティビティは `clr-namespace:` 形式の代わりの値になる（System 44個、UIAutomation 11個）
+
+## XAML → IR の取り込み
+
+```bash
+node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]   # XAML を IR にする
+node tools/ir/migrate-report.ts <file.xaml>... [--json]                           # Coded への置き換えの見積もり
+node tools/ir/migrate-report.ts --dropped-props                                   # 全対応表の ignore を knowledge/coded-dropped-props.md に書き出す
+```
+
+- 捨てるもの（一覧に出る）：ViewState、IdRef、HintSize、注釈、生成器が足し直す値（既定値、GUID）、`{x:Null}`。注釈は中身も警告に出す
+- 取り込めないもの（エラー）：C# の式（`CSHARP_EXPR`）、Flowchart（`UNSUPPORTED_FLOWCHART`）、StateMachine（`UNSUPPORTED_STATEMACHINE`）、カタログに無いアクティビティやプロパティ（`UNKNOWN_ACT` / `UNKNOWN_PROP`）、`types-xaml.ts` に無い型（`UNKNOWN_TYPE`）、IR に無い要素構文（`UNSUPPORTED_ELEMENT`）、IR で書けないリテラル（`LITERAL_NOT_REPRESENTABLE`）
+- 取り込んだあと XAML を作り直して意味を比べ、残った違いを警告にする（`ROUNDTRIP_LOST` / `ROUNDTRIP_ADDED`）。IR に持てない import と参照は `EXTRA_IMPORT` / `EXTRA_REFERENCE`
+- XAML の既定値と同じ値は IR から落とす（生成器が足し直す）。ただし必須のものと、対応表の全部の形が使うものは残す（C# の API の既定値がアクティビティと違うことがあるため）
+- `{ vb, cs }` の `cs` は XAML に無いので戻らない。C# に直せない式は `generateCoded` の `CODED_EXPR` になる

@@ -51,3 +51,15 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 - `ChangeType`：Int32 から String への変換は、XAML だと `"7.00"`、C# だと `"7"` になる
 - `ParallelForEach`：XAML は c, b, a の順、C# は a, b, c の順で回る
 - `system.FindAndReplace`：引数名 `valueToFind` と `source` が実装と逆（先頭が対象の文字列、2つ目が検索語として動く）。対応表で入れ替えてある
+
+次は run の比較ではなく、生成器（`tools/ir/generate-coded.ts`）の直し方から分かる違い。置き換えたら `*.expected.log` で確かめる。
+
+- `Switch`：C# では if / else if と `Equals` になる（中の `break` がループを抜けるようにするため）
+- `RetryScope`：C# では for と try / catch になる。回数は `NumberOfRetries` の合計で、`RetryInterval` の待ちは `Delay`。回数の数え方とログの出方が XAML と違うことがある（期待ログで確かめる）。`Condition` は未対応
+- `ContinueOnError`：C# では try / catch で包み、式が真のとき例外を握りつぶす。ログの出方が XAML と違うことがある（期待ログで確かめる）
+- `Parallel`：C# では枝を宣言順に1つずつ実行する。待ちのある枝が交互に進むことはない
+- `InterruptibleWhile`：ジョブの停止による割り込みは C# では扱えない
+- `InterruptibleDoWhile`：ジョブの停止による割り込みは C# では扱えない
+- `CommentOut`：C# では中のアクティビティを生成しない（XAML でも実行されない）
+
+`tools/ir/migrate-report.ts` はこの節の箇条書き（`` - `名前`：説明 ``）を読んで警告に出す。名前はクラス名、プロパティ名、`system.メソッド名`のどれか。
