@@ -119,6 +119,7 @@ git commit
 | 既定 XAML | `knowledge/default-xaml/<ClassName>.json` | get-default-xaml の出力そのまま |
 | 手書きの Coded（必要なときだけ） | `samples/coded/<pkg>/<ClassName>.cs` | namespace は `CatalogProbeNet8`、クラス名＝ファイル名 |
 | 不正な IR のテスト | `samples/ir-invalid/<名前>.json` と `.expected.json`（`{ "codes": [...] }`） | 検証で弾くべきものを足したとき |
+| run で読む入力ファイル（.xlsx など） | `samples/data/<分類>/`（例 `samples/data/excel/Sample.xlsx`）と、それを作るスクリプト | `verify.mjs` が作業用プロジェクトの `data/` に写す。書き出しは `output/`（8-E-4） |
 
 共有のファイル（`tools/`、`catalog/`、README、この手順書）を変えるときは次の節に従う。
 
@@ -208,6 +209,132 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 ## 8. UI 操作（UIAutomation）と Excel
 
 後で追記（別のワーカーが IR の形と手順を設計する）。それまでは UIAutomation の `Target` / `TargetAnchorable` などは coverage で「UI のターゲット」として書けない扱いになる。
+
+### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
+
+`<pkg>` は `UiPath.Excel.Activities`。カタログは `catalog/UiPath.Excel.Activities/3.6.1.json`、Excel 固有の処理は `tools/ir/excel.ts`。見本は `samples/ir/UiPath.Excel.Activities/` の `ExcelApplicationCard`・`ReadRangeX`・`WriteRangeX`・`WriteCellX`・`ReadCellValueX`・`ExcelApplicationScope`・`ExcelReadCell`（どれも XAML と C# の build は通っている。run はまだ）。迷ったらまずこれを真似る。
+
+#### 8-E-1. イシューのクラス名とカタログのクラス名
+
+イシューのタイトルのクラス名がカタログと違うものがある。カタログの名前で書く（`node tools/ir/coverage.ts --activity <名前>` で確かめる）。
+
+| イシュー | カタログ | 備考 |
+| --- | --- | --- |
+| ReadCellX（AUT-712） | `ReadCellValueX` | |
+| ChangePivotDataSourceX（AUT-988） | `ChangePivotTableDataSourceX` | |
+| クラス名不明 / Auto Fill（AUT-986） | `AutoFillX` | |
+| ExcelForEachRow（AUT-1058） | `ExcelForEachRowX` | `ExcelForEachRow` は非推奨（Obsolete）。新しい方で書き、古い方は触れるだけ |
+| CreatePivotTableX（AUT-991） | `CreatePivotTableXv2` | `CreatePivotTableX` は非推奨 |
+| CsvFile / Write CSV（AUT-850） | `AppendWriteCsvFile` | `CsvAction`（Write / Append）を持つモダンの Write CSV。get-default-xaml で表示名を確かめる |
+| GetCellColorX、ExcelProcessScopeX など | 同じ | `ExcelProcessScopeX` はイシューではクラシックに入っているが、中身はモダン（Use Excel File を入れる外側のスコープ） |
+
+完全名（get-default-xaml の `--activity-class-name`）は、モダンが `UiPath.Excel.Activities.Business.<名前>`（`GetSelectedRangeX` / `SelectRangeX` は `UiPath.Excel.Activities.Windows.Business.`、`GetCellColorX` は `UiPath.Excel.Activities.`）、クラシックが `UiPath.Excel.Activities.<名前>`、CSV が `UiPath.CSV.Activities.<名前>`。迷ったらカタログの `clrType` を見る。
+
+#### 8-E-2. モダン（Use Excel File の中で使うもの）
+
+Use Excel File（`ExcelApplicationCard`）は、ブックの参照（`IWorkbookQuickHandle`）を delegate の引数として中に渡す。中のアクティビティは、その参照から作った式（`IReadRangeRef` / `IReadWriteRangeRef` / `IReadCellRef` / `ISheetRef` など）をプロパティに受け取る。
+
+```json
+{ "act": "ExcelApplicationCard", "item": "Excel",
+  "props": { "WorkbookPath": { "lit": "data\\excel\\Sample.xlsx" }, "ReadOnly": true },
+  "body": [
+    { "act": "ReadRangeX", "props": { "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")", "SaveTo": "dt" } },
+    { "act": "WriteCellX", "props": { "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"D1\")", "Value": { "lit": "済" } } }
+  ] }
+```
+
+- **`"item": "Excel"` を必ず書く**（Studio の既定の名前。書かないと引数名が `item` になり、`Excel` が宣言されていないと検証で `EXCEL_REF` になる）
+- body に2つ以上書くと生成器が Sequence で包む
+- 参照は VB の式で書く。XAML ではそのまま `Range="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;A1:B4&quot;)]"` になり、C# では生成器が `Excel.Sheet["Sheet1"].Range["A1:B4"]`（インデクサー）に直す
+
+| プロパティの型 | 書き方の例 |
+| --- | --- |
+| `IReadRangeRef` / `IReadWriteRangeRef` / `IWellDefined*RangeRef`（範囲） | `Excel.Sheet("Sheet1").Range("A1:B4")`、シート全体は `Excel.Sheet("Sheet1")`、テーブルは `Excel.Table("Table1")` |
+| `IReadCellRef` / `IReadWriteCellRef`（セル） | `Excel.Sheet("Sheet1").Cell("A1")` |
+| `ISheetRef`（シート） | `Excel.Sheet("Sheet1")` |
+| `IPivotTableRef` | `Excel.Sheet("Sheet1").PivotTable("PivotTable1")` |
+| `IChartRef` | `Excel.Sheet("Sheet1").Chart("Chart 1")` |
+| `IWorkbookQuickHandle`（`Workbook` などブックそのもの） | `Excel` |
+| For Each Excel Row の中の行 | `CurrentRow("Name")`（`ExcelForEachRowX` の `item` は `["CurrentRow", "CurrentIndex"]`） |
+
+使えるメンバーはカタログの `handles`（`IWorkbookQuickHandle` → `Sheet` / `Table`、`WorksheetQuickHandle` → `Range` / `Cell` / `PivotTable` / `Chart` など）。検証（`tools/ir/excel.ts` の `checkExcel`）は、式の先頭が宣言済みか、`.名前` がカタログにあるか（`Rangee` のような打ち間違い）を build の前に見る。
+
+ほかの delegate の引数名（get-default-xaml の `DelegateInArgument Name` と同じにする）：
+
+| アクティビティ | item |
+| --- | --- |
+| `ExcelProcessScopeX` | `"ExcelProcessScopeTag"` |
+| `ExcelForEachRowX` | `["CurrentRow", "CurrentIndex"]` |
+| `ForEachSheetX` | `["CurrentSheet", "CurrentIndex"]` |
+
+`SortX` / `InvokeVBAX` / `ExecuteMacroX` / `CreatePivotTableXv2` / `UpdateChartX` は、body に「子の設定用アクティビティ」（`SortColumnX`、`InvokeVBAArgumentX`、`ExecuteMacroArgumentX`、`PivotTableFieldX`、`*Modification`）を並べる。get-default-xaml は body に空の Sequence を置くので、IR では body に子の設定を並べる（2つ以上なら Sequence に包まれる。Studio と同じ）。
+
+#### 8-E-3. クラシック（Excel Application Scope の中で使うもの）
+
+```json
+{ "act": "ExcelApplicationScope", "item": "ExcelWorkbookScope",
+  "props": { "WorkbookPath": { "lit": "data\\excel\\Sample.xlsx" }, "ReadOnly": true },
+  "body": [ { "act": "ExcelReadCell", "props": { "SheetName": { "lit": "Sheet1" }, "Cell": { "lit": "A2" }, "Result": "v" } } ] }
+```
+
+- 中のアクティビティ（`ExcelReadRange`、`ExcelWriteCell` など。基底が `ExcelInteropActivity`）は、スコープの変数を参照しない（実行時に親を探す）。スコープの外に置くと検証で `EXCEL_SCOPE`
+- `item` は Studio の既定の `"ExcelWorkbookScope"` にする（中から参照しないが、Coded の using の変数名になる）
+- `WorkbookPath`（新しく開く）と `ExistingWorkbook`（開いているブックを使う）は OverloadGroup。後者の例は `ExcelApplicationScope.existing.json`
+- `Range` など String の入力は、既定 XAML が `""` を入れるものがある（`ExcelReadRange.Range`）。空でよいなら `{ "lit": "" }` を書く
+
+#### 8-E-4. テスト用のブック（samples/data）
+
+- 読むブックは `samples/data/excel/Sample.xlsx`。中身は `samples/data/excel/make-sample.mjs` の先頭のコメント（Sheet1：Name / Age / Double の表と式、A1 が赤。Sheet2：A1 に「シート2」）
+- `verify.mjs` が `samples/data/` を作業用プロジェクトの `data/` に写すので、IR では **`"data\\excel\\Sample.xlsx"`**（相対パス）で開く。読むだけのときは `"ReadOnly": true`
+- 書き出すときは **`"output\\<workflow>.xlsx"`** に書く（`verify.mjs` が毎回空の `output/` を作る。`CreateNewFile` の既定 true で新しく作られる）。Sample.xlsx は書き換えない
+- XAML と C# は同じ `output/` に続けて書くので、**何度流しても同じ結果になる書き方**にする（追記ではなく上書き。書いたら読み戻してログに出す）。例は `WriteRangeX.min.json`
+- 別のブックが要る（シートを増やす、表やピボットを入れるなど）ときは、`make-sample.mjs` を直して作り直すか、同じ形のスクリプトで別のファイルを作る（バイナリを手で作って置かない。中身はスクリプトに書く）。パスワード付きのブックなどスクリプトで作れないものは、サンプルを build だけにして `*.verify.json` の `noRun` に理由を書く（例 `ExcelApplicationCard.secure.json`）
+
+#### 8-E-5. Coded（対応表）
+
+Coded の Excel は `excel` サービス（`IExcelService`）でブックを開き、返ってきた参照に対して **拡張メソッド**（`UiPath.Excel.Activities.API.ExcelOperations`）を呼ぶ形。API はカタログで探す：
+
+```bash
+# サービスのメソッド（UseExcelFile / UseWorkBook / ExcelProcessScope）
+node -e "const c=require('./catalog/UiPath.Excel.Activities/3.6.1.json');for(const m of c.services[0].methods)console.log(m.name,m.params.map(p=>p.type+' '+p.name).join(', '))"
+# 拡張メソッド（ReadRange、WriteCell、SaveExcelFile …）。最初の引数が this（どの参照に対して呼べるか）
+node -e "const c=require('./catalog/UiPath.Excel.Activities/3.6.1.json');for(const m of c.extensions[0].methods.filter(m=>/Sort/.test(m.name)))console.log(m.returns,m.name,m.params.map(p=>p.type+' '+p.name+(p.optional?'='+p.default:'')).join(', '))"
+```
+
+`handles`（参照の型のプロパティ・インデクサー）、`enums`（`UiPath.Excel.ExcelSaveAsType` などのメンバー名）、オプションのクラス（`UseOptions`、`FilterOptions`、`TextToColumnsOptions` など。`handles` にプロパティがある）も同じファイルにある。
+
+対応表の書き方（`tools/ir/mapping.ts` の先頭のコメントも見る）：
+
+| やりたいこと | 書き方 | 例 |
+| --- | --- | --- |
+| スコープを using にする | `"scope": "using"`。変数名は IR の `item` | `ExcelApplicationCard.json` → `using (var Excel = excel.UseExcelFile(options: new UseOptions { ... })) { ... }` |
+| オプションのクラスを渡す | `"init": { "param": "options", "type": "UseOptions", "props": { "Path": "{WorkbookPath}", ... } }`。IR に無いプロパティの行は省かれる。値を配列にすると使える最初のもの | `ExcelApplicationCard.json` の `Password` |
+| 参照に対して拡張メソッドを呼ぶ | `"call": "{Range}.ReadRange"`（call にもテンプレートが使える） | `ReadRangeX.json`、`WriteRangeX.json`、`WriteCellX.json` |
+| API に既定値が無い引数 | `"defaults": { "HasHeaders": true }`（アクティビティの既定値。IR に無いときに使う） | `ReadRangeX.json` |
+| enum | `"UiPath.Excel.ReadFormattingOptions.{ReadFormatting}"`（完全名 + メンバー名） | `ReadRangeX.json` |
+| object を返す API の結果を変数に入れる | `"code": "{SaveTo} = ({SaveTo|type})Convert.ChangeType(..., typeof({SaveTo|type}));"` | `ReadCellValueX.json` |
+| クラシック：スコープの変数を使う | `{@IWorkHandle}`（外側の `scopeType` の末尾の名前） | `ExcelReadCell.json` → `ExcelWorkbookScope.ReadCell(sheetName: ..., ...)` |
+| ある形だけ Coded API が無い | `{ "when": ["ExistingWorkbook"], "reason": "..." }`（NO_CODED_API になり C# を作らない） | `ExcelApplicationScope.json` |
+| static のメソッド（CSV） | `"call": "ExcelOperations.WriteCsvFile"`（`AppendCsvFile` / `ReadCsvFile` / `WriteCsvFile` は拡張メソッドではない） | （未作成） |
+
+- `usings` に、拡張メソッドを使うなら `UiPath.Excel.Activities.API`、オプションのクラスなら `UiPath.Excel.Activities.API.Models`、`UiPath.Excel` の型を使うなら `UiPath.Excel` を書く（スコープの対応表には全部入れてある）
+- モダンのスコープ（`UseExcelFile`）は Excel を起動する。クラシックの `UseWorkBook` は Excel を起動せずにブックを読み書きする（Visible / MacroSetting など Excel の起動に関するプロパティは Coded では捨てている）
+- IR の変数の型で、C# の既定の using に無いもの（`SecureString` など）は完全名で書く（`"type": "System.Security.SecureString"`）。`types-xaml.ts` に無い Excel の型は `tools/ir/excel.ts` の `excelXamlTypes` に足す
+- 繰り返し（`ExcelForEachRowX` / `ForEachSheetX`）は、API が `ForEachRow(range, Action<CurrentRowQuickHandle>)` のようにラムダを取る。生成器はまだラムダのスコープ（`"scope": "lambda"` のような形）を持たない。そのバッチで生成器を足すか、足すまでは対応表を `"coded": null` と理由にする
+- 子の設定用アクティビティを持つもの（`SortX` など）は、API が記述子（`SortXDescriptor`、`PivotTableDescriptor` など）を取る。body の子から記述子を作る仕組みは生成器にまだ無い。同じく、そのバッチで生成器を足すか、`"coded": null` と理由にする
+
+#### 8-E-6. build / run と Linear
+
+```bash
+node tools/ir/gen.ts samples/ir/UiPath.Excel.Activities/ReadRangeX.*.json --check
+node tools/ir/gen-coded.ts samples/ir/UiPath.Excel.Activities/ReadRangeX.*.json --check --print
+node tools/verify/verify.mjs --name <作業名> --build-only samples/ir/UiPath.Excel.Activities/ReadRangeX.min.json samples/ir/UiPath.Excel.Activities/ReadRangeX.full.json
+node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.Activities --activity ReadRangeX
+```
+
+- build の警告「Use Excel File を Excel Process Scope の中で使うことを勧める」は無視してよい
+- run には Excel（デスクトップ版）が要る。この PC には入っているが、管理者権限のシェルから起動した Excel はファイルを開けない（「ファイルにアクセスできません」）。run はマネージャーがまとめて流すので、期待ログ（`*.expected.log`）を必ず書き、build まで通ったら Linear を **In Progress** にして「run 待ち」とコメントする
+- run できないもの（パスワード付きのブック、秘密度ラベル、マクロ付きのブック、クリップボード、PDF の出力先の確認など）は `noRun` に理由を書く。その上で build と全テストが通れば Done
 
 ## 9. XAML → IR の取り込みに向けて気づいた点
 
