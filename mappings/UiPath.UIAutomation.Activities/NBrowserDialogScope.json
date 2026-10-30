@@ -1,0 +1,6 @@
+{
+  "activity": "NBrowserDialogScope",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（スコープの API が無い。ダイアログは TargetAppOptions.DialogHandling で一括して自動応答する形で、メッセージを受け取る DialogMessage は無い）"
+}

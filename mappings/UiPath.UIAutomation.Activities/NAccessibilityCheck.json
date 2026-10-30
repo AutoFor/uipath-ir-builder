@@ -1,0 +1,6 @@
+{
+  "activity": "NAccessibilityCheck",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（GetAccessibilityCheck は結果を JSON の文字列で返し、XAML の AccessibilityCheckResult と型が違う）"
+}

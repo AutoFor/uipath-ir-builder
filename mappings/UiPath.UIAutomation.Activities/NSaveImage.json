@@ -1,0 +1,6 @@
+{
+  "activity": "NSaveImage",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（画像を保存する API が無い。TakeScreenshot の FileName が近いが、UiPath.Core.Image を受け取れない）"
+}

@@ -60,7 +60,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
         continue;
       }
       if (p.obsolete) add(at, "OBSOLETE_PROP", `"${k}" は非推奨`);
-      if (p.enum && !(typeof v === "string" && v.split(",").every((x) => p.enum!.includes(x.trim()))))
+      if (p.enum && p.kind !== "out" && p.kind !== "inout" && !(typeof v === "string" && v.split(",").every((x) => p.enum!.includes(x.trim()))))
         add(at, "BAD_ENUM", `"${k}" は ${p.enum.join(" / ")} のどれか`);
       if (p.kind === "out" || p.kind === "inout") checkLValue(v, at, scope);
       if (isUntypedArgument(p.type) && !argumentType(n, a, scope))

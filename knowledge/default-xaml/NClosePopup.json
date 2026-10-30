@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u3092\u9589\u3058\u308b\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NClosePopup PopupException=\"{x:Null}\" PopupHandled=\"{x:Null}\" DisplayName=\"\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u3092\u9589\u3058\u308b\" PreferredButtons=\"[New String(){&quot;Close&quot;, &quot;Cancel&quot;}]\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

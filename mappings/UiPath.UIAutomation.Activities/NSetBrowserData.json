@@ -1,0 +1,6 @@
+{
+  "activity": "NSetBrowserData",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ブラウザのセッション データを書く API が無い）。利用者の Cookie などの実データを書き換えるので run もしない"
+}

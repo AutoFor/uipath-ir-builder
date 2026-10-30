@@ -1,0 +1,6 @@
+{
+  "activity": "NInjectJsScript",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（InjectJsScriptOptions は ScriptCodePath＝スクリプトのファイルのパスで、ScriptCode の文字列を渡せない。ScriptOutput の受け方も XAML と違う）"
+}

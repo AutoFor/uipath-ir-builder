@@ -1,0 +1,44 @@
+{
+  "activity": "NTakeScreenshot",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "when": [
+        "OutImage"
+      ],
+      "reason": "Coded API なし（TakeScreenshot はファイルに保存するだけで、画像（UiPath.Core.Image）を受け取れない）"
+    },
+    {
+      "call": "{app}.TakeScreenshot",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "takeScreenshotOptions": {
+          "new": "TakeScreenshotOptions",
+          "always": true,
+          "set": {
+            "FileName": "{FileName}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "SaveScreenshotTo",
+    "IsDesktop",
+    "FileNameMode",
+    "DelayBeforeScreenshot",
+    "OutFile",
+    "SavedTo"
+  ],
+  "notes": "Coded は FileName にファイルとして保存するだけ。SaveScreenshotTo（File 以外）、IsDesktop、FileNameMode、DelayBeforeScreenshot、OutFile、SavedTo は Coded 未対応"
+}

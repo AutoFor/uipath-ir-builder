@@ -1,0 +1,1 @@
+{"noRun":"利用者の Edge の Cookie・セッションなど実データを読み書きする。file:// のテスト用 HTML では Cookie を設定できず、自分で作った値だけを扱えないので run しない（build まで）"}

@@ -1,0 +1,6 @@
+{
+  "activity": "NNavigateBrowser",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiTargetApp に前に戻る・進む・再読み込みなどのメソッドが無い。GoToUrl と GetUrl だけ）"
+}

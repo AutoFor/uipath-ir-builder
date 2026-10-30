@@ -1,0 +1,6 @@
+{
+  "activity": "NBrowserFilePickerScope",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ファイル選択ダイアログを扱う API が無い）"
+}

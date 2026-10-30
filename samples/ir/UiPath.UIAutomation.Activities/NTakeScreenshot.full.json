@@ -1,0 +1,91 @@
+{
+  "workflow": "NTakeScreenshot_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-m2-form.html\")"
+    },
+    {
+      "name": "shotPath",
+      "type": "String",
+      "default": "System.IO.Path.GetFullPath(\"output\\uia-m2-shot-full.png\")"
+    },
+    {
+      "name": "outFile",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "savedTo",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><div id='result'>ready</div><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><button id='alertbtn' onclick=\"alert('Hello alert');document.getElementById('result').textContent='alerted'\">Alert</button><button id='confirmbtn' onclick=\"document.getElementById('result').textContent='confirm:'+confirm('Proceed?')\">Confirm</button><button id='promptbtn' onclick=\"document.getElementById('result').textContent='prompt:'+prompt('Name?')\">Prompt</button><input id='file' type='file' onchange=\"document.getElementById('result').textContent='file:'+this.files[0].name\"><input id='files' type='file' multiple onchange=\"document.getElementById('result').textContent='files:'+this.files.length\"></body></html>"
+        }
+      }
+    },
+    {
+      "act": "NApplicationCard",
+      "name": "UIA Test Form を開く",
+      "item": "WSSessionData",
+      "objs": {
+        "TargetApp": {
+          "Url": "New Uri(htmlPath).AbsoluteUri",
+          "BrowserType": "Edge",
+          "Selector": {
+            "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+          }
+        }
+      },
+      "props": {
+        "OpenMode": "Always",
+        "CloseMode": "Always"
+      },
+      "body": [
+        {
+          "act": "NTakeScreenshot",
+          "name": "スクリーンショット（全部入り）",
+          "objs": {
+            "Target": {
+              "FullSelectorArgument": {
+                "lit": "<webctrl id='result' tag='DIV' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+              },
+              "SearchSteps": "Selector"
+            }
+          },
+          "props": {
+            "SaveScreenshotTo": "File",
+            "FileName": "shotPath",
+            "FileNameMode": "None",
+            "IsDesktop": false,
+            "DelayBeforeScreenshot": 0.2,
+            "OutFile": "outFile",
+            "SavedTo": "savedTo",
+            "HealingAgentBehavior": "Disabled",
+            "Timeout": 20,
+            "DelayBefore": 0.1,
+            "DelayAfter": 0.1,
+            "ContinueOnError": false
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"saved=\" & (System.IO.File.Exists(shotPath) AndAlso New System.IO.FileInfo(shotPath).Length > 0).ToString"
+      }
+    }
+  ]
+}

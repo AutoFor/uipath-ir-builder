@@ -1,0 +1,35 @@
+{
+  "activity": "NShowStatusMessage",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.ShowStatusMessage",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "options": {
+          "new": "ShowStatusMessageOptions",
+          "always": true,
+          "set": {
+            "Message": "{Message}",
+            "Title": "{Title}",
+            "Level": "{Level|enum}",
+            "Progress": "{Progress}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target"
+  ],
+  "notes": "ステータス ウィンドウはターゲットを使わないので Target は捨てる"
+}

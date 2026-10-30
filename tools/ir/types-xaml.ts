@@ -67,6 +67,9 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Browser: ["ui:Browser", { ui: UI }],
   Region: ["ui:Region", { ui: UI }],
   "UiPath.Core.Image": ["ui:Image", { ui: UI }], // "Image" は System.Drawing.Image（CV の OCREngine の引数）。UiPath の Image はこの完全名で書く
+  // UI 操作の出力の型（Out の変数に使う）
+  "UiPath.UIAutomationNext.Enums.NPopupHandleState": ["uuinx:NPopupHandleState", { uuinx: "clr-namespace:UiPath.UIAutomationNext.Enums;assembly=UiPath.UIAutomationNext" }],
+  "UiPath.UIAutomationNext.Activities.Models.AccessibilityCheckResult": ["uuinm:AccessibilityCheckResult", { uuinm: "clr-namespace:UiPath.UIAutomationNext.Activities.Models;assembly=UiPath.UIAutomationNext.Activities" }],
   Point: ["sdp:Point", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
   DayOfWeek: ["s:DayOfWeek", { s: S }],
   DataColumn: ["sd:DataColumn", { sd: SD }],
