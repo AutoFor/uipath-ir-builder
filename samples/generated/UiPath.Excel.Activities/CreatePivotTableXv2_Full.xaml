@@ -79,7 +79,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
               <ueab:CreatePivotTableXv2.Body>
                 <ActivityAction>
                   <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
-                    <ueab:PivotTableFieldX DisplayName="行" FieldName="Name" Type="Row" sap2010:WorkflowViewState.IdRef="PivotTableFieldX_1" />
+                    <ueab:PivotTableFieldX DisplayName="行" FieldName="Name" Function="Sum" Type="Row" sap2010:WorkflowViewState.IdRef="PivotTableFieldX_1" />
                     <ueab:PivotTableFieldX DisplayName="値1" FieldName="Age" Function="Max" Type="Value" sap2010:WorkflowViewState.IdRef="PivotTableFieldX_2" />
                     <ueab:PivotTableFieldX DisplayName="値2" FieldName="Double" Function="Sum" Type="Value" sap2010:WorkflowViewState.IdRef="PivotTableFieldX_3" />
                   </Sequence>

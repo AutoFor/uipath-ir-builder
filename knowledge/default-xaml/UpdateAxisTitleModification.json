@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"UpdateAxisTitleModification\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ueabc=\"clr-namespace:UiPath.Excel.Activities.Business.ChartModifications;assembly=UiPath.Excel.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ueabc:UpdateAxisTitleModification Title=\"{x:Null}\" ShowTitle=\"False\" />\r\n</Activity>"
+  }
+}
