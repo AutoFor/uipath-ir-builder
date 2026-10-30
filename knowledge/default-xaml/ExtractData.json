@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ExtractData\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ExtractData DataTable=\"{x:Null}\" DelayBetweenPagesMS=\"{x:Null}\" ExtractMetadata=\"{x:Null}\" NextLinkSelector=\"{x:Null}\" SimulateClick=\"{x:Null}\" MaxNumberOfResults=\"100\">\r\n    <ui:ExtractData.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"0ff8b469-e25e-4b31-8506-8d235cff49f3\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:ExtractData.Target>\r\n  </ui:ExtractData>\r\n</Activity>"
+  }
+}

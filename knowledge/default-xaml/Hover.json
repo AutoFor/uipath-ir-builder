@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"Hover\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:Hover DelayBefore=\"{x:Null}\" DelayMS=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" SimulateHover=\"{x:Null}\">\r\n    <ui:Hover.CursorPosition>\r\n      <ui:CursorPosition Position=\"Center\">\r\n        <ui:CursorPosition.OffsetX>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetX>\r\n        <ui:CursorPosition.OffsetY>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetY>\r\n      </ui:CursorPosition>\r\n    </ui:Hover.CursorPosition>\r\n    <ui:Hover.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"54eaa092-3107-48fb-95fd-e0bf2b41e663\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:Hover.Target>\r\n  </ui:Hover>\r\n</Activity>"
+  }
+}

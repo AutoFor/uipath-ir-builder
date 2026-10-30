@@ -1,0 +1,6 @@
+{
+  "activity": "WaitUiElementAppear",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ）"
+}

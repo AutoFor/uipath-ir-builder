@@ -1,0 +1,81 @@
+{
+  "workflow": "WaitUiElementVanish_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "still",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div><div id='temp'>temp</div><script>setTimeout(function(){var t=document.getElementById('temp');t.parentNode.removeChild(t)},1500)</script></body></html>"
+        }
+      }
+    },
+    {
+      "act": "OpenBrowser",
+      "name": "UIA Test Form を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "Url": "New Uri(htmlPath).AbsoluteUri",
+        "BrowserType": "Edge"
+      },
+      "body": [
+        {
+          "act": "WaitUiElementVanish",
+          "name": "temp が消えるのを待つ（Classic・全部入り）",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='temp' tag='DIV' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "WaitNotVisible": true,
+            "WaitNotActive": false,
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "UiElementExists",
+          "name": "temp がまだあるか",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='temp' tag='DIV' />"
+              },
+              "TimeoutMS": 1000
+            }
+          },
+          "props": {
+            "Exists": "still"
+          }
+        },
+        {
+          "act": "CloseTab",
+          "name": "タブを閉じる"
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"まだある: \" & still.ToString"
+      }
+    }
+  ]
+}

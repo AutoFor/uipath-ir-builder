@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"FindRelative\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:FindRelative RelativeElement=\"{x:Null}\">\r\n    <ui:FindRelative.CursorPosition>\r\n      <ui:CursorPosition Position=\"Center\">\r\n        <ui:CursorPosition.OffsetX>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetX>\r\n        <ui:CursorPosition.OffsetY>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetY>\r\n      </ui:CursorPosition>\r\n    </ui:FindRelative.CursorPosition>\r\n    <ui:FindRelative.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"c200254d-b903-4f1b-8255-d27981a2f958\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:FindRelative.Target>\r\n  </ui:FindRelative>\r\n</Activity>"
+  }
+}
