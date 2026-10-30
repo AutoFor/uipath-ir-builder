@@ -64,7 +64,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="dt" />
     </Sequence.Variables>
-    <ui:GenerateDataTable AllowMisalignedColumns="True" AutoDetectTypes="True" ColumnSeparators=";" ContinueOnError="False" CSVParsing="True" DataTable="[dt]" DisplayName="文字列から表を作る" Input="Name;Age;Note|Alice;30;&quot;x;y&quot;|Bob;25" NewLineSeparator="|" PreserveNewLines="False" PreserveStrings="False" UseColumnHeader="True" UseRowHeader="False" sap2010:WorkflowViewState.IdRef="GenerateDataTable_1" />
+    <ui:GenerateDataTable AllowMisalignedColumns="True" AutoDetectTypes="True" ColumnSeparators=";" ContinueOnError="False" CSVParsing="True" DataTable="[dt]" DisplayName="文字列から表を作る" Input="Name;Age;Note&#xA;Alice;30;&quot;x;y&quot;&#xA;Bob;25" NewLineSeparator="&#xA;" PreserveNewLines="False" PreserveStrings="False" UseColumnHeader="True" UseRowHeader="False" sap2010:WorkflowViewState.IdRef="GenerateDataTable_1" />
     <ui:LogMessage Level="Info" Message="[&quot;rows=&quot; &amp; dt.Rows.Count.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
     <ui:LogMessage Level="Info" Message="[&quot;columns=&quot; &amp; dt.Columns.Count.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
     <ui:LogMessage Level="Info" Message="[&quot;note0=&quot; &amp; dt.Rows(0)(&quot;Note&quot;).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />

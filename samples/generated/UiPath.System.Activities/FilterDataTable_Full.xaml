@@ -76,12 +76,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ui:FilterDataTable DataTable="[dt]" DisplayName="Keep: 条件に合う行を残す" FilterRowsMode="Keep" OutputDataTable="[res]" SelectColumnsMode="Keep" sap2010:WorkflowViewState.IdRef="FilterDataTable_1">
       <ui:FilterDataTable.Filters>
         <scg:List x:TypeArguments="ui:FilterOperationArgument" Capacity="4">
-          <ui:FilterOperationArgument Operator="GT">
+          <ui:FilterOperationArgument Operator="NOTEQ">
             <ui:FilterOperationArgument.Column>
-              <InArgument x:TypeArguments="x:String">[&quot;Age&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String">[&quot;Name&quot;]</InArgument>
             </ui:FilterOperationArgument.Column>
             <ui:FilterOperationArgument.Operand>
-              <InArgument x:TypeArguments="x:String">[&quot;25&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String">[&quot;Carol&quot;]</InArgument>
             </ui:FilterOperationArgument.Operand>
           </ui:FilterOperationArgument>
           <ui:FilterOperationArgument BooleanOperator="And" Operator="NOTEQ">
@@ -89,7 +89,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
               <InArgument x:TypeArguments="x:String">[&quot;Name&quot;]</InArgument>
             </ui:FilterOperationArgument.Column>
             <ui:FilterOperationArgument.Operand>
-              <InArgument x:TypeArguments="x:String">[&quot;Carol&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String">[&quot;Bob&quot;]</InArgument>
             </ui:FilterOperationArgument.Operand>
           </ui:FilterOperationArgument>
         </scg:List>

@@ -68,7 +68,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="result" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox'&gt;agree&lt;/label&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="f8ccdf66-bd2c-4a01-99e5-f89af7f92ed6" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="d10aa320-5f41-483d-96fa-00f0d3ccdbfe" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -77,9 +77,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <uix:NGetText ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="結果を読む（全部入り）" HealingAgentBehavior="Disabled" ScopeIdentifier="f8ccdf66-bd2c-4a01-99e5-f89af7f92ed6" ScrapingMethod="Default" TextString="[result]" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
+          <uix:NGetText ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="結果を読む（全部入り）" HealingAgentBehavior="Disabled" ScopeIdentifier="d10aa320-5f41-483d-96fa-00f0d3ccdbfe" ScrapingMethod="Default" TextString="[result]" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
             <uix:NGetText.Target>
-              <uix:TargetAnchorable ElementType="Text" FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="74621c56-b770-4fc8-ba2e-f26c45aa63a2" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Complete" />
+              <uix:TargetAnchorable ElementType="Text" FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="9a275121-23d0-4a25-a894-a73fd985bdbb" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Complete" />
             </uix:NGetText.Target>
           </uix:NGetText>
         </ActivityAction>
