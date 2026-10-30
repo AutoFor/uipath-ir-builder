@@ -64,6 +64,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="sdc:Image" Name="img" />
     </Sequence.Variables>
-    <ui:MicrosoftAzureComputerVisionOCR ComputeSkewAngle="False" DisplayName="MicrosoftAzureComputerVisionOCR（最小）" ExtractWords="False" HandwritingRecognition="False" Image="[img]" NoopExecution="False" sap2010:WorkflowViewState.IdRef="MicrosoftAzureComputerVisionOCR_1" />
+    <ui:MicrosoftAzureComputerVisionOCR ApiKey="DUMMY-KEY-NOT-USED" ComputeSkewAngle="False" DisplayName="MicrosoftAzureComputerVisionOCR（最小）" Endpoint="https://example.invalid/" ExtractWords="False" HandwritingRecognition="False" Image="[img]" NoopExecution="False" sap2010:WorkflowViewState.IdRef="MicrosoftAzureComputerVisionOCR_1" />
   </Sequence>
 </Activity>

@@ -64,6 +64,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="sdc:Image" Name="img" />
     </Sequence.Variables>
-    <ui:GoogleCloudOCR ComputeSkewAngle="False" DetectionMode="TextDetection" DisplayName="GoogleCloudOCR（最小）" ExtractWords="False" Image="[img]" NoopExecution="False" ResizeToApiLimits="False" sap2010:WorkflowViewState.IdRef="GoogleCloudOCR_1" />
+    <ui:GoogleCloudOCR ApiKey="DUMMY-KEY-NOT-USED" ComputeSkewAngle="False" DetectionMode="TextDetection" DisplayName="GoogleCloudOCR（最小）" ExtractWords="False" Image="[img]" NoopExecution="False" ResizeToApiLimits="False" sap2010:WorkflowViewState.IdRef="GoogleCloudOCR_1" />
   </Sequence>
 </Activity>

@@ -60,7 +60,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="AnchorContextAware_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:AnchorContextAware ContinueOnError="False" DesignAnchor="[&quot;10, 10, 80, 20&quot;]" DesignTarget="[&quot;100, 10, 80, 20&quot;]" DisplayName="コンテキスト アンカー（全部入り）" sap2010:WorkflowViewState.IdRef="AnchorContextAware_1">
+    <ui:AnchorContextAware ContinueOnError="False" DesignAnchor="[New System.Drawing.Rectangle(10, 10, 80, 20)]" DesignTarget="[New System.Drawing.Rectangle(100, 10, 80, 20)]" DisplayName="コンテキスト アンカー（全部入り）" sap2010:WorkflowViewState.IdRef="AnchorContextAware_1">
       <ui:AnchorContextAware.AnchorProvider>
         <ActivityAction x:TypeArguments="ui:Anchor2Data">
           <ActivityAction.Argument>

@@ -6,12 +6,8 @@
       "name": "コンテキスト アンカー（全部入り）",
       "item": "ContextAnchor2Data",
       "props": {
-        "DesignAnchor": {
-          "lit": "10, 10, 80, 20"
-        },
-        "DesignTarget": {
-          "lit": "100, 10, 80, 20"
-        },
+        "DesignAnchor": "New System.Drawing.Rectangle(10, 10, 80, 20)",
+        "DesignTarget": "New System.Drawing.Rectangle(100, 10, 80, 20)",
         "ContinueOnError": false
       },
       "slots": {

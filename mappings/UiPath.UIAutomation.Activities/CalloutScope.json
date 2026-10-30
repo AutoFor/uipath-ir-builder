@@ -1,6 +1,0 @@
-{
-  "activity": "CalloutScope",
-  "package": "UiPath.UIAutomation.Activities",
-  "coded": null,
-  "reason": "Coded API なし（Classic の UI 操作（吹き出しのスコープ）。Coded の API なし）"
-}
