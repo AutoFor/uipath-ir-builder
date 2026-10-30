@@ -1,0 +1,6 @@
+{
+  "activity": "NSAPLogon",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiTargetApp に SAPLogon が無い。SAP Logon の起動は uiAutomation.Open で近い動きになるが、別の API なので対応させない）"
+}

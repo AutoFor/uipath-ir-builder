@@ -1,0 +1,69 @@
+{
+  "workflow": "NSAPClickPictureOnScreen_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "NApplicationCard",
+      "name": "SAP セッションを使う",
+      "item": "WSSessionData",
+      "objs": {
+        "TargetApp": {
+          "FilePath": {
+            "lit": "C:\\Program Files (x86)\\SAP\\FrontEnd\\SAPgui\\saplogon.exe"
+          },
+          "Selector": {
+            "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />"
+          }
+        }
+      },
+      "props": {
+        "OpenMode": "IfNotOpen",
+        "CloseMode": "Never"
+      },
+      "body": [
+        {
+          "act": "NSAPClickPictureOnScreen",
+          "name": "画面上の画像をクリック（全部入り）",
+          "objs": {
+            "Target": {
+              "FullSelectorArgument": {
+                "lit": "<sap id='wnd[0]/usr/cntlIMAGE/shellcont/shell' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />"
+              },
+              "SearchSteps": "Selector"
+            },
+            "PointOffset": {
+              "Position": "TopLeft",
+              "X": 0,
+              "Y": 0
+            }
+          },
+          "props": {
+            "ActivateBefore": true,
+            "AlterIfDisabled": true,
+            "ClickType": "Single",
+            "KeyModifiers": "None",
+            "Timeout": 30,
+            "DelayBefore": 0.2,
+            "DelayAfter": 0.2,
+            "ContinueOnError": false,
+            "HealingAgentBehavior": "SameAsCard",
+            "Description": {
+              "lit": "SAP 画面の操作"
+            },
+            "ForceRefreshView": true
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"NSAPClickPictureOnScreen 完了（全部入り）\""
+          }
+        }
+      ]
+    }
+  ]
+}

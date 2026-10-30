@@ -1,0 +1,36 @@
+{
+  "activity": "NSAPCallTransaction",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SAPCallTransaction",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "sapCallTransactionOptions": {
+          "new": "SAPCallTransactionOptions",
+          "always": true,
+          "set": {
+            "Transaction": "{Transaction}",
+            "Prefix": "{Prefix}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}",
+            "Description": "{Description}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization",
+    "Target"
+  ],
+  "notes": "Coded は UiTargetApp.SAPCallTransaction(SAPCallTransactionOptions)。ターゲットを取らないので Target は捨てる（SAP のセッションは Use Application の app）。OutUiElement は扱わない"
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30b9\u30c6\u30fc\u30bf\u30b9 \u30d0\u30fc\u3092\u8aad\u307f\u53d6\u308a\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NSAPReadStatusbar MessageData=\"{x:Null}\" MessageId=\"{x:Null}\" MessageNumber=\"{x:Null}\" MessageText=\"{x:Null}\" MessageType=\"{x:Null}\" DisplayName=\"\u30b9\u30c6\u30fc\u30bf\u30b9 \u30d0\u30fc\u3092\u8aad\u307f\u53d6\u308a\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

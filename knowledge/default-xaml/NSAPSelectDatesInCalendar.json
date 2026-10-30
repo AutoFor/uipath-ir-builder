@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30ab\u30ec\u30f3\u30c0\u304b\u3089\u65e5\u4ed8\u3092\u9078\u629e\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:s=\"clr-namespace:System;assembly=System.Private.CoreLib\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NSAPSelectDatesInCalendar DisplayName=\"\u30ab\u30ec\u30f3\u30c0\u304b\u3089\u65e5\u4ed8\u3092\u9078\u629e\" HealingAgentBehavior=\"SameAsCard\" SelectType=\"Date\" Version=\"V5\">\r\n    <uix:NSAPSelectDatesInCalendar.Date>\r\n      <InArgument x:TypeArguments=\"s:DateTime\">\r\n        <Literal x:TypeArguments=\"s:DateTime\" Value=\"2026-10-30T00:00+09:00\" />\r\n      </InArgument>\r\n    </uix:NSAPSelectDatesInCalendar.Date>\r\n  </uix:NSAPSelectDatesInCalendar>\r\n</Activity>"
+  }
+}

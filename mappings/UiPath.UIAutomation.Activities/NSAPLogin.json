@@ -1,0 +1,6 @@
+{
+  "activity": "NSAPLogin",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiTargetApp に SAPLogin が無い）"
+}

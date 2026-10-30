@@ -1,0 +1,35 @@
+{
+  "activity": "NSAPExpandALVTree",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SAPExpandALVTree",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "sapExpandALVTreeOptions": {
+          "new": "SAPExpandALVTreeOptions",
+          "always": true,
+          "set": {
+            "Path": "{Path}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}",
+            "Description": "{Description}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization"
+  ],
+  "notes": "SAPExpandALVTreeOptions を使う。OutUiElement は扱わない"
+}
