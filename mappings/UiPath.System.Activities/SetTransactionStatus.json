@@ -1,0 +1,66 @@
+{
+  "activity": "SetTransactionStatus",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "AnalyticsVariable",
+        "OutputVariable",
+        "Details",
+        "ErrorType",
+        "Reason",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.SetTransactionStatus",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "status": "UiPath.Core.ProcessingStatus.{Status}",
+        "analytics": "{AnalyticsVariable}",
+        "output": "{OutputVariable}",
+        "details": "{Details}",
+        "errorType": "UiPath.Core.Activities.ErrorType.{ErrorType}",
+        "reason": "{Reason}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "Details",
+        "ErrorType",
+        "Reason",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.SetTransactionStatus",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "status": "UiPath.Core.ProcessingStatus.{Status}",
+        "analytics": "{Analytics|dict}",
+        "output": "{Output|dict}",
+        "details": "{Details}",
+        "errorType": "UiPath.Core.Activities.ErrorType.{ErrorType}",
+        "reason": "{Reason}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.SetTransactionStatus",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "status": "UiPath.Core.ProcessingStatus.{Status}"
+      }
+    }
+  ],
+  "ignore": [
+    "FolderPath"
+  ],
+  "notes": "Coded API に無いもの：AssociatedFilePath（エラー時の画像などの添付。使うと MAPPING_UNUSED_PROP）。全部の形は Details・ErrorType・Reason・TimeoutMS と、Analytics / Output（辞書）か AnalyticsVariable / OutputVariable がそろっているときだけ。"
+}

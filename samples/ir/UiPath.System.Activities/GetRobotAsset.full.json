@@ -1,0 +1,33 @@
+{
+  "workflow": "GetRobotAsset_Full",
+  "variables": [
+    {
+      "name": "val",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetRobotAsset",
+      "name": "アセットを取得",
+      "props": {
+        "AssetName": {
+          "lit": "IRAsset"
+        },
+        "CacheStrategy": "Execution",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "Value": "val"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"アセット: \" & val.ToString"
+      }
+    }
+  ]
+}

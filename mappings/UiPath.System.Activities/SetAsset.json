@@ -1,0 +1,60 @@
+{
+  "activity": "SetAsset",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "JsonValue",
+        "FolderPath",
+        "TimeoutMS"
+      ],
+      "call": "system.SetAsset",
+      "args": {
+        "value": "{JsonValue}",
+        "assetName": "{AssetName}",
+        "folderPath": "{FolderPath}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "Value",
+        "FolderPath",
+        "TimeoutMS"
+      ],
+      "call": "system.SetAsset",
+      "args": {
+        "value": "{Value}",
+        "assetName": "{AssetName}",
+        "folderPath": "{FolderPath}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "Value",
+        "FolderPath"
+      ],
+      "call": "system.SetAsset",
+      "args": {
+        "value": "{Value}",
+        "assetName": "{AssetName}",
+        "folderPath": "{FolderPath}"
+      }
+    },
+    {
+      "when": [
+        "Value"
+      ],
+      "call": "system.SetAsset",
+      "args": {
+        "value": "{Value}",
+        "assetName": "{AssetName}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "ISystemService.SetAsset(value: object, ...)。JsonValue は文字列として value に渡す（JSON アセットに書けるかは run で確かめていない）。"
+}

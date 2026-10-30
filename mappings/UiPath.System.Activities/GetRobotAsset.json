@@ -1,0 +1,51 @@
+{
+  "activity": "GetRobotAsset",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "AssetName",
+        "FolderPath",
+        "CacheStrategy",
+        "TimeoutMS",
+        "Value"
+      ],
+      "call": "system.GetAsset",
+      "args": {
+        "assetName": "{AssetName}",
+        "folderPath": "{FolderPath}",
+        "cacheStrategy": "UiPath.Core.Activities.CacheStrategyEnum.{CacheStrategy}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "Value"
+    },
+    {
+      "when": [
+        "AssetName",
+        "FolderPath",
+        "Value"
+      ],
+      "call": "system.GetAsset",
+      "args": {
+        "assetName": "{AssetName}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "Value"
+    },
+    {
+      "when": [
+        "AssetName",
+        "Value"
+      ],
+      "call": "system.GetAsset",
+      "args": {
+        "assetName": "{AssetName}"
+      },
+      "returns": "Value"
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "ISystemService.GetAsset（戻り値は object）。全部の形は FolderPath・CacheStrategy・TimeoutMS がそろっているときだけ。"
+}

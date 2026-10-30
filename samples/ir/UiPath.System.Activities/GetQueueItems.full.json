@@ -1,0 +1,49 @@
+{
+  "workflow": "GetQueueItems_Full",
+  "variables": [
+    {
+      "name": "items",
+      "type": "IEnumerable<QueueItem>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItems",
+      "name": "キューの項目を取得",
+      "props": {
+        "ContinueOnError": false,
+        "ConvertDatesToLocalTime": true,
+        "Duration": "60",
+        "FilterByCurrentRobot": false,
+        "FilterStrategy": "Equals",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "From": "DateTime.Now.AddDays(-1)",
+        "Priority": "1",
+        "QueueItemStates": "New",
+        "QueueName": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-001"
+        },
+        "Result": "items",
+        "Skip": "0",
+        "TimeoutMS": 30000,
+        "To": "DateTime.Now",
+        "Top": "10"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"取得した件数: \" & items.Count().ToString()",
+          "cs": "\"取得した件数: \" + items.Count()"
+        }
+      }
+    }
+  ]
+}

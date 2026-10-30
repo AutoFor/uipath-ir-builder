@@ -1,0 +1,59 @@
+{
+  "workflow": "AddTransactionItem_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    },
+    {
+      "name": "sd",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddTransactionItem",
+      "name": "トランザクションを追加",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-001"
+        },
+        "SpecificData": "sd",
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      },
+      "dicts": {
+        "TransactionInformation": [
+          {
+            "name": "customer",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "A-001"
+            }
+          },
+          {
+            "name": "count",
+            "dir": "In",
+            "type": "Int32",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"追加した: \" & item.Reference"
+      }
+    }
+  ]
+}

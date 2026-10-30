@@ -1234,6 +1234,16 @@
           "declaredOn": "BulkAddQueueItems"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Data.DataTable",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "TimeoutMS",
           "kind": "in",
           "type": "System.Int32",
@@ -6162,6 +6172,16 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "GetQueueItems"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Skip",
@@ -14633,6 +14653,16 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "WaitQueueItem"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Core.QueueItem",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "TimeoutMS",

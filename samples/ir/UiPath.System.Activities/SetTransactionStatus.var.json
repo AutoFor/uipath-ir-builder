@@ -1,0 +1,55 @@
+{
+  "workflow": "SetTransactionStatus_Var",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    },
+    {
+      "name": "ana",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object)"
+    },
+    {
+      "name": "outd",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object)"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから1件取る",
+      "props": {
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "SetTransactionStatus",
+      "props": {
+        "AnalyticsVariable": "ana",
+        "Details": {
+          "lit": "詳細"
+        },
+        "ErrorType": "Business",
+        "OutputVariable": "outd",
+        "Reason": {
+          "lit": "理由"
+        },
+        "Status": "Failed",
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ステータスを設定した\""
+      }
+    }
+  ]
+}

@@ -36,6 +36,7 @@ export type Variant = {
   code?: string;
   special?: "invokeWorkflow";
   usings?: string[];
+  ignore?: string[]; // この形のときだけ捨てる props（mapping の ignore はどの形でも捨てる）
 };
 
 export type Mapping = {

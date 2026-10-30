@@ -1,0 +1,40 @@
+{
+  "workflow": "BulkAddQueueItems_Full",
+  "variables": [
+    {
+      "name": "table",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "failed",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "BulkAddQueueItems",
+      "name": "一括追加",
+      "props": {
+        "CommitType": "ProcessAllIndependently",
+        "ContinueOnError": false,
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "QueueItemsDataTable": "table",
+        "QueueName": {
+          "lit": "IRQueue"
+        },
+        "Result": "failed",
+        "TimeoutMS": 30000
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"失敗した行数: \" & failed.Rows.Count.ToString"
+      }
+    }
+  ]
+}

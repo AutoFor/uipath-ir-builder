@@ -1,0 +1,41 @@
+{
+  "workflow": "AddQueueItem_Var",
+  "variables": [
+    {
+      "name": "qinfo",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object)"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddQueueItem",
+      "props": {
+        "DeferDate": "DateTime.Now.AddDays(1)",
+        "DueDate": "DateTime.Now.AddDays(2)",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "ItemInformationCollection": "qinfo",
+        "Priority": "Low",
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-004"
+        },
+        "TimeoutMS": 30000
+      },
+      "dicts": {
+        "ItemInformation": []
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"キューに追加した\""
+      }
+    }
+  ]
+}

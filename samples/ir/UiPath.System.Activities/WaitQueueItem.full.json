@@ -1,0 +1,39 @@
+{
+  "workflow": "WaitQueueItem_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "WaitQueueItem",
+      "name": "キュー項目を待つ",
+      "props": {
+        "ContinueOnError": false,
+        "ConvertDatesToLocalTime": true,
+        "FilterStrategy": "Equals",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "PollTimeMS": 5000,
+        "QueueName": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-001"
+        },
+        "Result": "item",
+        "TimeoutMS": 30000
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"待ち終わった: \" & item.Reference"
+      }
+    }
+  ]
+}

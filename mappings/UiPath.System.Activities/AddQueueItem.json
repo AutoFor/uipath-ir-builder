@@ -1,0 +1,67 @@
+{
+  "activity": "AddQueueItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ItemInformationCollection",
+        "FolderPath",
+        "DueDate",
+        "DeferDate",
+        "Priority",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "ignore": [
+        "ItemInformation"
+      ],
+      "call": "system.AddQueueItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}",
+        "dueDate": "{DueDate}",
+        "itemInformationCollection": "{ItemInformationCollection}",
+        "deferDate": "{DeferDate}",
+        "priority": "UiPath.Core.QueueItemPriority.{Priority}",
+        "reference": "{Reference}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "FolderPath",
+        "DueDate",
+        "DeferDate",
+        "Priority",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "call": "system.AddQueueItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}",
+        "dueDate": "{DueDate}",
+        "itemInformationCollection": "{ItemInformation|dict}",
+        "deferDate": "{DeferDate}",
+        "priority": "UiPath.Core.QueueItemPriority.{Priority}",
+        "reference": "{Reference}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "QueueType"
+      ],
+      "call": "system.AddQueueItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "null",
+        "itemInformationCollection": "{ItemInformation|dict}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "Coded の AddQueueItem は引数の組が4通り。全部の形は FolderPath・DueDate・DeferDate・Priority・Reference・TimeoutMS がそろっているときだけ。最小の形（QueueType と ItemInformation だけ）は folderPath に null を渡す。ItemInformation（辞書）は new Dictionary<string, object> にする。"
+}

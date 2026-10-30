@@ -1,0 +1,40 @@
+{
+  "workflow": "SetTransactionProgress_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから1件取る",
+      "props": {
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "SetTransactionProgress",
+      "name": "進捗を設定",
+      "props": {
+        "ContinueOnError": false,
+        "Progress": {
+          "lit": "50%"
+        },
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"進捗を設定した\""
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "activity": "DeleteQueueItems",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.DeleteQueueItems",
+      "args": {
+        "queueItems": "{QueueItems}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.DeleteQueueItems",
+      "args": {
+        "queueItems": "{QueueItems}"
+      }
+    }
+  ],
+  "notes": "folderPath を取る形は Coded API で非推奨なので使わない（XAML 側も FolderPath は非推奨）。"
+}

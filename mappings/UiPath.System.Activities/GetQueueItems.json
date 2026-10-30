@@ -1,0 +1,71 @@
+{
+  "activity": "GetQueueItems",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "FolderPath",
+        "Duration",
+        "From",
+        "Priority",
+        "QueueItemStates",
+        "To",
+        "FilterStrategy",
+        "Reference",
+        "Skip",
+        "Top",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItems",
+      "args": {
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}",
+        "duration": "{Duration}",
+        "from": "{From}",
+        "priority": "{Priority}",
+        "queueItemStates": "UiPath.Core.Activities.QueueItemStates.{QueueItemStates}",
+        "to": "{To}",
+        "filterStrategy": "UiPath.Core.Activities.ReferenceFilterStrategy.{FilterStrategy}",
+        "reference": "{Reference}",
+        "skip": "{Skip}",
+        "top": "{Top}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "Result"
+    },
+    {
+      "when": [
+        "FolderPath"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItems",
+      "args": {
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "Result"
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItems",
+      "args": {
+        "queueName": "{QueueName}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "ignore": [
+    "BindingsKey",
+    "ConvertDatesToLocalTime",
+    "FilterByCurrentRobot",
+    "PropsImportedIntoFilterBuilder"
+  ],
+  "notes": "Result（IEnumerable<QueueItem>）は戻り値で受ける。全部の形は FolderPath・Duration・From・Priority・QueueItemStates・To・FilterStrategy・Reference・Skip・Top・TimeoutMS がそろっているときだけ。Coded API に無いもの：Filter（OData フィルター。使うと MAPPING_UNUSED_PROP）。ConvertDatesToLocalTime / FilterByCurrentRobot / PropsImportedIntoFilterBuilder は Coded で対応する引数が無いので捨てる（日付は変換されない、現在のロボットによる絞り込みは効かない）。"
+}

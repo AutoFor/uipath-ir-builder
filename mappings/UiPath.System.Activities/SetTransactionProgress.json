@@ -1,0 +1,30 @@
+{
+  "activity": "SetTransactionProgress",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.SetTransactionProgress",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "progress": "{Progress}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.SetTransactionProgress",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "progress": "{Progress}"
+      }
+    }
+  ]
+}

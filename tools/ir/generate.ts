@@ -251,7 +251,7 @@ function attrValue(v: Value, p: Prop): string {
   if (typeof v === "string" && p.enum?.includes(v)) return v;
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
-  if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return v.lit;
+  if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return v.lit.startsWith("{") ? "{}" + v.lit : v.lit; // "{" で始まる文字列は XAML のマークアップ拡張と読まれるので "{}" を前に付ける
   return `[${exprText(v)}]`;
 }
 

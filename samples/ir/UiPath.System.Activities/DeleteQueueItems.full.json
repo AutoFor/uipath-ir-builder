@@ -1,0 +1,36 @@
+{
+  "workflow": "DeleteQueueItems_Full",
+  "variables": [
+    {
+      "name": "items",
+      "type": "IEnumerable<QueueItem>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItems",
+      "props": {
+        "QueueName": {
+          "lit": "IRQueue"
+        },
+        "Result": "items"
+      }
+    },
+    {
+      "act": "DeleteQueueItems",
+      "name": "キューの項目を削除",
+      "props": {
+        "ContinueOnError": false,
+        "QueueItems": "items",
+        "TimeoutMS": 30000
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"削除した\""
+      }
+    }
+  ]
+}

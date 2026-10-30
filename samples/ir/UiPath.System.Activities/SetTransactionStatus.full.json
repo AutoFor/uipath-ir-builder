@@ -1,0 +1,65 @@
+{
+  "workflow": "SetTransactionStatus_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから1件取る",
+      "props": {
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "SetTransactionStatus",
+      "name": "ステータスを設定",
+      "props": {
+        "ContinueOnError": false,
+        "Details": {
+          "lit": "詳細"
+        },
+        "ErrorType": "Application",
+        "Reason": {
+          "lit": "理由"
+        },
+        "Status": "Failed",
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      },
+      "dicts": {
+        "Analytics": [
+          {
+            "name": "steps",
+            "dir": "In",
+            "type": "Int32",
+            "value": "5"
+          }
+        ],
+        "Output": [
+          {
+            "name": "result",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "NG"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ステータスを設定した\""
+      }
+    }
+  ]
+}

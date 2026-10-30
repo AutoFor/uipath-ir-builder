@@ -6,6 +6,9 @@ export type XamlType = { text: string; xmlns: Record<string, string> };
 const S = "clr-namespace:System;assembly=System.Private.CoreLib";
 const SCG = "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib";
 const SD = "clr-namespace:System.Data;assembly=System.Data.Common";
+const UCORE = "clr-namespace:UiPath.Core;assembly=UiPath.System.Activities";
+const UCA = "clr-namespace:UiPath.Core.Activities;assembly=UiPath.System.Activities";
+const SSEC = "clr-namespace:System.Security;assembly=System.Private.CoreLib";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
@@ -27,6 +30,9 @@ const simple: Record<string, [string, Record<string, string>]> = {
   FileInfo: ["sio:FileInfo", { sio: SIO }],
   DirectoryInfo: ["sio:DirectoryInfo", { sio: SIO }],
   DataTable: ["sd:DataTable", { sd: SD }],
+  QueueItem: ["ucore:QueueItem", { ucore: UCORE }],
+  PasswordCredentials: ["uca:PasswordCredentials", { uca: UCA }],
+  SecureString: ["ssec:SecureString", { ssec: SSEC }],
   DataRow: ["sd:DataRow", { sd: SD }],
 };
 

@@ -1,0 +1,39 @@
+{
+  "workflow": "PostponeTransactionItem_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから1件取る",
+      "props": {
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "PostponeTransactionItem",
+      "name": "トランザクションを延期",
+      "props": {
+        "ContinueOnError": false,
+        "DeferDate": "DateTime.Now.AddHours(1)",
+        "DueDate": "DateTime.Now.AddDays(1)",
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"延期した\""
+      }
+    }
+  ]
+}

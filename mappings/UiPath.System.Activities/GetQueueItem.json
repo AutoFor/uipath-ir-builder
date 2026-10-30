@@ -1,0 +1,68 @@
+{
+  "activity": "GetQueueItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "FolderPath",
+        "FilterStrategy",
+        "Reference",
+        "TimeoutMS",
+        "SpecificData",
+        "TransactionItem"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "code": "{TransactionItem} = system.GetQueueItem(queueType: {QueueType}, folderPath: {FolderPath}, filterStrategy: UiPath.Core.Activities.ReferenceFilterStrategy.{FilterStrategy}, reference: {Reference}, timeoutMS: {TimeoutMS});\n{SpecificData} = {TransactionItem}.SpecificContent;"
+    },
+    {
+      "when": [
+        "FolderPath",
+        "FilterStrategy",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}",
+        "filterStrategy": "UiPath.Core.Activities.ReferenceFilterStrategy.{FilterStrategy}",
+        "reference": "{Reference}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "TransactionItem"
+    },
+    {
+      "when": [
+        "FolderPath"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "TransactionItem"
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.GetQueueItem",
+      "args": {
+        "queueType": "{QueueType}"
+      },
+      "returns": "TransactionItem"
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "ISystemService.GetQueueItem（戻り値は QueueItem）。全部の形は FolderPath・FilterStrategy・Reference・TimeoutMS がそろっているときだけ。SpecificData は戻り値の SpecificContent を代入する。"
+}

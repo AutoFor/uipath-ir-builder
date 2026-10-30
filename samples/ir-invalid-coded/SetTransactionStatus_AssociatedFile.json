@@ -1,0 +1,38 @@
+{
+  "workflow": "SetTransactionStatus_AssociatedFile",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから1件取る",
+      "props": {
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "SetTransactionStatus",
+      "props": {
+        "AssociatedFilePath": {
+          "lit": "C:\\Temp\\error.png"
+        },
+        "Status": "Successful",
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ステータスを設定した\""
+      }
+    }
+  ]
+}
