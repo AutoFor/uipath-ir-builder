@@ -1,0 +1,9 @@
+{
+  "activity": "GetEnvironmentVariable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "code": "{VariableValue:-_} = System.Environment.GetEnvironmentVariable({Variable});" }
+  ],
+  "ignore": ["TargetFramework"],
+  "notes": "ISystemService には無いので、.NET の Environment.GetEnvironmentVariable を直接呼ぶ（プロセスの環境変数。無ければ null）"
+}

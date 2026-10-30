@@ -1,0 +1,34 @@
+{
+  "workflow": "BeginProcess_Full",
+  "body": [
+    {
+      "act": "BeginProcess",
+      "name": "待たずに呼ぶ",
+      "props": {
+        "ProcessName": {
+          "lit": "IrbSampleProcess"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "EntryPointPath": {
+          "lit": "Main.xaml"
+        },
+        "UsePackage": true,
+        "TargetSession": "Current"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "world"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

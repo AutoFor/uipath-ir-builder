@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"InvokePowerShell&lt;PSObject&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:sma=\"clr-namespace:System.Management.Automation;assembly=System.Management.Automation\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:InvokePowerShell x:TypeArguments=\"sma:PSObject\" ContinueOnError=\"{x:Null}\" PowerShellProcess=\"PowerShellCore\">\r\n    <ui:InvokePowerShell.Parameters>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, InArgument\" />\r\n    </ui:InvokePowerShell.Parameters>\r\n    <ui:InvokePowerShell.PowerShellVariables>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, Argument\" />\r\n    </ui:InvokePowerShell.PowerShellVariables>\r\n  </ui:InvokePowerShell>\r\n</Activity>"
+  }
+}

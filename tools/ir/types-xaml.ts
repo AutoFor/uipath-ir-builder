@@ -15,6 +15,8 @@ const UCAS = "clr-namespace:UiPath.Core.Activities.Storage;assembly=UiPath.Syste
 const UPRH = "clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform";
 const SRX = "clr-namespace:System.Text.RegularExpressions;assembly=System.Text.RegularExpressions";
 const UPT = "clr-namespace:UiPath.Platform.Triggers;assembly=UiPath.Platform";
+const SDIAG = "clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Process";
+const SCOM = "clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
@@ -52,12 +54,14 @@ const simple: Record<string, [string, Record<string, string>]> = {
   StorageFileInfo: ["ucas:StorageFileInfo", { ucas: UCAS }],
   ILocalResource: ["upr:ILocalResource", { upr: UPRH }],
   IResource: ["upr:IResource", { upr: UPRH }],
+  Process: ["sdiag:Process", { sdiag: SDIAG }],
   Match: ["srx:Match", { srx: SRX }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {
   List: ["scg:List", { scg: SCG }],
   Dictionary: ["scg:Dictionary", { scg: SCG }],
+  Collection: ["scom:Collection", { scom: SCOM }],
   IEnumerable: ["scg:IEnumerable", { scg: SCG }],
   IList: ["scg:IList", { scg: SCG }],
   ICollection: ["scg:ICollection", { scg: SCG }],

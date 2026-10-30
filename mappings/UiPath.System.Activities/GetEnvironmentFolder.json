@@ -1,0 +1,8 @@
+{
+  "activity": "GetEnvironmentFolder",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "code": "{FolderPath:-_} = System.Environment.GetFolderPath(System.Environment.SpecialFolder.{SpecialFolder});" }
+  ],
+  "notes": "ISystemService には無いので、.NET の Environment.GetFolderPath を直接呼ぶ。SpecialFolder の enum は System.Environment+SpecialFolder で、メンバー名は IR と同じ"
+}

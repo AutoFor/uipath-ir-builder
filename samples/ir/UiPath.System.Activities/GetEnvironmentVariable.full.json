@@ -1,0 +1,60 @@
+{
+  "workflow": "GetEnvironmentVariable_Full",
+  "variables": [
+    {
+      "name": "val",
+      "type": "String"
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "default": "\"IRB_ENV_GET_FULL\""
+    }
+  ],
+  "body": [
+    {
+      "act": "SetEnvironmentVariable",
+      "props": {
+        "Name": "name",
+        "Value": {
+          "lit": "abc"
+        }
+      }
+    },
+    {
+      "act": "GetEnvironmentVariable",
+      "name": "設定した値を読む",
+      "props": {
+        "Variable": "name",
+        "VariableValue": "val",
+        "TargetFramework": {
+          "lit": "windows"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"found=\" & val"
+      }
+    },
+    {
+      "act": "GetEnvironmentVariable",
+      "name": "無い変数を読む",
+      "props": {
+        "Variable": {
+          "lit": "IRB_ENV_NOT_SET"
+        },
+        "VariableValue": "val"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"missing=\" & String.IsNullOrEmpty(val).ToString"
+      }
+    }
+  ]
+}

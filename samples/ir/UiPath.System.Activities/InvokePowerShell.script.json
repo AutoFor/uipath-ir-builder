@@ -1,0 +1,71 @@
+{
+  "workflow": "InvokePowerShell_Script",
+  "variables": [
+    {
+      "name": "res",
+      "type": "Collection<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "スクリプトを書く",
+      "props": {
+        "FileName": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb-ps-script.ps1\")",
+        "Text": {
+          "lit": "param($Name, $Times)\n\"hi $Name\"\n$Times * 2"
+        }
+      }
+    },
+    {
+      "act": "InvokePowerShell",
+      "name": "スクリプトを実行",
+      "typeArg": "String",
+      "props": {
+        "CommandText": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb-ps-script.ps1\")",
+        "IsScript": true,
+        "PowerShellProcess": "PowerShellCore",
+        "Output": "res"
+      },
+      "dicts": {
+        "Parameters": [
+          {
+            "name": "Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "ps"
+            }
+          },
+          {
+            "name": "Times",
+            "dir": "In",
+            "type": "Int32",
+            "value": "21"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res(0).ToString()"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res(1).ToString()"
+      }
+    }
+  ]
+}

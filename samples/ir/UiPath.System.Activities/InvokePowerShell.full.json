@@ -1,0 +1,67 @@
+{
+  "workflow": "InvokePowerShell_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "Collection<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokePowerShell",
+      "name": "Join-Path を呼ぶ",
+      "typeArg": "String",
+      "props": {
+        "CommandText": {
+          "lit": "Join-Path"
+        },
+        "IsScript": false,
+        "PowerShellProcess": "WindowsPowerShell64",
+        "ContinueOnError": false,
+        "Output": "res"
+      },
+      "dicts": {
+        "Parameters": [
+          {
+            "name": "Path",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "a"
+            }
+          },
+          {
+            "name": "ChildPath",
+            "dir": "In",
+            "type": "String",
+            "value": "\"b\" & \"c\""
+          }
+        ],
+        "PowerShellVariables": [
+          {
+            "name": "unused",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "x"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res(0).ToString()"
+      }
+    }
+  ]
+}

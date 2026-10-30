@@ -1,0 +1,61 @@
+{
+  "workflow": "InvokeProcess_Full",
+  "variables": [
+    {
+      "name": "outArgs",
+      "type": "Dictionary<String, Object>"
+    },
+    {
+      "name": "inArgs",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object)"
+    },
+    {
+      "name": "resultText",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeProcess",
+      "name": "プロセスを呼ぶ",
+      "props": {
+        "ProcessName": {
+          "lit": "IrbSampleProcess"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "EntryPointPath": {
+          "lit": "Main.xaml"
+        },
+        "UsePackage": true,
+        "TargetSession": "Current",
+        "LogEntry": "OnlyInvocation",
+        "LogExit": "OnlySuccessfulReturn",
+        "Level": "Info",
+        "Timeout": "TimeSpan.FromMinutes(5)",
+        "ContinueOnError": false,
+        "OutputArguments": "outArgs"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "world"
+            }
+          },
+          {
+            "name": "out_Result",
+            "dir": "Out",
+            "type": "String",
+            "value": "resultText"
+          }
+        ]
+      }
+    }
+  ]
+}

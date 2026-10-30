@@ -1,0 +1,78 @@
+{
+  "workflow": "SetEnvironmentVariable_Full",
+  "variables": [
+    {
+      "name": "envName",
+      "type": "String",
+      "default": "\"IRB_ENV_SET_FULL\""
+    },
+    {
+      "name": "got",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "SetEnvironmentVariable",
+      "name": "1回目",
+      "props": {
+        "Name": "envName",
+        "Value": {
+          "lit": "first"
+        },
+        "TargetFramework": {
+          "lit": "windows"
+        }
+      }
+    },
+    {
+      "act": "SetEnvironmentVariable",
+      "name": "上書き",
+      "props": {
+        "Name": "envName",
+        "Value": "\"second-\" & 2",
+        "TargetFramework": {
+          "lit": "windows"
+        }
+      }
+    },
+    {
+      "act": "GetEnvironmentVariable",
+      "props": {
+        "Variable": "envName",
+        "VariableValue": "got"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"value=\" & got"
+      }
+    },
+    {
+      "act": "SetEnvironmentVariable",
+      "name": "空にして消す",
+      "props": {
+        "Name": "envName",
+        "Value": {
+          "lit": ""
+        }
+      }
+    },
+    {
+      "act": "GetEnvironmentVariable",
+      "props": {
+        "Variable": "envName",
+        "VariableValue": "got"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"removed=\" & String.IsNullOrEmpty(got).ToString"
+      }
+    }
+  ]
+}

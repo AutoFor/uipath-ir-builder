@@ -332,9 +332,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const m = maps.get(`${pkg}/${className}`);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
-    const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {})];
+    const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
+    // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
+    if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
     // 引数の辞書（dicts）は、対応表が {Arguments|dict} で受けるか、ignore に書いたものだけ許す
     const tplRefs = new Set([...(v.code ? refs(v.code) : []), ...(v.call ? refs(v.call) : []), ...Object.values(v.init?.props ?? {}).flat().flatMap(refs), ...Object.values(v.args ?? {}).flatMap((t) => (typeof t === "string" ? refs(t) : Object.values(t.set).flatMap(refs)))]);
     for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tplRefs.has(k))
@@ -342,8 +344,6 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     for (const k of Object.keys(n.lists ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tplRefs.has(k))
       add(`${at}.lists.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（式の一覧）を対応表（${m.file}）が扱っていない`);
     for (const u of v.usings ?? []) usings.add(u);
-    // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
-    if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
 
     if (v.special === "invokeWorkflow") return invoke(n, v, m, depth, at, sc);
 

@@ -1,0 +1,26 @@
+{
+  "workflow": "InvokeProcess_Opts",
+  "body": [
+    {
+      "act": "InvokeProcess",
+      "name": "引数なしで呼ぶ",
+      "props": {
+        "ProcessName": {
+          "lit": "IrbSampleProcess"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "EntryPointPath": {
+          "lit": "Main.xaml"
+        },
+        "UsePackage": true,
+        "TargetSession": "Current",
+        "LogEntry": "OnlyInvocation",
+        "LogExit": "OnlySuccessfulReturn",
+        "Level": "Info",
+        "Timeout": "TimeSpan.FromMinutes(5)"
+      }
+    }
+  ]
+}

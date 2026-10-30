@@ -1,0 +1,6 @@
+{
+  "activity": "InvokeComMethod",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService にも基底クラスにも無い。Type.GetTypeFromProgID と InvokeMember を直接使って書く）"
+}
