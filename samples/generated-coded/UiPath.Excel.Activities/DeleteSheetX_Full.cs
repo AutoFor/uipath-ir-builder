@@ -26,16 +26,9 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet2"].DeleteSheet();
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
                 Log(message: "Sheet1 の A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
-                // Sheet2 を読む
-                try
-                {
-                    a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                    Log(message: "Sheet2 が残っている", level: UiPath.CodedWorkflows.LogLevel.Info);
-                }
-                catch (Exception ex)
-                {
-                    Log(message: "Sheet2 は無い", level: UiPath.CodedWorkflows.LogLevel.Info);
-                }
+                // 元の名前のシートを読む（無いと空のシートが作られる）
+                a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
+                Log(message: "Sheet2 の A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
             }
         }
     }

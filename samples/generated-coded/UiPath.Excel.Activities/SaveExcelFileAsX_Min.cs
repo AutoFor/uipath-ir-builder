@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
             {
                 Excel.Sheet["Sheet1"].Cell["E1"].WriteCell(value: "別名で保存");
-                Excel.SaveExcelFileAs(filePath: "output\\SaveExcelFileAsX_Min.copy.xlsx", replaceExisting: false, saveAsType: UiPath.Excel.ExcelSaveAsType.OpenXmlWorkbook);
+                Excel.SaveExcelFileAs(filePath: "output\\SaveExcelFileAsX_Min.copy.xlsx", replaceExisting: true, saveAsType: UiPath.Excel.ExcelSaveAsType.OpenXmlWorkbook);
             }
             ex = system.PathExists(path: "output\\SaveExcelFileAsX_Min.copy.xlsx", pathType: UiPath.Core.Activities.PathType.File);
             Log(message: "別名のファイルがある: " + ex.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
