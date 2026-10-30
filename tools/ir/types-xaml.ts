@@ -1,6 +1,8 @@
 // IR に書く型名（"String"、"List<String>"、"DataTable" など）を XAML の型表記にする。
 // 知らない型はエラーにする（推測で書かない）。
 
+import { excelXamlTypes } from "./excel.ts";
+
 export type XamlType = { text: string; xmlns: Record<string, string> };
 
 const S = "clr-namespace:System;assembly=System.Private.CoreLib";
@@ -76,7 +78,7 @@ export function toXamlType(t: string): XamlType | { error: string } {
     const ok = args as XamlType[];
     return { text: `${base[0]}(${ok.map((a) => a.text).join(", ")})`, xmlns: Object.assign({}, base[1], ...ok.map((a) => a.xmlns)) };
   }
-  const hit = simple[alias[s] ?? s];
+  const hit = simple[alias[s] ?? s] ?? excelXamlTypes[s];
   if (!hit) return { error: `未知の型 "${t}"（types-xaml.ts に足す）` };
   return { text: hit[0], xmlns: hit[1] };
 }

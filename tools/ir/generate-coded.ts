@@ -11,10 +11,11 @@
 //   InOut → 未対応（Execute の ref / out 引数は Studio の生成コードがコンパイルできない）
 
 import type { Catalog } from "./catalog.ts";
-import { resolve } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, Issue } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
-import { refs, requiredRefs } from "./mapping.ts";
+import { refs, requiredRefs, scopeRefs, usingScope, UIA_APP_TYPE } from "./mapping.ts";
+import { excelVbForCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames } from "./validate.ts";
 import { objToCs } from "./uia.ts";
@@ -41,7 +42,6 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
-  const apps: string[] = []; // NApplicationCard（"special": "scope"）が作ったアプリの変数。内側が最後
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
   const emit = (depth: number, s: string) => lines.push("    ".repeat(depth) + s);
 
@@ -87,7 +87,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       if ("lit" in v) return csLit(v.lit);
       return v.cs;
     }
-    const r = vbToCs(v, sc);
+    const r = vbToCs(excelVbForCs(v, sc), sc);
     if ("error" in r) { add(at, "CODED_EXPR", `式 ${JSON.stringify(v)} を C# に直せない: ${r.error}`); return "/* ? */ default"; }
     return r.cs;
   }
@@ -236,14 +236,15 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {})];
-    const has = (r: string) => n.props?.[r] !== undefined || n.objs?.[r] !== undefined || n.dicts?.[r] !== undefined;
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     // 引数の辞書（dicts）は、対応表が {Arguments|dict} で受けるか、ignore に書いたものだけ許す
-    const tplRefs = new Set([...(v.code ? refs(v.code) : []), ...Object.values(v.args ?? {}).flatMap((t) => (typeof t === "string" ? refs(t) : Object.values(t.set).flatMap(refs)))]);
+    const tplRefs = new Set([...(v.code ? refs(v.code) : []), ...(v.call ? refs(v.call) : []), ...Object.values(v.init?.props ?? {}).flat().flatMap(refs), ...Object.values(v.args ?? {}).flatMap((t) => (typeof t === "string" ? refs(t) : Object.values(t.set).flatMap(refs)))]);
     for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tplRefs.has(k))
       add(`${at}.dicts.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（引数の辞書）はまだ Coded に直せない`);
     for (const u of v.usings ?? []) usings.add(u);
+    // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
+    if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
 
     if (v.special === "invokeWorkflow") return invoke(n, v, m, depth, at, sc);
 
@@ -251,13 +252,23 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const adef = "activity" in act ? act.activity : undefined;
     // どの props を使ったか（使わなかった props は意味が落ちるのでエラー）
     const used = new Set<string>((m.ignore ?? []).concat(v.ignore ?? []));
+    // IR の props に、対応表の defaults（IR に無いときの値）を足したもの
+    const props: Record<string, Value> = { ...(v.defaults ?? {}), ...(n.props ?? {}) };
+    const has = (r: string) => props[r] !== undefined || n.objs?.[r] !== undefined || n.dicts?.[r] !== undefined;
+    // 外側のスコープ（"scope": "using"）の変数。内側のものほど後ろにある
+    const scopeVar = (t: string) => [...sc].reverse().find(([, ty]) => ty === t || ty.endsWith("." + t))?.[0];
+    // テンプレートを使えるか（既定の無い参照が IR にそろい、{@型名} のスコープが外側にある）。使えなければその引数・行ごと省く
+    const avail = (tpl: string) => requiredRefs(tpl).every(has) && scopeRefs(tpl).every((t) => scopeVar(t) !== undefined);
     const fill = (tpl: string) => {
       for (const r of refs(tpl)) used.add(r);
-      return tpl.replace(/\{(\w+)(?:\|(\w+))?(?::-([^}]*))?\}/g, (_, name: string, filter?: string, dflt?: string) => {
+      for (const t of scopeRefs(tpl)) if (!scopeVar(t)) add(at, "CODED_SCOPE", `${className} は ${t} のスコープの中に置く（${m.file}）`);
+      return tpl.replace(/\{@([\w.]+)\}/g, (_, t: string) => scopeVar(t) ?? "_").replace(/\{(\w+)(?:\|(\w+))?(?::-([^}]*))?\}/g, (_, name: string, filter?: string, dflt?: string) => {
         if (name === "typeArg") return n.typeArg ? csType(n.typeArg) : "object";
         if (name === "app") {
-          if (!apps.length) { add(at, "CODED_NO_SCOPE", `${className} の対応表は {app} を使うが、NApplicationCard の中に無い`); return "/* ? */ null"; }
-          return apps[apps.length - 1];
+          // {app} は、いちばん内側の NApplicationCard（"special": "scope"）の変数。{@UiTargetApp} と同じ
+          const app = scopeVar(UIA_APP_TYPE);
+          if (!app) { add(at, "CODED_NO_SCOPE", `${className} の対応表は {app} を使うが、NApplicationCard の中に無い`); return "/* ? */ null"; }
+          return app;
         }
         if (filter === "dict") {
           // 引数の辞書 → new Dictionary<string, object> { ["名前"] = 値, ... }（In だけ。Out / InOut は Coded に直せない）
@@ -269,8 +280,13 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         }
         const pat = `${at}.props.${name}`;
         if (n.objs?.[name] !== undefined && adef) return objToCs(adef, name, n.objs[name], `${at}.objs.${name}`, { expr: (x, xat) => expr(x, xat, sc), add });
-        const val = n.props?.[name];
+        const val = props[name];
         if (val === undefined) return dflt ?? "";
+        // {Prop|type} … out の代入先の変数の型（C# の型名）
+        if (filter === "type") {
+          const t = typeof val === "string" ? (sc.get(val.trim()) ?? [...sc].find(([k]) => k.toLowerCase() === val.trim().toLowerCase())?.[1]) : undefined;
+          return t ? csType(t) : "object";
+        }
         // {Prop|is_Member} … enum の値が Member かどうか（"true" / "false"）
         if (filter?.startsWith("is_")) return String(val === filter.slice(3));
         const pdef = adef?.props.find((x) => x.name === name);
@@ -280,10 +296,10 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         return filter === "str" ? str(val, pat, sc) : expr(val, pat, sc);
       });
     };
-    // args の値（文字列のテンプレートか、オプションのオブジェクト { new, set }）。IR に無いものを参照するなら undefined（引数ごと省く）
+    // args の値（文字列のテンプレートか、オプションのオブジェクト { new, set }）。使えないなら undefined（引数ごと省く）
     const argText = (tpl: string | ObjArg): string | undefined => {
-      if (typeof tpl === "string") return requiredRefs(tpl).every(has) ? fill(tpl) : undefined;
-      const sets = Object.entries(tpl.set).filter(([, t]) => refs(t).length > 0 && requiredRefs(t).every(has)).map(([k, t]) => `${k} = ${fill(t)}`);
+      if (typeof tpl === "string") return avail(tpl) ? fill(tpl) : undefined;
+      const sets = Object.entries(tpl.set).filter(([, t]) => refs(t).length > 0 && avail(t)).map(([k, t]) => `${k} = ${fill(t)}`);
       if (!sets.length) return tpl.always ? `new ${tpl.new}()` : undefined;
       return `new ${tpl.new} { ${sets.join(", ")} }`;
     };
@@ -301,16 +317,25 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (v.code) for (const l of fill(v.code).split(/\r?\n/)) emit(d, l);
     else if (v.call) {
       const args = Object.entries(v.args ?? {}).map(([param, tpl]) => [param, argText(tpl)] as const).filter(([, t]) => t !== undefined).map(([param, t]) => `${param}: ${t}`);
+      if (v.init) {
+        // 引数 param に new Type { ... } を渡す。値が配列なら、使える最初のもの（Password と SecurePassword のどちらか、など）
+        const members = Object.entries(v.init.props).map(([k, t]) => [k, (Array.isArray(t) ? t : [t]).find(avail)] as const)
+          .filter(([, tpl]) => tpl !== undefined).map(([k, tpl]) => `${k} = ${fill(tpl!)}`);
+        args.push(`${v.init.param}: new ${v.init.type} { ${members.join(", ")} }`);
+      }
       const call = `${fill(v.call)}(${args.join(", ")})`;
       if (v.returns) used.add(v.returns);
       const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
-      if (v.special === "scope") {
-        // NApplicationCard: using (var app1 = uiAutomation.Open(...)) { body }。CloseMode などは Dispose で効く
-        const app = `app${++tmp}`;
-        emit(d, `using (var ${app} = ${call})`);
-        apps.push(app);
-        braces(d, () => block(n.body, d + 1, `${at}.body`, sc));
-        apps.pop();
+      const us = usingScope(v);
+      if (us) {
+        // スコープ: using (var <変数> = call) { body }。子からは {@scopeType の末尾}（NApplicationCard なら {app}）で参照する
+        //   変数名は、varPrefix があれば <varPrefix><連番>（NApplicationCard の app1）、無ければ IR の item（Excel の Use Excel File など）
+        //   CloseMode などは Dispose で効く
+        const slot = adef ? defaultSlot(adef) : undefined;
+        const name = us.varPrefix ? `${us.varPrefix}${++tmp}` : itemNames(n, 1)[0];
+        const type = us.type ?? (slot ? delegateArgs(slot, n.typeArg)?.[0] : undefined) ?? "Object";
+        emit(d, `using (var ${name} = ${call})`);
+        braces(d, () => block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)));
         slotsUsed.add("body");
       } else if (v.branches) {
         const r = `__state${++tmp}`;
@@ -328,7 +353,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     for (const k of Object.keys(n.slots ?? {})) if (!slotsUsed.has(k) && !(m.ignore ?? []).includes(k))
       add(`${at}.slots.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（子）を対応表（${m.file}）が扱っていない`);
     for (const k of given) if (!used.has(k) && k !== "DisplayName")
-      add(`${at}.props.${k}`, "MAPPING_UNUSED_PROP", `${className}.${k} を対応表（${m.file}）が扱っていない。args に足すか、意味がなければ ignore に書く`);
+      add(`${at}.props.${k}`, "MAPPING_UNUSED_PROP", `${className}.${k} を対応表（${m.file}）が扱っていない。args${v.init ? " か init" : ""} に足すか、意味がなければ ignore に書く`);
     if (!wrap) return;
     emit(depth, "}");
     emit(depth, cond === "true" ? "catch (Exception)" : `catch (Exception) when (${cond})`);

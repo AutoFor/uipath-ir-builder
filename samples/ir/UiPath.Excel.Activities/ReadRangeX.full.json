@@ -1,0 +1,48 @@
+{
+  "workflow": "ReadRangeX_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadRangeX",
+          "name": "表を読む",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "HasHeaders": true,
+            "ReadFormatting": "DisplayValue",
+            "VisibleOnly": false,
+            "SaveTo": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"列数: \" & dt.Columns.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"3行目: \" & dt.Rows(2).Item(\"Name\").ToString & \" \" & dt.Rows(2).Item(\"Double\").ToString"
+      }
+    }
+  ]
+}

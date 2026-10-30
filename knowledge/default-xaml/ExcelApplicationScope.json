@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ExcelApplicationScope\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ExcelApplicationScope WorkbookPath=\"{x:Null}\" InstanceCachePeriod=\"3000\">\r\n    <ui:ExcelApplicationScope.Body>\r\n      <ActivityAction x:TypeArguments=\"ui:WorkbookApplication\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"ui:WorkbookApplication\" Name=\"ExcelWorkbookScope\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </ui:ExcelApplicationScope.Body>\r\n  </ui:ExcelApplicationScope>\r\n</Activity>"
+  }
+}

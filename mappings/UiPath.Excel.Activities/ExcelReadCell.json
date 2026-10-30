@@ -1,0 +1,12 @@
+{
+  "activity": "ExcelReadCell",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "code": "{Result} = ({Result|type})Convert.ChangeType({@IWorkHandle}.ReadCell(sheetName: {SheetName}, cell: {Cell}, preserveFormat: {PreserveFormat}), typeof({Result|type}));",
+      "defaults": { "PreserveFormat": false },
+      "usings": ["UiPath.Excel.Activities.API"]
+    }
+  ],
+  "notes": "ExcelOperations.ReadCell(this IWorkHandle handle, string sheetName, string cell, bool preserveFormat) は object を返すので、代入先の型に Convert.ChangeType で変換する。{@IWorkHandle} は外側の Excel Application Scope（Coded では using の変数）"
+}

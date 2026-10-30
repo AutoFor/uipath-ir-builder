@@ -1,0 +1,49 @@
+{
+  "workflow": "ExcelApplicationScope_Secure",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Protected.xlsx"
+        },
+        "Password": {
+          "lit": "open"
+        },
+        "EditPassword": {
+          "lit": "edit"
+        },
+        "SensitivityLabel": "Nothing",
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A1"
+            },
+            "Result": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A1: \" & v"
+      }
+    }
+  ]
+}

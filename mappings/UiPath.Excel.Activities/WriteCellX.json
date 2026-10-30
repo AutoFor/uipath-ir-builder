@@ -1,0 +1,9 @@
+{
+  "activity": "WriteCellX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    { "call": "{Cell}.WriteCell", "args": { "value": "{Value}" }, "usings": ["UiPath.Excel.Activities.API"] }
+  ],
+  "ignore": ["AutoIncrementRow"],
+  "notes": "ExcelOperations.WriteCell(this IReadWriteCellRef cell, object value)。Cell は Excel.Sheet[\"Sheet1\"].Cell[\"A1\"]。AutoIncrementRow（繰り返しの中で書くたびに1行下へずらす）は Coded に同じものが無い（WriteCell(cell, value, rowOffset) で行のずれを自分で数える）ので捨てる。false のときだけ意味が同じ"
+}

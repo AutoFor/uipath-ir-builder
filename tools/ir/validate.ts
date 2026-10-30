@@ -5,6 +5,7 @@ import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from 
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
+import { checkExcel } from "./excel.ts";
 
 type Scope = Map<string, string>; // 名前 -> IR の型名
 
@@ -66,6 +67,9 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
 
     // 要素で書くオブジェクト（UI のターゲットなど。uia.ts）
     for (const k of validateObjs(n, a, path, scope, add)) given.add(k);
+
+    // Excel 固有の検査（excel.ts）
+    checkExcel(n, a, scope, path, add);
 
     // 子の置き場所
     const slotProps = new Map<string, Node[]>();

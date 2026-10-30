@@ -7,6 +7,7 @@ import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts"
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
 import { prepareUia, emitObjs } from "./uia.ts";
+import { excelPrefixes } from "./excel.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
@@ -14,6 +15,7 @@ const knownPrefixes: Record<string, string> = {
   "http://schemas.uipath.com/workflow/activities": "ui",
   "http://schemas.uipath.com/workflow/activities/uix": "uix",
   "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib": "scg",
+  ...excelPrefixes,
 };
 
 // Studio の BlankTemplate の Main.xaml と同じ並び

@@ -1,0 +1,54 @@
+{
+  "workflow": "ExcelApplicationScope_SecureString",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    },
+    {
+      "name": "pw",
+      "type": "System.Security.SecureString",
+      "default": "New System.Net.NetworkCredential(\"\", \"open\").SecurePassword"
+    },
+    {
+      "name": "editPw",
+      "type": "System.Security.SecureString",
+      "default": "New System.Net.NetworkCredential(\"\", \"edit\").SecurePassword"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Protected.xlsx"
+        },
+        "SecurePassword": "pw",
+        "SecureEditPassword": "editPw",
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A1"
+            },
+            "Result": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A1: \" & v"
+      }
+    }
+  ]
+}

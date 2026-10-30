@@ -21,6 +21,8 @@
 //   <名前>.verify.json   { "args": { "in_Name": "太郎" },       // run の入力引数
 //                          "noRun": "Orchestrator が要るため" }   // run しない（build だけ）理由
 //
+// 入力データ: samples/data/ を <プロジェクト>/data/ に写す（Excel のサンプルは "data\excel\Sample.xlsx" を読み、"output\<名前>.xlsx" に書く）。
+//
 // 結果: <report>/report.json、<report>/report.md、<report>/logs/*.txt。全部通れば終了コード 0。
 
 import { spawnSync } from "node:child_process";
@@ -256,6 +258,12 @@ function prepareProject() {
   // 前回のワークフローを消す。壊れた .cs が残るとプロジェクト全体のコンパイルが落ちるため
   for (const e of readdirSync(projDir)) if (/\.(xaml|cs)$/i.test(e)) rmSync(join(projDir, e));
   rmSync(join(projDir, "coded"), { recursive: true, force: true });
+  // サンプルの入力データ（samples/data/、Excel の .xlsx など）を <プロジェクト>/data/ に写し直す。ワークフローは "data\excel\Sample.xlsx" のように相対パスで読む。
+  // 書き出すファイルは <プロジェクト>/output/ に置く（毎回空にする）
+  for (const d of ["data", "output"]) rmSync(join(projDir, d), { recursive: true, force: true });
+  const data = join(root, "samples", "data");
+  if (existsSync(data)) cpSync(data, join(projDir, "data"), { recursive: true, filter: (f) => !/\.(mjs|md)$/i.test(f) });
+  mkdirSync(join(projDir, "output"), { recursive: true });
 }
 
 // run はマシン全体で1つずつにする。ロボット（Assistant）は1ユーザーに1つで、同時に頼んだときの動きを確かめられていないため。

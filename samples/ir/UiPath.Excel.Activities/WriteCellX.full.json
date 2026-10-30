@@ -1,0 +1,44 @@
+{
+  "workflow": "WriteCellX_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\WriteCellX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B2\")",
+            "Value": "6 * 7",
+            "AutoIncrementRow": false
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B2\")",
+            "SaveTo": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"B2: \" & v"
+      }
+    }
+  ]
+}

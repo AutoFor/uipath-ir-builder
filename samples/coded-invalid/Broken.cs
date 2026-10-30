@@ -23,7 +23,7 @@ namespace WrongNamespace
             system.DownloadFileFromURLAsync("http://example.com"); // ASYNC_NOT_AWAITED
             Console.WriteLine("x");                                // CONSOLE
             uiAutomation.Clik("x");                                // UNKNOWN_METHOD
-            excel.Anything();                                      // NO_CATALOG（警告だけ）
+            mail.Anything();                                       // NO_CATALOG（警告だけ）
         }
     }
 }

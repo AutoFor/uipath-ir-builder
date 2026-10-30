@@ -23,6 +23,7 @@ export const catalogFiles = [
   "catalog/System.Activities/6.0.0.json",
   "catalog/UiPath.System.Activities/26.10.0.json",
   "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
+  "catalog/UiPath.Excel.Activities/3.6.1.json",
 ];
 
 const args = process.argv.slice(2);

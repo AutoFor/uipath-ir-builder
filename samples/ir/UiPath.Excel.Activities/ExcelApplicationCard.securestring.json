@@ -1,0 +1,49 @@
+{
+  "workflow": "ExcelApplicationCard_SecureString",
+  "variables": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "pw",
+      "type": "System.Security.SecureString",
+      "default": "New System.Net.NetworkCredential(\"\", \"open\").SecurePassword"
+    },
+    {
+      "name": "editPw",
+      "type": "System.Security.SecureString",
+      "default": "New System.Net.NetworkCredential(\"\", \"edit\").SecurePassword"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Protected.xlsx"
+        },
+        "SecurePassword": "pw",
+        "SecureEditPassword": "editPw",
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "SaveTo": "name"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A1: \" & name"
+      }
+    }
+  ]
+}

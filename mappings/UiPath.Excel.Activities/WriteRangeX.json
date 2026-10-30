@@ -1,0 +1,13 @@
+{
+  "activity": "WriteRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Destination}.WriteRange",
+      "args": { "source": "{Source}", "append": "{Append}", "excludeHeaders": "{ExcludeHeaders}", "ignoreEmptySource": "{IgnoreEmptySource}" },
+      "defaults": { "Append": false, "ExcludeHeaders": false },
+      "usings": ["UiPath.Excel.Activities.API"]
+    }
+  ],
+  "notes": "ExcelOperations.WriteRange(this IReadWriteRangeRef destination, DataTable source, bool append, bool excludeHeaders, [bool ignoreEmptySource])。append / excludeHeaders は API に既定値が無いので defaults で渡す"
+}

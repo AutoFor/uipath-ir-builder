@@ -1,0 +1,26 @@
+{
+  "activity": "ExcelApplicationScope",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": ["WorkbookPath"],
+      "call": "excel.UseWorkBook",
+      "scope": "using",
+      "scopeType": "UiPath.Excel.Activities.API.IWorkHandle",
+      "init": {
+        "param": "options",
+        "type": "WorkbookOptions",
+        "props": {
+          "Path": "{WorkbookPath}",
+          "CreateNew": "{CreateNewFile}",
+          "Password": ["{Password}", "new System.Net.NetworkCredential(string.Empty, {SecurePassword}).Password"]
+        }
+      },
+      "defaults": { "CreateNewFile": true },
+      "usings": ["UiPath.Excel", "UiPath.Excel.Activities.API", "UiPath.Excel.Activities.API.Models"]
+    },
+    { "when": ["ExistingWorkbook"], "reason": "開いているブック（WorkbookApplication）を使う形は Coded API が無い（UseWorkBook はパスで開くだけ）" }
+  ],
+  "ignore": ["AutoSave", "Visible", "ReadOnly", "MacroSetting", "StartAsProcess", "InstanceCachePeriod", "EditPassword", "SecureEditPassword", "SensitivityOperation", "SensitivityLabel", "Workbook"],
+  "notes": "using (var ExcelWorkbookScope = excel.UseWorkBook(new WorkbookOptions { ... })) { 子 }。中のクラシックのアクティビティは {@IWorkHandle} でこの変数を使う（ExcelReadCell.json など）。UseWorkBook は Excel を起動せずにブックを読み書きする。そのため Excel の起動や表示に関するもの（Visible / MacroSetting / StartAsProcess / InstanceCachePeriod）、保存の仕方（AutoSave / ReadOnly）、編集パスワード・秘密度ラベルは WorkbookOptions に無く、捨てる。Workbook（出力の WorkbookApplication）も Coded には無い。ExistingWorkbook（開いているブックを使う）の形は Coded API が無い（2つめの形。生成すると NO_CODED_API で C# を作らない）"
+}
