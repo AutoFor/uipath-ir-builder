@@ -14,13 +14,13 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Int32 n = 7;
-            String asText = default;
+            String numText = "7";
+            Int32 n = default;
             String flagText = "True";
             Boolean flag = default;
-            // 数値を文字列に
-            asText = (String)Convert.ChangeType(n, typeof(String));
-            Log(message: "文字列: " + asText, level: UiPath.CodedWorkflows.LogLevel.Info);
+            // 文字列を整数に
+            n = (Int32)Convert.ChangeType(numText, typeof(Int32));
+            Log(message: "整数+1: " + (n + 1).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             // 文字列を真偽値に
             flag = (Boolean)Convert.ChangeType(flagText, typeof(Boolean));
             if (flag)

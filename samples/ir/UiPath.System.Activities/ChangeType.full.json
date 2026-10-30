@@ -1,14 +1,14 @@
 {
   "workflow": "ChangeType_Full",
   "variables": [
-    { "name": "n", "type": "Int32", "default": "7" },
-    { "name": "asText", "type": "String" },
+    { "name": "numText", "type": "String", "default": "\"7\"" },
+    { "name": "n", "type": "Int32" },
     { "name": "flagText", "type": "String", "default": "\"True\"" },
     { "name": "flag", "type": "Boolean" }
   ],
   "body": [
-    { "act": "ChangeType", "name": "数値を文字列に", "typeArg": "String", "props": { "SourceValue": "n", "ConvertedValue": "asText" } },
-    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"文字列: \" & asText" } },
+    { "act": "ChangeType", "name": "文字列を整数に", "typeArg": "Int32", "props": { "SourceValue": "numText", "ConvertedValue": "n" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"整数+1: \" & (n + 1).ToString" } },
     { "act": "ChangeType", "name": "文字列を真偽値に", "typeArg": "Boolean", "props": { "SourceValue": "flagText", "ConvertedValue": "flag" } },
     { "act": "If", "props": { "Condition": "flag" }, "then": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "真偽値: True" } } }], "else": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "真偽値: False" } } }] }
   ]
