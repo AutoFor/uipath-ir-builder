@@ -43,3 +43,11 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 | `workflows` | プロジェクトごとの `WorkflowRunnerService`（ワークフローを型付きで呼ぶ） |
 
 基底クラス `UiPath.CodedWorkflows.CodedWorkflowBase`（UiPath.CodedWorkflows 24.10.3）の `Log` / `RunWorkflow` / `Delay` / `BuildClient` などは、カタログ抽出器が `catalog/UiPath.CodedWorkflows/24.10.3.json` に書き出す。
+
+## XAML と C# で動きが違うもの（run で分かった）
+
+サンプルはどちらでも同じログになる形にしてある。XAML から Coded に置き換えるときは、次の違いに注意する。
+
+- `ChangeType`：Int32 から String への変換は、XAML だと `"7.00"`、C# だと `"7"` になる
+- `ParallelForEach`：XAML は c, b, a の順、C# は a, b, c の順で回る
+- `system.FindAndReplace`：引数名 `valueToFind` と `source` が実装と逆（先頭が対象の文字列、2つ目が検索語として動く）。対応表で入れ替えてある
