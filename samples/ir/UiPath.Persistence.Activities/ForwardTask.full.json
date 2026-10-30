@@ -1,0 +1,30 @@
+{
+  "workflow": "ForwardTask_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "ForwardTask",
+      "name": "転送する",
+      "props": {
+        "TaskId": "in_TaskId",
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "Comments": {
+          "lit": "お願いします"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

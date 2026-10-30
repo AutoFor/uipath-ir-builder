@@ -1,0 +1,31 @@
+{
+  "workflow": "AddQueueItemAndGetReference_Collection",
+  "arguments": [
+    {
+      "name": "in_Info",
+      "dir": "In",
+      "type": "Dictionary<String, Object>"
+    }
+  ],
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItemData"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddQueueItemAndGetReference",
+      "props": {
+        "QueueName": {
+          "lit": "Invoices"
+        },
+        "QueueItemOutput": "item",
+        "ItemInformationCollection": "in_Info"
+      },
+      "dicts": {
+        "ItemInformation": []
+      }
+    }
+  ]
+}

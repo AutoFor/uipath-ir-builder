@@ -1,0 +1,22 @@
+{
+  "workflow": "ResumeAfterDelay_Full",
+  "variables": [
+    {
+      "name": "d",
+      "type": "DateTime"
+    }
+  ],
+  "body": [
+    {
+      "act": "ResumeAfterDelay",
+      "name": "時刻まで待つ",
+      "props": {
+        "ResumeTime": "DateTime.Now.AddHours(1)",
+        "StatusMessage": {
+          "lit": "1時間待つ"
+        },
+        "WaitItemDataObject": "d"
+      }
+    }
+  ]
+}

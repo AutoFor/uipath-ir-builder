@@ -1,0 +1,6 @@
+{
+  "activity": "UpdateTaskLabels",
+  "package": "UiPath.Persistence.Activities",
+  "coded": null,
+  "reason": "Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件）"
+}

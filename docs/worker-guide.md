@@ -499,6 +499,10 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 - run には Excel（デスクトップ版）が要る。この PC には入っているが、管理者権限のシェルから起動した Excel はファイルを開けない（「ファイルにアクセスできません」）。run はマネージャーがまとめて流すので、期待ログ（`*.expected.log`）を必ず書き、build まで通ったら Linear を **In Progress** にして「run 待ち」とコメントする
 - run できないもの（パスワード付きのブック、秘密度ラベル、マクロ付きのブック、クリップボード、PDF の出力先の確認など）は `noRun` に理由を書く。その上で build と全テストが通れば Done
 
+## 8-P. 永続化（UiPath.Persistence.Activities）
+
+詳しくは `knowledge/persistence.md`。テンプレートに依存が無いので、作業用プロジェクトの `project.json` に `"UiPath.Persistence.Activities": "[1.13.0]"` と `supportsPersistence: true` を足す（`--fresh` で消える）。Wait と `ResumeAfterDelay` のサンプルの `*.verify.json` には `"entryPoint": true`、Wait が別々のファイルにあると分析が落ちるので `"buildAlone": true` も書く（`verify.mjs --build-only` が1つずつ build する）。run の方は、`noRun` なので影響しない。
+
 ## 9. XAML → IR の取り込みに向けて気づいた点
 
 今回は作らないが、既存の XAML を読んで IR にする（そこから C# を作る）ときに困らないよう、IR を変えるときは次に気をつける。

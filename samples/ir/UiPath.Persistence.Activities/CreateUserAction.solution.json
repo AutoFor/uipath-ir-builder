@@ -1,0 +1,73 @@
+{
+  "workflow": "CreateUserAction_Solution",
+  "variables": [
+    {
+      "name": "task",
+      "type": "UserActionData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "アプリで確認"
+        },
+        "TaskPriority": "Low",
+        "TaskOutput": "task",
+        "SolutionApp": {
+          "lit": "InvoiceApp"
+        },
+        "SolutionTaskCatalog": {
+          "lit": "InvoiceApproval"
+        },
+        "EnforcePropertyRefresh": false,
+        "TaskFieldsForWeb": "New String() {\"No\"}",
+        "AutoCompleteOutcome": "Approve",
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "ReassignUser": {
+          "lit": "user@example.com"
+        },
+        "ReassignGroup": {
+          "lit": "Reviewers"
+        }
+      },
+      "dicts": {
+        "SolutionAppResources": [
+          {
+            "name": "k",
+            "value": {
+              "lit": "v"
+            }
+          }
+        ]
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        },
+        "ReassignCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    }
+  ]
+}

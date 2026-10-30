@@ -22,7 +22,8 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "AddQueueItemAndGetReference"
+          "declaredOn": "AddQueueItemAndGetReference",
+          "readOnly": true
         },
         {
           "name": "ContinueOnError",
@@ -1264,7 +1265,8 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "CreateUserAction"
+          "declaredOn": "CreateUserAction",
+          "readOnly": true
         },
         {
           "name": "AssignmentCriteria",
@@ -1293,7 +1295,8 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "CreateUserAction"
+          "declaredOn": "CreateUserAction",
+          "readOnly": true
         },
         {
           "name": "ContinueOnError",
@@ -2175,7 +2178,8 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "StartJobAndGetReference"
+          "declaredOn": "StartJobAndGetReference",
+          "readOnly": true
         },
         {
           "name": "ContinueOnError",

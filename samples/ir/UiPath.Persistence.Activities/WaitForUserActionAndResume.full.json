@@ -1,0 +1,47 @@
+{
+  "workflow": "WaitForUserActionAndResume_Full",
+  "variables": [
+    {
+      "name": "task",
+      "type": "UserActionData"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "アプリで確認"
+        },
+        "TaskPriority": "Medium",
+        "TaskOutput": "task"
+      }
+    },
+    {
+      "act": "WaitForUserActionAndResume",
+      "name": "人の判断を待つ",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task",
+        "StatusMessage": {
+          "lit": "承認待ち"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "WaitItemDataObject": "task"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"結果: \" & action"
+      }
+    }
+  ]
+}

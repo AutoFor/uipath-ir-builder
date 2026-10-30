@@ -1,0 +1,64 @@
+{
+  "workflow": "CreateUserAction_Full",
+  "variables": [
+    {
+      "name": "task",
+      "type": "UserActionData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "name": "App タスクを作る",
+      "props": {
+        "TaskTitle": {
+          "lit": "アプリで確認"
+        },
+        "TaskPriority": "High",
+        "TaskOutput": "task",
+        "TaskCatalog": {
+          "lit": "InvoiceApproval"
+        },
+        "Labels": {
+          "lit": "invoice"
+        },
+        "ExternalTag": {
+          "lit": "INV-1"
+        },
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "ActionableNotification": true,
+        "PrimaryActionableOutcome": "Approve",
+        "SecondaryActionableOutcome": "Reject",
+        "PrimaryButtonLabel": {
+          "lit": "承認"
+        },
+        "SecondaryButtonLabel": {
+          "lit": "却下"
+        },
+        "TaskTimerEnabled": true,
+        "TimerDuration": "TimeSpan.FromHours(4)",
+        "StartCriteria": "TaskCreated",
+        "EndCriteria": "TaskCompleted",
+        "Outcome": "Notify",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000
+      },
+      "dicts": {
+        "AppActionData": [
+          {
+            "name": "No",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "INV-1"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

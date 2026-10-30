@@ -1,0 +1,58 @@
+{
+  "workflow": "AssignTasks_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "variables": [
+    {
+      "name": "failed",
+      "type": "List<TaskAssignmentResponse>"
+    }
+  ],
+  "body": [
+    {
+      "act": "AssignTasks",
+      "name": "担当を替える",
+      "props": {
+        "TaskAssignmentType": "Reassign",
+        "TaskId": "in_TaskId",
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "FailedTaskAssignments": "failed",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        }
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"失敗: \" & failed.Count.ToString"
+      }
+    }
+  ]
+}

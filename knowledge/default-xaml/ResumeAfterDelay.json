@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ResumeAfterDelay\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:upad=\"clr-namespace:UiPath.Persistence.Activities.Delay;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upad:ResumeAfterDelay ResumeTime=\"{x:Null}\" StatusMessage=\"{x:Null}\" WaitItemDataObject=\"{x:Null}\" />\r\n</Activity>"
+  }
+}

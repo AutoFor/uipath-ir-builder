@@ -1,0 +1,53 @@
+{
+  "workflow": "ConfigureTaskTimer_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "ConfigureTaskTimer",
+      "name": "タイマーを設定する",
+      "props": {
+        "TaskId": "in_TaskId",
+        "TimerDuration": "TimeSpan.FromHours(4)",
+        "StartCriteria": "TaskAssigned",
+        "EndCriteria": "TaskCompleted",
+        "Outcome": "Reassign",
+        "ReassignUser": {
+          "lit": "user@example.com"
+        },
+        "TimerMinutes": "Min30",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "TimerDays": 1,
+        "TimerHours": 2,
+        "ReassignGroup": {
+          "lit": "Reviewers"
+        },
+        "AutoCompleteOutcome": {
+          "lit": "Approve"
+        }
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    }
+  ]
+}

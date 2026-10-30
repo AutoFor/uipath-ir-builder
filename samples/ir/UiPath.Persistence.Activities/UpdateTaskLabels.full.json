@@ -1,0 +1,30 @@
+{
+  "workflow": "UpdateTaskLabels_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "UpdateTaskLabels",
+      "name": "ラベルを変える",
+      "props": {
+        "TaskId": "in_TaskId",
+        "AddLabels": {
+          "lit": "invoice"
+        },
+        "DeleteLabels": {
+          "lit": "draft"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

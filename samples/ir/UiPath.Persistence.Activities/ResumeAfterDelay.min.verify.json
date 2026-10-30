@@ -1,1 +1,1 @@
-{ "entryPoint": true, "noRun": "Orchestrator と Action Center が要る（永続化はロボットの run だけでは確かめられない）" }
+{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る（永続化はロボットの run だけでは確かめられない）"}

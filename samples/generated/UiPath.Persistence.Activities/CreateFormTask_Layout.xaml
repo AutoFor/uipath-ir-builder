@@ -67,7 +67,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="upaf:FormTaskData" Name="task" />
       <Variable x:TypeArguments="x:String" Name="comment" />
     </Sequence.Variables>
-    <upaf:CreateFormTask FormLayout="{}{&quot;components&quot;:[{&quot;type&quot;:&quot;textfield&quot;,&quot;key&quot;:&quot;Comment&quot;,&quot;label&quot;:&quot;コメント&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;action&quot;:&quot;submit&quot;,&quot;label&quot;:&quot;Approve&quot;,&quot;key&quot;:&quot;approve&quot;}]}" GenerateInputFields="False" TaskOutput="[task]" TaskPriority="Low" TaskTitle="レイアウト付きのフォーム" sap2010:WorkflowViewState.IdRef="CreateFormTask_1">
+    <upaf:CreateFormTask BulkFormLayoutGuid="750cb3c8-4a4d-533e-9544-dc6046f09a80" EnableBulkEdit="False" EnableDynamicForms="False" EnableV2="False" EndCriteria="TaskAssigned" FormLayout="{}{&quot;components&quot;:[{&quot;type&quot;:&quot;textfield&quot;,&quot;key&quot;:&quot;Comment&quot;,&quot;label&quot;:&quot;コメント&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;action&quot;:&quot;submit&quot;,&quot;label&quot;:&quot;Approve&quot;,&quot;key&quot;:&quot;approve&quot;}]}" FormLayoutGuid="4746cd2c-f7c6-584d-8538-b8ed5f92c914" GenerateInputFields="False" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="レイアウト付きのフォーム" sap2010:WorkflowViewState.IdRef="CreateFormTask_1">
       <upaf:CreateFormTask.FormData>
         <scg:Dictionary x:TypeArguments="x:String, Argument">
           <OutArgument x:TypeArguments="x:String" x:Key="Comment">[comment]</OutArgument>

@@ -1,0 +1,38 @@
+{
+  "workflow": "GetTaskData_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "variables": [
+    {
+      "name": "data",
+      "type": "TaskData"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetTaskData",
+      "name": "タスクを読む",
+      "props": {
+        "TaskId": "in_TaskId",
+        "TaskOutput": "data",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"タスク: \" & data.Id.ToString"
+      }
+    }
+  ]
+}

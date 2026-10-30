@@ -1,0 +1,17 @@
+{
+  "workflow": "PersistenceBroken",
+  "variables": [
+    { "name": "t", "type": "FormTaskData" },
+    { "name": "j", "type": "JobData" }
+  ],
+  "body": [
+    { "act": "NoPersistScope", "body": [
+      { "act": "Sequence", "body": [
+        { "act": "WaitForFormTaskAndResume", "props": { "TaskInput": "t" } }
+      ] }
+    ] },
+    { "act": "NApplicationCard", "item": "WSSessionData",
+      "objs": { "TargetApp": { "FilePath": { "lit": "notepad.exe" }, "Selector": { "lit": "<wnd app='notepad.exe' />" } } },
+      "body": [ { "act": "WaitForJobAndResume", "props": { "JobInput": "j" } } ] }
+  ]
+}

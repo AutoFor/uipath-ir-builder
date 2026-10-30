@@ -20,7 +20,8 @@
 //                        "[Information] こんにちは" のように [レベル] から書くとレベルも比べる。XAML と C# の両方で比べる
 //   <名前>.verify.json   { "args": { "in_Name": "太郎" },       // run の入力引数
 //                          "noRun": "Orchestrator が要るため",   // run しない（build だけ）理由
-//                          "entryPoint": true }                  // このワークフローを project.json のエントリポイントにする（トリガー用）
+//                          "entryPoint": true,                   // このワークフローを project.json のエントリポイントにする（トリガー用）
+//                          "buildAlone": true }                  // --build-only で、このファイルだけを置いて別に build する（Wait 系。AUT-1074）
 //
 // 入力データ: samples/data/ を <プロジェクト>/data/ に写す（Excel のサンプルは "data\excel\Sample.xlsx" を読み、"output\<名前>.xlsx" に書く）。
 //
@@ -28,7 +29,7 @@
 
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -182,15 +183,45 @@ if (csFiles.length) {
 
 // ---- build / run ----
 if (opt.buildOnly) {
-  const b = uip(["rpa", "build", projDir, "--output", "json"], "_build");
-  const ok = b.envelope?.Result === "Success";
-  const text = b.raw;
-  for (const r of results) {
-    if (!targetReady(r)) continue;
-    const stem = basename(r.target, extname(r.target));
-    const mine = text.split(/\r?\n/).filter((l) => [`${stem}.cs`, `${stem}+`, `${stem}.xaml`].some((k) => l.includes(k)) &&/error|エラー/i.test(l)).slice(0, 20);
-    r.build = { ok: ok && !mine.length, seconds: b.seconds, errors: ok ? mine : mine.length ? mine : [summarize(b)] };
+  // "buildAlone": true のファイルは、プロジェクトに1つだけ置いて別に build する（Wait 系が別々のファイルにあると分析が落ちる。AUT-1074、knowledge/persistence.md）
+  const alone = results.filter((r) => targetReady(r) && sidecar(r.file).buildAlone);
+  const hold = (r, on) => { if (on) renameSync(r.target, `${r.target}.held`); else renameSync(`${r.target}.held`, r.target); };
+  const setEntryPoints = (held) => {
+    const pjPath = join(projDir, "project.json");
+    const pj = readJson(pjPath);
+    for (const r of held) {
+      const f = `${basename(r.target)}`;
+      if (sidecar(r.file).entryPoint) {
+        if (r.heldEntry === undefined) r.heldEntry = pj.entryPoints.find((e) => e.filePath === f);
+        pj.entryPoints = pj.entryPoints.filter((e) => e.filePath !== f);
+      }
+    }
+    for (const r of alone) {
+      if (r.heldEntry && !held.includes(r) && !pj.entryPoints.some((e) => e.filePath === r.heldEntry.filePath)) pj.entryPoints.push(r.heldEntry);
+    }
+    writeFileSync(pjPath, JSON.stringify(pj, null, 2));
+  };
+  const buildAll = (only, logName) => {
+    const b = uip(["rpa", "build", projDir, "--output", "json"], logName);
+    const ok = b.envelope?.Result === "Success";
+    for (const r of only) {
+      const stem = basename(r.target, extname(r.target));
+      const mine = b.raw.split(/\r?\n/).filter((l) => [`${stem}.cs`, `${stem}+`, `${stem}.xaml`].some((k) => l.includes(k)) && /error|エラー/i.test(l)).slice(0, 20);
+      r.build = { ok: ok && !mine.length, seconds: b.seconds, errors: ok ? mine : mine.length ? mine : [summarize(b)] };
+    }
+  };
+  for (const r of alone) hold(r, true);
+  setEntryPoints(alone);
+  const rest = results.filter((r) => targetReady(r) && !alone.includes(r));
+  if (rest.length || !alone.length) buildAll(rest, "_build");
+  for (const r of alone) {
+    hold(r, false);
+    setEntryPoints(alone.filter((x) => x !== r));
+    buildAll([r], `_build.${safe(r.file)}`);
+    hold(r, true);
   }
+  // 次の実行のために戻す必要はない（prepareProject が消す）。.held は残ると無駄なので消す
+  for (const r of alone) rmSync(`${r.target}.held`, { force: true });
 } else {
   for (const r of results) {
     if (!targetReady(r)) continue;

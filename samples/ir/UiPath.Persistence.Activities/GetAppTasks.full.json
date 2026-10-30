@@ -1,0 +1,50 @@
+{
+  "workflow": "GetAppTasks_Full",
+  "variables": [
+    {
+      "name": "tasks",
+      "type": "List<UserActionData>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetAppTasks",
+      "name": "タスクを探す",
+      "props": {
+        "TaskObjects": "tasks",
+        "Filter": {
+          "lit": "Status eq 'Pending'"
+        },
+        "Select": {
+          "lit": "Id,Title"
+        },
+        "Expand": {
+          "lit": "AssignedToUser"
+        },
+        "OrderBy": {
+          "lit": "Id desc"
+        },
+        "Top": 10,
+        "Skip": 0,
+        "Reference": {
+          "lit": "INV-1"
+        },
+        "TaskCatalogName": {
+          "lit": "InvoiceApproval"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"件数: \" & tasks.Count.ToString"
+      }
+    }
+  ]
+}

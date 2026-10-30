@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CreateExternalTask\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:upae=\"clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities\" xmlns:upat=\"clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upae:CreateExternalTask ExternalTag=\"{x:Null}\" Group=\"{x:Null}\" Labels=\"{x:Null}\" TaskCatalog=\"{x:Null}\" TaskOutput=\"{x:Null}\" TaskTitle=\"{x:Null}\" TimeoutMs=\"{x:Null}\" UserNameOrEmail=\"{x:Null}\" TaskPriority=\"Medium\">\r\n    <upae:CreateExternalTask.AssignmentCriteria>\r\n      <upat:Criteria Description=\"SingleUserDescription\" Id=\"SingleUser\" Name=\"Activity_AssignTasks_AssignmentCriteria_SingleUserName\" />\r\n    </upae:CreateExternalTask.AssignmentCriteria>\r\n    <upae:CreateExternalTask.TaskData>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, Argument\" />\r\n    </upae:CreateExternalTask.TaskData>\r\n  </upae:CreateExternalTask>\r\n</Activity>"
+  }
+}

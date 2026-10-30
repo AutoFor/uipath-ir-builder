@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CompleteTask\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:upat=\"clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upat:CompleteTask Action=\"{x:Null}\" Data=\"{x:Null}\" TaskId=\"{x:Null}\" TimeoutMs=\"{x:Null}\" />\r\n</Activity>"
+  }
+}

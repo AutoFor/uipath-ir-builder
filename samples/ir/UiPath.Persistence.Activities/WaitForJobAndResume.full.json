@@ -1,0 +1,43 @@
+{
+  "workflow": "WaitForJobAndResume_Full",
+  "variables": [
+    {
+      "name": "job",
+      "type": "JobData"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartJobAndGetReference",
+      "props": {
+        "ProcessName": {
+          "lit": "ChildProcess"
+        },
+        "JobOutput": "job"
+      }
+    },
+    {
+      "act": "WaitForJobAndResume",
+      "name": "ジョブを待つ",
+      "props": {
+        "JobInput": "job",
+        "JobOutput": "job",
+        "StatusMessage": {
+          "lit": "ジョブ待ち"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "WaitItemDataObject": "job"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "再開した"
+        }
+      }
+    }
+  ]
+}

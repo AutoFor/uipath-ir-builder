@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"WaitForExternalTaskAndResume\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:upae=\"clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upae:WaitForExternalTaskAndResume StatusMessage=\"{x:Null}\" TaskAction=\"{x:Null}\" TaskInput=\"{x:Null}\" TaskOutput=\"{x:Null}\" TimeoutMs=\"{x:Null}\" WaitItemDataObject=\"{x:Null}\" />\r\n</Activity>"
+  }
+}
