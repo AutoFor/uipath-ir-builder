@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GetAttribute\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:GetAttribute Attribute=\"{x:Null}\" ContinueOnError=\"{x:Null}\" Result=\"{x:Null}\">\r\n    <ui:GetAttribute.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"825d5107-8780-4420-9afd-b9b31921ab21\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:GetAttribute.Target>\r\n  </ui:GetAttribute>\r\n</Activity>"
+  }
+}

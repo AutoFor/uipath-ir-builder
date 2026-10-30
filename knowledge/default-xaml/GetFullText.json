@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GetFullText\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:GetFullText IgnoreHidden=\"{x:Null}\" Text=\"{x:Null}\">\r\n    <ui:GetFullText.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"d67d620f-c5ac-468d-90ff-4824c0df4ac6\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:GetFullText.Target>\r\n  </ui:GetFullText>\r\n</Activity>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"InjectJsScript\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:InjectJsScript InputParameter=\"{x:Null}\" ScriptCode=\"{x:Null}\" ScriptOutput=\"{x:Null}\">\r\n    <ui:InjectJsScript.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"2ee26f2d-4b5b-415b-bfd5-916783b258b5\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:InjectJsScript.Target>\r\n  </ui:InjectJsScript>\r\n</Activity>"
+  }
+}
