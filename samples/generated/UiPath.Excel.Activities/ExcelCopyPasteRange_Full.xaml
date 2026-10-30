@@ -64,7 +64,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="ExcelCopyPasteRange_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="v" />
-      <Variable x:TypeArguments="x:String" Name="w" />
+      <Variable x:TypeArguments="x:Object" Name="w" />
     </Sequence.Variables>
     <ui:CopyFile Destination="output\ExcelCopyPasteRange_Full.xlsx" DisplayName="元のブックを output に写す" Overwrite="True" Path="data\excel\Sample.xlsx" sap2010:WorkflowViewState.IdRef="CopyFile_1" />
     <ui:ExcelApplicationScope InstanceCachePeriod="3000" WorkbookPath="output\ExcelCopyPasteRange_Full.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1">
@@ -78,7 +78,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ui:ExcelReadCellFormula Cell="D3" Formula="[v]" SheetName="Sheet2" sap2010:WorkflowViewState.IdRef="ExcelReadCellFormula_1" />
             <ui:ExcelReadCell Cell="D3" SheetName="Sheet2" sap2010:WorkflowViewState.IdRef="ExcelReadCell_1">
               <ui:ExcelReadCell.Result>
-                <OutArgument x:TypeArguments="x:String">[w]</OutArgument>
+                <OutArgument x:TypeArguments="x:Object">[w]</OutArgument>
               </ui:ExcelReadCell.Result>
             </ui:ExcelReadCell>
           </Sequence>
@@ -86,6 +86,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       </ui:ExcelApplicationScope.Body>
     </ui:ExcelApplicationScope>
     <ui:LogMessage Level="Info" Message="[&quot;Sheet2!D3 の式: &quot; &amp; v]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;Sheet2!D3: &quot; &amp; w]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Level="Info" Message="[&quot;Sheet2!D3: &quot; &amp; Convert.ToString(w)]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
   </Sequence>
 </Activity>

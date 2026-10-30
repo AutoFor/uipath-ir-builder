@@ -77,12 +77,13 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:ExcelReadRange AddHeaders="True" DataTable="[dt]" Range="A1:C4" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelReadRange_1" />
             <ui:ExcelAppendRange DataTable="[dt]" DisplayName="Sheet2 の末尾に足す" SheetName="Sheet2" sap2010:WorkflowViewState.IdRef="ExcelAppendRange_1" />
-            <ui:ExcelReadRange AddHeaders="True" DataTable="[back]" Range="A1:C8" SheetName="Sheet2" sap2010:WorkflowViewState.IdRef="ExcelReadRange_2" />
+            <ui:ExcelReadRange AddHeaders="False" DataTable="[back]" Range="A1:C5" SheetName="Sheet2" sap2010:WorkflowViewState.IdRef="ExcelReadRange_2" />
           </Sequence>
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>
     </ui:ExcelApplicationScope>
     <ui:LogMessage Level="Info" Message="[&quot;行数: &quot; &amp; back.Rows.Count.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;最後の行: &quot; &amp; back.Rows(back.Rows.Count - 1).Item(0).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Level="Info" Message="[&quot;2 行目: &quot; &amp; back.Rows(1).Item(0).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Level="Info" Message="[&quot;5 行目: &quot; &amp; back.Rows(4).Item(0).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
   </Sequence>
 </Activity>

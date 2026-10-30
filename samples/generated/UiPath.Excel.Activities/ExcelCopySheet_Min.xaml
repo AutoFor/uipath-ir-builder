@@ -63,8 +63,8 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ExcelCopySheet_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="v" />
-      <Variable x:TypeArguments="x:String" Name="w" />
+      <Variable x:TypeArguments="x:Object" Name="v" />
+      <Variable x:TypeArguments="x:Object" Name="w" />
     </Sequence.Variables>
     <ui:CopyFile Destination="output\ExcelCopySheet_Min.xlsx" DisplayName="元のブックを output に写す" Overwrite="True" Path="data\excel\Sample.xlsx" sap2010:WorkflowViewState.IdRef="CopyFile_1" />
     <ui:ExcelApplicationScope InstanceCachePeriod="3000" WorkbookPath="output\ExcelCopySheet_Min.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1">
@@ -77,13 +77,13 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ui:ExcelCopySheet DestinationSheetName="Sheet1コピー" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelCopySheet_1" />
             <ui:ExcelReadCell Cell="A2" SheetName="Sheet1コピー" sap2010:WorkflowViewState.IdRef="ExcelReadCell_1">
               <ui:ExcelReadCell.Result>
-                <OutArgument x:TypeArguments="x:String">[v]</OutArgument>
+                <OutArgument x:TypeArguments="x:Object">[v]</OutArgument>
               </ui:ExcelReadCell.Result>
             </ui:ExcelReadCell>
           </Sequence>
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>
     </ui:ExcelApplicationScope>
-    <ui:LogMessage Level="Info" Message="[&quot;コピー先 A2: &quot; &amp; v]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;コピー先 A2: &quot; &amp; Convert.ToString(v)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

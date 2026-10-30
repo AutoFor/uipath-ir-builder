@@ -63,8 +63,8 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ExcelInsertDeleteRows_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="v" />
-      <Variable x:TypeArguments="x:String" Name="w" />
+      <Variable x:TypeArguments="x:Object" Name="v" />
+      <Variable x:TypeArguments="x:Object" Name="w" />
     </Sequence.Variables>
     <ui:CopyFile Destination="output\ExcelInsertDeleteRows_Min.xlsx" DisplayName="元のブックを output に写す" Overwrite="True" Path="data\excel\Sample.xlsx" sap2010:WorkflowViewState.IdRef="CopyFile_1" />
     <ui:ExcelApplicationScope InstanceCachePeriod="3000" WorkbookPath="output\ExcelInsertDeleteRows_Min.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1">
@@ -77,19 +77,19 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ui:ExcelInsertDeleteRows Mode="Add" NoRows="1" Position="2" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelInsertDeleteRows_1" />
             <ui:ExcelReadCell Cell="A2" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelReadCell_1">
               <ui:ExcelReadCell.Result>
-                <OutArgument x:TypeArguments="x:String">[v]</OutArgument>
+                <OutArgument x:TypeArguments="x:Object">[v]</OutArgument>
               </ui:ExcelReadCell.Result>
             </ui:ExcelReadCell>
             <ui:ExcelReadCell Cell="A3" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelReadCell_2">
               <ui:ExcelReadCell.Result>
-                <OutArgument x:TypeArguments="x:String">[w]</OutArgument>
+                <OutArgument x:TypeArguments="x:Object">[w]</OutArgument>
               </ui:ExcelReadCell.Result>
             </ui:ExcelReadCell>
           </Sequence>
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>
     </ui:ExcelApplicationScope>
-    <ui:LogMessage Level="Info" Message="[&quot;A2: &quot; &amp; v]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;A3: &quot; &amp; w]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Level="Info" Message="[&quot;A2: &quot; &amp; Convert.ToString(v)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;A3: &quot; &amp; Convert.ToString(w)]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
   </Sequence>
 </Activity>

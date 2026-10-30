@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "output\\ExcelWriteRange_Min.xlsx", CreateNew = true }))
             {
                 ExcelWorkbookScope.WriteRange(sheetName: "Sheet1", startingCell: "A1", table: dt, addHeaders: false);
-                back = ExcelWorkbookScope.ReadRange(sheetName: "Sheet1", range: "A1:B4", addHeaders: true, preserveFormat: false);
+                back = ExcelWorkbookScope.ReadRange(sheetName: "Sheet1", range: "A1:B3", addHeaders: false, preserveFormat: false);
             }
             Log(message: "書いた行数: " + back.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: "最後の行: " + back.Rows[2][0].ToString() + " " + back.Rows[2][1].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

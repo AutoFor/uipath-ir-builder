@@ -85,7 +85,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:ExcelWriteRange AddHeaders="False" DataTable="[dt]" SheetName="Sheet1" StartingCell="A1" sap2010:WorkflowViewState.IdRef="ExcelWriteRange_1" />
-            <ui:ExcelReadRange AddHeaders="True" DataTable="[back]" Range="A1:B4" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelReadRange_2" />
+            <ui:ExcelReadRange AddHeaders="False" DataTable="[back]" Range="A1:B3" SheetName="Sheet1" sap2010:WorkflowViewState.IdRef="ExcelReadRange_2" />
           </Sequence>
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>

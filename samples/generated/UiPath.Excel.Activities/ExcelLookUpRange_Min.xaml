@@ -63,8 +63,8 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ExcelLookUpRange_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="v" />
-      <Variable x:TypeArguments="x:String" Name="w" />
+      <Variable x:TypeArguments="x:Object" Name="v" />
+      <Variable x:TypeArguments="x:Object" Name="w" />
     </Sequence.Variables>
     <ui:ExcelApplicationScope InstanceCachePeriod="3000" WorkbookPath="output\ExcelLookUpRange_Min.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1">
       <ui:ExcelApplicationScope.Body>
@@ -81,6 +81,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>
     </ui:ExcelApplicationScope>
-    <ui:LogMessage Level="Info" Message="[&quot;結果: &quot; &amp; v]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;結果: &quot; &amp; Convert.ToString(v)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>
