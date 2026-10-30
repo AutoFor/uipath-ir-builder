@@ -1,0 +1,24 @@
+{
+  "activity": "ExcelForEachRowX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.ForEachRow",
+      "scope": "lambda",
+      "scopeType": "UiPath.Excel.ICurrentRowQuickHandle",
+      "lambdaArg": "act",
+      "lambdaFuncArg": "func",
+      "args": {
+        "emptyRowBehavior": "UiPath.Excel.EmptyRowBehavior.{EmptyRowBehavior:-StopAfterThreeConsecutiveEmptyRows}",
+        "forceFirstRowAsHeaders": "{HasHeaders}",
+        "saveAfterEachRow": "{SaveAfterEachRow:-false}"
+      },
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "ラムダの Func は true で続行、false で打ち切り（API の XML ドキュメント）。CurrentIndex は生成器が数える"
+}

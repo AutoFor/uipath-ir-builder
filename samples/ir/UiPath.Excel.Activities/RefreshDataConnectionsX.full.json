@@ -1,0 +1,56 @@
+{
+  "workflow": "RefreshDataConnectionsX_Full",
+  "variables": [
+    {
+      "name": "a",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\RefreshDataConnectionsX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\RefreshDataConnectionsX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "RefreshDataConnectionsX",
+          "name": "接続を更新（接続なし）",
+          "props": {
+            "Workbook": "Excel"
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B2\")",
+            "SaveTo": "a"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"B2: [\" & Convert.ToString(a) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

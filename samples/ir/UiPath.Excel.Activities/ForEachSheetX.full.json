@@ -1,0 +1,40 @@
+{
+  "workflow": "ForEachSheetX_Full",
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ForEachSheetX",
+          "name": "1枚目だけ",
+          "item": [
+            "CurrentSheet",
+            "CurrentIndex"
+          ],
+          "props": {
+            "Workbook": "Excel"
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "CurrentSheet.Name"
+              }
+            },
+            {
+              "act": "Break"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

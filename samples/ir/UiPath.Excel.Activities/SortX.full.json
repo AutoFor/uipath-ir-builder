@@ -1,0 +1,102 @@
+{
+  "workflow": "SortX_Full",
+  "variables": [
+    {
+      "name": "a2",
+      "type": "Object"
+    },
+    {
+      "name": "a4",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\SortX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\SortX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "SortX",
+          "name": "年齢の降順、名前の昇順",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "HasHeaders": true
+          },
+          "body": [
+            {
+              "act": "Sequence",
+              "body": [
+                {
+                  "act": "SortColumnX",
+                  "name": "年齢",
+                  "props": {
+                    "ColumnName": {
+                      "lit": "Age"
+                    },
+                    "SortDirection": "Descending"
+                  }
+                },
+                {
+                  "act": "SortColumnX",
+                  "name": "名前",
+                  "props": {
+                    "ColumnName": {
+                      "lit": "Name"
+                    },
+                    "SortDirection": "Ascending"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A2\")",
+            "SaveTo": "a2"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"A2: [\" & Convert.ToString(a2) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A4\")",
+            "SaveTo": "a4"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"A4: [\" & Convert.ToString(a4) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

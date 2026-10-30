@@ -1,0 +1,75 @@
+{
+  "workflow": "InvokeVBAX_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\InvokeVBAX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\InvokeVBAX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "InvokeVBAX",
+          "name": "足し算",
+          "props": {
+            "Workbook": "Excel",
+            "CodeFilePath": {
+              "lit": "data\\excel\\vba\\AddNumbers.bas"
+            },
+            "EntryMethodName": {
+              "lit": "AddNumbers"
+            },
+            "Result": "r"
+          },
+          "body": [
+            {
+              "act": "Sequence",
+              "body": [
+                {
+                  "act": "InvokeVBAArgumentX",
+                  "props": {
+                    "ArgumentValue": "2"
+                  }
+                },
+                {
+                  "act": "InvokeVBAArgumentX",
+                  "props": {
+                    "ArgumentValue": "3"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"結果: [\" & Convert.ToString(r) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

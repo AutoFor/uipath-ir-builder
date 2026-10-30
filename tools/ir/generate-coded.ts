@@ -15,7 +15,7 @@ import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, Issue } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs, requiredRefs, scopeRefs, usingScope, UIA_APP_TYPE } from "./mapping.ts";
-import { excelVbForCs } from "./excel.ts";
+import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames } from "./validate.ts";
 import { objToCs } from "./uia.ts";
@@ -46,6 +46,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  // ラムダ（"scope": "lambda"）の本体に直接ある Break / Continue。C# では return にする
+  const lambdaExits = new Set<Node>();
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
   const emit = (depth: number, s: string) => lines.push("    ".repeat(depth) + s);
 
@@ -298,8 +300,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         else { emit(depth, "do"); braces(depth, inner, `while (${cond});`); }
         return;
       }
-      case "Break": emit(depth, "break;"); return;
-      case "Continue": emit(depth, "continue;"); return;
+      case "Break": emit(depth, lambdaExits.has(n) ? "return false;" : "break;"); return;
+      case "Continue": emit(depth, lambdaExits.has(n) ? "return true;" : "continue;"); return;
       case "Throw": emit(depth, `throw ${expr(p.Exception, `${at}.props.Exception`, sc)};`); return;
       case "Rethrow": emit(depth, "throw;"); return;
       case "RetryScope": {
@@ -333,7 +335,12 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];
-    const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
+    // "Prop" は IR にあること、"Prop=値" は props の値が等しいこと
+    const whenOk = (w: string) => {
+      const eq = w.indexOf("=");
+      return eq < 0 ? given.includes(w) : n.props?.[w.slice(0, eq)] !== undefined && String(n.props[w.slice(0, eq)]) === w.slice(eq + 1);
+    };
+    const v = m.coded.find((x) => (x.when ?? []).every(whenOk));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
     if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
@@ -383,6 +390,12 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
           const items = d.filter((x) => x.dir === "In").map((x) => `[${csLit(x.name)}] = ${expr(x.value, `${at}.dicts.${name}.${x.name}`, sc)}`);
           return `new Dictionary<string, object> { ${items.join(", ")} }`;
         }
+        if (filter === "excelFilter" || filter === "excelFilterValues") {
+          const fa = n.objs?.[name];
+          if (!fa) return dflt ?? "";
+          const ctx = { expr: (x: Value, xat: string) => expr(x, xat, sc), add };
+          return filter === "excelFilter" ? excelFilterToCs(fa, `${at}.objs.${name}`, ctx) : excelFilterValuesToCs(fa, `${at}.objs.${name}`, ctx);
+        }
         const pat = `${at}.props.${name}`;
         if (n.objs?.[name] !== undefined && adef) return objToCs(adef, name, n.objs[name], `${at}.objs.${name}`, { expr: (x, xat) => expr(x, xat, sc), add });
         const val = props[name];
@@ -421,6 +434,14 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const slotsUsed = new Set<string>();
     if (v.code) for (const l of fill(v.code).split(/\r?\n/)) emit(d, l);
     else if (v.call) {
+      // 子の設定から記述子を作る: 先に変数を作って子を実行し、それを引数に渡す
+      if (v.scope === "collect") {
+        const name = `__collect${++tmp}`;
+        emit(d, `var ${name} = ${fill(v.collectInit ?? "null")};`);
+        sc = new Map(sc).set(name, v.scopeType ?? "Object");
+        block(n.body, d, `${at}.body`, sc);
+        slotsUsed.add("body");
+      }
       const args = Object.entries(v.args ?? {}).map(([param, tpl]) => [param, argText(tpl)] as const).filter(([, t]) => t !== undefined).map(([param, t]) => `${param}: ${t}`);
       if (v.init) {
         // 引数 param に new Type { ... } を渡す。値が配列なら、使える最初のもの（Password と SecurePassword のどちらか、など）
@@ -432,7 +453,24 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       if (v.returns) used.add(v.returns);
       const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
       const us = usingScope(v);
-      if (us) {
+      if (v.scope === "lambda") {
+        const [item, index] = itemNames(n, 2);
+        const slot = adef ? defaultSlot(adef) : undefined;
+        const inner = new Map(sc).set(item, v.scopeType ?? (slot ? delegateArgs(slot, n.typeArg)?.[0] : undefined) ?? "Object");
+        const exits = loopExits(n.body ?? [], at);
+        exits.forEach((x) => lambdaExits.add(x));
+        const isFunc = exits.length > 0;
+        if (isFunc && !v.lambdaFuncArg) add(at, "CODED_UNSUPPORTED", `${className} の Break / Continue を対応表（${m.file}）が扱っていない（lambdaFuncArg が要る）`);
+        const counter = index ? `__index${++tmp}` : undefined;
+        if (counter) emit(d, `var ${counter} = 0;`); // XAML の番号は 1 始まり（run で確かめた）
+        emit(d, `${fill(v.call)}(${[...args, `${isFunc ? v.lambdaFuncArg : v.lambdaArg}: ${item} =>`].join(", ")}`);
+        emit(d, "{");
+        if (counter) { emit(d + 1, `${counter}++;`); emit(d + 1, `int ${index} = ${counter};`); inner.set(index, "Int32"); }
+        block(n.body, d + 1, `${at}.body`, inner);
+        if (isFunc) emit(d + 1, "return true;");
+        emit(d, "});");
+        slotsUsed.add("body");
+      } else if (us) {
         // スコープ: using (var <変数> = call) { body }。子からは {@scopeType の末尾}（NApplicationCard なら {app}）で参照する
         //   変数名は、varPrefix があれば <varPrefix><連番>（NApplicationCard の app1）、無ければ IR の item（Excel の Use Excel File など）
         //   CloseMode などは Dispose で効く
@@ -463,6 +501,26 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     emit(depth, "}");
     emit(depth, cond === "true" ? "catch (Exception)" : `catch (Exception) when (${cond})`);
     braces(depth, () => emit(depth + 1, `// ContinueOnError: ${className} の例外を無視する`));
+  }
+
+  // ラムダの本体にある、そのラムダを抜ける Break / Continue。内側のループの中のものは数えない。Return はラムダの中では書けない
+  function loopExits(nodes: Node[], at: string): Node[] {
+    const out: Node[] = [];
+    const walk = (c: Node, cat_at: string) => {
+      const r = resolve(cat, c.act, c.typeArg !== undefined);
+      if ("error" in r) return;
+      const name = r.activity.className;
+      if (name === "Return" && isBuiltin(r.activity.clrType)) add(cat_at, "CODED_UNSUPPORTED", "ラムダ（Excel の繰り返し）の中の Return は Coded に直せない");
+      if ((name === "Break" || name === "Continue") && isBuiltin(r.activity.clrType)) { out.push(c); return; }
+      const isLoop = isBuiltin(r.activity.clrType)
+        ? ["ForEach", "ForEachRow", "While", "DoWhile", "ParallelForEach", "RepeatNumberOfTimesX", "InterruptibleWhile", "InterruptibleDoWhile", "RetryScope"].includes(name)
+        : !!maps.get(`${r.activity.package}/${name}`)?.coded?.some((x) => x.scope === "lambda");
+      if (isLoop) return;
+      const kids = [...(c.body ?? []), ...(c.then ?? []), ...(c.else ?? []), ...Object.values(c.slots ?? {}).flat(), ...Object.values(c.cases ?? {}).flat(), ...(c.catches ?? []).flatMap((x) => x.body)];
+      kids.forEach((k) => walk(k, cat_at));
+    };
+    nodes.forEach((c, i) => walk(c, `${at}.body[${i}]`));
+    return out;
   }
 
   function invoke(n: Node, _v: Variant, m: Mapping, depth: number, at: string, sc: Map<string, string>) {

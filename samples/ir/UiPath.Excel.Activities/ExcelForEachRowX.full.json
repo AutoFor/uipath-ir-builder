@@ -1,0 +1,80 @@
+{
+  "workflow": "ExcelForEachRowX_Full",
+  "variables": [
+    {
+      "name": "d2",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelForEachRowX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelForEachRowX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelForEachRowX",
+          "name": "行ごと",
+          "item": [
+            "CurrentRow",
+            "CurrentIndex"
+          ],
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "HasHeaders": true,
+            "EmptyRowBehavior": "Stop",
+            "SaveAfterEachRow": true
+          },
+          "body": [
+            {
+              "act": "If",
+              "props": {
+                "Condition": "CurrentIndex = 1"
+              },
+              "then": [
+                {
+                  "act": "Continue"
+                }
+              ]
+            },
+            {
+              "act": "If",
+              "props": {
+                "Condition": "CurrentIndex = 3"
+              },
+              "then": [
+                {
+                  "act": "Break"
+                }
+              ]
+            },
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"処理: \" & CurrentRow(\"Name\").ToString"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

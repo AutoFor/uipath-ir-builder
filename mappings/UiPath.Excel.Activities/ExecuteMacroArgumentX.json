@@ -1,0 +1,9 @@
+{
+  "activity": "ExecuteMacroArgumentX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "code": "{@ExcelMacroArguments}.Add({ArgumentValue});"
+    }
+  ]
+}

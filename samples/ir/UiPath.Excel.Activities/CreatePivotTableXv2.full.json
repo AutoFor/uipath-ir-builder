@@ -1,0 +1,100 @@
+{
+  "workflow": "CreatePivotTableXv2_Full",
+  "variables": [
+    {
+      "name": "t",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\CreatePivotTableXv2_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\CreatePivotTableXv2_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "CreatePivotTableXv2",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "DestinationRange": "Excel.Sheet(\"Sheet2\").Range(\"C3\")",
+            "TableName": {
+              "lit": "Pivot1"
+            },
+            "LayoutRowType": "Tabular",
+            "ValuesMode": "Columns"
+          },
+          "body": [
+            {
+              "act": "Sequence",
+              "body": [
+                {
+                  "act": "PivotTableFieldX",
+                  "name": "行",
+                  "props": {
+                    "FieldName": {
+                      "lit": "Name"
+                    },
+                    "Type": "Row"
+                  }
+                },
+                {
+                  "act": "PivotTableFieldX",
+                  "name": "値1",
+                  "props": {
+                    "FieldName": {
+                      "lit": "Age"
+                    },
+                    "Type": "Value",
+                    "Function": "Max"
+                  }
+                },
+                {
+                  "act": "PivotTableFieldX",
+                  "name": "値2",
+                  "props": {
+                    "FieldName": {
+                      "lit": "Double"
+                    },
+                    "Type": "Value",
+                    "Function": "Sum"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"D7\")",
+            "SaveTo": "t"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"年齢の最大: [\" & Convert.ToString(t) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "activity": "InsertExcelChartX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.InsertExcelChart",
+      "returns": "InsertedChart",
+      "args": {
+        "sheet": "{InsertIntoSheet}",
+        "chartCategory": "UiPath.Excel.ExcelChartCategory.{ChartCategory}",
+        "chartType": "UiPath.Excel.ExcelChartType.{ChartType}",
+        "left": "{Left}",
+        "top": "{Top}",
+        "width": "{ChartWidth}",
+        "height": "{ChartHeight}"
+      },
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ]
+}

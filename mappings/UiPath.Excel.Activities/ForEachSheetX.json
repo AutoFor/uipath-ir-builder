@@ -1,0 +1,19 @@
+{
+  "activity": "ForEachSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.ForEachSheet",
+      "scope": "lambda",
+      "scopeType": "UiPath.Excel.ISheetRef",
+      "lambdaArg": "act",
+      "lambdaFuncArg": "func",
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "API のラムダの引数は ISheetRef（XAML の WorksheetQuickHandle より狭い）。CurrentSheet.Range(...) は Coded では build で落ちる"
+}

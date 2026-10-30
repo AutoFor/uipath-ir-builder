@@ -1,0 +1,10 @@
+{
+  "activity": "SortColumnX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "code": "{@SortXDescriptor}.SortColumns.Add(new SortXColumnModel({ColumnName}, UiPath.Excel.OrderType.{SortDirection:-Ascending}));"
+    }
+  ],
+  "notes": "SortX の子"
+}

@@ -1,0 +1,15 @@
+{
+  "activity": "RefreshPivotTableX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Table}.RefreshPivotTable",
+      "args": {
+        "layoutRowType": "UiPath.Excel.PivotTableLayoutRowType.{LayoutRowType}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

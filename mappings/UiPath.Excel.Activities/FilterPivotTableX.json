@@ -1,0 +1,18 @@
+{
+  "activity": "FilterPivotTableX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Table}.FilterPivotTable",
+      "args": {
+        "columnName": "{ColumnName}",
+        "values": "{FilterArgument|excelFilterValues:-new List<string>()}",
+        "clearFilter": "{ClearFilter:-false}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "API は値の一覧だけを取るので、Advanced のフィルターは NO_CODED_API（tools/ir/excel.ts）"
+}
