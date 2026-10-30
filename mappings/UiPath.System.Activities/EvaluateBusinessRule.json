@@ -1,0 +1,6 @@
+{
+  "activity": "EvaluateBusinessRule",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ビジネスルールの評価 API が ISystemService に無い）"
+}

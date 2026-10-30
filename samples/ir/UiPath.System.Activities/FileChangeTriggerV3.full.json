@@ -1,0 +1,56 @@
+{
+  "workflow": "FileChangeTriggerV3_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "slots": {
+        "Triggers": [
+          {
+            "act": "FileChangeTriggerV3",
+            "name": "ファイルの変更",
+            "props": {
+              "Path": {
+                "lit": "C:\\Users\\Public\\watch"
+              },
+              "FileNameFilter": {
+                "lit": "*.txt"
+              },
+              "IncludeSubdirectories": true,
+              "ChangeType": "Created",
+              "NotifyFilters": "FileName",
+              "Enabled": true,
+              "SchedulingMode": "Concurrent",
+              "TriggerId": "ir-file-trigger"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "発火した"
+              }
+            }
+          },
+          {
+            "act": "StopTriggers",
+            "props": {
+              "ShouldStop": "stp"
+            }
+          }
+        ]
+      },
+      "variables": [
+        {
+          "name": "stp",
+          "type": "Boolean"
+        }
+      ],
+      "item": "args"
+    }
+  ]
+}

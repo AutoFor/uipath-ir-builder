@@ -1,0 +1,42 @@
+{
+  "workflow": "ProcessTrackingScope_Full",
+  "body": [
+    {
+      "act": "ProcessTrackingScope",
+      "name": "トラッキングの範囲",
+      "props": {
+        "ProcessLogMode": "NewTrace",
+        "ProcessCaseName": {
+          "lit": "IrProcess"
+        },
+        "ProcessCaseNameToSwitchTo": {
+          "lit": "IrProcess2"
+        },
+        "TaskName": {
+          "lit": "IrTask"
+        },
+        "ScopeId": "ir-scope",
+        "ObjectId": {
+          "lit": "o1"
+        },
+        "ObjectType": {
+          "lit": "Invoice"
+        },
+        "ObjectInteraction": "Created"
+      },
+      "slots": {
+        "Sequence": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "範囲の中"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

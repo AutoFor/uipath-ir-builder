@@ -1,0 +1,27 @@
+{
+  "workflow": "SelectFolder_Full",
+  "variables": [
+    {
+      "name": "d",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "SelectFolder",
+      "name": "フォルダーを選ぶ",
+      "props": {
+        "SelectedFolder": "d"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "選んだ"
+        }
+      }
+    }
+  ]
+}

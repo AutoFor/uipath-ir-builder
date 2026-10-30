@@ -1,0 +1,30 @@
+{
+  "workflow": "TrackObject_Full",
+  "body": [
+    {
+      "act": "TrackObject",
+      "name": "オブジェクト追跡",
+      "props": {
+        "ObjectId": {
+          "lit": "o1"
+        },
+        "ObjectType": {
+          "lit": "Invoice"
+        },
+        "ObjectInteraction": "Updated",
+        "UseObjectPropertiesV2": true,
+        "ObjectPropertiesV2": "New Dictionary(Of String, Object) From {{\"amount\", 100}}",
+        "ObjectProperties": "New Dictionary(Of String, String) From {{\"status\", \"open\"}}"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "記録した"
+        }
+      }
+    }
+  ]
+}

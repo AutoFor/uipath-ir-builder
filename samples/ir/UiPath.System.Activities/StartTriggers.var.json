@@ -1,0 +1,30 @@
+{
+  "workflow": "StartTriggers_Var",
+  "variables": [
+    {
+      "name": "av",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object) From {{\"in_Name\", \"三郎\"}}"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartTriggers",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "Triggers.xaml"
+        },
+        "ArgumentsVariable": "av"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "開始した"
+        }
+      }
+    }
+  ]
+}

@@ -135,7 +135,14 @@ export const isExpressionChild = (p: Prop) => p.kind === "child" && p.type.start
 
 // delegate の引数の型（ActivityAction<A, B> なら [A, B]、引数なしなら []）。ジェネリックの仮引数（T）は typeArg で置き換える。
 // ActivityFunc（戻り値のある delegate）はまだ書けないので undefined
+// カタログが引数の型を落とす ActivityDelegate（宣言元.プロパティ → 引数の型）。Studio の既定 XAML に合わせる
+const delegateOverrides: Record<string, string[]> = {
+  "TriggerScope.Action": ["UiPath.Platform.Triggers.TriggerArgs"],
+};
+
 export function delegateArgs(p: Prop, typeArg: string | undefined): string[] | undefined {
+  const ov = delegateOverrides[`${p.declaredOn}.${p.name}`];
+  if (ov) return ov;
   if (p.type === "System.Activities.ActivityAction" || p.type === "System.Activities.ActivityDelegate") return [];
   const m = p.type.match(/^(?:System\.Activities\.)?ActivityAction<(.+)>$/);
   if (!m) return undefined;

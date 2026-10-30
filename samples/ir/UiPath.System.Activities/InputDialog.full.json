@@ -1,0 +1,36 @@
+{
+  "workflow": "InputDialog_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "InputDialog",
+      "name": "入力ダイアログ",
+      "props": {
+        "Title": {
+          "lit": "確認"
+        },
+        "Label": {
+          "lit": "選んでください"
+        },
+        "IsPassword": false,
+        "TopMost": true,
+        "Options": "New String() {\"A\", \"B\", \"C\"}",
+        "Result": "r"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "入力した"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "MessageBox",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（メッセージボックスの API が ISystemService に無い）"
+}

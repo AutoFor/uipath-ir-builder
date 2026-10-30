@@ -1,0 +1,36 @@
+{
+  "workflow": "MessageBox_Full",
+  "variables": [
+    {
+      "name": "b",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "MessageBox",
+      "name": "メッセージ",
+      "props": {
+        "Text": {
+          "lit": "続けますか"
+        },
+        "Caption": {
+          "lit": "確認"
+        },
+        "Buttons": "YesNo",
+        "AutoCloseAfter": "TimeSpan.FromSeconds(5)",
+        "TopMost": true,
+        "ChosenButton": "b"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "閉じた"
+        }
+      }
+    }
+  ]
+}

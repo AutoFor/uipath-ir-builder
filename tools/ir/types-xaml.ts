@@ -14,6 +14,7 @@ const SSEC = "clr-namespace:System.Security;assembly=System.Private.CoreLib";
 const UCAS = "clr-namespace:UiPath.Core.Activities.Storage;assembly=UiPath.System.Activities";
 const UPRH = "clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform";
 const SRX = "clr-namespace:System.Text.RegularExpressions;assembly=System.Text.RegularExpressions";
+const UPT = "clr-namespace:UiPath.Platform.Triggers;assembly=UiPath.Platform";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
@@ -38,6 +39,9 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Activity: ["Activity", {}],
   Timer: ["ucore:Timer", { ucore: UCORE }],
   QueueItem: ["ucore:QueueItem", { ucore: UCORE }],
+  "UiPath.Platform.Triggers.TriggerArgs": ["upt:TriggerArgs", { upt: UPT }],
+  FileChangeInfo: ["ucore:FileChangeInfo", { ucore: UCORE }],
+  ProcessInfo: ["ucore:ProcessInfo", { ucore: UCORE }],
   PasswordCredentials: ["uca:PasswordCredentials", { uca: UCA }],
   SecureString: ["ssec:SecureString", { ssec: SSEC }],
   DataRow: ["sd:DataRow", { sd: SD }],
@@ -67,7 +71,7 @@ const alias: Record<string, string> = {
 
 export function toXamlType(t: string): XamlType | { error: string } {
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
-  const s = t.trim().replace(/^System\.(?:(?:IO|Data|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
+  const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {
     const inner = toXamlType(s.slice(0, -2));
     if ("error" in inner) return inner;

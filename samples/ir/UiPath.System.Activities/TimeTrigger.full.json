@@ -1,0 +1,38 @@
+{
+  "workflow": "TimeTrigger_Full",
+  "variables": [
+    {
+      "name": "ji",
+      "type": "CurrentJobInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "TimeTrigger",
+      "name": "時刻トリガー",
+      "props": {
+        "Frequency": "CronExpression",
+        "CronExpression": "0 0 12 ? * MON-FRI *",
+        "MonthDaySelection": "DayOfMonth",
+        "TimeZone": "Tokyo Standard Time",
+        "HourlyRepeat": 2,
+        "HourlyStartingMinutes": 5,
+        "DailyRepeat": 1,
+        "DailyStartingTime": "2026-01-01T09:00:00",
+        "WeeklyStartingTime": "2026-01-01T10:00:00",
+        "MonthlyRepeat": 1,
+        "MonthlyStartingTime": "2026-01-01T11:00:00",
+        "Result": "ji"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "時刻で開始した"
+        }
+      }
+    }
+  ]
+}

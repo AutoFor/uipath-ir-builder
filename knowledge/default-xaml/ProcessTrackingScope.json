@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ProcessTrackingScope\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucap=\"clr-namespace:UiPath.Core.Activities.ProcessTracking;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucap:ProcessTrackingScope ObjectId=\"{x:Null}\" ObjectType=\"{x:Null}\" ProcessCaseName=\"{x:Null}\" ProcessCaseNameToSwitchTo=\"{x:Null}\" TaskName=\"{x:Null}\" ProcessLogMode=\"CurrentTrace\" ScopeId=\"c58f2332-548e-43ef-9c4e-013221b262f4\">\r\n    <ucap:ProcessTrackingScope.Sequence>\r\n      <Sequence DisplayName=\"\u30b7\u30fc\u30b1\u30f3\u30b9\" />\r\n    </ucap:ProcessTrackingScope.Sequence>\r\n  </ucap:ProcessTrackingScope>\r\n</Activity>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GlobalVariableChangedTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:GlobalVariableChangedTrigger VariableName=\"{x:Null}\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"9da2b01c-269e-48c1-bb07-a255d15a2ccd\" />\r\n</Activity>"
+  }
+}

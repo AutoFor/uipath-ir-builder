@@ -1,0 +1,67 @@
+{
+  "workflow": "InvokeWorkflowInteractive_Full",
+  "variables": [
+    {
+      "name": "msg",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeWorkflowInteractive",
+      "name": "対話で呼ぶ",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "InvokeWorkflowFile_Callee.xaml"
+        },
+        "ContinueOnError": "False",
+        "Level": "Warn",
+        "LogEntry": "WithArguments",
+        "LogExit": "WithArguments",
+        "Timeout": "TimeSpan.FromSeconds(30)",
+        "TargetSession": "Current",
+        "Elevated": false,
+        "UnSafe": false,
+        "KeepSessionConnected": true,
+        "LoginToConsole": false,
+        "Depth": 1,
+        "Width": 800,
+        "Height": 600,
+        "AssemblyName": ""
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "次郎"
+            }
+          },
+          {
+            "name": "in_Count",
+            "dir": "In",
+            "type": "Int32",
+            "value": "3"
+          },
+          {
+            "name": "out_Message",
+            "dir": "Out",
+            "type": "String",
+            "value": "msg"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "呼んだ"
+        }
+      }
+    }
+  ]
+}
