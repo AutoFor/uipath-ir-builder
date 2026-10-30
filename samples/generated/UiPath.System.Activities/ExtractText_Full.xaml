@@ -72,7 +72,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ns0:ExtractText DisplayName="2つの文字列の間" EndingText="&lt;/A&gt;" ExtractBaseURLOnly="False" ExtractOptions="BetweenStrings" FirstMatch="[first]" IgnoreDuplicates="True" MatchCase="True" Results="[all]" Source="&lt;A&gt;x&lt;/A&gt;&lt;a&gt;y&lt;/a&gt;&lt;A&gt;x&lt;/A&gt;" StartingText="&lt;A&gt;" sap2010:WorkflowViewState.IdRef="ExtractText_1" />
     <ns0:ExtractText DisplayName="メールアドレス" ExtractBaseURLOnly="False" ExtractOptions="Email" IgnoreDuplicates="True" MatchCase="False" Results="[mails]" Source="連絡先 a@example.com と b@example.org と a@example.com" sap2010:WorkflowViewState.IdRef="ExtractText_2" />
     <ns0:ExtractText DisplayName="URL" ExtractBaseURLOnly="True" ExtractOptions="URLs" IgnoreDuplicates="False" MatchCase="False" Results="[urls]" Source="see https://example.com/path?q=1 and http://foo.org/x" sap2010:WorkflowViewState.IdRef="ExtractText_3" />
-    <ui:LogMessage Level="Info" Message="[first]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[all.First()]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
     <ui:LogMessage Level="Info" Message="[all.Count().ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
     <ui:LogMessage Level="Info" Message="[String.Join(&quot;|&quot;, mails)]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
     <ui:LogMessage Level="Info" Message="[String.Join(&quot;|&quot;, urls)]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />

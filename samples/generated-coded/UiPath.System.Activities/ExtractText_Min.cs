@@ -14,17 +14,17 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            String first = default;
+            IEnumerable<String> res = default;
             {
                 IEnumerable<string> __found;
                 if (true) __found = system.ExtractTextOccurrences("ID: [123] end", "[", "]", false, false);
                 else if (false) __found = system.ExtractEmails("ID: [123] end", false);
                 else if (false) __found = system.ExtractUrls("ID: [123] end", false, false);
                 else __found = new[] { system.ExtractTextFromHTML("ID: [123] end") };
-                _ = __found;
-                first = __found.FirstOrDefault();
+                res = __found;
+                _ = __found.FirstOrDefault();
             }
-            Log(message: first, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(res.First()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }

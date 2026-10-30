@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Activities.System.Text;assembly=UiPath.System.Activities"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -63,9 +64,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ExtractText_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="first" />
+      <Variable x:TypeArguments="scg:IEnumerable(x:String)" Name="res" />
     </Sequence.Variables>
-    <ns0:ExtractText EndingText="]" ExtractBaseURLOnly="False" ExtractOptions="BetweenStrings" FirstMatch="[first]" IgnoreDuplicates="False" MatchCase="False" Source="ID: [123] end" StartingText="[&quot;[&quot;]" sap2010:WorkflowViewState.IdRef="ExtractText_1" />
-    <ui:LogMessage Level="Info" Message="[first]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ns0:ExtractText EndingText="]" ExtractBaseURLOnly="False" ExtractOptions="BetweenStrings" IgnoreDuplicates="False" MatchCase="False" Results="[res]" Source="ID: [123] end" StartingText="[&quot;[&quot;]" sap2010:WorkflowViewState.IdRef="ExtractText_1" />
+    <ui:LogMessage Level="Info" Message="[res.First()]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

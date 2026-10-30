@@ -27,7 +27,7 @@
           "act": "LogMessage",
           "props": {
             "Level": "Info",
-            "Message": "\"item=\" & it"
+            "Message": "\"item\""
           }
         },
         {

@@ -78,16 +78,6 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": {
-          "vb": "r.ToString(\"yyyy-MM-dd\")",
-          "cs": "r.ToString(\"yyyy-MM-dd\")"
-        }
-      }
-    },
-    {
-      "act": "LogMessage",
-      "props": {
-        "Level": "Info",
         "Message": "t"
       }
     }

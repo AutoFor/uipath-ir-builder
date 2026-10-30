@@ -41,7 +41,7 @@
       "name": "大文字小文字を区別せずに分ける",
       "props": {
         "FullText": {
-          "lit": "leftXright"
+          "lit": "leftxright"
         },
         "SeparatorKey": "Custom",
         "CustomSeparatorEnabled": true,

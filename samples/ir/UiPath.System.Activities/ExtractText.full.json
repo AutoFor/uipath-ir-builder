@@ -68,7 +68,10 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "first"
+        "Message": {
+          "vb": "all.First()",
+          "cs": "all.First()"
+        }
       }
     },
     {

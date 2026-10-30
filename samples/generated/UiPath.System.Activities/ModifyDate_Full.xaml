@@ -80,7 +80,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         </ActivityAction>
       </ui:ModifyDate.Body>
     </ui:ModifyDate>
-    <ui:LogMessage Level="Info" Message="[r.ToString(&quot;yyyy-MM-dd&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-    <ui:LogMessage Level="Info" Message="[t]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Level="Info" Message="[t]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>
