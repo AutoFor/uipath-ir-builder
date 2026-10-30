@@ -23,7 +23,9 @@ const args = process.argv.slice(2);
 const outIdx = args.indexOf("--out");
 const outDir = outIdx >= 0 ? args[outIdx + 1] : undefined;
 const checkOnly = args.includes("--check");
-const files = args.filter((a, i) => !a.startsWith("--") && (outIdx < 0 || i !== outIdx + 1));
+// 横に置く付属ファイル（*.verify.json、*.expected.json）は IR ではないので飛ばす
+export const isSidecar = (f: string) => /\.(verify|expected|args)\.json$/i.test(f);
+const files = args.filter((a, i) => !a.startsWith("--") && (outIdx < 0 || i !== outIdx + 1) && !isSidecar(a));
 if (!files.length || (!outDir && !checkOnly)) {
   console.error("使い方: node tools/ir/gen.ts <ir.json>... (--out <dir> | --check)");
   process.exit(2);

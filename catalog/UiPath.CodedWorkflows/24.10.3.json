@@ -1,0 +1,254 @@
+{
+  "package": "UiPath.CodedWorkflows",
+  "version": "24.10.3",
+  "assemblies": [
+    "UiPath.CodedWorkflows.dll"
+  ],
+  "activities": [],
+  "services": [
+    {
+      "name": "CodedWorkflowBase",
+      "clrType": "UiPath.CodedWorkflows.CodedWorkflowBase",
+      "assembly": "UiPath.CodedWorkflows",
+      "bases": [],
+      "methods": [
+        {
+          "name": "BuildClient",
+          "returns": "System.Net.Http.HttpClient",
+          "params": [
+            {
+              "name": "scope",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"Orchestrator\"",
+              "params": false
+            },
+            {
+              "name": "force",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "true",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BuildClientAsync",
+          "returns": "System.Threading.Tasks.Task<System.Net.Http.HttpClient>",
+          "params": [
+            {
+              "name": "scope",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"Orchestrator\"",
+              "params": false
+            },
+            {
+              "name": "force",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "true",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Delay",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "time",
+              "type": "System.TimeSpan",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Delay",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "delayMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DelayAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "time",
+              "type": "System.TimeSpan",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DelayAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "delayMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetRunningJobInformation",
+          "returns": "UiPath.Robot.Activities.Api.IRunningJobInformation",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "Log",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "message",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "level",
+              "type": "UiPath.CodedWorkflows.LogLevel",
+              "optional": true,
+              "default": "8",
+              "params": false
+            },
+            {
+              "name": "additionalLogFields",
+              "type": "System.Collections.Generic.IDictionary<System.String, System.Object>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RegisterServices",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "serviceLocator",
+              "type": "UiPath.CodedWorkflows.ICodedWorkflowsServiceLocator",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RegisterServicesCore",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "serviceLocator",
+              "type": "UiPath.CodedWorkflows.ICodedWorkflowsServiceLocator",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RunWorkflow",
+          "returns": "System.Collections.Generic.IDictionary<System.String, System.Object>",
+          "params": [
+            {
+              "name": "workflowFilePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "inputArguments",
+              "type": "System.Collections.Generic.IDictionary<System.String, System.Object>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "timeout",
+              "type": "System.Nullable<System.TimeSpan>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "isolated",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "targetSession",
+              "type": "UiPath.Activities.Contracts.InvokeTargetSession",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RunWorkflowAsync",
+          "returns": "System.Threading.Tasks.Task<System.Collections.Generic.IDictionary<System.String, System.Object>>",
+          "params": [
+            {
+              "name": "workflowFilePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "inputArguments",
+              "type": "System.Collections.Generic.IDictionary<System.String, System.Object>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "timeout",
+              "type": "System.Nullable<System.TimeSpan>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "isolated",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "targetSession",
+              "type": "UiPath.Activities.Contracts.InvokeTargetSession",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

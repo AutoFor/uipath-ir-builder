@@ -1,0 +1,8 @@
+{
+  "activity": "ReadTextFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "when": ["FileName"], "call": "system.ReadTextFile", "args": { "file": "LocalResource.FromPath({FileName})", "encoding": "{Encoding}" }, "returns": "Content" },
+    { "when": ["File"], "call": "system.ReadTextFile", "args": { "file": "{File}", "encoding": "{Encoding}" }, "returns": "Content" }
+  ]
+}

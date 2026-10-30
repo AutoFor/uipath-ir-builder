@@ -1,0 +1,15 @@
+{
+  "workflow": "PropForms",
+  "variables": [ { "name": "y", "type": "Int32", "default": "0" } ],
+  "body": [
+    { "act": "AddLogFields", "name": "ログに項目を足す",
+      "dicts": { "Fields": [ { "name": "verify_case", "dir": "In", "type": "String", "value": { "lit": "PropForms" } } ] } },
+    { "act": "InvokeCode", "name": "コードを呼ぶ",
+      "props": { "Code": "out_y = in_x * 2", "Language": "VBNet" },
+      "dicts": { "Arguments": [
+        { "name": "in_x", "dir": "In", "type": "Int32", "value": "21" },
+        { "name": "out_y", "dir": "Out", "type": "Int32", "value": "y" }
+      ] } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"y=\" & y.ToString" } }
+  ]
+}

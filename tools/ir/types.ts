@@ -17,7 +17,9 @@ export type VariableDecl = { name: string; type: string; default?: string };
 //   { lit: "こんにちは" } … 文字列リテラル。引用符のエスケープは生成器がやる
 //   30 / true           … 数値・真偽値のリテラル
 //   "Info"              … enum のプロパティなら、メンバー名はそのままリテラルになる
-export type Value = string | number | boolean | { lit: string };
+//   { vb: "...", cs: "..." } … VB と C# を別々に書く式。XAML には vb、Coded には cs を使う。
+//                          VB の式を C# に機械的に直せないとき（If(...)、ラムダなど）に使う
+export type Value = string | number | boolean | { lit: string } | { vb: string; cs: string };
 
 export type Node = {
   act: string; // ClassName（例 "LogMessage"）。曖昧なときは完全名（例 "System.Activities.Statements.ForEach"）
@@ -30,7 +32,8 @@ export type Node = {
   else?: Node[]; // If.Else
   slots?: Record<string, Node[]>; // それ以外の子（プロパティ名で指定）
   item?: string | string[]; // ForEach などのデリゲート引数名（既定 "item"）。ForEachFileX のように2つ取るものは配列
-  args?: InvokeArg[]; // InvokeWorkflowFile の引数
+  args?: InvokeArg[]; // InvokeWorkflowFile の引数（dicts.Arguments と同じ）
+  dicts?: Record<string, InvokeArg[]>; // Dictionary<String, Argument> 型のプロパティ（InvokeCode.Arguments、AddLogFields.Fields など）
   cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
   catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）

@@ -1,0 +1,6 @@
+{
+  "activity": "InvokeWorkflowFile",
+  "package": "UiPath.System.Activities",
+  "coded": [ { "special": "invokeWorkflow" } ],
+  "notes": "基底クラスの RunWorkflow(path, 引数の辞書, timeout)。戻り値の辞書から Out 引数を取り出す。呼び先が Coded で Out が1つのときは、引数名が \"Output\" になる。生成器の invoke() が書く"
+}

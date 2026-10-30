@@ -1,0 +1,6 @@
+{
+  "activity": "Delay",
+  "package": "System.Activities",
+  "coded": [ { "call": "Delay", "args": { "time": "{Duration}" } } ],
+  "notes": "基底クラスの Delay(TimeSpan)"
+}

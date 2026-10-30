@@ -22,6 +22,13 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe \
 
 DLL はデザイン用パッケージ（`uipath.system.activities`）ではなく、ランタイム用パッケージ（`*.runtime.windows` / `*.runtime`）の `lib/` にある。
 
+Coded の基底クラス（`Log`、`RunWorkflow`、`Delay` など）は `UiPath.CodedWorkflows.dll` から取る：
+
+```bash
+tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath.CodedWorkflows --version 24.10.3 \
+  --dll $N/uipath.codedworkflows/24.10.3/lib/net6.0-windows7.0/UiPath.CodedWorkflows.dll --out catalog/UiPath.CodedWorkflows/24.10.3.json
+```
+
 ### カタログ（`catalog/`）
 
 | パッケージ | バージョン | アクティビティ数 |
@@ -30,6 +37,7 @@ DLL はデザイン用パッケージ（`uipath.system.activities`）ではな�
 | UiPath.System.Activities | 26.10.0 | 186 |
 | UiPath.UIAutomation.Activities | 25.10.33 | 202 |
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
+| UiPath.CodedWorkflows | 24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ） |
 
 ### get-default-xaml との突き合わせ（`tools/compare-default-xaml.mjs`）
 
@@ -108,7 +116,52 @@ OverloadGroup（`WriteTextFile` の `File` か `FileName` のどちらか）は�
 
 XAML と同じ処理を C# の Coded Workflow でも書き、`uip rpa run` で同じログが出ることを確かめた（`samples/coded/CodedMain.cs`）。Coded から呼ぶサービスの API（`system.` / `uiAutomation.` のメソッドと引数）は、カタログ抽出器が `services` としてカタログに書き出す。
 
-制御フローは C# の構文で書けるので、Coded 側に IR は作らない。UI 操作や Excel のように設定が多いアクティビティは、Coded 側も IR から生成する予定。分かったことは [knowledge/coded-workflow.md](knowledge/coded-workflow.md)。
+いまは、手で書かずに XAML と同じ IR から C# を生成する（下の「IR → Coded（C#）生成器」）。`samples/coded/CodedMain.cs` は手書きの例として残している。分かったことは [knowledge/coded-workflow.md](knowledge/coded-workflow.md)。
+
+### IR → Coded（C#）生成器（`tools/ir/gen-coded.ts`）
+
+XAML と同じ IR から Coded Workflow の `.cs` を作る。制御フローは C# の構文に、アクティビティは対応表（`mappings/<pkg>/<ClassName>.json`、1アクティビティ1ファイル）でサービスのメソッド呼び出しにする。対応表が無いアクティビティはエラーになる。VB の式は `tools/ir/vb2cs.ts` が C# に直し、直せない式は IR に `{ "vb": "...", "cs": "..." }` で書く。
+
+```bash
+node tools/ir/gen-coded.ts samples/ir/Main.json --check --print     # 生成して表示（書き出さない）
+node tools/ir/gen-coded.ts samples/ir/*.json --out <フォルダ> --invoke-dir coded
+```
+
+生成例は `samples/generated-coded/`。In 引数は `Execute` の引数、Out 引数は戻り値（詳しくは [knowledge/coded-workflow.md](knowledge/coded-workflow.md)）。
+
+### Coded のチェッカー（`tools/coded/check.ts`）
+
+`.cs` のサービス呼び出し（`system.X(...)`、`uiAutomation.X(...)`、基底クラスの `Log(...)` など）を、カタログの `services` で検証する。生成した C# にも、手書きの C# にも使える。
+
+```bash
+node tools/coded/check.ts samples/coded/CodedMain.cs [--project <UiPathプロジェクト>] [--json]
+```
+
+検出するもの：無いメソッド（似た名前を出す）、どのオーバーロードにも合わない引数の数・名前付き引数・out/ref、リテラルの型違い（文字列を `ILocalResource` に渡すなど）、`LogLevel` のあいまいさ、`GetResourceForLocalPath`、`using` の欠け、名前空間の違い、`[Workflow]` の付け忘れ、await していない `*Async`、`Console.WriteLine`。検出しないもの：リテラル以外の式の型、サービスの戻り値に対する呼び出し（`app.Click(...)` など）、C# の文法。わざと壊した例は `samples/coded-invalid/Broken.cs`。
+
+### 一括検証（`tools/verify/verify.mjs`）
+
+IR と `.cs` を作業用の UiPath プロジェクト（`C:\Users\Public\uipath-ir-probe-<名前>`、テンプレートから作る）に置き、ファイルごとに `uip rpa run`（`--build-only` なら build だけ）を流して、結果を `out/verify/<名前>/report.md` / `report.json` に出す。IR 1つにつき XAML と C# の両方を試し、横に置いた `*.expected.log` と実際のログを突き合わせる。
+
+```bash
+node tools/verify/verify.mjs --name aut-512 samples/ir/Main.json samples/ir/Greet.json
+node tools/verify/verify.mjs --name aut-512 --build-only samples/ir
+```
+
+build は作業用プロジェクトごとに並行してよい（4並列で確認）。run はマシン全体で1つずつに並べる。管理者権限のシェルからは run できない（ロボットに「アクセスが拒否されました」と言われる）。詳しくは [docs/worker-guide.md](docs/worker-guide.md)。
+
+### テストと網羅レポート
+
+```bash
+node --test "tools/ir/*.test.ts"     # サンプルの検証・スナップショット・不正な例・チェッカー・VB→C#
+node tools/ir/coverage.ts            # knowledge/coverage.md（全プロパティを IR で書けるか）
+node tools/ir/coverage.ts --activity WriteTextFile
+node tools/compare-default-xaml.mjs --generated samples/generated   # 生成した XAML と Studio の既定 XAML を比べる
+```
+
+### ワーカー用の手順書
+
+Linear のイシュー（1アクティビティ1件）の進め方、ファイルの置き場所、完了の基準、Linear の更新の雛形は [docs/worker-guide.md](docs/worker-guide.md)。
 
 ## わかっている穴
 

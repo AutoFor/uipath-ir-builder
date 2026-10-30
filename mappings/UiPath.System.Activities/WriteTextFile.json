@@ -1,0 +1,9 @@
+{
+  "activity": "WriteTextFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "when": ["FileName"], "call": "system.WriteTextFile", "args": { "text": "{Text}", "file": "LocalResource.FromPath({FileName})", "encoding": "{Encoding}" } },
+    { "when": ["File"], "call": "system.WriteTextFile", "args": { "text": "{Text}", "file": "{File}", "encoding": "{Encoding}" } }
+  ],
+  "notes": "file は ILocalResource。パスの文字列は LocalResource.FromPath で包む（GetResourceForLocalPath を渡すと run で落ちる）。Output（書いたファイル）は Coded の戻り値が void なので扱えない"
+}

@@ -1,0 +1,8 @@
+{
+  "activity": "LogMessage",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "call": "Log", "args": { "message": "{Message|str}", "level": "UiPath.CodedWorkflows.LogLevel.{Level}" } }
+  ],
+  "notes": "基底クラスの Log。LogLevel は UiPath.Core.Activities にもあるので完全名で書く。Level の名前（Trace/Info/Warn/Error/Fatal）は XAML と Coded で同じ。Level が無ければ Info"
+}

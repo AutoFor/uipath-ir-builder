@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
 import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
-import type { Workflow, Node, Value, VariableDecl } from "./types.ts";
+import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
 
@@ -112,6 +112,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.props ?? {})) {
       const p = a.props.find((p) => p.name === k)!;
       if (isUntypedArgument(p.type)) elems.push({ prop: p, value: v });
+      else if (p.type === "System.Type") attrs.push([k, `{x:Type ${typeText(String(v))}}`]);
       else attrs.push([k, attrValue(v, p)]);
     }
     // get-default-xaml に出た既定値のうち、IR が書いていないもの（Version=V5 など）
@@ -133,17 +134,26 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
     const hasContent =
-      elems.length || slots.length || n.variables?.length || n.args?.length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || slots.length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
-    if (n.args?.length) {
-      emit(depth + 1, `<${tag}.Arguments>`);
-      for (const x of n.args) {
+    const dicts: [string, InvokeArg[]][] = [...(n.args?.length ? [["Arguments", n.args] as [string, InvokeArg[]]] : []), ...Object.entries(n.dicts ?? {})];
+    for (const [prop, list] of dicts) {
+      // 辞書のプロパティ。Studio の既定 XAML と同じく <scg:Dictionary> で包む（プロパティが null で始まるアクティビティもあるため）。
+      // InvokeWorkflowFile（args）だけは、run で確かめた包まない形のまま
+      const wrap = !(n.args?.length && prop === "Arguments");
+      const p = a.props.find((x) => x.name === prop);
+      const valueType = /InArgument>$/.test(p?.type ?? "") ? "InArgument" : "Argument";
+      if (wrap) xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      emit(depth + 1, `<${tag}.${prop}>`);
+      if (wrap) emit(depth + 2, `<scg:Dictionary x:TypeArguments="x:String, ${valueType}">`);
+      for (const x of list) {
         const v = x.dir === "In" ? exprText(x.value) : String(x.value);
-        emit(depth + 2, `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
+        emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
       }
-      emit(depth + 1, `</${tag}.Arguments>`);
+      if (wrap) emit(depth + 2, `</scg:Dictionary>`);
+      emit(depth + 1, `</${tag}.${prop}>`);
     }
     if (n.variables?.length) {
       emit(depth + 1, `<${tag}.Variables>`);
@@ -237,17 +247,17 @@ function single(nodes: Node[], name: string): Node {
 function attrValue(v: Value, p: Prop): string {
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "True" : "False";
-  if (p.kind === "prop") return typeof v === "string" ? v : v.lit;
+  if (p.kind === "prop") return typeof v === "string" ? v : "lit" in v ? v.lit : v.vb;
   if (typeof v === "string" && p.enum?.includes(v)) return v;
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
-  if (typeof v === "object" && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return v.lit;
+  if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return v.lit;
   return `[${exprText(v)}]`;
 }
 
 // VB の式にする。{ lit } は文字列リテラル
 function exprText(v: Value): string {
-  if (typeof v === "object") return `"${v.lit.replace(/"/g, '""')}"`;
+  if (typeof v === "object") return "lit" in v ? `"${v.lit.replace(/"/g, '""')}"` : v.vb;
   if (typeof v === "boolean") return v ? "True" : "False";
   return String(v);
 }

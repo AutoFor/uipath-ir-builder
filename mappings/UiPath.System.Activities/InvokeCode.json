@@ -1,0 +1,6 @@
+{
+  "activity": "InvokeCode",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded では C# をそのまま書くので InvokeCode は要らない"
+}

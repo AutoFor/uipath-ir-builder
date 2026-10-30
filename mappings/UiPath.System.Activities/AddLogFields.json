@@ -1,0 +1,6 @@
+{
+  "activity": "AddLogFields",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（基底クラスの Log の additionalLogFields で、ログ1件ごとに渡す）"
+}

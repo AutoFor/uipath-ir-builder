@@ -1,0 +1,6 @@
+{
+  "activity": "AddToCollection",
+  "package": "System.Activities",
+  "coded": [ { "code": "{Collection}.Add({Item});" } ],
+  "notes": "サービスの API は無い。C# の ICollection<T>.Add で書く"
+}

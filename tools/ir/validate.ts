@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot, isExpressionChild, delegateArgs } from "./catalog.ts";
+import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 
@@ -47,6 +47,13 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
         continue;
       }
       given.add(k);
+      const w = writable(a, p);
+      if (!w.ok) { add(at, "UNSUPPORTED_PROP", `"${k}": ${w.reason}`); continue; }
+      if (p.type === "System.Type") {
+        if (typeof v !== "string") add(at, "BAD_TYPE_VALUE", `"${k}" は型名（"String" など）で書く`);
+        else checkType(v, at, add);
+        continue;
+      }
       if (p.obsolete) add(at, "OBSOLETE_PROP", `"${k}" は非推奨`);
       if (p.enum && !(typeof v === "string" && p.enum.includes(v)))
         add(at, "BAD_ENUM", `"${k}" は ${p.enum.join(" / ")} のどれか`);
@@ -87,6 +94,19 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       n.args.forEach((x, i) => {
         checkType(x.type, `${path}.args[${i}]`, add);
         if (x.dir !== "In") checkLValue(x.value, `${path}.args[${i}]`, scope);
+      });
+    }
+
+    for (const [k, list] of Object.entries(n.dicts ?? {})) {
+      const p = a.props.find((p) => p.name === k);
+      const at = `${path}.dicts.${k}`;
+      if (!p || !isArgumentDict(p.type)) { add(at, "BAD_DICT", `${a.className} に引数の辞書のプロパティ "${k}" は無い`); continue; }
+      given.add(k);
+      const inOnly = /InArgument>$/.test(p.type);
+      list.forEach((x, i) => {
+        checkType(x.type, `${at}[${i}]`, add);
+        if (inOnly && x.dir !== "In") add(`${at}[${i}]`, "BAD_DICT", `"${k}" には In の引数しか入らない`);
+        if (x.dir !== "In") checkLValue(x.value, `${at}[${i}]`, scope);
       });
     }
 
@@ -147,6 +167,9 @@ export function itemNames(n: Node, count: number): string[] {
   const given = n.item === undefined ? [] : Array.isArray(n.item) ? n.item : [n.item];
   return Array.from({ length: count }, (_, i) => given[i] ?? (i === 0 ? "item" : `item${i + 1}`));
 }
+
+// Dictionary<String, Argument> / Dictionary<String, InArgument>（IDictionary も）
+export const isArgumentDict = (t: string) => /^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(t);
 
 // 非ジェネリックの InArgument / OutArgument（Assign.To など）は、要素形式で型を書く必要がある
 export const isUntypedArgument = (t: string) => t === "System.Activities.InArgument" || t === "System.Activities.OutArgument";

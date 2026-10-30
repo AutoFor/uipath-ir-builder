@@ -1,0 +1,6 @@
+{
+  "workflow": "Main",
+  "body": [
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "verify: Main.xaml placeholder" } } }
+  ]
+}

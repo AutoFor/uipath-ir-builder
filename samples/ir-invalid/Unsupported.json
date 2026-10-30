@@ -1,0 +1,10 @@
+{
+  "workflow": "Unsupported",
+  "variables": [ { "name": "x", "type": "Int32" } ],
+  "body": [
+    { "act": "RemoveLogFields", "props": { "Fields": "New List(Of InArgument(Of String))" } },
+    { "act": "AddLogFields", "dicts": { "Fields": [ { "name": "a", "dir": "Out", "type": "String", "value": "x" } ] } },
+    { "act": "InvokeCode", "props": { "Code": "x = 1" }, "dicts": { "Argumentz": [] } },
+    { "act": "ModifyText", "props": { "AllowedItemType": 3 } }
+  ]
+}

@@ -105,3 +105,41 @@ export function delegateArgs(p: Prop, typeArg: string | undefined): string[] | u
   if (!m) return undefined;
   return m[1].split(",").map((s) => s.trim()).map((t) => (/^T\d*$/.test(t) ? typeArg ?? "Object" : t));
 }
+
+// ---- プロパティを IR で書けるか（validate と coverage が使う）----
+
+// IR の専用の書き方があるプロパティ（ClassName.Prop）
+const specialProps: Record<string, string> = {
+  "*.Variables": "variables",
+  "*.DisplayName": "name",
+  "InvokeWorkflowFile.Arguments": "args",
+  "Switch.Cases": "cases",
+  "TryCatch.Catches": "catches",
+  "MultipleAssign.AssignOperations": "assigns",
+};
+const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan"]);
+
+export type Writable = { ok: true; how: string } | { ok: false; reason: string; group: string };
+
+export function writable(a: Activity, p: Prop): Writable {
+  const sp = specialProps[`${a.className}.${p.name}`] ?? specialProps[`*.${p.name}`];
+  if (sp) return { ok: true, how: sp };
+  switch (p.kind) {
+    case "in": case "out": case "inout": return { ok: true, how: "式" };
+    case "child": return { ok: true, how: isExpressionChild(p) ? "式" : "slots" };
+    case "children": return { ok: true, how: "slots" };
+    case "delegate":
+      return delegateArgs(p, "T") ? { ok: true, how: "slots" } : { ok: false, group: "ActivityFunc", reason: `${p.type}（戻り値のある delegate）はまだ書けない` };
+  }
+  // 素のプロパティ（XAML の属性に書く）
+  if (p.enum || attrTypes.has(p.type)) return { ok: true, how: "属性" };
+  const nullable = p.type.match(/^System\.Nullable<(.+)>$/);
+  if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
+  if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
+  if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))
+    return { ok: false, group: "コレクション", reason: `${p.type} は要素構文が要るのでまだ書けない` };
+  if (/^UiPath\.(Core\.Activities\.(Target|ImageTarget|CursorPosition)|UIAutomationNext\.(TargetAnchorable|TargetApp|ClickOffset|PointOffset)|CV\.|Core\.Region)/.test(p.type))
+    return { ok: false, group: "UI のターゲット", reason: `${p.type} は UI 操作の設計で扱う（後で追記）` };
+  return { ok: false, group: "オブジェクト", reason: `${p.type} は要素構文が要るのでまだ書けない` };
+}

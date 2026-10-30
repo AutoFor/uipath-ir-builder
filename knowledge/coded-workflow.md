@@ -19,3 +19,27 @@
 
 - 制御フロー（If、ループ、TryCatch、Switch、代入など）は C# の構文で書けるので、Coded 側に IR は要らない
 - UI 操作や Excel のように、設定が多い・リソースの渡し方に癖があるアクティビティは、Coded 側も IR から生成して、カタログ（`services`）で検証する
+
+## ワークフローの引数（uip rpa build の生成コードで確かめた）
+
+Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス>Activity.cs` を生成し、`Execute` のシグネチャから XAML の引数を作る。
+
+- In 引数：`Execute` の引数（名前もそのまま）
+- Out 引数：戻り値。1つなら `public string Execute(...)` で、引数名は `Output` になる。2つ以上なら名前付きタプル `public (string out_Message, int out_Length) Execute(...)` で、要素名が引数名になる
+- `ref` / `out` の引数は使えない（生成コードが `out` / `ref` を付けずに呼ぶので CS1620 でコンパイルが落ちる）。InOut は Coded では書けない
+- `RunWorkflow("coded/Greet.cs", 引数の辞書)` と書くと build は通る（run で呼べるかはまだ確かめていない）。戻り値の辞書のキーは上の引数名（Out が1つなら `"Output"`）
+
+## サービスの変数名と型
+
+`.local/.codedworkflows/CodedWorkflow.cs`（Studio が依存パッケージから生成する `CodedWorkflow` の部分クラス）に書かれている。プローブ プロジェクトでは：
+
+| 変数 | 型 |
+| --- | --- |
+| `system` | `UiPath.Core.Activities.API.ISystemService` |
+| `uiAutomation` | `UiPath.UIAutomationNext.API.Contracts.IUiAutomationAppService` |
+| `excel` | `UiPath.Excel.Activities.API.IExcelService` |
+| `mail` | `UiPath.Mail.Activities.Api.IMailService` |
+| `testing` | `UiPath.Testing.API.ITestingService` |
+| `workflows` | プロジェクトごとの `WorkflowRunnerService`（ワークフローを型付きで呼ぶ） |
+
+基底クラス `UiPath.CodedWorkflows.CodedWorkflowBase`（UiPath.CodedWorkflows 24.10.3）の `Log` / `RunWorkflow` / `Delay` / `BuildClient` などは、カタログ抽出器が `catalog/UiPath.CodedWorkflows/24.10.3.json` に書き出す。

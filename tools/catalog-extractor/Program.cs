@@ -205,13 +205,20 @@ record AttrSummary(bool Required, string? Default, string? Category, string? Dis
 static class Services
 {
     // Coded の API は "<名前空間>.API" 配下の公開インターフェース（ISystemService、IUiAutomationAppService など）
+    // それに加えて、Coded Workflow の基底クラス CodedWorkflowBase（Log、RunWorkflow、Delay など。protected も含む）
     public static bool IsService(Type t) =>
-        t.IsPublic && t.IsInterface && t.Name.EndsWith("Service") && (t.Namespace ?? "").Split('.').Contains("API");
+        (t.IsPublic && t.IsInterface && t.Name.EndsWith("Service") && (t.Namespace ?? "").Split('.').Contains("API"))
+        || t.FullName == "UiPath.CodedWorkflows.CodedWorkflowBase";
 
     public static ServiceInfo Describe(Type t)
     {
         var methods = new List<MethodSig>();
-        foreach (var m in t.GetMethods().Where(m => !m.IsSpecialName))
+        // クラスは自分で宣言した public / protected のメソッドだけ（object のメソッドは要らない）
+        var all = t.IsInterface
+            ? t.GetMethods()
+            : t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                .Where(m => m.IsPublic || m.IsFamily || m.IsFamilyOrAssembly).ToArray();
+        foreach (var m in all.Where(m => !m.IsSpecialName))
         {
             var ps = m.GetParameters().Select(p =>
             {
