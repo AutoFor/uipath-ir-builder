@@ -244,14 +244,19 @@ function single(nodes: Node[], name: string): Node {
   return nodes.length === 1 ? nodes[0] : { act: "Sequence", name, body: nodes };
 }
 
+// 属性の値が { で始まると XAML は markup extension とみなす。リテラルの { は {} を前に付けて逃がす（JSON の文字列など）
+function markupEscape(s: string): string {
+  return s.startsWith("{") && !s.startsWith("{}") ? "{}" + s : s;
+}
+
 function attrValue(v: Value, p: Prop): string {
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "True" : "False";
-  if (p.kind === "prop") return typeof v === "string" ? v : "lit" in v ? v.lit : v.vb;
+  if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
   if (typeof v === "string" && p.enum?.includes(v)) return v;
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
-  if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return v.lit;
+  if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return markupEscape(v.lit);
   return `[${exprText(v)}]`;
 }
 

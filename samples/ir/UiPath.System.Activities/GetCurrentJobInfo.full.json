@@ -1,0 +1,25 @@
+{
+  "workflow": "GetCurrentJobInfo_Full",
+  "variables": [
+    {
+      "name": "info",
+      "type": "CurrentJobInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetCurrentJobInfo",
+      "name": "今のジョブの情報",
+      "props": {
+        "Result": "info"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ジョブ情報あり: \" & (info IsNot Nothing).ToString"
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "workflow": "DeleteStorageFile_Full",
+  "body": [
+    {
+      "act": "DeleteStorageFile",
+      "name": "ストレージのファイルを消す",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Path": {
+          "lit": "ir/delete-me.txt"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "削除した"
+        }
+      }
+    }
+  ]
+}

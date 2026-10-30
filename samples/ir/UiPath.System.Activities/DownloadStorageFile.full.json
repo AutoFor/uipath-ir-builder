@@ -1,0 +1,39 @@
+{
+  "workflow": "DownloadStorageFile_Full",
+  "variables": [
+    {
+      "name": "file",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "DownloadStorageFile",
+      "name": "ストレージからダウンロード",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Path": {
+          "lit": "ir/report.txt"
+        },
+        "Destination": {
+          "lit": "C:\\Temp\\ir-download\\report.txt"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "Result": "file"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ダウンロードした: \" & file.LocalPath"
+      }
+    }
+  ]
+}

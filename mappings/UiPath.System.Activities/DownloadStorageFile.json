@@ -1,0 +1,47 @@
+{
+  "activity": "DownloadStorageFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Destination"
+      ],
+      "call": "system.DownloadStorageFile",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "destination": "{Destination}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      }
+    },
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.DownloadStorageFile",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "destination": "null",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.DownloadStorageFile",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "Result（ILocalResource）は戻り値で受ける。Destination か TimeoutMS があるときは 5 引数の形（足りない方は null / 30000）"
+}

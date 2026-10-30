@@ -1,0 +1,30 @@
+{
+  "activity": "DeleteStorageFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.DeleteStorageFile",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.DeleteStorageFile",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "BindingsKey は Studio のバインド用で、XAML にも Coded にも書けない（書くと build が落ちる）。FolderPath が無いときは folderPath 引数ごと省く（3 引数の形）"
+}

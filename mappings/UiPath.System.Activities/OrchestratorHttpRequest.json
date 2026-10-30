@@ -1,0 +1,35 @@
+{
+  "activity": "OrchestratorHttpRequest",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.OrchestratorHTTPRequest",
+      "returns": "StatusCode",
+      "args": {
+        "method": "UiPath.Core.Activities.OrchestratorAPIHttpMethods.{Method:-GET}",
+        "relativeEndpoint": "{RelativeEndpoint}",
+        "jSONPayload": "{JSONPayload:-null}",
+        "folderPath": "{FolderPath:-null}",
+        "responseHeaders": "out {ResponseHeaders:-_}",
+        "result": "out {Result:-_}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.OrchestratorHTTPRequest",
+      "returns": "StatusCode",
+      "args": {
+        "method": "UiPath.Core.Activities.OrchestratorAPIHttpMethods.{Method:-GET}",
+        "relativeEndpoint": "{RelativeEndpoint}",
+        "jSONPayload": "{JSONPayload:-null}",
+        "responseHeaders": "out {ResponseHeaders:-_}",
+        "result": "out {Result:-_}",
+        "folderPath": "{FolderPath:-null}"
+      }
+    }
+  ],
+  "notes": "応答の本文（Result）と ResponseHeaders は out 引数で受ける（無いときは捨てる）。StatusCode は戻り値。RelativeEndpoint が無い形は Coded では書かない（必須）"
+}

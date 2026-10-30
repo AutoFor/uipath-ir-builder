@@ -1,0 +1,35 @@
+{
+  "workflow": "GetJobs_Full",
+  "variables": [
+    {
+      "name": "jobs",
+      "type": "IEnumerable<OrchestratorJob>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetJobs",
+      "name": "成功したジョブを集める",
+      "props": {
+        "Filter": {
+          "lit": "State eq 'Successful'"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "Top": 10,
+        "Skip": 0,
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "Result": "jobs"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ジョブ数: \" & jobs.Count().ToString"
+      }
+    }
+  ]
+}

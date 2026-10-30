@@ -1,0 +1,30 @@
+{
+  "workflow": "StopJob_Full",
+  "variables": [
+    {
+      "name": "job",
+      "type": "OrchestratorJob"
+    }
+  ],
+  "body": [
+    {
+      "act": "StopJob",
+      "name": "ジョブを止める",
+      "props": {
+        "Job": "job",
+        "Strategy": "Kill",
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "ジョブを止めた"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "activity": "ReadStorageText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Encoding"
+      ],
+      "call": "system.ReadStorageText",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "encoding": "{Encoding}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      }
+    },
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.ReadStorageText",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "encoding": "null",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.ReadStorageText",
+      "returns": "Result",
+      "args": {
+        "path": "{Path}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "読んだ文字（Result）は戻り値で受ける。Encoding か TimeoutMS があるときは 5 引数の形"
+}

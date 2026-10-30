@@ -6,6 +6,9 @@ export type XamlType = { text: string; xmlns: Record<string, string> };
 const S = "clr-namespace:System;assembly=System.Private.CoreLib";
 const SCG = "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib";
 const SD = "clr-namespace:System.Data;assembly=System.Data.Common";
+const UCA = "clr-namespace:UiPath.Core.Activities;assembly=UiPath.System.Activities";
+const UCAS = "clr-namespace:UiPath.Core.Activities.Storage;assembly=UiPath.System.Activities";
+const UPRH = "clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
@@ -28,6 +31,12 @@ const simple: Record<string, [string, Record<string, string>]> = {
   DirectoryInfo: ["sio:DirectoryInfo", { sio: SIO }],
   DataTable: ["sd:DataTable", { sd: SD }],
   DataRow: ["sd:DataRow", { sd: SD }],
+  // UiPath.System.Activities / UiPath.Platform の型
+  OrchestratorJob: ["uca:OrchestratorJob", { uca: UCA }],
+  CurrentJobInfo: ["uca:CurrentJobInfo", { uca: UCA }],
+  StorageFileInfo: ["ucas:StorageFileInfo", { ucas: UCAS }],
+  ILocalResource: ["upr:ILocalResource", { upr: UPRH }],
+  IResource: ["upr:IResource", { upr: UPRH }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {

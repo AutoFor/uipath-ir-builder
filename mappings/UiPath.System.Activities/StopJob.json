@@ -1,0 +1,33 @@
+{
+  "activity": "StopJob",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.StopJob",
+      "args": {
+        "job": "{Job}",
+        "strategy": "UiPath.Core.Activities.StopStrategy.{Strategy:-Stop}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ]
+    },
+    {
+      "call": "system.StopJob",
+      "args": {
+        "job": "{Job}",
+        "strategy": "UiPath.Core.Activities.StopStrategy.{Strategy:-Stop}",
+        "folderPath": "{FolderPath}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ]
+    }
+  ],
+  "notes": "Strategy の既定は Stop。FolderPath は廃止（obsolete）のプロパティ"
+}

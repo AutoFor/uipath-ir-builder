@@ -1,0 +1,25 @@
+{
+  "activity": "ListStorageFiles",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.ListStorageFiles",
+      "returns": "Result",
+      "args": {
+        "directory": "{Directory}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "recursive": "{Recursive:-true}",
+        "filter": "{Filter:-null}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities.Storage"
+      ]
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "いつも 6 引数の形。Recursive の既定は XAML の既定 XAML に合わせて true"
+}

@@ -1,0 +1,47 @@
+{
+  "activity": "WriteStorageText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Encoding"
+      ],
+      "call": "system.WriteStorageText",
+      "args": {
+        "path": "{Path}",
+        "text": "{Text}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "encoding": "{Encoding}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      }
+    },
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.WriteStorageText",
+      "args": {
+        "path": "{Path}",
+        "text": "{Text}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "encoding": "null",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.WriteStorageText",
+      "args": {
+        "path": "{Path}",
+        "text": "{Text}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "Encoding か TimeoutMS があるときは 6 引数の形"
+}

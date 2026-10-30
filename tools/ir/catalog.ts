@@ -40,6 +40,10 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
     for (const a of c.activities) {
       // 型が ActivityDelegate のプロパティ（RetryScope.ActivityBody など）は、抽出器では prop になるが中身は引数なしの ActivityAction
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
+      // 戻り値のある基底（BaseStorageActivity<String> など。最後の型引数 T が決まっているもの）の Result は、リフレクションでは
+      // 取れない（Activity<T>.Result）が、XAML では Result="[変数]" の属性で書ける。out のプロパティとして足す
+      const res = typeof a.baseType === "string" && a.genericArity === 0 && !props.some((p: Prop) => p.name === "Result") ? resultType(a.baseType) : undefined;
+      if (res) props.push({ name: "Result", kind: "out", type: res, required: false, obsolete: false });
       activities.push({ ...a, props, package: c.package });
     }
   }
@@ -61,6 +65,16 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
     }
   }
   return { activities, defaults };
+}
+
+// 基底クラスの型引数から Result の型を取る。Activity<T> 系（CodeActivity<T>、NativeActivity<T>、AsyncTaskCodeActivity<T>、
+// Base…Activity<T> など）で、T が決まっている（T、T1 のような仮引数でない）ときだけ
+function resultType(baseType: string): string | undefined {
+  const m = baseType.match(/(?:^|\.)(\w*Activity)<(.+)>$/);
+  if (!m) return undefined;
+  const t = m[2];
+  if (/(^|[<, ])T\d?(?=[>, ]|$)/.test(t)) return undefined;
+  return t;
 }
 
 export type Resolved = { activity: Activity } | { error: string; candidates: Activity[] };
@@ -124,6 +138,8 @@ export type Writable = { ok: true; how: string } | { ok: false; reason: string; 
 export function writable(a: Activity, p: Prop): Writable {
   const sp = specialProps[`${a.className}.${p.name}`] ?? specialProps[`*.${p.name}`];
   if (sp) return { ok: true, how: sp };
+  // BindingsKey は Studio が実行時のバインド用に内部で持つ。XAML の属性に書くと「unknown member」で build が落ちる（storage / RunJob / StartJob で確認）
+  if (p.name === "BindingsKey") return { ok: false, group: "Studio の内部", reason: "XAML に書けない（書くと build が「unknown member」で落ちる。Studio がバインド用に内部で持つ）" };
   switch (p.kind) {
     case "in": case "out": case "inout": return { ok: true, how: "式" };
     case "child": return { ok: true, how: isExpressionChild(p) ? "式" : "slots" };

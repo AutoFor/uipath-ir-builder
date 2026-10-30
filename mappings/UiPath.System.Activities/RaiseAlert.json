@@ -1,0 +1,27 @@
+{
+  "activity": "RaiseAlert",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TimeoutMS"
+      ],
+      "call": "system.RaiseAlert",
+      "args": {
+        "severity": "UiPath.Core.Activities.AlertSeverity.{Severity:-Info}",
+        "notification": "{Notification}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "call": "system.RaiseAlert",
+      "args": {
+        "severity": "UiPath.Core.Activities.AlertSeverity.{Severity:-Info}",
+        "notification": "{Notification}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "notes": "Severity の既定は XAML の既定 XAML に合わせて Info"
+}

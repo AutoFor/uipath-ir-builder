@@ -1,0 +1,60 @@
+{
+  "workflow": "RunJob_Full",
+  "variables": [
+    {
+      "name": "job",
+      "type": "OrchestratorJob"
+    }
+  ],
+  "body": [
+    {
+      "act": "RunJob",
+      "name": "子のプロセスを実行",
+      "props": {
+        "ProcessName": {
+          "lit": "IrChildProcess"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "Account": {
+          "lit": "ir-robot-unattended"
+        },
+        "Machine": {
+          "lit": "ir-machine"
+        },
+        "EntryPointPath": {
+          "lit": "Main.xaml"
+        },
+        "ExecutionMode": "Busy",
+        "FailWhenFaulted": false,
+        "Priority": "High",
+        "RuntimeType": "Unattended",
+        "TimeoutMS": 600000,
+        "ContinueOnError": false,
+        "Job": "job"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "太郎"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "ジョブを実行した"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "workflow": "RaiseAlert_Full",
+  "body": [
+    {
+      "act": "RaiseAlert",
+      "name": "警告を上げる",
+      "props": {
+        "Notification": {
+          "lit": "IR テストのアラート（警告）"
+        },
+        "Severity": "Warning",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "アラートを上げた"
+        }
+      }
+    }
+  ]
+}

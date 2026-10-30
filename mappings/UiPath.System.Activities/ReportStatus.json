@@ -1,0 +1,6 @@
+{
+  "activity": "ReportStatus",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に ReportStatus が無い）"
+}

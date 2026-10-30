@@ -1,0 +1,42 @@
+{
+  "workflow": "UploadStorageFile_Full",
+  "arguments": [
+    {
+      "name": "in_File",
+      "dir": "In",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "UploadStorageFile",
+      "name": "ストレージへアップロード",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "FileResource": "in_File",
+        "Destination": {
+          "lit": "reports/"
+        },
+        "FileName": {
+          "lit": "ir-upload.txt"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "アップロードした"
+        }
+      }
+    }
+  ]
+}
