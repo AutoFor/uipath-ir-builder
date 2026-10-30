@@ -1,0 +1,6 @@
+{
+  "activity": "FormatValue",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に該当するメソッドが無い）"
+}

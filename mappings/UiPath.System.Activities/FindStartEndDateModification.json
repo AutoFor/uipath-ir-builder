@@ -1,0 +1,6 @@
+{
+  "activity": "FindStartEndDateModification",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ModifyDate の中に置く加工。ModifyDate 自体に Coded API が無い）"
+}

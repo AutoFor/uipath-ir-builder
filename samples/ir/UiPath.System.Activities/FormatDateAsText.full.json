@@ -1,0 +1,72 @@
+{
+  "workflow": "FormatDateAsText_Full",
+  "variables": [
+    {
+      "name": "d",
+      "type": "DateTime"
+    },
+    {
+      "name": "r1",
+      "type": "String"
+    },
+    {
+      "name": "r2",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "typeArg": "DateTime",
+      "props": {
+        "To": "d",
+        "Value": {
+          "vb": "New DateTime(2024, 1, 31)",
+          "cs": "new DateTime(2024, 1, 31)"
+        }
+      }
+    },
+    {
+      "act": "FormatDateAsText",
+      "name": "日本語の書式",
+      "props": {
+        "Source": "d",
+        "Format": {
+          "lit": "yyyy年M月d日"
+        },
+        "LocalizationCode": {
+          "lit": "ja-JP"
+        },
+        "Result": "r1"
+      }
+    },
+    {
+      "act": "FormatDateAsText",
+      "name": "英語の書式",
+      "props": {
+        "Source": "d",
+        "Format": {
+          "lit": "dddd, MMMM d, yyyy"
+        },
+        "LocalizationCode": {
+          "lit": "en-US"
+        },
+        "Result": "r2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r1"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r2"
+      }
+    }
+  ]
+}

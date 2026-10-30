@@ -1,0 +1,105 @@
+{
+  "workflow": "ExtractText_Full",
+  "variables": [
+    {
+      "name": "first",
+      "type": "String"
+    },
+    {
+      "name": "all",
+      "type": "IEnumerable<String>"
+    },
+    {
+      "name": "mails",
+      "type": "IEnumerable<String>"
+    },
+    {
+      "name": "urls",
+      "type": "IEnumerable<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExtractText",
+      "name": "2つの文字列の間",
+      "props": {
+        "Source": {
+          "lit": "<A>x</A><a>y</a><A>x</A>"
+        },
+        "ExtractOptions": "BetweenStrings",
+        "StartingText": {
+          "lit": "<A>"
+        },
+        "EndingText": {
+          "lit": "</A>"
+        },
+        "MatchCase": true,
+        "IgnoreDuplicates": true,
+        "FirstMatch": "first",
+        "Results": "all"
+      }
+    },
+    {
+      "act": "ExtractText",
+      "name": "メールアドレス",
+      "props": {
+        "Source": {
+          "lit": "連絡先 a@example.com と b@example.org と a@example.com"
+        },
+        "ExtractOptions": "Email",
+        "IgnoreDuplicates": true,
+        "Results": "mails"
+      }
+    },
+    {
+      "act": "ExtractText",
+      "name": "URL",
+      "props": {
+        "Source": {
+          "lit": "see https://example.com/path?q=1 and http://foo.org/x"
+        },
+        "ExtractOptions": "URLs",
+        "ExtractBaseURLOnly": true,
+        "IgnoreDuplicates": false,
+        "Results": "urls"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "first"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "all.Count().ToString",
+          "cs": "all.Count().ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "String.Join(\"|\", mails)",
+          "cs": "string.Join(\"|\", mails)"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "String.Join(\"|\", urls)",
+          "cs": "string.Join(\"|\", urls)"
+        }
+      }
+    }
+  ]
+}

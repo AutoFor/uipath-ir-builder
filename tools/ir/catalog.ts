@@ -29,6 +29,20 @@ export type Activity = {
 export type ObjType = { clrType: string; className: string; xmlns: string; assembly: string; props: Prop[] };
 export const objectTypes = new Map<string, ObjType>(); // clrType -> 型
 
+// インターフェース型のプロパティ（IFormatProvider など）に入れる、要素で書く実装。objs の中で "$type": "クラス名" で選ぶ（省略時は先頭）
+export const objectImpls: Record<string, string[]> = {
+  "System.IFormatProvider": ["UiPath.Core.GeneralNumberFormatProvider", "UiPath.Core.CurrencyNumberFormatProvider", "UiPath.Core.PercentageNumberFormatProvider", "UiPath.Core.DateTimeFormatProvider"],
+};
+export function objTypeFor(type: string, v?: unknown): ObjType | undefined {
+  const direct = objectTypes.get(type);
+  if (direct) return direct;
+  const impls = objectImpls[type];
+  if (!impls) return undefined;
+  const want = v && typeof v === "object" && "$type" in v ? String((v as Record<string, unknown>)["$type"]) : undefined;
+  const clr = want === undefined ? impls[0] : impls.find((c) => c.endsWith("." + want));
+  return clr ? objectTypes.get(clr) : undefined;
+}
+
 export type Catalog = {
   activities: Activity[];
   defaults: Map<string, Record<string, string>>; // ClassName -> get-default-xaml に出た属性
@@ -137,7 +151,7 @@ const specialProps: Record<string, string> = {
   "TryCatch.Catches": "catches",
   "MultipleAssign.AssignOperations": "assigns",
 };
-const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan"]);
+const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo"]);
 
 export type Writable = { ok: true; how: string } | { ok: false; reason: string; group: string };
 
@@ -161,7 +175,7 @@ export function writable(a: Activity, p: Prop): Writable {
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))
     return { ok: false, group: "コレクション", reason: `${p.type} は要素構文が要るのでまだ書けない` };
-  if (objectTypes.has(p.type)) return { ok: true, how: "objs" };
+  if (objectTypes.has(p.type) || objectImpls[p.type]) return { ok: true, how: "objs" };
   if (/^UiPath\.(Core\.Activities\.(Target|ImageTarget|CursorPosition)|UIAutomationNext\.(TargetAnchorable|TargetApp|ClickOffset|PointOffset)|CV\.|Core\.Region)/.test(p.type))
     return { ok: false, group: "UI のターゲット", reason: `${p.type} はまだ書けない（catalog/UiPath.UIAutomation.Activities/*.objects.json に型が無い。docs/worker-guide.md の 8. で足す）` };
   return { ok: false, group: "オブジェクト", reason: `${p.type} は要素構文が要るのでまだ書けない` };

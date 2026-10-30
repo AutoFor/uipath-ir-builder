@@ -1,0 +1,72 @@
+{
+  "workflow": "AddOrSubtractFromDate_Full",
+  "variables": [
+    {
+      "name": "d",
+      "type": "DateTime"
+    },
+    {
+      "name": "r1",
+      "type": "DateTime"
+    },
+    {
+      "name": "r2",
+      "type": "DateTime"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "typeArg": "DateTime",
+      "props": {
+        "To": "d",
+        "Value": {
+          "vb": "New DateTime(2024, 3, 15)",
+          "cs": "new DateTime(2024, 3, 15)"
+        }
+      }
+    },
+    {
+      "act": "AddOrSubtractFromDate",
+      "name": "1か月前",
+      "props": {
+        "Source": "d",
+        "SelectedOperation": "Subtract",
+        "UnitOfTime": "Months",
+        "AmountOfTime": 1,
+        "Result": "r1"
+      }
+    },
+    {
+      "act": "AddOrSubtractFromDate",
+      "name": "36時間後",
+      "props": {
+        "Source": "d",
+        "SelectedOperation": "Add",
+        "UnitOfTime": "Hours",
+        "AmountOfTime": 36,
+        "Result": "r2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "r1.ToString(\"yyyy-MM-dd\")",
+          "cs": "r1.ToString(\"yyyy-MM-dd\")"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "r2.ToString(\"yyyy-MM-dd HH:mm\")",
+          "cs": "r2.ToString(\"yyyy-MM-dd HH:mm\")"
+        }
+      }
+    }
+  ]
+}

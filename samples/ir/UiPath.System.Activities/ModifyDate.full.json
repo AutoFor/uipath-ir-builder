@@ -1,0 +1,95 @@
+{
+  "workflow": "ModifyDate_Full",
+  "variables": [
+    {
+      "name": "d",
+      "type": "DateTime"
+    },
+    {
+      "name": "r",
+      "type": "DateTime"
+    },
+    {
+      "name": "t",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "typeArg": "DateTime",
+      "props": {
+        "To": "d",
+        "Value": {
+          "vb": "New DateTime(2024, 1, 15)",
+          "cs": "new DateTime(2024, 1, 15)"
+        }
+      }
+    },
+    {
+      "act": "ModifyDate",
+      "name": "日付を順に加工する",
+      "props": {
+        "SourceDate": "d",
+        "FormatAsText": true,
+        "UseCustomDateFormat": true,
+        "CustomDateFormat": {
+          "lit": "yyyy/MM/dd"
+        },
+        "PredefinedDateFormat": "yyyy_MM_dd",
+        "OutDate": "r",
+        "OutText": "t"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "name": "実行",
+          "body": [
+            {
+              "act": "AddSubtractTimePeriodDateModification",
+              "name": "1か月足す",
+              "props": {
+                "Operation": "Add",
+                "TimeUnit": "Months",
+                "Value": 1
+              }
+            },
+            {
+              "act": "FindStartEndDateModification",
+              "name": "月末を探す",
+              "props": {
+                "Location": "LastDay",
+                "TimeUnit": "Month"
+              }
+            },
+            {
+              "act": "FindDayOfWeekDateModification",
+              "name": "直前の金曜を探す",
+              "props": {
+                "Day": "Friday",
+                "Direction": "Previous"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "r.ToString(\"yyyy-MM-dd\")",
+          "cs": "r.ToString(\"yyyy-MM-dd\")"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "t"
+      }
+    }
+  ]
+}

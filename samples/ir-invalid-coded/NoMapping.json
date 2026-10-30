@@ -2,7 +2,7 @@
   "workflow": "NoMapping",
   "variables": [ { "name": "t", "type": "String" }, { "name": "f", "type": "Boolean" } ],
   "body": [
-    { "act": "ChangeCase", "props": { "Source": { "lit": "abc" }, "ChangeCaseOptions": "UpperCase" } },
+    { "act": "AskWhenRun", "props": { } },
     { "act": "LogMessage", "props": { "Message": "If(f, \"a\", \"b\")" } },
     { "act": "WriteTextFile", "props": { "FileName": { "lit": "a.txt" }, "Text": "t", "Output": "t" } }
   ]

@@ -1,0 +1,35 @@
+{
+  "activity": "Replace",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "RegexOption"
+      ],
+      "call": "system.Replace",
+      "args": {
+        "input": "{Input}",
+        "pattern": "{Pattern}",
+        "replacement": "{Replacement}",
+        "regexOption": "{RegexOption|enum}"
+      },
+      "returns": "Result"
+    },
+    {
+      "call": "system.Replace",
+      "args": {
+        "input": "{Input}",
+        "pattern": "{Pattern}",
+        "replacement": "{Replacement}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "ignore": [
+    "TimeoutMS",
+    "BuilderPattern",
+    "IsBuilderTabModified",
+    "Model"
+  ],
+  "notes": "ISystemService.Replace（正規表現）。TimeoutMS は API の引数に無いので捨てる。BuilderPattern / IsBuilderTabModified / Model はパターンビルダー（デザイナー）用で実行には関係しない"
+}

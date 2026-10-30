@@ -21,7 +21,7 @@
 
 import { randomUUID } from "node:crypto";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
-import { objectTypes, resolve } from "./catalog.ts";
+import { objectTypes, objTypeFor, resolve } from "./catalog.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 
 type Add = (path: string, code: string, message: string) => void;
@@ -68,7 +68,7 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
     const at = `${path}.objs.${k}`;
     const p = a.props.find((x) => x.name === k);
     if (!p) { add(at, "UNKNOWN_PROP", `${a.className} に "${k}" は無い`); continue; }
-    const t = objectTypes.get(p.type);
+    const t = objTypeFor(p.type, v);
     if (!t) { add(at, "BAD_OBJ", `"${k}"（${p.type}）はオブジェクトとして書けない。props に書く`); continue; }
     given.push(k);
     obj(t, v, at);
@@ -78,6 +78,7 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
   function obj(t: ObjType, v: unknown, at: string) {
     if (typeof v !== "object" || v === null || Array.isArray(v) || isValue(v)) { add(at, "BAD_OBJ", `${t.className} はオブジェクト（{ "プロパティ": 値 }）で書く`); return; }
     for (const [k, x] of Object.entries(v as ObjValue)) {
+      if (k === "$type") continue; // インターフェース型のプロパティで実装を選ぶ印
       const kat = `${at}.${k}`;
       const p = t.props.find((q) => q.name === k);
       if (!p) { add(kat, "UNKNOWN_PROP", `${t.className} に "${k}" は無い（${hint(t)}）`); continue; }
@@ -185,7 +186,7 @@ export function emitObjs(n: Node, a: Activity, tag: string, depth: number, ctx: 
   for (const [k, v] of Object.entries(n.objs ?? {})) {
     const p = a.props.find((x) => x.name === k)!;
     ctx.emit(depth, `<${tag}.${k}>`);
-    emitObj(objectTypes.get(p.type)!, v, depth + 1, ctx);
+    emitObj(objTypeFor(p.type, v)!, v, depth + 1, ctx);
     ctx.emit(depth, `</${tag}.${k}>`);
   }
 }
@@ -195,6 +196,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
   const attrs: [string, string][] = [];
   const elems: [Prop, ObjValue | ObjValue[]][] = [];
   for (const [k, x] of Object.entries(v)) {
+    if (k === "$type") continue;
     const p = t.props.find((q) => q.name === k)!;
     if (isValue(x)) attrs.push([k, ctx.attrValue(x, p)]);
     else elems.push([p, x as ObjValue | ObjValue[]]);

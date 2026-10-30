@@ -1,0 +1,91 @@
+{
+  "workflow": "CombineText_Full",
+  "variables": [
+    {
+      "name": "parts",
+      "type": "List<String>"
+    },
+    {
+      "name": "r1",
+      "type": "String"
+    },
+    {
+      "name": "r2",
+      "type": "String"
+    },
+    {
+      "name": "r3",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "typeArg": "List<String>",
+      "props": {
+        "To": "parts",
+        "Value": {
+          "vb": "New List(Of String) From {\"a\", \"b\", \"c\"}",
+          "cs": "new List<string> { \"a\", \"b\", \"c\" }"
+        }
+      }
+    },
+    {
+      "act": "CombineText",
+      "name": "カンマでつなぐ",
+      "props": {
+        "Source": "parts",
+        "SeparatorKey": "Comma",
+        "Separator": {
+          "lit": ","
+        },
+        "Result": "r1"
+      }
+    },
+    {
+      "act": "CombineText",
+      "name": "スペースでつなぐ",
+      "props": {
+        "Source": "parts",
+        "SeparatorKey": "Space",
+        "Separator": {
+          "lit": " "
+        },
+        "Result": "r2"
+      }
+    },
+    {
+      "act": "CombineText",
+      "name": "任意の文字でつなぐ",
+      "props": {
+        "Source": "parts",
+        "SeparatorKey": "Custom",
+        "Separator": {
+          "lit": "::"
+        },
+        "Result": "r3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r1"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r3"
+      }
+    }
+  ]
+}

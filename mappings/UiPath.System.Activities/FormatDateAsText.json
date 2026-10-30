@@ -1,0 +1,28 @@
+{
+  "activity": "FormatDateAsText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "LocalizationCode"
+      ],
+      "call": "system.FormatDateAsText",
+      "args": {
+        "source": "{Source}",
+        "format": "{Format}",
+        "localizationCode": "new System.Globalization.CultureInfo({LocalizationCode|str})"
+      },
+      "returns": "Result"
+    },
+    {
+      "call": "system.FormatDateAsText",
+      "args": {
+        "source": "{Source}",
+        "format": "{Format}",
+        "localizationCode": "System.Globalization.CultureInfo.CurrentCulture"
+      },
+      "returns": "Result"
+    }
+  ],
+  "notes": "ISystemService.FormatDateAsText。LocalizationCode（カルチャ名 'ja-JP' など）は new CultureInfo(...) に直す。無いときは CurrentCulture"
+}

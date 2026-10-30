@@ -1,0 +1,16 @@
+{
+  "activity": "ExtractDateTime",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "LocalizationCode"
+      ],
+      "code": "{\n    var __dates = system.ExtractDateAndTimeFromText({Format}, {Source}, new System.Globalization.CultureInfo({LocalizationCode|str}));\n    {Results:-_} = __dates;\n    {Result:-_} = __dates.FirstOrDefault();\n}"
+    },
+    {
+      "code": "{\n    var __dates = system.ExtractDateAndTimeFromText({Format}, {Source}, System.Globalization.CultureInfo.CurrentCulture);\n    {Results:-_} = __dates;\n    {Result:-_} = __dates.FirstOrDefault();\n}"
+    }
+  ],
+  "notes": "ISystemService.ExtractDateAndTimeFromText（IEnumerable<DateTime> を返す）。Results にその列、Result に先頭の1件（無ければ既定値）を入れる。LocalizationCode は new CultureInfo(...) に直す"
+}

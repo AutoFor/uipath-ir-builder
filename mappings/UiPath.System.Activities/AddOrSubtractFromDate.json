@@ -1,0 +1,22 @@
+{
+  "activity": "AddOrSubtractFromDate",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.AddOrSubtractFromDate",
+      "defaults": {
+        "SelectedOperation": "Add",
+        "UnitOfTime": "Days",
+        "AmountOfTime": 0
+      },
+      "args": {
+        "source": "{Source}",
+        "unitOfTime": "UiPath.Core.Activities.DateTimeUtilities.UnitsOfTime.{UnitOfTime}",
+        "amountOfTime": "{AmountOfTime}",
+        "selectedOperation": "UiPath.Activities.System.Date.AddOrSubtractFromDate.DateOperations.{SelectedOperation}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "notes": "ISystemService.AddOrSubtractFromDate。SelectedOperation の enum は入れ子（AddOrSubtractFromDate+DateOperations）なので、完全名を直接書く。IR に無い SelectedOperation / UnitOfTime / AmountOfTime は、アクティビティの既定（Add / Days / 0）を defaults で補う"
+}

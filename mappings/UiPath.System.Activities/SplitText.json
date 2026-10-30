@@ -1,0 +1,10 @@
+{
+  "activity": "SplitText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{Results:-_} = {SeparatorKey|is_Custom:-true} ? system.SplitText({Source}, {Separator:-\"\"}) : system.SplitText({Source}, UiPath.Activities.System.Text.SeparatorOptions.{SeparatorKey:-Custom});"
+    }
+  ],
+  "notes": "ISystemService.SplitText。SeparatorKey が Custom（または無い）なら Separator の文字列を渡すオーバーロード、それ以外は SeparatorOptions を渡すオーバーロード"
+}

@@ -1,0 +1,52 @@
+{
+  "workflow": "ExtractDateTime_Full",
+  "variables": [
+    {
+      "name": "ds",
+      "type": "IEnumerable<DateTime>"
+    },
+    {
+      "name": "first",
+      "type": "DateTime"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExtractDateTime",
+      "name": "日付を取り出す",
+      "props": {
+        "Source": {
+          "lit": "期限: 17/05/2024 と 01/06/2024"
+        },
+        "Format": {
+          "lit": "dd/MM/yyyy"
+        },
+        "LocalizationCode": {
+          "lit": "ja-JP"
+        },
+        "Results": "ds",
+        "Result": "first"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "ds.Count().ToString",
+          "cs": "ds.Count().ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "first.ToString(\"yyyy-MM-dd\")",
+          "cs": "first.ToString(\"yyyy-MM-dd\")"
+        }
+      }
+    }
+  ]
+}
