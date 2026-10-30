@@ -1,0 +1,6 @@
+{
+  "activity": "IsMatch",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける）"
+}

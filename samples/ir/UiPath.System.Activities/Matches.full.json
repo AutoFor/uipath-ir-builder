@@ -1,0 +1,50 @@
+{
+  "workflow": "Matches_Full",
+  "variables": [
+    {
+      "name": "ms",
+      "type": "IEnumerable<Match>"
+    },
+    {
+      "name": "first",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Matches",
+      "name": "文字と数字の組を全部探す",
+      "props": {
+        "Input": {
+          "lit": "A1b22C333"
+        },
+        "Pattern": {
+          "lit": "[a-z]\\d+"
+        },
+        "RegexOption": "IgnoreCase",
+        "TimeoutMS": 5000,
+        "BuilderPattern": "[a-z]\\d+",
+        "IsBuilderTabModified": false,
+        "FirstMatch": "first",
+        "Result": "ms"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "ms.Count().ToString",
+          "cs": "ms.Count().ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "first"
+      }
+    }
+  ]
+}

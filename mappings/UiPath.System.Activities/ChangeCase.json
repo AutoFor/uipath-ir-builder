@@ -1,0 +1,15 @@
+{
+  "activity": "ChangeCase",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.ChangeCase",
+      "args": {
+        "source": "{Source}",
+        "changeCaseOptions": "{ChangeCaseOptions|enum}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "notes": "ISystemService.ChangeCase"
+}

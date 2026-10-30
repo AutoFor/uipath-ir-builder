@@ -1,0 +1,85 @@
+{
+  "workflow": "TextToLeftRight_Full",
+  "variables": [
+    {
+      "name": "l",
+      "type": "String"
+    },
+    {
+      "name": "r",
+      "type": "String"
+    },
+    {
+      "name": "l2",
+      "type": "String"
+    },
+    {
+      "name": "r2",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "TextToLeftRight",
+      "name": "カンマで左右に分ける",
+      "props": {
+        "FullText": {
+          "lit": "left,right"
+        },
+        "SeparatorKey": "Comma",
+        "CustomSeparatorEnabled": false,
+        "CaseSensitiveSeparator": true,
+        "Separator": {
+          "lit": ","
+        },
+        "TextToLeft": "l",
+        "TextToRight": "r"
+      }
+    },
+    {
+      "act": "TextToLeftRight",
+      "name": "大文字小文字を区別せずに分ける",
+      "props": {
+        "FullText": {
+          "lit": "leftXright"
+        },
+        "SeparatorKey": "Custom",
+        "CustomSeparatorEnabled": true,
+        "CaseSensitiveSeparator": false,
+        "Separator": {
+          "lit": "x"
+        },
+        "TextToLeft": "l2",
+        "TextToRight": "r2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "l"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "l2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r2"
+      }
+    }
+  ]
+}

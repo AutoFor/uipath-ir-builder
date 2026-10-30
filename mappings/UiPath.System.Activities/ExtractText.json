@@ -1,0 +1,10 @@
+{
+  "activity": "ExtractText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{\n    IEnumerable<string> __found;\n    if ({ExtractOptions|is_BetweenStrings}) __found = system.ExtractTextOccurrences({Source}, {StartingText:-null}, {EndingText:-null}, {IgnoreDuplicates:-false}, {MatchCase:-false});\n    else if ({ExtractOptions|is_Email}) __found = system.ExtractEmails({Source}, {IgnoreDuplicates:-false});\n    else if ({ExtractOptions|is_URLs}) __found = system.ExtractUrls({Source}, {ExtractBaseURLOnly:-false}, {IgnoreDuplicates:-false});\n    else __found = new[] { system.ExtractTextFromHTML({Source}) };\n    {Results:-_} = __found;\n    {FirstMatch:-_} = __found.FirstOrDefault();\n}"
+    }
+  ],
+  "notes": "ExtractOptions で呼ぶ API が変わる（BetweenStrings: ExtractTextOccurrences、Email: ExtractEmails、URLs: ExtractUrls、FromHTML: ExtractTextFromHTML）。生成時は ExtractOptions の値が定数になる if / else if。Results に列、FirstMatch に先頭の1件を入れる"
+}

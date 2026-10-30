@@ -1,0 +1,63 @@
+{
+  "workflow": "FindAndReplace_Full",
+  "variables": [
+    {
+      "name": "r1",
+      "type": "String"
+    },
+    {
+      "name": "r2",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "FindAndReplace",
+      "name": "大文字小文字を区別しない",
+      "props": {
+        "Source": {
+          "lit": "Hello hello World"
+        },
+        "ValueToFind": {
+          "lit": "HELLO"
+        },
+        "ReplaceWith": {
+          "lit": "bye"
+        },
+        "MatchCase": false,
+        "Result": "r1"
+      }
+    },
+    {
+      "act": "FindAndReplace",
+      "name": "大文字小文字を区別する",
+      "props": {
+        "Source": {
+          "lit": "Hello hello World"
+        },
+        "ValueToFind": {
+          "lit": "hello"
+        },
+        "ReplaceWith": {
+          "lit": "bye"
+        },
+        "MatchCase": true,
+        "Result": "r2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r1"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r2"
+      }
+    }
+  ]
+}

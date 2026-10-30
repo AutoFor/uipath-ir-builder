@@ -1,0 +1,17 @@
+{
+  "activity": "FindAndReplace",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.FindAndReplace",
+      "args": {
+        "valueToFind": "{ValueToFind:-\"\"}",
+        "source": "{Source}",
+        "replaceWith": "{ReplaceWith:-\"\"}",
+        "matchCase": "{MatchCase:-false}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "notes": "ISystemService.FindAndReplace（matchCase は省略できないので、IR に無いときはアクティビティの既定の false）"
+}

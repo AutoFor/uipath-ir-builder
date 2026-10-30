@@ -1,0 +1,6 @@
+{
+  "activity": "ModifyDate",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に該当するメソッドが無い。個々の加工は AddOrSubtractFromDate などで書き分ける）"
+}

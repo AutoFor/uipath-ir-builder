@@ -1,0 +1,6 @@
+{
+  "activity": "FindAndReplaceTextModification",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ModifyText の中に置く加工。ModifyText 自体に Coded API が無い）"
+}

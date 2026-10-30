@@ -1,0 +1,60 @@
+{
+  "workflow": "IsMatch_Full",
+  "variables": [
+    {
+      "name": "a",
+      "type": "Boolean"
+    },
+    {
+      "name": "b",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "IsMatch",
+      "name": "大文字小文字を区別しない",
+      "props": {
+        "Input": {
+          "lit": "ABC123"
+        },
+        "Pattern": {
+          "lit": "^[a-z]+\\d+$"
+        },
+        "RegexOption": "IgnoreCase",
+        "TimeoutMS": 5000,
+        "BuilderPattern": "^[a-z]+\\d+$",
+        "IsBuilderTabModified": false,
+        "Result": "a"
+      }
+    },
+    {
+      "act": "IsMatch",
+      "name": "大文字小文字を区別する",
+      "props": {
+        "Input": {
+          "lit": "ABC123"
+        },
+        "Pattern": {
+          "lit": "^[a-z]+\\d+$"
+        },
+        "RegexOption": "None",
+        "Result": "b"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "a.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "b.ToString"
+      }
+    }
+  ]
+}

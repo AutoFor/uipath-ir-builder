@@ -1,0 +1,96 @@
+{
+  "workflow": "ChangeCase_Full",
+  "variables": [
+    {
+      "name": "src",
+      "type": "String",
+      "default": "\"hELLO wORLD\""
+    },
+    {
+      "name": "a",
+      "type": "String"
+    },
+    {
+      "name": "b",
+      "type": "String"
+    },
+    {
+      "name": "c",
+      "type": "String"
+    },
+    {
+      "name": "d",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ChangeCase",
+      "name": "小文字にする",
+      "props": {
+        "Source": "src",
+        "ChangeCaseOptions": "LowerCase",
+        "Result": "a"
+      }
+    },
+    {
+      "act": "ChangeCase",
+      "name": "大文字にする",
+      "props": {
+        "Source": "src",
+        "ChangeCaseOptions": "UpperCase",
+        "Result": "b"
+      }
+    },
+    {
+      "act": "ChangeCase",
+      "name": "文の先頭だけ大文字にする",
+      "props": {
+        "Source": {
+          "lit": "HELLO WORLD"
+        },
+        "ChangeCaseOptions": "SentenceCase",
+        "Result": "c"
+      }
+    },
+    {
+      "act": "ChangeCase",
+      "name": "各単語の先頭を大文字にする",
+      "props": {
+        "Source": {
+          "lit": "hello big world"
+        },
+        "ChangeCaseOptions": "CapitalizeEachWord",
+        "Result": "d"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "a"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "b"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "c"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "d"
+      }
+    }
+  ]
+}

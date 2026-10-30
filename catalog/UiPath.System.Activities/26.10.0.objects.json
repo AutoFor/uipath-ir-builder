@@ -1,0 +1,163 @@
+{
+  "package": "UiPath.System.Activities",
+  "version": "26.10.0",
+  "objects": [
+    {
+      "className": "CurrencyNumberFormatProvider",
+      "clrType": "UiPath.Core.CurrencyNumberFormatProvider",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalDigits",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyNumberFormatProvider"
+        },
+        {
+          "name": "DecimalSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyNumberFormatProvider"
+        },
+        {
+          "name": "GroupSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyNumberFormatProvider"
+        },
+        {
+          "name": "Symbol",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyNumberFormatProvider"
+        }
+      ]
+    },
+    {
+      "className": "DateTimeFormatProvider",
+      "clrType": "UiPath.Core.DateTimeFormatProvider",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Pattern",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DateTimeFormatProvider"
+        }
+      ]
+    },
+    {
+      "className": "GeneralNumberFormatProvider",
+      "clrType": "UiPath.Core.GeneralNumberFormatProvider",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalDigits",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GeneralNumberFormatProvider"
+        },
+        {
+          "name": "DecimalSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GeneralNumberFormatProvider"
+        },
+        {
+          "name": "GroupSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GeneralNumberFormatProvider"
+        }
+      ]
+    },
+    {
+      "className": "PercentageNumberFormatProvider",
+      "clrType": "UiPath.Core.PercentageNumberFormatProvider",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalDigits",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PercentageNumberFormatProvider"
+        },
+        {
+          "name": "DecimalSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PercentageNumberFormatProvider"
+        },
+        {
+          "name": "GroupSeparator",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PercentageNumberFormatProvider"
+        },
+        {
+          "name": "Symbol",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PercentageNumberFormatProvider"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

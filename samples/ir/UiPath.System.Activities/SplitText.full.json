@@ -1,0 +1,91 @@
+{
+  "workflow": "SplitText_Full",
+  "variables": [
+    {
+      "name": "p1",
+      "type": "IEnumerable<String>"
+    },
+    {
+      "name": "p2",
+      "type": "IEnumerable<String>"
+    },
+    {
+      "name": "p3",
+      "type": "IEnumerable<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "SplitText",
+      "name": "スペースで分ける",
+      "props": {
+        "Source": {
+          "lit": "x y z"
+        },
+        "SeparatorKey": "Space",
+        "Separator": {
+          "lit": " "
+        },
+        "Results": "p1"
+      }
+    },
+    {
+      "act": "SplitText",
+      "name": "セミコロンで分ける",
+      "props": {
+        "Source": {
+          "lit": "1;2;3"
+        },
+        "SeparatorKey": "SemiColon",
+        "Separator": {
+          "lit": ";"
+        },
+        "Results": "p2"
+      }
+    },
+    {
+      "act": "SplitText",
+      "name": "任意の文字で分ける",
+      "props": {
+        "Source": {
+          "lit": "p--q--r"
+        },
+        "SeparatorKey": "Custom",
+        "Separator": {
+          "lit": "--"
+        },
+        "Results": "p3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "String.Join(\"|\", p1)",
+          "cs": "string.Join(\"|\", p1)"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "String.Join(\"|\", p2)",
+          "cs": "string.Join(\"|\", p2)"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "String.Join(\"|\", p3)",
+          "cs": "string.Join(\"|\", p3)"
+        }
+      }
+    }
+  ]
+}

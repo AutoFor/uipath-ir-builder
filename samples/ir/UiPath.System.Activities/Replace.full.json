@@ -1,0 +1,38 @@
+{
+  "workflow": "Replace_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Replace",
+      "name": "正規表現で置き換える",
+      "props": {
+        "Input": {
+          "lit": "John@Example"
+        },
+        "Pattern": {
+          "lit": "(\\w+)@(\\w+)"
+        },
+        "Replacement": {
+          "lit": "$2 at $1"
+        },
+        "RegexOption": "IgnoreCase, Compiled",
+        "TimeoutMS": 5000,
+        "BuilderPattern": "(\\w+)@(\\w+)",
+        "IsBuilderTabModified": false,
+        "Result": "r"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "r"
+      }
+    }
+  ]
+}

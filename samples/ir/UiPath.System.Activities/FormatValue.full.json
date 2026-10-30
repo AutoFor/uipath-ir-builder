@@ -1,0 +1,123 @@
+{
+  "workflow": "FormatValue_Full",
+  "variables": [
+    {
+      "name": "a",
+      "type": "GenericValue"
+    },
+    {
+      "name": "b",
+      "type": "GenericValue"
+    },
+    {
+      "name": "c",
+      "type": "GenericValue"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "typeArg": "GenericValue",
+      "props": {
+        "To": "a",
+        "Value": "1234567.891"
+      }
+    },
+    {
+      "act": "FormatValue",
+      "name": "桁区切りを入れ替える",
+      "props": {
+        "Value": "a"
+      },
+      "objs": {
+        "Format": {
+          "$type": "GeneralNumberFormatProvider",
+          "DecimalDigits": 1,
+          "DecimalSeparator": {
+            "lit": ","
+          },
+          "GroupSeparator": {
+            "lit": "."
+          }
+        }
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "GenericValue",
+      "props": {
+        "To": "b",
+        "Value": {
+          "vb": "New DateTime(2024, 1, 31)",
+          "cs": "new DateTime(2024, 1, 31)"
+        }
+      }
+    },
+    {
+      "act": "FormatValue",
+      "name": "日付の書式",
+      "props": {
+        "Value": "b"
+      },
+      "objs": {
+        "Format": {
+          "$type": "DateTimeFormatProvider",
+          "Pattern": {
+            "lit": "yyyy/MM/dd"
+          }
+        }
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "GenericValue",
+      "props": {
+        "To": "c",
+        "Value": "0.256"
+      }
+    },
+    {
+      "act": "FormatValue",
+      "name": "パーセント",
+      "props": {
+        "Value": "c"
+      },
+      "objs": {
+        "Format": {
+          "$type": "PercentageNumberFormatProvider",
+          "DecimalDigits": 1,
+          "DecimalSeparator": {
+            "lit": "."
+          },
+          "GroupSeparator": {
+            "lit": ","
+          },
+          "Symbol": {
+            "lit": "%"
+          }
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "a.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "b.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "c.ToString"
+      }
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "workflow": "ToUpperLowerTextModification_Full",
+  "variables": [
+    {
+      "name": "a",
+      "type": "String"
+    },
+    {
+      "name": "b",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ModifyText",
+      "name": "小文字にする",
+      "props": {
+        "SourceText": {
+          "lit": "Hello WORLD"
+        },
+        "OutputText": "a"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "name": "実行",
+          "body": [
+            {
+              "act": "ToUpperLowerTextModification",
+              "name": "小文字",
+              "props": {
+                "ModificationType": "Lowercase",
+                "UseCurrentCulture": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "ModifyText",
+      "name": "大文字にする",
+      "props": {
+        "SourceText": {
+          "lit": "Hello world"
+        },
+        "OutputText": "b"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "name": "実行",
+          "body": [
+            {
+              "act": "ToUpperLowerTextModification",
+              "name": "大文字",
+              "props": {
+                "ModificationType": "Uppercase",
+                "UseCurrentCulture": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "a"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "b"
+      }
+    }
+  ]
+}

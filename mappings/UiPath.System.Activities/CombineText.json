@@ -1,0 +1,10 @@
+{
+  "activity": "CombineText",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{Result:-_} = {SeparatorKey|is_Custom:-true} ? system.CombineText({Source}, {Separator:-\"\"}) : system.CombineText({Source}, UiPath.Activities.System.Text.SeparatorOptions.{SeparatorKey:-Custom});"
+    }
+  ],
+  "notes": "ISystemService.CombineText。SeparatorKey が Custom（または無い）なら Separator の文字列を渡すオーバーロード、それ以外は SeparatorOptions を渡すオーバーロード（生成時は定数の三項演算子になる）"
+}
