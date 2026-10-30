@@ -1,0 +1,48 @@
+{
+  "workflow": "DeleteFileX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\DeleteFileX_Full.txt"
+        },
+        "Text": {
+          "lit": "bye"
+        }
+      }
+    },
+    {
+      "act": "DeleteFileX",
+      "name": "ファイルを消す",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFileX_Full.txt"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFileX_Full.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

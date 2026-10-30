@@ -1,0 +1,125 @@
+{
+  "workflow": "CopyFolderX_NoSub",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.src"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.dst"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.src"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.src\\sub"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_NoSub.src\\a.txt"
+        },
+        "Text": {
+          "lit": "top"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_NoSub.src\\sub\\b.txt"
+        },
+        "Text": {
+          "lit": "sub"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.dst"
+        }
+      }
+    },
+    {
+      "act": "CopyFolderX",
+      "props": {
+        "From": {
+          "lit": "output\\CopyFolderX_NoSub.src"
+        },
+        "To": {
+          "lit": "output\\CopyFolderX_NoSub.dst"
+        },
+        "IncludeSubfolders": false,
+        "Overwrite": false
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_NoSub.dst\\CopyFolderX_NoSub.src\\a.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_NoSub.dst\\CopyFolderX_NoSub.src\\sub\\b.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

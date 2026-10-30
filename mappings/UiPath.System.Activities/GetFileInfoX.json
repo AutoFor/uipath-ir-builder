@@ -1,0 +1,6 @@
+{
+  "activity": "GetFileInfoX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（FileInfo は System.IO の型。サービスにメソッドが無い）"
+}

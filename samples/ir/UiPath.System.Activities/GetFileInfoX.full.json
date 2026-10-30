@@ -1,0 +1,67 @@
+{
+  "workflow": "GetFileInfoX_Full",
+  "variables": [
+    {
+      "name": "fi",
+      "type": "FileInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\GetFileInfoX_Full.csv"
+        },
+        "Text": {
+          "lit": "a,b"
+        }
+      }
+    },
+    {
+      "act": "GetFileInfoX",
+      "name": "ファイル情報",
+      "props": {
+        "FilePath": {
+          "lit": "output\\GetFileInfoX_Full.csv"
+        },
+        "Output": "fi"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "fi.Name"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "fi.Extension"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "fi.Length.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "fi.Exists.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "fi.DirectoryName.EndsWith(\"output\").ToString"
+      }
+    }
+  ]
+}

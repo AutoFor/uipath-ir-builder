@@ -1,0 +1,6 @@
+{
+  "activity": "RenameFileX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（名前の変更はサービスにメソッドが無い）"
+}

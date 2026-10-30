@@ -1,0 +1,74 @@
+{
+  "workflow": "DeleteFolderX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Full.d"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Full.d"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Full.d\\sub"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\DeleteFolderX_Full.d\\sub\\a.txt"
+        },
+        "Text": {
+          "lit": "x"
+        }
+      }
+    },
+    {
+      "act": "DeleteFolderX",
+      "name": "中身ごと消す",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Full.d"
+        },
+        "Recursive": true
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Full.d"
+        },
+        "PathType": "Folder",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "workflow": "CopyFolderX_Resource",
+  "variables": [
+    {
+      "name": "src",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "dst",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.src"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.dst"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.src"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Resource.src\\a.txt"
+        },
+        "Text": {
+          "lit": "by resource"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.dst"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.src"
+        },
+        "PathType": "Folder",
+        "Resource": "src"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Resource.dst"
+        },
+        "PathType": "Folder",
+        "Resource": "dst"
+      }
+    },
+    {
+      "act": "CopyFolderX",
+      "name": "リソースでコピー",
+      "props": {
+        "FromResource": "src",
+        "ToResource": "dst"
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Resource.dst\\CopyFolderX_Resource.src\\a.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

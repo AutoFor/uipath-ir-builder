@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ForEachFolderX\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:si=\"clr-namespace:System.IO;assembly=System.Private.CoreLib\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ForEachFolderX Folder=\"{x:Null}\" IncludeSubFolders=\"False\" OrderBy=\"NameAscFirst\" SkipFoldersWithoutPermission=\"False\">\r\n    <ui:ForEachFolderX.Body>\r\n      <ActivityAction x:TypeArguments=\"si:DirectoryInfo, x:Int32\">\r\n        <ActivityAction.Argument1>\r\n          <DelegateInArgument x:TypeArguments=\"si:DirectoryInfo\" Name=\"CurrentFolder\" />\r\n        </ActivityAction.Argument1>\r\n        <ActivityAction.Argument2>\r\n          <DelegateInArgument x:TypeArguments=\"x:Int32\" Name=\"CurrentIndex\" />\r\n        </ActivityAction.Argument2>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </ui:ForEachFolderX.Body>\r\n  </ui:ForEachFolderX>\r\n</Activity>"
+  }
+}

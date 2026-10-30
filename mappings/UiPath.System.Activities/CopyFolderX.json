@@ -1,0 +1,59 @@
+{
+  "activity": "CopyFolderX",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "From",
+        "To"
+      ],
+      "call": "system.CopyFolder",
+      "args": {
+        "from": "{From}",
+        "to": "{To}",
+        "overwrite": "{Overwrite:-true}",
+        "includeSubfolder": "{IncludeSubfolders:-true}"
+      }
+    },
+    {
+      "when": [
+        "FromResource",
+        "To"
+      ],
+      "call": "system.CopyFolder",
+      "args": {
+        "from": "((UiPath.Platform.ResourceHandling.ILocalResource){FromResource}).LocalPath",
+        "to": "{To}",
+        "overwrite": "{Overwrite:-true}",
+        "includeSubfolder": "{IncludeSubfolders:-true}"
+      }
+    },
+    {
+      "when": [
+        "From",
+        "ToResource"
+      ],
+      "call": "system.CopyFolder",
+      "args": {
+        "from": "{From}",
+        "to": "((UiPath.Platform.ResourceHandling.ILocalResource){ToResource}).LocalPath",
+        "overwrite": "{Overwrite:-true}",
+        "includeSubfolder": "{IncludeSubfolders:-true}"
+      }
+    },
+    {
+      "when": [
+        "FromResource",
+        "ToResource"
+      ],
+      "call": "system.CopyFolder",
+      "args": {
+        "from": "((UiPath.Platform.ResourceHandling.ILocalResource){FromResource}).LocalPath",
+        "to": "((UiPath.Platform.ResourceHandling.ILocalResource){ToResource}).LocalPath",
+        "overwrite": "{Overwrite:-true}",
+        "includeSubfolder": "{IncludeSubfolders:-true}"
+      }
+    }
+  ],
+  "notes": "CopyFolder(from, to, overwrite, includeSubfolder) はパス文字列を取る。リソースは ILocalResource にして LocalPath を渡す。ContinueOnError は生成器の try / catch"
+}

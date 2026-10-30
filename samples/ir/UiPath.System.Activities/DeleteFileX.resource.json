@@ -1,0 +1,60 @@
+{
+  "workflow": "DeleteFileX_Resource",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\DeleteFileX_Resource.txt"
+        },
+        "Text": {
+          "lit": "bye"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFileX_Resource.txt"
+        },
+        "PathType": "File",
+        "Resource": "res"
+      }
+    },
+    {
+      "act": "DeleteFileX",
+      "name": "リソースで消す",
+      "props": {
+        "FileResource": "res"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFileX_Resource.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

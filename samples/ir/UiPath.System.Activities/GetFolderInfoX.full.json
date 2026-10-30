@@ -1,0 +1,51 @@
+{
+  "workflow": "GetFolderInfoX_Full",
+  "variables": [
+    {
+      "name": "di",
+      "type": "DirectoryInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\GetFolderInfoX_Full.d"
+        }
+      }
+    },
+    {
+      "act": "GetFolderInfoX",
+      "name": "フォルダー情報",
+      "props": {
+        "FolderPath": {
+          "lit": "output\\GetFolderInfoX_Full.d"
+        },
+        "Output": "di",
+        "ThrowIfNotExists": true
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "di.Name"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "di.Exists.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "di.Parent.Name"
+      }
+    }
+  ]
+}

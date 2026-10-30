@@ -1,0 +1,90 @@
+{
+  "workflow": "RenameFileX_Resource",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "src",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Resource.new.txt"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\RenameFileX_Resource.txt"
+        },
+        "Text": {
+          "lit": "rename me"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Resource.txt"
+        },
+        "PathType": "File",
+        "Resource": "src"
+      }
+    },
+    {
+      "act": "RenameFileX",
+      "name": "リソースで名前を変える",
+      "props": {
+        "FileResource": "src",
+        "NewName": {
+          "lit": "RenameFileX_Resource.new"
+        },
+        "KeepExtension": true
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Resource.new.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Resource.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

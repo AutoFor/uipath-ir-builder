@@ -1,0 +1,97 @@
+{
+  "workflow": "RenameFolderX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFolderX_Full.new"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFolderX_Full.old"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFolderX_Full.old"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\RenameFolderX_Full.old\\a.txt"
+        },
+        "Text": {
+          "lit": "in folder"
+        }
+      }
+    },
+    {
+      "act": "RenameFolderX",
+      "name": "フォルダー名を変える",
+      "props": {
+        "FolderPath": {
+          "lit": "output\\RenameFolderX_Full.old"
+        },
+        "NewName": {
+          "lit": "RenameFolderX_Full.new"
+        }
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\RenameFolderX_Full.new\\a.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFolderX_Full.old"
+        },
+        "PathType": "Folder",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "ForEachFileX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ファイルの列挙は System.IO.Directory.EnumerateFiles などの .NET の機能。サービスにメソッドが無い）"
+}
