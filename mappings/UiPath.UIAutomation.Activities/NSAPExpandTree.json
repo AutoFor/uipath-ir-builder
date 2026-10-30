@@ -1,0 +1,37 @@
+{
+  "activity": "NSAPExpandTree",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SAPExpandTree",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "sapExpandTreeOptions": {
+          "new": "SAPExpandTreeOptions",
+          "always": true,
+          "set": {
+            "Path": "{Item}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}",
+            "Description": "{Description}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization",
+    "AlterIfDisabled",
+    "ExpandedNodeElement"
+  ],
+  "notes": "アクティビティの Item を SAPExpandTreeOptions.Path に写す。Items（複数）と AlterIfDisabled（オプションに無い）、ExpandedNodeElement / OutUiElement は Coded 未対応"
+}

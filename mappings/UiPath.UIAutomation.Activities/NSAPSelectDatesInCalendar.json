@@ -1,0 +1,40 @@
+{
+  "activity": "NSAPSelectDatesInCalendar",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SAPSelectDatesInCalendar",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "sapSelectDatesInCalendarOptions": {
+          "new": "SAPSelectDatesInCalendarOptions",
+          "always": true,
+          "set": {
+            "SelectType": "{SelectType|enum}",
+            "Date": "{Date}",
+            "StartDate": "{StartDate}",
+            "EndDate": "{EndDate}",
+            "Year": "{Year}",
+            "Week": "{Week}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}",
+            "Description": "{Description}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization"
+  ],
+  "notes": "SAPSelectDatesInCalendarOptions を使う。OutUiElement は扱わない"
+}

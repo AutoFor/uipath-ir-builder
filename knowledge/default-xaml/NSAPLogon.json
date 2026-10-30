@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"NSAPLogon\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NSAPLogon CloseMode=\"Never\" HealingAgentBehavior=\"Disabled\" ScopeGuid=\"681fc97b-c3ce-4147-befe-81a68d4d5b18\" Version=\"V2\">\r\n    <uix:NSAPLogon.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"WSSessionData\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </uix:NSAPLogon.Body>\r\n    <uix:NSAPLogon.TargetApp>\r\n      <uix:TargetApp Area=\"0, 0, 0, 0\" FilePath=\"C:\\Program Files (x86)\\SAP\\FrontEnd\\SAPgui\\saplogon.exe\" Version=\"V3\" />\r\n    </uix:NSAPLogon.TargetApp>\r\n  </uix:NSAPLogon>\r\n</Activity>"
+  }
+}

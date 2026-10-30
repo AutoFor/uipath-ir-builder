@@ -1,0 +1,36 @@
+{
+  "activity": "NSAPSelectMenuItem",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SAPSelectMenuItem",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "selectItemOptions": {
+          "new": "SelectItemOptions",
+          "always": true,
+          "set": {
+            "Item": "{Item}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}",
+            "Description": "{Description}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization",
+    "Target"
+  ],
+  "notes": "SAPSelectMenuItem(SelectItemOptions) を使う。ターゲットは取らないので Target は捨てる。Items（複数）は IR でまだ書けない"
+}

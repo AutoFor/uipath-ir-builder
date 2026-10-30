@@ -1,0 +1,22 @@
+{
+  "activity": "NSAPReadStatusbar",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "code": "var __sb = {app}.SAPReadStatusbar(readStatusbarOptions: new SAPReadStatusbarOptions { Timeout = {Timeout:-30}, DelayAfter = {DelayAfter:-0.3}, DelayBefore = {DelayBefore:-0.2}, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior:-SameAsCard} }); {MessageType} = __sb.MessageType; {MessageText} = __sb.MessageText; {MessageId} = __sb.MessageId; {MessageNumber} = __sb.MessageNumber; {MessageData} = __sb.MessageData;",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ]
+    }
+  ],
+  "ignore": [
+    "Description",
+    "ScopeIdentifier",
+    "Version",
+    "ForceRefreshView",
+    "RequiresInitialization",
+    "Target"
+  ],
+  "notes": "戻り値 SAPReadStatusbarResult の5つの項目を out に写す（5つとも IR に要る。IR に無いオプションは Studio の既定 30 / 0.3 / 0.2 / SameAsCard）。ターゲットは取らないので Target は捨てる"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "NSAPExpandALVHierarchicalTable",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiTargetApp に SAPExpandALVHierarchicalTable が無い）"
+}

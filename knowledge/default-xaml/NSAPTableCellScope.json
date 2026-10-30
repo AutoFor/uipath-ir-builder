@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u8868\u306e\u30bb\u30eb \u30b9\u30b3\u30fc\u30d7\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NSAPTableCellScope ColumnNames=\"{x:Null}\" DisplayName=\"\u8868\u306e\u30bb\u30eb \u30b9\u30b3\u30fc\u30d7\" HealingAgentBehavior=\"SameAsCard\" RowType=\"FirstEmptyRow\" Version=\"V5\">\r\n    <uix:NSAPTableCellScope.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"ContextTarget\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </uix:NSAPTableCellScope.Body>\r\n  </uix:NSAPTableCellScope>\r\n</Activity>"
+  }
+}
