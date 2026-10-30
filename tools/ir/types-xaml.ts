@@ -56,6 +56,8 @@ const simple: Record<string, [string, Record<string, string>]> = {
   IResource: ["upr:IResource", { upr: UPRH }],
   Process: ["sdiag:Process", { sdiag: SDIAG }],
   Match: ["srx:Match", { srx: SRX }],
+  Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
+  Rectangle: ["sdp:Rectangle", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {
@@ -63,6 +65,7 @@ const generic: Record<string, [string, Record<string, string>]> = {
   Dictionary: ["scg:Dictionary", { scg: SCG }],
   Collection: ["scom:Collection", { scom: SCOM }],
   IEnumerable: ["scg:IEnumerable", { scg: SCG }],
+  KeyValuePair: ["scg:KeyValuePair", { scg: SCG }],
   IList: ["scg:IList", { scg: SCG }],
   ICollection: ["scg:ICollection", { scg: SCG }],
 };
@@ -75,7 +78,7 @@ const alias: Record<string, string> = {
 
 export function toXamlType(t: string): XamlType | { error: string } {
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
-  const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
+  const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Drawing|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {
     const inner = toXamlType(s.slice(0, -2));
     if ("error" in inner) return inner;

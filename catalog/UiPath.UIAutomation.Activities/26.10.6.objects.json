@@ -270,6 +270,195 @@
       ]
     },
     {
+      "className": "CvDescriptor",
+      "clrType": "UiPath.CV.CvDescriptor",
+      "assembly": "UiPath.CV",
+      "xmlns": "clr-namespace:UiPath.CV;assembly=UiPath.CV",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Anchors",
+          "kind": "prop",
+          "type": "UiPath.CV.CvElementDescriptor[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Id",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "InformativeScreenshot",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Target",
+          "kind": "prop",
+          "type": "UiPath.CV.CvElementDescriptor",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "TargetOffset",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "TargetPointOffset",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Point>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        }
+      ]
+    },
+    {
+      "className": "CvElementDescriptor",
+      "clrType": "UiPath.CV.CvElementDescriptor",
+      "assembly": "UiPath.CV",
+      "xmlns": "clr-namespace:UiPath.CV;assembly=UiPath.CV",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "CellExtraInfo",
+          "kind": "prop",
+          "type": "UiPath.CV.CvCellExtraInfo",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "DesignTimeArea",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Models.CV.UIVisionCategoryType",
+          "required": false,
+          "enum": [
+            "None",
+            "Button",
+            "InputBox",
+            "CheckBox",
+            "RadioButton",
+            "CloseButton",
+            "MaximizeButton",
+            "MinimizeButton",
+            "Icon",
+            "ArrowButton",
+            "Cell",
+            "Text",
+            "Image",
+            "Area",
+            "AnyText",
+            "AnyWordGroup",
+            "AnyIcon",
+            "Table",
+            "TableCell"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ImageAccuracy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Double>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ImageBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "Text",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "TextAccuracy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Double>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "UseFuzzy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        }
+      ]
+    },
+    {
       "className": "SearchedElement",
       "clrType": "UiPath.UIAutomationNext.Activities.SearchedElement",
       "assembly": "UiPath.UIAutomationNext.Activities",

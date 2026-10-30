@@ -1,0 +1,6 @@
+{
+  "activity": "CVRefresh",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Computer Vision の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけで、CV の記述子（CvDescriptor）を受ける API が無い）"
+}

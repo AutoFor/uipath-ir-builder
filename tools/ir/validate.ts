@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
+import { funcInfo, funcArgName, resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -92,6 +92,13 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       given.add(k);
       const inner = new Map(scope);
       if (p.kind === "delegate") {
+        const fi = funcInfo(p);
+        if (fi) {
+          for (const t of [...fi.args, fi.result]) checkType(t, `${path}.${k}`, add);
+          fi.args.forEach((t) => inner.set(funcArgName(t), t));
+          nodes.forEach((c, i) => visit(c, `${path}.${k}[${i}]`, inner));
+          continue;
+        }
         const types = delegateArgs(p, n.typeArg);
         if (!types) { add(`${path}.${k}`, "UNSUPPORTED_SLOT", `"${k}"（${p.type}）はまだ書けない`); continue; }
         const names = itemNames(n, types.length);
