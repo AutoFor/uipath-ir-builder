@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelCreatePivotTable",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（CreatePivotTable は IPivotTableInfo を取るが、その実体の型がカタログに無く、Excel Application Scope の元の表・範囲から作る形（SourceTableName / Range）に当たるものも無い）"
+}

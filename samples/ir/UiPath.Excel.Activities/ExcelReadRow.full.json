@@ -1,0 +1,51 @@
+{
+  "workflow": "ExcelReadRow_Full",
+  "variables": [
+    {
+      "name": "row",
+      "type": "IEnumerable<Object>"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadRow",
+          "name": "3 行目を B から読む",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "StartingCell": {
+              "lit": "B3"
+            },
+            "PreserveFormat": true,
+            "Result": "row"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"件数: \" & row.Count().ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"行: \" & String.Join(\",\", row)"
+      }
+    }
+  ]
+}

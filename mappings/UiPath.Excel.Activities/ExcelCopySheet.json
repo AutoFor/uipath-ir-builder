@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelCopySheet",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（シートのコピーは IWorkHandle の拡張メソッドに無い）"
+}

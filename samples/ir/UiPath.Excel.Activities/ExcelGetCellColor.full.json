@@ -1,0 +1,43 @@
+{
+  "workflow": "ExcelGetCellColor_Full",
+  "variables": [
+    {
+      "name": "c",
+      "type": "System.Drawing.Color"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelGetCellColor",
+          "name": "色のないセル",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B2"
+            },
+            "Color": "c"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"RGB=\" & c.R.ToString & \",\" & c.G.ToString & \",\" & c.B.ToString"
+      }
+    }
+  ]
+}

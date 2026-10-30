@@ -1,0 +1,99 @@
+{
+  "workflow": "ExcelFilterTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelFilterTable_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelFilterTable_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelCreateTable",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "TableName": {
+              "lit": "PeopleTable"
+            }
+          }
+        },
+        {
+          "act": "ExcelFilterTable",
+          "name": "Age が 25 か 41",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "TableName": {
+              "lit": "PeopleTable"
+            },
+            "ColumnName": {
+              "lit": "Age"
+            },
+            "FilterOptions": "New String() {\"25\", \"41\"}"
+          }
+        },
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "DataTable": "dt",
+            "UseFilter": true
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"行数: \" & dt.Rows.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"1 行目: \" & dt.Rows(0).Item(\"Name\").ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"2 行目: \" & dt.Rows(1).Item(\"Name\").ToString"
+      }
+    }
+  ]
+}

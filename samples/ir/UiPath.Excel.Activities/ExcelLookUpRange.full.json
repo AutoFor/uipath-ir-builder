@@ -1,0 +1,133 @@
+{
+  "workflow": "ExcelLookUpRange_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    },
+    {
+      "name": "w",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelLookUpRange_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A1"
+            },
+            "Text": {
+              "lit": "10"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A2"
+            },
+            "Text": {
+              "lit": "20"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A3"
+            },
+            "Text": {
+              "lit": "30"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B1"
+            },
+            "Text": {
+              "lit": "あ"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B2"
+            },
+            "Text": {
+              "lit": "い"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B3"
+            },
+            "Text": {
+              "lit": "う"
+            }
+          }
+        },
+        {
+          "act": "ExcelLookUpRange",
+          "name": "25 以下で最大の行を探す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B3"
+            },
+            "Value": {
+              "lit": "25"
+            },
+            "Result": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"結果: \" & v"
+      }
+    }
+  ]
+}

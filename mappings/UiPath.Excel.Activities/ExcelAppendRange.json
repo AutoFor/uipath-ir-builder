@@ -1,0 +1,17 @@
+{
+  "activity": "ExcelAppendRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.AppendRange",
+      "args": {
+        "sheetName": "{SheetName}",
+        "table": "{DataTable}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.AppendRange(this IWorkHandle, string sheetName, DataTable table)"
+}

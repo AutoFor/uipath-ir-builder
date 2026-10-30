@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelRefreshPivotTable",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ピボットテーブルの更新は IWorkHandle の拡張メソッドに無い）"
+}

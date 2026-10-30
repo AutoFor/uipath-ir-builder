@@ -1,0 +1,51 @@
+{
+  "workflow": "ExcelReadColumn_Full",
+  "variables": [
+    {
+      "name": "col",
+      "type": "IEnumerable<Object>"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadColumn",
+          "name": "式の列を読む",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "StartingCell": {
+              "lit": "C2"
+            },
+            "PreserveFormat": true,
+            "Result": "col"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"件数: \" & col.Count().ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"列: \" & String.Join(\",\", col)"
+      }
+    }
+  ]
+}

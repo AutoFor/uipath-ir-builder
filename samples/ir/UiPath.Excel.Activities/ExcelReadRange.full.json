@@ -1,0 +1,53 @@
+{
+  "workflow": "ExcelReadRange_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadRange",
+          "name": "見出しなしで読む",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A2:B4"
+            },
+            "DataTable": "dt",
+            "AddHeaders": false,
+            "PreserveFormat": true,
+            "UseFilter": false
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"行数: \" & dt.Rows.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"1 行目: \" & dt.Rows(0).Item(0).ToString & \" \" & dt.Rows(0).Item(1).ToString"
+      }
+    }
+  ]
+}

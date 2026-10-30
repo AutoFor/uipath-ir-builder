@@ -1,0 +1,22 @@
+{
+  "activity": "ExcelReadColumn",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.ReadColumn",
+      "args": {
+        "sheetName": "{SheetName}",
+        "startingCell": "{StartingCell}",
+        "preserveFormat": "{PreserveFormat}"
+      },
+      "returns": "Result",
+      "defaults": {
+        "PreserveFormat": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.ReadColumn(this IWorkHandle, string sheetName, string startingCell, bool preserveFormat)。preserveFormat は API に既定値が無いので defaults で渡す"
+}

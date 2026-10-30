@@ -1,0 +1,88 @@
+{
+  "workflow": "ExcelCreatePivotTable_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelCreatePivotTable_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelCreatePivotTable_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelCreateTable",
+          "name": "名簿の表を作る",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "TableName": {
+              "lit": "PeopleTable"
+            }
+          }
+        },
+        {
+          "act": "ExcelCreatePivotTable",
+          "name": "同じシートにピボットを作る",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "F1"
+            },
+            "SourceTableName": {
+              "lit": "PeopleTable"
+            },
+            "TableName": {
+              "lit": "SamePagePivot"
+            }
+          }
+        },
+        {
+          "act": "ExcelGetTableRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "TableName": {
+              "lit": "SamePagePivot"
+            },
+            "IsPivot": true,
+            "Range": "r"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ピボットの範囲: \" & r"
+      }
+    }
+  ]
+}

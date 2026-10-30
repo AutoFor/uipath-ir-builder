@@ -1,0 +1,96 @@
+{
+  "workflow": "ExcelCopyPasteRange_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    },
+    {
+      "name": "w",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelCopyPasteRange_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelCopyPasteRange_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelCopyPasteRange",
+          "name": "値だけ写す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "SourceRange": {
+              "lit": "A1:C4"
+            },
+            "DestinationSheet": {
+              "lit": "Sheet2"
+            },
+            "DestinationCell": {
+              "lit": "B2"
+            },
+            "CopyItems": "Value"
+          }
+        },
+        {
+          "act": "ExcelReadCellFormula",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Cell": {
+              "lit": "D3"
+            },
+            "Formula": "v"
+          }
+        },
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Cell": {
+              "lit": "D3"
+            },
+            "Result": "w"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"Sheet2!D3 の式: \" & v"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"Sheet2!D3: \" & w"
+      }
+    }
+  ]
+}

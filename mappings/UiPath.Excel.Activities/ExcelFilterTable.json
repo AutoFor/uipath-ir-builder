@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelFilterTable",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（表のフィルターは IWorkHandle の拡張メソッドに無い）"
+}

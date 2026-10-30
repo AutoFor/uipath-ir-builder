@@ -1,0 +1,97 @@
+{
+  "workflow": "ExcelDeleteColumn_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelDeleteColumn_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelDeleteColumn_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelCreateTable",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "TableName": {
+              "lit": "PeopleTable"
+            }
+          }
+        },
+        {
+          "act": "ExcelDeleteColumn",
+          "name": "Age 列を消す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "TableName": {
+              "lit": "PeopleTable"
+            },
+            "ColumnName": {
+              "lit": "Age"
+            }
+          }
+        },
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "DataTable": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"見出し0: \" & dt.Columns(0).ColumnName"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"見出し1: \" & dt.Columns(1).ColumnName"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"見出し2: \" & dt.Columns(2).ColumnName"
+      }
+    }
+  ]
+}

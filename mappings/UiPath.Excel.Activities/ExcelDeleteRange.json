@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelDeleteRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（削除は IWorkHandle の拡張メソッドに無い）"
+}

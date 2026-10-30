@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelInsertColumn",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（表の列の挿入は IWorkHandle の拡張メソッドに無い）"
+}

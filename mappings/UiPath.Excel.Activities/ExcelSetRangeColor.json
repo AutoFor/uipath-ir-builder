@@ -1,0 +1,18 @@
+{
+  "activity": "ExcelSetRangeColor",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.SetRangeColor",
+      "args": {
+        "sheetName": "{SheetName}",
+        "range": "{Range}",
+        "color": "{Color}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.SetRangeColor(this IWorkHandle, string sheetName, string range, Color color)"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelAutoFillRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（オートフィルは IWorkHandle の拡張メソッドに無い）"
+}

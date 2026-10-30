@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelLookUpRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（LOOKUP は IWorkHandle の拡張メソッドに無い）"
+}

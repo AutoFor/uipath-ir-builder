@@ -1,0 +1,109 @@
+{
+  "workflow": "ExcelRemoveDuplicatesRange_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelRemoveDuplicatesRange_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelRemoveDuplicatesRange_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A5"
+            },
+            "Text": {
+              "lit": "太郎"
+            }
+          }
+        },
+        {
+          "act": "ExcelWriteCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B5"
+            },
+            "Text": {
+              "lit": "30"
+            }
+          }
+        },
+        {
+          "act": "ExcelRemoveDuplicatesRange",
+          "name": "重複した行を消す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B5"
+            }
+          }
+        },
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B5"
+            },
+            "DataTable": "dt",
+            "AddHeaders": false
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"行数: \" & dt.Rows.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"4 行目: \" & dt.Rows(3).Item(0).ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"5 行目: \" & dt.Rows(4).Item(0).ToString"
+      }
+    }
+  ]
+}
