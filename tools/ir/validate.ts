@@ -4,6 +4,7 @@ import type { Catalog, Activity } from "./catalog.ts";
 import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
+import { validateObjs, validateUiaTree } from "./uia.ts";
 
 type Scope = Map<string, string>; // 名前 -> IR の型名
 
@@ -21,6 +22,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
   }
   declare(wf.variables ?? [], "variables", scope, add);
   wf.body.forEach((n, i) => visit(n, `body[${i}]`, new Map(scope)));
+  validateUiaTree(wf, cat, add);
   return issues;
 
   function visit(n: Node, path: string, scope: Scope) {
@@ -61,6 +63,9 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       if (isUntypedArgument(p.type) && !argumentType(n, a, scope))
         add(at, "TYPE_UNKNOWN", `"${k}" の型が決まらない。typeArg を書くか、宣言済みの変数を代入先にする`);
     }
+
+    // 要素で書くオブジェクト（UI のターゲットなど。uia.ts）
+    for (const k of validateObjs(n, a, path, scope, add)) given.add(k);
 
     // 子の置き場所
     const slotProps = new Map<string, Node[]>();

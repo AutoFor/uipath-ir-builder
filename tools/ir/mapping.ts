@@ -21,20 +21,33 @@
 //   in のプロパティ → C# の式（VB から直したもの、{ lit } は C# の文字列リテラル）
 //   out / inout のプロパティ → 代入先の変数名
 //   enum のプロパティ → メンバー名そのまま（"UiPath.CodedWorkflows.LogLevel.{Level}" のように使う）
+//   {Prop|enum} → enum の完全名（UiPath.UIAutomationNext.Enums.NClickType.Double。フラグの "Alt, Ctrl" は A | B）
 //   {Prop|str} → 文字列にする（文字列だと分かる式はそのまま、それ以外は Convert.ToString(...)）
 //   {typeArg} → ジェネリックの型引数（C# の型名）
 // args の値が、IR に無いプロパティを参照していたら、その引数ごと省く（省略可能な引数かどうかはチェッカーが確かめる）。
+//
+// UI 操作（tools/ir/uia.ts）のための書き方:
+//   {Target}（objs のプロパティ）→ new TargetAnchorableModel { ... } のようなモデルの式
+//   {app} → いちばん内側の "special": "scope"（NApplicationCard）が作るアプリの変数（UiTargetApp）
+//   args の値をオブジェクトにすると、オプションのオブジェクトを作る:
+//     "clickOptions": { "new": "ClickOptions", "set": { "ClickType": "NClickType.{ClickType}", "Timeout": "{Timeout}" } }
+//     → new ClickOptions { ClickType = NClickType.Double, Timeout = 10 }（IR にある props の分だけ。1つも無ければ引数ごと省く。"always": true なら new ClickOptions()）
+//   "special": "scope" … call の戻り値を using (var appN = ...) で受け、body をその中に書く（NApplicationCard）
+//   "branches": { "true": "IfExists", "false": "IfNotExists" } … call の戻り値（bool）で子（slots）を if / else に分ける（NCheckState）
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
+export type ObjArg = { new: string; set: Record<string, string>; always?: boolean };
+
 export type Variant = {
   when?: string[];
   call?: string;
-  args?: Record<string, string>;
+  args?: Record<string, string | ObjArg>;
   returns?: string;
   code?: string;
-  special?: "invokeWorkflow";
+  special?: "invokeWorkflow" | "scope";
+  branches?: { true?: string; false?: string };
   usings?: string[];
 };
 
@@ -78,5 +91,5 @@ export function loadMappings(root: string): { maps: Map<string, Mapping>; errors
 
 // テンプレートが参照するプロパティ名
 export function refs(template: string): string[] {
-  return [...template.matchAll(/\{(\w+)(?:\|\w+)?\}/g)].map((m) => m[1]).filter((n) => n !== "typeArg");
+  return [...template.matchAll(/\{(\w+)(?:\|\w+)?\}/g)].map((m) => m[1]).filter((n) => n !== "typeArg" && n !== "app");
 }

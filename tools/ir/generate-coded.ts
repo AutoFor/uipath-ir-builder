@@ -13,10 +13,11 @@
 import type { Catalog } from "./catalog.ts";
 import { resolve } from "./catalog.ts";
 import type { Workflow, Node, Value, Issue } from "./types.ts";
-import type { Mapping, Variant } from "./mapping.ts";
+import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs } from "./mapping.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames } from "./validate.ts";
+import { objToCs } from "./uia.ts";
 
 export type CodedOptions = {
   namespace: string;
@@ -40,6 +41,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  const apps: string[] = []; // NApplicationCard（"special": "scope"）が作ったアプリの変数。内側が最後
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
   const emit = (depth: number, s: string) => lines.push("    ".repeat(depth) + s);
 
@@ -233,7 +235,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const m = maps.get(`${pkg}/${className}`);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
-    const given = Object.keys(n.props ?? {});
+    const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {})];
+    const has = (r: string) => n.props?.[r] !== undefined || n.objs?.[r] !== undefined;
     for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).includes(k))
       add(`${at}.dicts.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（引数の辞書）はまだ Coded に直せない`);
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
@@ -242,43 +245,80 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
 
     if (v.special === "invokeWorkflow") return invoke(n, v, m, depth, at, sc);
 
+    const act = resolve(cat, n.act, n.typeArg !== undefined);
+    const adef = "activity" in act ? act.activity : undefined;
     // どの props を使ったか（使わなかった props は意味が落ちるのでエラー）
     const used = new Set<string>(m.ignore ?? []);
     const fill = (tpl: string) => {
       for (const r of refs(tpl)) used.add(r);
       return tpl.replace(/\{(\w+)(?:\|(\w+))?\}/g, (_, name: string, filter?: string) => {
         if (name === "typeArg") return n.typeArg ? csType(n.typeArg) : "object";
+        if (name === "app") {
+          if (!apps.length) { add(at, "CODED_NO_SCOPE", `${className} の対応表は {app} を使うが、NApplicationCard の中に無い`); return "/* ? */ null"; }
+          return apps[apps.length - 1];
+        }
+        const pat = `${at}.props.${name}`;
+        if (n.objs?.[name] !== undefined && adef) return objToCs(adef, name, n.objs[name], `${at}.objs.${name}`, { expr: (x, xat) => expr(x, xat, sc), add });
         const val = n.props?.[name];
         if (val === undefined) return "";
-        const prop = resolve(cat, n.act, n.typeArg !== undefined);
-        const pdef = "activity" in prop ? prop.activity.props.find((x) => x.name === name) : undefined;
-        const pat = `${at}.props.${name}`;
-        if (pdef?.enum && typeof val === "string") return val;
+        const pdef = adef?.props.find((x) => x.name === name);
+        if (pdef?.enum && typeof val === "string")
+          return filter === "enum" ? val.split(",").map((x) => `${pdef.type}.${x.trim()}`).join(" | ") : val;
         if (pdef && (pdef.kind === "out" || pdef.kind === "inout")) return lvalue(val, pat, sc);
         return filter === "str" ? str(val, pat, sc) : expr(val, pat, sc);
       });
     };
-    let stmt: string;
-    if (v.code) stmt = fill(v.code);
-    else if (v.call) {
-      const args = Object.entries(v.args ?? {})
-        .filter(([, tpl]) => refs(tpl).every((r) => n.props?.[r] !== undefined))
-        .map(([param, tpl]) => `${param}: ${fill(tpl)}`);
-      const call = `${v.call}(${args.join(", ")})`;
-      if (v.returns) used.add(v.returns);
-      const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
-      stmt = target ? `${target} = ${call};` : `${call};`;
-    } else { add(at, "BAD_MAPPING", `${m.file}: call か code が要る`); return; }
+    // args の値（文字列のテンプレートか、オプションのオブジェクト { new, set }）。IR に無いものを参照するなら undefined（引数ごと省く）
+    const argText = (tpl: string | ObjArg): string | undefined => {
+      if (typeof tpl === "string") return refs(tpl).every(has) ? fill(tpl) : undefined;
+      const sets = Object.entries(tpl.set).filter(([, t]) => refs(t).length > 0 && refs(t).every(has)).map(([k, t]) => `${k} = ${fill(t)}`);
+      if (!sets.length) return tpl.always ? `new ${tpl.new}()` : undefined;
+      return `new ${tpl.new} { ${sets.join(", ")} }`;
+    };
+
     // ContinueOnError は、どのアクティビティでも try / catch で包む（式が真のときだけ例外を握りつぶす）
     const coe = n.props?.ContinueOnError;
     if (coe !== undefined) used.add("ContinueOnError");
+    const cond = coe === undefined ? "false" : expr(coe, `${at}.props.ContinueOnError`, sc);
+    const wrap = cond !== "false";
+    const d = wrap ? depth + 1 : depth;
+    if (wrap) { emit(depth, "try"); emit(depth, "{"); }
+
+    // 子（body / slots）は scope と branches だけが使う。それ以外で書かれていたら意味が落ちる
+    const slotsUsed = new Set<string>();
+    if (v.code) for (const l of fill(v.code).split(/\r?\n/)) emit(d, l);
+    else if (v.call) {
+      const args = Object.entries(v.args ?? {}).map(([param, tpl]) => [param, argText(tpl)] as const).filter(([, t]) => t !== undefined).map(([param, t]) => `${param}: ${t}`);
+      const call = `${fill(v.call)}(${args.join(", ")})`;
+      if (v.returns) used.add(v.returns);
+      const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
+      if (v.special === "scope") {
+        // NApplicationCard: using (var app1 = uiAutomation.Open(...)) { body }。CloseMode などは Dispose で効く
+        const app = `app${++tmp}`;
+        emit(d, `using (var ${app} = ${call})`);
+        apps.push(app);
+        braces(d, () => block(n.body, d + 1, `${at}.body`, sc));
+        apps.pop();
+        slotsUsed.add("body");
+      } else if (v.branches) {
+        const r = `__state${++tmp}`;
+        emit(d, `var ${r} = ${call};`);
+        if (target) emit(d, `${target} = ${r};`);
+        const t = v.branches.true, f = v.branches.false;
+        emit(d, `if (${r})`);
+        braces(d, () => block(t ? n.slots?.[t] : undefined, d + 1, `${at}.slots.${t}`, sc));
+        if (f && n.slots?.[f]?.length) { emit(d, "else"); braces(d, () => block(n.slots![f], d + 1, `${at}.slots.${f}`, sc)); }
+        if (t) slotsUsed.add(t);
+        if (f) slotsUsed.add(f);
+      } else emit(d, target ? `${target} = ${call};` : `${call};`);
+    } else add(at, "BAD_MAPPING", `${m.file}: call か code が要る`);
+    if (n.body?.length && !slotsUsed.has("body")) add(`${at}.body`, "CODED_UNSUPPORTED", `${className} の body を対応表（${m.file}）が扱っていない`);
+    for (const k of Object.keys(n.slots ?? {})) if (!slotsUsed.has(k) && !(m.ignore ?? []).includes(k))
+      add(`${at}.slots.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（子）を対応表（${m.file}）が扱っていない`);
     for (const k of given) if (!used.has(k) && k !== "DisplayName")
       add(`${at}.props.${k}`, "MAPPING_UNUSED_PROP", `${className}.${k} を対応表（${m.file}）が扱っていない。args に足すか、意味がなければ ignore に書く`);
-    const lines = stmt.split(/\r?\n/);
-    const cond = coe === undefined ? "false" : expr(coe, `${at}.props.ContinueOnError`, sc);
-    if (cond === "false") { for (const l of lines) emit(depth, l); return; }
-    emit(depth, "try");
-    braces(depth, () => { for (const l of lines) emit(depth + 1, l); });
+    if (!wrap) return;
+    emit(depth, "}");
     emit(depth, cond === "true" ? "catch (Exception)" : `catch (Exception) when (${cond})`);
     braces(depth, () => emit(depth + 1, `// ContinueOnError: ${className} の例外を無視する`));
   }

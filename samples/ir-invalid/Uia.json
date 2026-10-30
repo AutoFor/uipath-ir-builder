@@ -1,0 +1,15 @@
+{
+  "workflow": "UiaInvalid",
+  "variables": [ { "name": "t", "type": "String" } ],
+  "body": [
+    { "act": "NClick", "name": "UIA_NO_SCOPE（NApplicationCard の外）",
+      "objs": { "Target": { "FullSelectorArgument": { "lit": "<webctrl id='a' tag='BUTTON' />" }, "SearchSteps": "Selector" } } },
+    { "act": "NApplicationCard", "name": "UIA_TARGET_MISSING（TargetApp が無い）", "body": [
+      { "act": "NClick", "name": "UIA_TARGET_MISSING（Target が無い）" },
+      { "act": "NGetText", "name": "UIA_SEARCH_STEPS", "objs": { "Target": { "FullSelectorArgument": { "lit": "<webctrl id='r' tag='DIV' />" } } }, "props": { "TextString": "t" } },
+      { "act": "NTypeInto", "name": "BAD_ENUM / UNKNOWN_PROP / UIA_TARGET_EMPTY", "objs": { "Target": { "SearchSteps": "Selector, Bogus", "Selectr": { "lit": "x" } } } },
+      { "act": "NClick", "name": "BAD_OBJ（オブジェクトを文字列で書いた）", "objs": { "Target": "<webctrl id='a' tag='BUTTON' />" } }
+    ] },
+    { "act": "Click", "name": "UIA_TARGET_EMPTY（Classic の Target にセレクタが無い）", "objs": { "Target": { "TimeoutMS": 100 } } }
+  ]
+}

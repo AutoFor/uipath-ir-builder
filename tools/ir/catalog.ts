@@ -25,6 +25,10 @@ export type Activity = {
   package: string;
 };
 
+// 要素で書くオブジェクトの型（UI のターゲットなど）。catalog/<pkg>/<ver>.objects.json（抽出器の --types）から読む
+export type ObjType = { clrType: string; className: string; xmlns: string; assembly: string; props: Prop[] };
+export const objectTypes = new Map<string, ObjType>(); // clrType -> 型
+
 export type Catalog = {
   activities: Activity[];
   defaults: Map<string, Record<string, string>>; // ClassName -> get-default-xaml に出た属性
@@ -42,6 +46,8 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
       activities.push({ ...a, props, package: c.package });
     }
+    const objFile = join(root, f.replace(/\.json$/, ".objects.json"));
+    if (existsSync(objFile)) for (const o of JSON.parse(readFileSync(objFile, "utf8")).objects) objectTypes.set(o.clrType, o);
   }
 
   const defaults = new Map<string, Record<string, string>>();
@@ -139,7 +145,8 @@ export function writable(a: Activity, p: Prop): Writable {
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))
     return { ok: false, group: "コレクション", reason: `${p.type} は要素構文が要るのでまだ書けない` };
+  if (objectTypes.has(p.type)) return { ok: true, how: "objs" };
   if (/^UiPath\.(Core\.Activities\.(Target|ImageTarget|CursorPosition)|UIAutomationNext\.(TargetAnchorable|TargetApp|ClickOffset|PointOffset)|CV\.|Core\.Region)/.test(p.type))
-    return { ok: false, group: "UI のターゲット", reason: `${p.type} は UI 操作の設計で扱う（後で追記）` };
+    return { ok: false, group: "UI のターゲット", reason: `${p.type} はまだ書けない（catalog/UiPath.UIAutomation.Activities/*.objects.json に型が無い。docs/worker-guide.md の 8. で足す）` };
   return { ok: false, group: "オブジェクト", reason: `${p.type} は要素構文が要るのでまだ書けない` };
 }

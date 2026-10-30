@@ -1,0 +1,78 @@
+{
+  "activity": "NTypeInto",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "when": [
+        "InUiElement"
+      ],
+      "call": "uiAutomation.TypeInto",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "uiElement": "{InUiElement}",
+        "typeIntoOptions": {
+          "new": "TypeIntoOptions",
+          "set": {
+            "Text": "{Text}",
+            "SecureText": "{SecureText}",
+            "DelayBetweenKeys": "{DelayBetweenKeys}",
+            "ActivateBefore": "{ActivateBefore}",
+            "ClickBeforeMode": "{ClickBeforeMode|enum}",
+            "EmptyFieldMode": "{EmptyFieldMode|enum}",
+            "ClipboardMode": "{ClipboardMode|enum}",
+            "DeselectAfter": "{DeselectAfter}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "VerifyOptions": "{VerifyOptions}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          },
+          "always": true
+        }
+      }
+    },
+    {
+      "call": "{app}.TypeInto",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "typeIntoOptions": {
+          "new": "TypeIntoOptions",
+          "set": {
+            "Text": "{Text}",
+            "SecureText": "{SecureText}",
+            "DelayBetweenKeys": "{DelayBetweenKeys}",
+            "ActivateBefore": "{ActivateBefore}",
+            "ClickBeforeMode": "{ClickBeforeMode|enum}",
+            "EmptyFieldMode": "{EmptyFieldMode|enum}",
+            "ClipboardMode": "{ClipboardMode|enum}",
+            "DeselectAfter": "{DeselectAfter}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "VerifyOptions": "{VerifyOptions}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          },
+          "always": true
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ],
+  "notes": "Text / SecureText は TypeIntoOptions に入れる（TypeInto(target, options)）。OutUiElement と ClickOffset（非推奨）はまだ扱わない"
+}

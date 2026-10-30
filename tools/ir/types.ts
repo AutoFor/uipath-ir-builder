@@ -37,7 +37,12 @@ export type Node = {
   cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
   catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）
+  objs?: Record<string, ObjValue>; // 要素で書くオブジェクトのプロパティ（UI のターゲット Target / TargetApp など）。書き方は tools/ir/uia.ts
 };
+
+// オブジェクトの中身。キーはそのオブジェクトの型のプロパティ名（カタログ *.objects.json）、値は Value か、入れ子のオブジェクト、
+// その配列（TargetAnchorable.Anchors など）
+export type ObjValue = { [prop: string]: Value | ObjValue | ObjValue[] };
 
 export type CatchDecl = { type: string; var?: string; body: Node[] }; // var の既定は "exception"
 

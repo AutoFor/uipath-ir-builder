@@ -1,0 +1,39 @@
+{
+  "activity": "NApplicationCard",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "special": "scope",
+      "call": "uiAutomation.Open",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "targetApp": "{TargetApp}",
+        "targetAppOptions": {
+          "new": "TargetAppOptions",
+          "set": {
+            "Timeout": "{Timeout}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "AttachMode": "{AttachMode|enum}",
+            "OpenMode": "{OpenMode|enum}",
+            "CloseMode": "{CloseMode|enum}",
+            "WindowResize": "{WindowResize|enum}",
+            "UserDataFolderMode": "{UserDataFolderMode|enum}",
+            "UserDataFolderPath": "{UserDataFolderPath}",
+            "IsIncognito": "{IsIncognito}",
+            "WebDriverMode": "{WebDriverMode|enum}",
+            "DialogHandlingOptions": "{DialogHandling}",
+            "HealingAgentBehavior": "UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.{HealingAgentBehavior}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeGuid",
+    "Version"
+  ],
+  "notes": "using (var app = uiAutomation.Open(TargetAppModel, TargetAppOptions)) { body } にする。中のアクティビティは {app}.Click(...) のように呼ぶ。CloseMode は Dispose で効く。HealingAgentBehavior は型が違う（NHealingAgentBehavior → NChildHealingAgentBehavior）のでメンバー名で写す。InUiElement / OutUiElement（UiElement で開く・返す）、TargetApp.WorkingDirectory はまだ扱わない"
+}

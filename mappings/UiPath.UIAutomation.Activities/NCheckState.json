@@ -1,0 +1,38 @@
+{
+  "activity": "NCheckState",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.WaitState",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "Exists",
+      "branches": {
+        "true": "IfExists",
+        "false": "IfNotExists"
+      },
+      "args": {
+        "target": "{Target}",
+        "checkStateOptions": {
+          "new": "CheckStateOptions",
+          "always": true,
+          "set": {
+            "Mode": "{Mode|enum}",
+            "CheckVisibility": "{CheckVisibility}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ],
+  "notes": "WaitState の戻り値（bool）で IfExists / IfNotExists を if / else にする。CheckWindowActive は CheckStateOptions に無いのでまだ扱わない。InUiElement / OutUiElement も扱わない"
+}

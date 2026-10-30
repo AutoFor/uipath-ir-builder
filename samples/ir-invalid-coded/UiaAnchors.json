@@ -1,0 +1,14 @@
+{
+  "workflow": "UiaAnchors",
+  "body": [
+    { "act": "NApplicationCard", "item": "WSSessionData",
+      "objs": { "TargetApp": { "Url": { "lit": "about:blank" }, "BrowserType": "Edge", "Selector": { "lit": "<html app='msedge.exe' />" } } },
+      "body": [
+        { "act": "NClick", "name": "アンカーは XAML では書けるが、Coded のモデル（TargetAnchorableModel）に無い",
+          "objs": { "Target": {
+            "FullSelectorArgument": { "lit": "<webctrl id='greet' tag='BUTTON' />" }, "SearchSteps": "Selector",
+            "Anchors": [ { "FullSelectorArgument": { "lit": "<webctrl id='name' tag='INPUT' />" }, "SearchSteps": "Selector" } ]
+          } } }
+      ] }
+  ]
+}
