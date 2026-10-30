@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CvHighlightWithDescriptor\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:p=\"http://schemas.uipath.com/workflow/activities/cv\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <p:CvHighlightWithDescriptor DelayScreenshotAfterScroll=\"{x:Null}\" DesignTimeScaleFactor=\"{x:Null}\" ScrollDirection=\"{x:Null}\" Color=\"Gold\" HighlightTime=\"1000\" NumberOfScrolls=\"2\">\r\n    <p:CvHighlightWithDescriptor.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"97e328c4-6848-4485-8324-5899afee55d6\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </p:CvHighlightWithDescriptor.Target>\r\n  </p:CvHighlightWithDescriptor>\r\n</Activity>"
+  }
+}

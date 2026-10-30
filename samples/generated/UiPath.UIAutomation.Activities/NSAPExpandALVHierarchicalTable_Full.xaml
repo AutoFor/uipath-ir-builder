@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:uix="http://schemas.uipath.com/workflow/activities/uix"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -63,7 +64,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPExpandALVHierarchicalTable_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="84bb0611-f3e8-4134-a7f5-c26d8872a157" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="9623f1c9-a1c7-56be-a299-c064befba688" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +74,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPExpandALVHierarchicalTable ColumnNameLevel0="VBELN" ColumnNameLevel1="POSNR" ColumnValueLevel0="0000001000" ColumnValueLevel1="000010" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="ALV 階層テーブルを展開（全部入り）" FocusedColumn="VBELN" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" ScopeIdentifier="84bb0611-f3e8-4134-a7f5-c26d8872a157" SelectLevel1="True" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVHierarchicalTable_1">
+            <uix:NSAPExpandALVHierarchicalTable ColumnNameLevel0="VBELN" ColumnNameLevel1="POSNR" ColumnValueLevel0="0000001000" ColumnValueLevel1="000010" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="ALV 階層テーブルを展開（全部入り）" FocusedColumn="VBELN" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" ScopeIdentifier="9623f1c9-a1c7-56be-a299-c064befba688" SelectLevel1="True" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVHierarchicalTable_1">
+              <uix:NSAPExpandALVHierarchicalTable.AllColumns>
+                <scg:List x:TypeArguments="x:String" Capacity="4">
+                  <x:String>MATNR</x:String>
+                  <x:String>WERKS</x:String>
+                </scg:List>
+              </uix:NSAPExpandALVHierarchicalTable.AllColumns>
               <uix:NSAPExpandALVHierarchicalTable.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="45406502-497c-4396-9140-7712c393ff2b" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="77ca0ce3-efd7-551c-8d72-16bf7c42518d" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPExpandALVHierarchicalTable.Target>
             </uix:NSAPExpandALVHierarchicalTable>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPExpandALVHierarchicalTable 完了（全部入り）&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

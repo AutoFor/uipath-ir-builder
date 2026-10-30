@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ClickPictureOnScreen ClickType="CLICK_SINGLE" KeyModifiers="None" sap2010:WorkflowViewState.IdRef="ClickPictureOnScreen_1">
             <ns0:ClickPictureOnScreen.Target>
-              <ui:Target Id="6aaf2c87-490d-4670-8e33-2f0bffd35fa3" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
+              <ui:Target Id="39305359-d04c-5ced-b401-ca25156fe9b5" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
             </ns0:ClickPictureOnScreen.Target>
           </ns0:ClickPictureOnScreen>
         </ActivityAction>

@@ -66,7 +66,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         <Variable x:TypeArguments="x:Boolean" Name="stp" />
       </ui:TriggerScope.Variables>
       <ui:TriggerScope.Triggers>
-        <ui:FileChangeTriggerV3 ChangeType="All" Enabled="True" NotifyFilters="FileName" Path="C:\Users\Public\watch" SchedulingMode="Sequential" TriggerId="4fe63203-2281-4119-9c7d-20b97e160fd1" sap2010:WorkflowViewState.IdRef="FileChangeTriggerV3_1" />
+        <ui:FileChangeTriggerV3 ChangeType="All" Enabled="True" NotifyFilters="FileName" Path="C:\Users\Public\watch" SchedulingMode="Sequential" TriggerId="5a9c3c52-5f1e-5a35-8736-fb4ac675e525" sap2010:WorkflowViewState.IdRef="FileChangeTriggerV3_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

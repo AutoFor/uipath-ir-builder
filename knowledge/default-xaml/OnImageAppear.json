@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"OnImageAppear\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:OnImageAppear ContinueOnError=\"{x:Null}\" FoundElement=\"{x:Null}\" RepeatForever=\"True\">\r\n    <ui:OnImageAppear.Body>\r\n      <Sequence DisplayName=\"Do\" />\r\n    </ui:OnImageAppear.Body>\r\n    <ui:OnImageAppear.Image>\r\n      <ui:ImageTarget Image=\"{x:Null}\" TargetImageBase64=\"{x:Null}\" Accuracy=\"0.8\" Profile=\"Basic\" />\r\n    </ui:OnImageAppear.Image>\r\n    <ui:OnImageAppear.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"78980547-4014-4f85-8861-7df549e03378\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:OnImageAppear.Target>\r\n  </ui:OnImageAppear>\r\n</Activity>"
+  }
+}

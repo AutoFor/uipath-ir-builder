@@ -192,6 +192,10 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 - **run**：ロボット（Assistant）は1ユーザーに1つなので、`verify.mjs` は `C:\Users\Public\uipath-ir-probe.run.lock` でマシン全体の run を1つずつに並べる（待つ間「run の順番待ち」と出る）。同時に run したときの動きはまだ確かめていない。ロックを外さないこと
 - 同じ作業用プロジェクトを2つの `verify.mjs` で同時に使うと、`.verify.lock` で止まる。作業名を分ける
 
+### Helm を SSH 側で起動しない
+
+SSH 側で起動した Helm は管理者権限（セッション 0）で、空いていると窓口の run に割り当てられ、run が「アクセスが拒否されました」で落ちる。build と既定 XAML も窓口を通す（`queue-run.mjs --build-only`、`queue-run.mjs --default-xaml <クラス> --out <ファイル>`）。`verify.mjs` を SSH から直接流すとガードで止まる。
+
 ### run は窓口（queue-run.mjs）を通す
 
 Claude のセッションは SSH 経由（管理者権限・セッション 0）なので、直接 `uip rpa run` すると落ちる。ユーザーが RDP 側の管理者なしターミナルで `node tools/verify/runner.mjs` を動かしているので、run は `node tools/verify/queue-run.mjs --name <作業名> <ファイル>` で頼む（引数は verify.mjs と同じ。順番待ちになる）。build は今までどおり `verify.mjs --build-only` でよい。
@@ -339,8 +343,14 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
     --dll $L/UiPath.UIAutomationNext.Activities.dll --dll $L/UiPath.UIAutomationNext.dll --dll $L/UiPath.UiAutomation.Activities.dll --dll $L/UiPath.UIAutomationCore.dll \
     --out catalog/UiPath.UIAutomation.Activities/26.10.6.objects.json
   ```
-- `UiElement` / `Browser` / `Window` 型の変数は `types-xaml.ts` にまだ無い（`InUiElement` / `OutUiElement` を使うサンプルは、型を足してから）
-- `System.Drawing.Rectangle`（`Region` の中身、CV の `InRegion`）、`List<String>`（SAP の `Items`）、`SecureString` はまだ書けない
+- 変数の型：`UiElement`、`Window`、`Browser`、`Region`、`Rectangle`、`Point`、`SecureString` は短い名前で書く。`Image` は `System.Drawing.Image`、UiPath の Image は完全名の `UiPath.Core.Image`
+- `SecureString` の変数は、使うアクティビティのすぐ外の Sequence で宣言する（外の階層で宣言すると build の分析 `ST-SEC-008` で落ちる。例 `Login.types.json`）
+- `Rectangle` / `Point`（`objs` の中）は文字列で書く：`"ClippingRegion": { "Rectangle": "10, 20, 300, 200" }`、`"X, Y"`。式は書けない（XAML の属性）
+- 文字列の一覧（`List<String>` / `IEnumerable<String>`。`NSelectItem.Items`、`AllColumns`、`ColumnNames` など）は `lists` に `{ "lit": "..." }` の配列で書く。式は持てない。`List<DayOfWeek>` はメンバー名の配列。`objs` の中でも同じ
+- 文字列の辞書（`IDictionary<String, String>` の `FieldMappings`、`Dictionary<String, InArgument<String>>` の `Queries`）は `dicts` に `{ "name": キー, "value": 値 }` の配列で書く（`dir` と `type` は書かない）
+- setter の無いプロパティ（`BindingsKey`、`FilterFiles`、`AllowedItemType` など）は検証で弾く。カタログの `readOnly`。理由と、まだ書けないものの一覧は `knowledge/coverage-gaps.md`
+- GUID（Target の `Id`、`ScopeGuid` など）はワークフロー名と通し番号から作るので、`UPDATE_SNAPSHOTS=1` で揺れない
+
 - 検証のエラー：`UIA_NO_SCOPE`（Modern のターゲットが `NApplicationCard` の外）、`UIA_TARGET_MISSING`（`Target` / `TargetApp` が無い）、`UIA_SEARCH_STEPS`（`SearchSteps` が無い）、`UIA_TARGET_EMPTY`（セレクタなど探す手がかりが無い）、`BAD_OBJ`（オブジェクトの形が違う）。例は `samples/ir-invalid/Uia.json`
 
 ### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
@@ -399,6 +409,13 @@ Use Excel File（`ExcelApplicationCard`）は、ブックの参照（`IWorkbookQ
 | `ExcelProcessScopeX` | `"ExcelProcessScopeTag"` |
 | `ExcelForEachRowX` | `["CurrentRow", "CurrentIndex"]` |
 | `ForEachSheetX` | `["CurrentSheet", "CurrentIndex"]` |
+
+`FilterX` / `FilterPivotTableX` の `FilterArgument` は `objs` に書く（XAML の build を確かめた。対応表はまだ）：
+
+```json
+"objs": { "FilterArgument": { "Mode": "Basic", "BasicFiltersArgument": { "BasicFilters": [ { "lit": "a" } ] } } }
+"objs": { "FilterArgument": { "Mode": "Advanced", "AdvancedFiltersArgument": { "LogicalOperator": "And", "Condition1": { "Operator": "GT", "Value": { "lit": "10" } } } } }
+```
 
 `SortX` / `InvokeVBAX` / `ExecuteMacroX` / `CreatePivotTableXv2` / `UpdateChartX` は、body に「子の設定用アクティビティ」（`SortColumnX`、`InvokeVBAArgumentX`、`ExecuteMacroArgumentX`、`PivotTableFieldX`、`*Modification`）を並べる。get-default-xaml は body に空の Sequence を置くので、IR では body に子の設定を並べる（2つ以上なら Sequence に包まれる。Studio と同じ）。
 

@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ExpandALVTree Path="RootNode1" sap2010:WorkflowViewState.IdRef="ExpandALVTree_1">
             <ns0:ExpandALVTree.Target>
-              <ui:Target Id="59142778-579b-445a-aa8d-7f0b036559cf" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
+              <ui:Target Id="cd5a1549-3eb5-5b20-b89f-0cc1e8fb5135" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
             </ns0:ExpandALVTree.Target>
           </ns0:ExpandALVTree>
         </ActivityAction>

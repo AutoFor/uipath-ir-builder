@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -69,8 +70,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <ns0:SelectMenuItem AlterIfDisabled="False" ContinueOnError="False" DelayAfter="100" DelayBefore="100" Item="System" sap2010:WorkflowViewState.IdRef="SelectMenuItem_1">
+            <ns0:SelectMenuItem.Items>
+              <scg:List x:TypeArguments="x:String" Capacity="4">
+                <x:String>Menu</x:String>
+                <x:String>Exit</x:String>
+              </scg:List>
+            </ns0:SelectMenuItem.Items>
             <ns0:SelectMenuItem.Target>
-              <ui:Target Id="3dc12116-1e61-4d11-bdac-df3110e719ce" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/mbar' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="0fa6d80f-7aab-51da-88f7-94f352bc782e" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/mbar' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:SelectMenuItem.Target>
           </ns0:SelectMenuItem>
         </ActivityAction>

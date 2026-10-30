@@ -270,6 +270,195 @@
       ]
     },
     {
+      "className": "CvDescriptor",
+      "clrType": "UiPath.CV.CvDescriptor",
+      "assembly": "UiPath.CV",
+      "xmlns": "clr-namespace:UiPath.CV;assembly=UiPath.CV",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Anchors",
+          "kind": "prop",
+          "type": "UiPath.CV.CvElementDescriptor[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Id",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "InformativeScreenshot",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "Target",
+          "kind": "prop",
+          "type": "UiPath.CV.CvElementDescriptor",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "TargetOffset",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        },
+        {
+          "name": "TargetPointOffset",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Point>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvDescriptor"
+        }
+      ]
+    },
+    {
+      "className": "CvElementDescriptor",
+      "clrType": "UiPath.CV.CvElementDescriptor",
+      "assembly": "UiPath.CV",
+      "xmlns": "clr-namespace:UiPath.CV;assembly=UiPath.CV",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "CellExtraInfo",
+          "kind": "prop",
+          "type": "UiPath.CV.CvCellExtraInfo",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "DesignTimeArea",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Models.CV.UIVisionCategoryType",
+          "required": false,
+          "enum": [
+            "None",
+            "Button",
+            "InputBox",
+            "CheckBox",
+            "RadioButton",
+            "CloseButton",
+            "MaximizeButton",
+            "MinimizeButton",
+            "Icon",
+            "ArrowButton",
+            "Cell",
+            "Text",
+            "Image",
+            "Area",
+            "AnyText",
+            "AnyWordGroup",
+            "AnyIcon",
+            "Table",
+            "TableCell"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ImageAccuracy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Double>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "ImageBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "Text",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "TextAccuracy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Double>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        },
+        {
+          "name": "UseFuzzy",
+          "kind": "prop",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CvElementDescriptor"
+        }
+      ]
+    },
+    {
       "className": "SearchedElement",
       "clrType": "UiPath.UIAutomationNext.Activities.SearchedElement",
       "assembly": "UiPath.UIAutomationNext.Activities",
@@ -2429,6 +2618,137 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "TargetApp"
+        }
+      ]
+    },
+    {
+      "className": "FilterArgument",
+      "clrType": "UiPath.UIAutomationNext.Activities.Models.FilterArgument",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Filters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.UIAutomationNext.Activities.Models.FilterEntryArgument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Activities.Models.LogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "FilterEntryArgument",
+      "clrType": "UiPath.UIAutomationNext.Activities.Models.FilterEntryArgument",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Criterion",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        },
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Activities.Models.StringFilterOperator",
+          "required": false,
+          "enum": [
+            "Contains",
+            "DoesNotContain",
+            "Equals",
+            "DoesNotEqual",
+            "StartsWith",
+            "EndsWith",
+            "IsEmpty",
+            "IsNotEmpty"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        }
+      ]
+    },
+    {
+      "className": "GenerationOptions",
+      "clrType": "UiPath.UIAutomationNext.Models.GenerationOptions",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ExpectedInputs",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "ExpectedOutputs",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "Prompt",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "Url",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
         }
       ]
     }

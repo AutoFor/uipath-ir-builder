@@ -60,11 +60,6 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
     for (const a of c.activities) {
       // 型が ActivityDelegate のプロパティ（RetryScope.ActivityBody など）は、抽出器では prop になるが中身は引数なしの ActivityAction
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
-      // 戻り値のある基底（BaseStorageActivity<String> など。最後の型引数 T が決まっているもの）の Result は、リフレクションでは
-      // 取れない（Activity<T>.Result）が、XAML では Result="[変数]" の属性で書ける。out のプロパティとして足す
-      // ジェネリックのアクティビティ（genericArity > 0）では、T が自分の型引数（CodeActivity<List<T>> の List<T> など）なので Result も書ける
-      const res = typeof a.baseType === "string" && !props.some((p: Prop) => p.name === "Result") ? resultType(a.baseType, a.genericArity > 0) : undefined;
-      if (res) props.push({ name: "Result", kind: "out", type: res, required: false, obsolete: false });
       activities.push({ ...a, props, package: c.package });
     }
     const objFile = join(root, f.replace(/\.json$/, ".objects.json"));
@@ -88,17 +83,6 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
     }
   }
   return { activities, defaults };
-}
-
-// 基底クラスの型引数から Result の型を取る。Activity<T> 系（CodeActivity<T>、NativeActivity<T>、AsyncTaskCodeActivity<T>、
-// Base…Activity<T> など）で、T が決まっている（T、T1 のような仮引数でない）ときだけ
-function resultType(baseType: string, ownGeneric: boolean): string | undefined {
-  const m = baseType.match(/(?:^|\.)(\w*Activity)<(.+)>$/);
-  if (!m) return undefined;
-  const t = m[2];
-  if (/(^|[<, ])T\d?(?=[>, ]|$)/.test(t)) return ownGeneric && /^[\w.]+<T>$/.test(t) && !/^ForEachBase/.test(m[1]) ? t : undefined;
-  if (ownGeneric) return undefined; // 型引数のあるアクティビティで T を含まない戻り値は、これまでどおり扱わない
-  return t;
 }
 
 export type Resolved = { activity: Activity } | { error: string; candidates: Activity[] };
@@ -142,6 +126,24 @@ const delegateOverrides: Record<string, string[]> = {
   "TriggerScope.Action": ["UiPath.Platform.Triggers.TriggerArgs"],
 };
 
+// ActivityFunc<引数..., 戻り値>（CVScope.OCREngine、RetryScope.Condition など）。引数の型と戻り値の型。引数は0か1つだけ扱う。
+// IR では body に Activity<戻り値> の子を1つ書く。引数名は型の短い名前（Image）、戻り値の DelegateOutArgument は書かない
+export function funcInfo(p: Prop): { args: string[]; result: string } | undefined {
+  const m = p.type.match(/^(?:System.Activities.)?ActivityFunc<(.+)>$/);
+  if (!m) return undefined;
+  const parts: string[] = [];
+  let depth = 0, cur = "";
+  for (const ch of m[1]) {
+    if (ch === "<") depth++;
+    if (ch === ">") depth--;
+    if (ch === "," && depth === 0) { parts.push(cur.trim()); cur = ""; } else cur += ch;
+  }
+  parts.push(cur.trim());
+  const result = parts.pop()!;
+  return parts.length <= 1 ? { args: parts, result } : undefined;
+}
+export const funcArgName = (t: string) => t.replace(/<.*$/, "").split(".").pop()!;
+
 export function delegateArgs(p: Prop, typeArg: string | undefined): string[] | undefined {
   const ov = delegateOverrides[`${p.declaredOn}.${p.name}`];
   if (ov) return ov;
@@ -173,20 +175,34 @@ export const argumentListElement = (propType: string, typeArg: string | undefine
   return t === undefined || /^T\d?$/.test(t) ? typeArg : t;
 };
 
+// 素の値の一覧（List<String> / IEnumerable<String> / List<DayOfWeek>）。要素は式を持てないリテラル。要素の型を返す
+export function plainListElement(t: string): string | undefined {
+  return t.match(/^System\.Collections\.Generic\.(?:List|IEnumerable)<(System\.String|System\.DayOfWeek)>$/)?.[1];
+}
+export const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// 文字列キーの辞書で、値が String（リテラル）か InArgument<String>（式）のもの。"String" / "InArgument" を返す
+export function literalMapValue(t: string): "String" | "InArgument" | undefined {
+  const m = t.match(/^System\.Collections\.Generic\.I?Dictionary<System\.String, (System\.String|System\.Activities\.InArgument<System\.String>)>$/);
+  return m ? (m[1] === "System.String" ? "String" : "InArgument") : undefined;
+}
+
+export const READ_ONLY = "読み取り専用";
+
 export type Writable = { ok: true; how: string } | { ok: false; reason: string; group: string };
 
 export function writable(a: Activity, p: Prop): Writable {
   const sp = specialProps[`${a.className}.${p.name}`] ?? specialProps[`*.${p.name}`];
   if (sp) return { ok: true, how: sp };
-  // BindingsKey は Studio が実行時のバインド用に内部で持つ。XAML の属性に書くと「unknown member」で build が落ちる（storage / RunJob / StartJob で確認）
-  if (p.name === "BindingsKey") return { ok: false, group: "Studio の内部", reason: "XAML に書けない（書くと build が「unknown member」で落ちる。Studio がバインド用に内部で持つ）" };
+  // setter が無いものは XAML に書くと build が「Cannot set unknown member」で落ちる（BindingsKey、FilterFiles、AllowedItemType など）
+  if (p.readOnly) return { ok: false, group: READ_ONLY, reason: "読み取り専用（public の setter が無い）。XAML に書けない" };
   if (isArgumentList(p.type)) return { ok: true, how: "lists" };
   switch (p.kind) {
     case "in": case "out": case "inout": return { ok: true, how: "式" };
     case "child": return { ok: true, how: isExpressionChild(p) ? "式" : "slots" };
     case "children": return { ok: true, how: "slots" };
     case "delegate":
-      return delegateArgs(p, "T") ? { ok: true, how: "slots" } : { ok: false, group: "ActivityFunc", reason: `${p.type}（戻り値のある delegate）はまだ書けない` };
+      return delegateArgs(p, "T") || funcInfo(p) ? { ok: true, how: "slots" } : { ok: false, group: "ActivityFunc", reason: `${p.type}（戻り値のある delegate）はまだ書けない` };
   }
   // 素のプロパティ（XAML の属性に書く）
   if (p.enum || attrTypes.has(p.type)) return { ok: true, how: "属性" };
@@ -194,6 +210,8 @@ export function writable(a: Activity, p: Prop): Writable {
   if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
   if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  if (literalMapValue(p.type)) return { ok: true, how: "dicts" };
+  if (plainListElement(p.type)) return { ok: true, how: "lists" };
   const listOf = listElementType(p.type);
   if (listOf && (listOf === "System.Activities.InArgument" || objectTypes.has(listOf))) return { ok: true, how: "lists" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))

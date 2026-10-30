@@ -1222,7 +1222,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",
@@ -1260,7 +1261,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "CreatePivotTableX"
+          "declaredOn": "CreatePivotTableX",
+          "readOnly": true
         },
         {
           "name": "LayoutRowType",
@@ -1334,7 +1336,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",
@@ -1372,7 +1375,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "CreatePivotTableXv2"
+          "declaredOn": "CreatePivotTableXv2",
+          "readOnly": true
         },
         {
           "name": "LayoutRowType",
@@ -4484,7 +4488,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",
@@ -6436,7 +6441,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",
@@ -8498,7 +8504,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",
@@ -9022,7 +9029,8 @@
           "required": false,
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "BaseParentActivityWithDescriptor"
+          "declaredOn": "BaseParentActivityWithDescriptor",
+          "readOnly": true
         },
         {
           "name": "Body",

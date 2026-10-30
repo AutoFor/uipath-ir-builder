@@ -155,7 +155,8 @@ record PropInfo(
     bool Browsable,
     List<string>? OverloadGroups,
     bool Obsolete,
-    string DeclaredOn);
+    string DeclaredOn,
+    bool? ReadOnly = null);
 
 static class Activities
 {
@@ -186,7 +187,10 @@ static class Activities
             {
                 if (p.GetMethod is not { IsPublic: true } || p.GetIndexParameters().Length > 0) continue;
                 var declared = p.DeclaringType!;
-                if (declared.Namespace == "System.Activities" && !BaseKeep.Contains(p.Name)) continue;
+                // Activity<T>.Result は XAML に Result="[変数]" で書ける出力なので残す。派生が同じ名前を宣言していれば、そちらを使う
+                var isResult = p.Name == "Result" && declared.IsGenericType && declared.GetGenericTypeDefinition().FullName == "System.Activities.Activity`1";
+                if (isResult && t.GetProperties(BindingFlags.Public | BindingFlags.Instance).Any(q => q.Name == "Result" && q.DeclaringType?.Namespace != "System.Activities")) continue;
+                if (declared.Namespace == "System.Activities" && !BaseKeep.Contains(p.Name) && !isResult) continue;
                 props.Add(DescribeProp(p));
             }
             catch (Exception ex)
@@ -229,8 +233,14 @@ static class Activities
             Browsable: a.Browsable,
             OverloadGroups: a.OverloadGroups.Count > 0 ? a.OverloadGroups : null,
             Obsolete: a.Obsolete,
-            DeclaredOn: TypeNames.StripArity(p.DeclaringType!.Name));
+            DeclaredOn: TypeNames.StripArity(p.DeclaringType!.Name),
+            // public の setter が無い。コレクションは XAML が既存のものに要素を足せるので、読み取り専用に数えない
+            ReadOnly: p.SetMethod is not { IsPublic: true } && !IsCollectionLike(pt) ? true : null);
     }
+
+    static bool IsCollectionLike(Type t) =>
+        t.GetInterfaces().Concat([t]).Any(i => i.FullName is "System.Collections.IList" or "System.Collections.IDictionary"
+            || (i.IsGenericType && i.GetGenericTypeDefinition().FullName is "System.Collections.Generic.ICollection`1" or "System.Collections.Generic.IDictionary`2"));
 
     // 戻り値の inner は Argument の T など「中身の型」
     static (string kind, Type? inner) Classify(Type pt)

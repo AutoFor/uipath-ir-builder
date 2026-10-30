@@ -1,0 +1,48 @@
+{
+  "workflow": "ClickImageTriggerV2_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "ClickImageTriggerV2",
+            "objs": {
+              "Image": {
+                "Accuracy": 0.8,
+                "Profile": "Basic"
+              }
+            },
+            "props": {
+              "Selector": {
+                "lit": "<webctrl id='greet' tag='BUTTON' />"
+              },
+              "BlockEvent": false,
+              "Enabled": true,
+              "KeyModifiers": "None",
+              "MouseButton": "BTN_LEFT",
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000011",
+              "TriggerMode": "TriggerDown"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "ClickImageTriggerV2 が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

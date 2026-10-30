@@ -1,0 +1,6 @@
+{
+  "activity": "HotkeyTriggerV2",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（トリガー。Coded の uiAutomation にトリガーは無い）"
+}

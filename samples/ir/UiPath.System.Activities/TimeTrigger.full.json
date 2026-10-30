@@ -23,6 +23,23 @@
         "MonthlyRepeat": 1,
         "MonthlyStartingTime": "2026-01-01T11:00:00",
         "Result": "ji"
+      },
+      "lists": {
+        "WeeklyDaysToRunOn": [
+          "Monday",
+          "Friday"
+        ],
+        "MonthlyDaysToRunOn": [
+          "Monday"
+        ],
+        "DaysOfMonthToRunOn": [
+          {
+            "lit": "1"
+          },
+          {
+            "lit": "15"
+          }
+        ]
       }
     },
     {

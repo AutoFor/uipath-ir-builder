@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"SystemTriggerV2\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:SystemTriggerV2 BlockEvent=\"False\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"de6b4236-9e23-4a21-a5b6-2ac4842280d5\" TriggerInput=\"Keyboard, Mouse\" />\r\n</Activity>"
+  }
+}

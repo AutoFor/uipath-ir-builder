@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:uix="http://schemas.uipath.com/workflow/activities/uix"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -63,7 +64,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPSelectMenuItem_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="0ce1bf62-3271-4844-bed2-03f46dcdf9b5" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="ca26816e-47a9-5d43-b850-130bdc4c375b" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +74,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPSelectMenuItem AlterIfDisabled="True" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="メニュー項目を選択（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" Item="System\Status" ScopeIdentifier="0ce1bf62-3271-4844-bed2-03f46dcdf9b5" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectMenuItem_1">
+            <uix:NSAPSelectMenuItem AlterIfDisabled="True" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="メニュー項目を選択（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" Item="System\Status" ScopeIdentifier="ca26816e-47a9-5d43-b850-130bdc4c375b" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectMenuItem_1">
+              <uix:NSAPSelectMenuItem.Items>
+                <scg:List x:TypeArguments="x:String" Capacity="4">
+                  <x:String>Menu</x:String>
+                  <x:String>Exit</x:String>
+                </scg:List>
+              </uix:NSAPSelectMenuItem.Items>
               <uix:NSAPSelectMenuItem.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/mbar' /&gt;" Guid="f0f9f9d9-ec84-4c60-8a06-9da969375f63" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/mbar' /&gt;" Guid="762d2c67-3cc3-56d5-80b6-fbd2a18307d6" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPSelectMenuItem.Target>
             </uix:NSAPSelectMenuItem>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPSelectMenuItem 完了（全部入り）&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

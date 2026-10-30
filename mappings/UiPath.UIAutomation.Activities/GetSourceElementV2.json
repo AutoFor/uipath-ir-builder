@@ -1,0 +1,6 @@
+{
+  "activity": "GetSourceElementV2",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic のイベント・待機。Coded の uiAutomation が扱うのは Modern のターゲットだけ）"
+}

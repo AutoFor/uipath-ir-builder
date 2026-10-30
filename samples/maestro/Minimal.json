@@ -1,0 +1,6 @@
+{
+  "process": "Minimal",
+  "steps": [
+    { "kind": "script", "id": "greet", "flow": "return { message: 'hello' };", "bpmn": "return { message: 'hello' };" }
+  ]
+}

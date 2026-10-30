@@ -73,7 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:Login Client="100" IsSecure="False" Language="JA" MultiLogonOptionToChoose="Single" Password="[sapPassword]" Timeout="5000" Username="sapuser" sap2010:WorkflowViewState.IdRef="Login_1">
             <ns0:Login.Target>
-              <ui:Target Id="7fa8306c-0333-4ff3-9d56-3ce92663de80" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]' /&gt;" />
+              <ui:Target Id="dd1d6dae-2985-54cd-b233-81cc2d8b8d81" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]' /&gt;" />
             </ns0:Login.Target>
           </ns0:Login>
         </ActivityAction>

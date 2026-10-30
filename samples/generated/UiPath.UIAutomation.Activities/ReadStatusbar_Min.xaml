@@ -79,7 +79,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ns0:ReadStatusbar MessageText="[msgText]" sap2010:WorkflowViewState.IdRef="ReadStatusbar_1">
               <ns0:ReadStatusbar.Target>
-                <ui:Target Id="42ec8fd3-3f70-4724-a413-88acb98b8871" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/sbar' /&gt;" />
+                <ui:Target Id="11409bfb-10d1-534d-9f69-370de055bf05" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/sbar' /&gt;" />
               </ns0:ReadStatusbar.Target>
             </ns0:ReadStatusbar>
             <ui:LogMessage Level="Info" Message="[&quot;ステータスバー: &quot; &amp; msgText]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

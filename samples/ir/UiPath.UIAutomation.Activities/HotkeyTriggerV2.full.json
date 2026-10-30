@@ -1,0 +1,41 @@
+{
+  "workflow": "HotkeyTriggerV2_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "HotkeyTriggerV2",
+            "props": {
+              "Key": {
+                "lit": "F9"
+              },
+              "BlockEvent": false,
+              "Enabled": true,
+              "KeyModifiers": "Ctrl",
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000014",
+              "UseWindowsHotKey": false
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "HotkeyTriggerV2 が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

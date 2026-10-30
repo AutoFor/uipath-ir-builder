@@ -1,0 +1,45 @@
+{
+  "workflow": "KeyPressTriggerV2_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "KeyPressTriggerV2",
+            "props": {
+              "Selector": {
+                "lit": "<webctrl id='name' tag='INPUT' />"
+              },
+              "Key": {
+                "lit": "a"
+              },
+              "BlockEvent": false,
+              "Enabled": true,
+              "IncludeChildren": true,
+              "KeyModifiers": "None",
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000015",
+              "TriggerMode": "TriggerDown"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "KeyPressTriggerV2 が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

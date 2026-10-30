@@ -31,7 +31,8 @@
     "ForceRefreshView",
     "RequiresInitialization",
     "AlterIfDisabled",
-    "ExpandedNodeElement"
+    "ExpandedNodeElement",
+    "Items"
   ],
-  "notes": "アクティビティの Item を SAPExpandTreeOptions.Path に写す。Items（複数）と AlterIfDisabled（オプションに無い）、ExpandedNodeElement / OutUiElement は Coded 未対応"
+  "notes": "アクティビティの Item を SAPExpandTreeOptions.Path に写す。AlterIfDisabled（オプションに無い）、ExpandedNodeElement / OutUiElement は Coded 未対応。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる"
 }

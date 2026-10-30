@@ -16,5 +16,5 @@
       ]
     }
   ],
-  "notes": "ColumnFormat（ICellFormat）は IR で書けない（要素構文）ので常に null。別イシューで追う"
+  "notes": "ColumnFormat（ICellFormat）は IR の objs で書く（$type で実装を選ぶ。FormatRangeX.Format と同じ。例 InsertColumnX.format.json）。IR に無いときは null"
 }

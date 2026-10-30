@@ -1,0 +1,55 @@
+{
+  "workflow": "Login_Types",
+  "variables": [
+    { "name": "win", "type": "Window" },
+    { "name": "appWin", "type": "Window" },
+    { "name": "browser", "type": "Browser" },
+    { "name": "element", "type": "UiElement" },
+    { "name": "image", "type": "UiPath.Core.Image" },
+    { "name": "drawingImage", "type": "Image" },
+    { "name": "region", "type": "Region" },
+    { "name": "rect", "type": "Rectangle", "default": "New Rectangle(10, 20, 300, 200)" },
+    { "name": "pt", "type": "Point", "default": "New Point(10, 20)" }
+  ],
+  "body": [
+    {
+      "act": "OpenApplication",
+      "name": "SAP Logon を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": { "lit": "saplogon.exe" },
+        "Selector": { "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />" },
+        "ApplicationWindow": "appWin"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "name": "ログイン",
+          "variables": [ { "name": "securePwd", "type": "SecureString" } ],
+          "body": [
+            {
+              "act": "Login",
+              "objs": {
+                "Target": {
+                  "Selector": { "lit": "<sap id='/app/con[0]/ses[0]/wnd[0]' />" },
+                  "ClippingRegion": { "Rectangle": "10, 20, 300, 200" }
+                }
+              },
+              "props": {
+                "Client": { "lit": "100" },
+                "Language": { "lit": "JA" },
+                "Username": { "lit": "sapuser" },
+                "SecurePassword": "securePwd",
+                "IsSecure": true,
+                "Timeout": 5000,
+                "MultiLogonOptionToChoose": "Single",
+                "Window": "win"
+              }
+            }
+          ]
+        },
+        { "act": "CloseTab", "props": { "Browser": "browser" } }
+      ]
+    }
+  ]
+}

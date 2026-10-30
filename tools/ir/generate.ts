@@ -1,12 +1,11 @@
 // 検証済みの IR から XAML を作る。XAML の書式はすべてここで決める。
 
-import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
+import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
-import { prepareUia, emitObjs } from "./uia.ts";
+import { prepareUia, emitObjs, nextGuid, resetGuids } from "./uia.ts";
 import { excelPrefixes } from "./excel.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
@@ -34,6 +33,7 @@ const baseRefs = [
 ];
 
 export function generate(wf: Workflow, cat: Catalog): string {
+  resetGuids(wf.workflow);
   const xmlns = new Map<string, string>(); // prefix -> uri
   const imports = new Set(baseImports);
   const refs = new Set(baseRefs);
@@ -122,7 +122,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     // get-default-xaml に出た既定値のうち、IR が書いていないもの（Version=V5 など）
     for (const [k, v] of Object.entries(cat.defaults.get(a.className) ?? {})) {
       if (attrs.some(([x]) => x === k) || !a.props.some((p) => p.name === k)) continue;
-      attrs.push([k, /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v) ? randomUUID() : v]);
+      attrs.push([k, /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v) ? nextGuid() : v]);
     }
     const first = (k: string) => (k === "x:TypeArguments" ? 0 : k === "x:Key" ? 1 : 2);
     attrs.sort(([x], [y]) => first(x) - first(y) || x.localeCompare(y));
@@ -144,6 +144,20 @@ export function generate(wf: Workflow, cat: Catalog): string {
 
     const dicts: [string, InvokeArg[]][] = [...(n.args?.length ? [["Arguments", n.args] as [string, InvokeArg[]]] : []), ...Object.entries(n.dicts ?? {})];
     for (const [prop, list] of dicts) {
+      const mapValue = literalMapValue(a.props.find((x) => x.name === prop)?.type ?? "");
+      if (mapValue) {
+        // IDictionary<String, String> は <x:String x:Key="k">値</x:String>、Dictionary<String, InArgument<String>> は <InArgument x:Key="k">[式]</InArgument>
+        const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+        emit(depth + 1, `<${tag}.${prop}>`);
+        emit(depth + 2, `<${sg}Dictionary x:TypeArguments="x:String, ${mapValue === "String" ? "x:String" : "InArgument(x:String)"}">`);
+        for (const x of list) {
+          if (mapValue === "String") emit(depth + 3, `<x:String x:Key="${esc(x.name)}">${esc((x.value as { lit: string }).lit)}</x:String>`);
+          else emit(depth + 3, `<InArgument x:TypeArguments="x:String" x:Key="${esc(x.name)}">${esc(`[${exprText(x.value)}]`)}</InArgument>`);
+        }
+        emit(depth + 2, `</${sg}Dictionary>`);
+        emit(depth + 1, `</${tag}.${prop}>`);
+        continue;
+      }
       // 辞書のプロパティ。Studio の既定 XAML と同じく <scg:Dictionary> で包む（プロパティが null で始まるアクティビティもあるため）。
       // InvokeWorkflowFile（args）だけは、run で確かめた包まない形のまま
       const wrap = !(n.args?.length && prop === "Arguments");
@@ -174,6 +188,24 @@ export function generate(wf: Workflow, cat: Catalog): string {
           emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="${Math.max(4, list.length)}">`);
           for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(v as Value)}]`)}</InArgument>`);
           emit(depth + 2, `</scg:List>`);
+        }
+        emit(depth + 1, `</${tag}.${prop}>`);
+        continue;
+      }
+      const plain = plainListElement(p.type);
+      if (plain) {
+        // List<String> は <scg:List x:TypeArguments="x:String"><x:String>値</x:String></scg:List>（IEnumerable<String> にも List を入れる）。式は持てない
+        const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+        const et = typeText(plain);
+        emit(depth + 1, `<${tag}.${prop}>`);
+        if (list.length === 0) emit(depth + 2, `<${sg}List x:TypeArguments="${et}" Capacity="0" />`);
+        else {
+          emit(depth + 2, `<${sg}List x:TypeArguments="${et}" Capacity="${Math.max(4, list.length)}">`);
+          for (const x of list) {
+            const text = typeof x === "object" ? (x as { lit: string }).lit : String(x);
+            emit(depth + 3, `<${et}${text !== text.trim() ? ' xml:space="preserve"' : ""}>${esc(text)}</${et}>`);
+          }
+          emit(depth + 2, `</${sg}List>`);
         }
         emit(depth + 1, `</${tag}.${prop}>`);
         continue;
@@ -222,6 +254,23 @@ export function generate(wf: Workflow, cat: Catalog): string {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる
         for (const c of nodes) emitNode(c, depth + 1, new Map(scope));
       } else if (p.kind === "delegate") {
+        const fi = funcInfo(p);
+        if (fi) {
+          const ta = [...fi.args, fi.result].map(typeText).join(", ");
+          emit(depth + 1, `<${tag}.${p.name}>`);
+          emit(depth + 2, `<ActivityFunc x:TypeArguments="${ta}">`);
+          const inner = new Map(scope);
+          fi.args.forEach((t) => {
+            emit(depth + 3, `<ActivityFunc.Argument>`);
+            emit(depth + 4, `<DelegateInArgument x:TypeArguments="${typeText(t)}" Name="${esc(funcArgName(t))}" />`);
+            emit(depth + 3, `</ActivityFunc.Argument>`);
+            inner.set(funcArgName(t), t);
+          });
+          emitNode(single(nodes, p.name), depth + 3, inner);
+          emit(depth + 2, `</ActivityFunc>`);
+          emit(depth + 1, `</${tag}.${p.name}>`);
+          continue;
+        }
         const types = delegateArgs(p, n.typeArg)!;
         emit(depth + 1, `<${tag}.${p.name}>`);
         activityAction(depth + 2, types, itemNames(n, types.length), nodes, scope);
@@ -305,6 +354,8 @@ function attrValue(v: Value, p: Prop): string {
   if (typeof v === "boolean") return v ? "True" : "False";
   if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
   if (typeof v === "string" && p.enum?.includes(v)) return v;
+  // フラグの enum（"Keyboard, Mouse"）も属性にそのまま書く
+  if (typeof v === "string" && v.includes(",") && p.enum && v.split(",").every((x) => p.enum!.includes(x.trim()))) return v;
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
   if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return markupEscape(v.lit);

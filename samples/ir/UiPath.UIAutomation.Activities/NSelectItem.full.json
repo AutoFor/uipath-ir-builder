@@ -65,6 +65,19 @@
             "DelayAfter": 0.3,
             "ContinueOnError": false,
             "HealingAgentBehavior": "Disabled"
+          },
+          "lists": {
+            "Items": [
+              {
+                "lit": "apple"
+              },
+              {
+                "lit": "banana"
+              },
+              {
+                "lit": "cherry"
+              }
+            ]
           }
         },
         {

@@ -1,0 +1,35 @@
+{
+  "workflow": "CVRefresh_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "CVScope",
+      "item": "CVSessionData",
+      "objs": {
+        "Target": {
+          "Selector": {
+            "lit": "<wnd app='notepad.exe' cls='Notepad' />"
+          }
+        }
+      },
+      "body": [
+        {
+          "act": "CVRefresh",
+          "name": "CV を更新",
+          "props": {
+            "DelayBefore": 100,
+            "TimeoutMS": 15000,
+            "IsMoveMouseEnabled": true
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"done\""
+      }
+    }
+  ]
+}
