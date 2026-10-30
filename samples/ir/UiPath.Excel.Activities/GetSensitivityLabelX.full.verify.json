@@ -1,3 +1,3 @@
 {
-  "noRun": "秘密度ラベルは組織（Microsoft Purview）の設定とサインインが要る。この環境で読めるか分からないため build まで"
+  "noRun": "秘密度ラベルは組織（Microsoft Purview）の設定とサインインが要る。実際に run したところ Excel が 0x8004030B で失敗した（組織の設定が無い）ため build まで"
 }

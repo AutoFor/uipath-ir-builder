@@ -74,6 +74,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ui:PathExists Path="output\AppendWriteCsvFile_Resource.csv" PathType="File" Resource="[res]" sap2010:WorkflowViewState.IdRef="PathExists_1" />
     <ui:AppendWriteCsvFile AddHeaders="True" CsvAction="Write" DataTable="[dt]" Delimitator="Comma" DelimitatorForViewModel="Comma" DisplayName="リソースで書く" PathResource="[res]" ShouldQuote="True" sap2010:WorkflowViewState.IdRef="AppendWriteCsvFile_1" />
     <ui:ReadTextFile Content="[txt]" FileName="output\AppendWriteCsvFile_Resource.csv" sap2010:WorkflowViewState.IdRef="ReadTextFile_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;|&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;/&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

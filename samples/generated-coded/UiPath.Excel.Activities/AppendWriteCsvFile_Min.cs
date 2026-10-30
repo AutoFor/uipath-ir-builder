@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             }
             if (false) { ExcelOperations.AppendCsvFile("output\\AppendWriteCsvFile_Min.csv", dt, UiPath.CSV.DelimitatorOptions.Comma, null); } else { ExcelOperations.WriteCsvFile("output\\AppendWriteCsvFile_Min.csv", dt, UiPath.CSV.DelimitatorOptions.Comma, true, null, true); }
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\AppendWriteCsvFile_Min.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "/")), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }

@@ -71,6 +71,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ui:AppendWriteCsvFile AddHeaders="True" CsvAction="Write" DataTable="[dt]" Delimitator="Tab" DelimitatorForViewModel="Tab" DisplayName="書く" Encoding="utf-8" FilePath="output\AppendWriteCsvFile_Full.csv" ShouldQuote="False" sap2010:WorkflowViewState.IdRef="AppendWriteCsvFile_1" />
     <ui:AppendWriteCsvFile AddHeaders="False" CsvAction="Append" DataTable="[dt]" Delimitator="Tab" DelimitatorForViewModel="Tab" DisplayName="見出し無しで追記" Encoding="utf-8" FilePath="output\AppendWriteCsvFile_Full.csv" ShouldQuote="False" sap2010:WorkflowViewState.IdRef="AppendWriteCsvFile_2" />
     <ui:ReadTextFile Content="[txt]" FileName="output\AppendWriteCsvFile_Full.csv" sap2010:WorkflowViewState.IdRef="ReadTextFile_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;|&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;/&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

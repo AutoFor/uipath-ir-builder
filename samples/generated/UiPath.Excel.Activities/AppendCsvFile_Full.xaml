@@ -71,6 +71,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ui:WriteCsvFile AddHeaders="True" DataTable="[dt]" Delimitator="Pipe" DelimitatorForViewModel="Pipe" DisplayName="先に書く" FilePath="output\AppendCsvFile_Full.csv" ShouldQuote="True" sap2010:WorkflowViewState.IdRef="WriteCsvFile_1" />
     <ui:AppendCsvFile DataTable="[dt]" Delimitator="Pipe" DelimitatorForViewModel="Pipe" DisplayName="パイプ区切りで追記" Encoding="utf-8" FilePath="output\AppendCsvFile_Full.csv" sap2010:WorkflowViewState.IdRef="AppendCsvFile_1" />
     <ui:ReadTextFile Content="[txt]" FileName="output\AppendCsvFile_Full.csv" sap2010:WorkflowViewState.IdRef="ReadTextFile_1" />
-    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;|&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;CSV: &quot; &amp; txt.Replace(vbCr, &quot;&quot;).Replace(vbLf, &quot;/&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

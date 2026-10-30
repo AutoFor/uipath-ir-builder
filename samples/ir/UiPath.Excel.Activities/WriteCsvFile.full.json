@@ -52,8 +52,8 @@
       "props": {
         "Level": "Info",
         "Message": {
-          "vb": "\"CSV: \" & txt.Replace(vbCr, \"\").Replace(vbLf, \"|\")",
-          "cs": "\"CSV: \" + txt.Replace(\"\\r\", \"\").Replace(\"\\n\", \"|\")"
+          "vb": "\"CSV: \" & txt.Replace(vbCr, \"\").Replace(vbLf, \"/\")",
+          "cs": "\"CSV: \" + txt.Replace(\"\\r\", \"\").Replace(\"\\n\", \"/\")"
         }
       }
     }

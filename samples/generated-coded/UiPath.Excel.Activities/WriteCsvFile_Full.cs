@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             // セミコロン区切りで書く
             ExcelOperations.WriteCsvFile(filePath: "output\\WriteCsvFile_Full.csv", data: dt, delimiter: UiPath.CSV.DelimitatorOptions.Semicolon, addHeaders: false, encodingStr: "utf-8", shouldQuote: false);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\WriteCsvFile_Full.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "/")), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }

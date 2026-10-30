@@ -30,7 +30,7 @@ namespace CatalogProbeNet8
             // リソースで書く
             if (false) { ExcelOperations.AppendCsvFile(((UiPath.Platform.ResourceHandling.ILocalResource)res).LocalPath, dt, UiPath.CSV.DelimitatorOptions.Comma, null); } else { ExcelOperations.WriteCsvFile(((UiPath.Platform.ResourceHandling.ILocalResource)res).LocalPath, dt, UiPath.CSV.DelimitatorOptions.Comma, true, null, true); }
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\AppendWriteCsvFile_Resource.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "/")), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace CatalogProbeNet8
             // 見出し無しで追記
             if (true) { ExcelOperations.AppendCsvFile("output\\AppendWriteCsvFile_Full.csv", dt, UiPath.CSV.DelimitatorOptions.Tab, "utf-8"); } else { ExcelOperations.WriteCsvFile("output\\AppendWriteCsvFile_Full.csv", dt, UiPath.CSV.DelimitatorOptions.Tab, false, "utf-8", false); }
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\AppendWriteCsvFile_Full.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "/")), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }
