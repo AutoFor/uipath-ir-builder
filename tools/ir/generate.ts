@@ -2,10 +2,10 @@
 
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
-import { isUntypedArgument, argumentType } from "./validate.ts";
+import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
@@ -93,7 +93,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
   out.push(...body, "</Activity>", "");
   return out.join("\r\n");
 
-  function emitNode(n: Node, depth: number, scope: Map<string, string>) {
+  function emitNode(n: Node, depth: number, scope: Map<string, string>, key?: string) {
     const r = resolve(cat, n.act, n.typeArg !== undefined);
     if ("error" in r) throw new Error(r.error);
     const a = r.activity;
@@ -106,6 +106,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     // 属性
     const attrs: [string, string][] = [];
     if (a.genericArity > 0) attrs.push(["x:TypeArguments", typeText(n.typeArg ?? "Object")]);
+    if (key !== undefined) attrs.push(["x:Key", key]);
     if (n.name) attrs.push(["DisplayName", n.name]);
     const elems: { prop: Prop; value: Value }[] = [];
     for (const [k, v] of Object.entries(n.props ?? {})) {
@@ -118,7 +119,8 @@ export function generate(wf: Workflow, cat: Catalog): string {
       if (attrs.some(([x]) => x === k) || !a.props.some((p) => p.name === k)) continue;
       attrs.push([k, /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v) ? randomUUID() : v]);
     }
-    attrs.sort(([x], [y]) => (x === "x:TypeArguments" ? -1 : y === "x:TypeArguments" ? 1 : x.localeCompare(y)));
+    const first = (k: string) => (k === "x:TypeArguments" ? 0 : k === "x:Key" ? 1 : 2);
+    attrs.sort(([x], [y]) => first(x) - first(y) || x.localeCompare(y));
     attrs.push(["sap2010:WorkflowViewState.IdRef", idRef(a.className)]);
     const attrText = attrs.map(([k, v]) => ` ${k}="${esc(v)}"`).join("");
 
@@ -130,7 +132,8 @@ export function generate(wf: Workflow, cat: Catalog): string {
     if (n.else) slots.push([slotOf("Else"), n.else]);
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
-    const hasContent = elems.length || slots.length || n.variables?.length || n.args?.length;
+    const hasContent =
+      elems.length || slots.length || n.variables?.length || n.args?.length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -160,15 +163,9 @@ export function generate(wf: Workflow, cat: Catalog): string {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる
         for (const c of nodes) emitNode(c, depth + 1, new Map(scope));
       } else if (p.kind === "delegate") {
-        const t = typeText(n.typeArg ?? "Object");
+        const types = delegateArgs(p, n.typeArg)!;
         emit(depth + 1, `<${tag}.${p.name}>`);
-        emit(depth + 2, `<ActivityAction x:TypeArguments="${t}">`);
-        emit(depth + 3, `<ActivityAction.Argument>`);
-        emit(depth + 4, `<DelegateInArgument x:TypeArguments="${t}" Name="${esc(n.item ?? "item")}" />`);
-        emit(depth + 3, `</ActivityAction.Argument>`);
-        const inner = new Map(scope).set(n.item ?? "item", n.typeArg ?? "Object");
-        emitNode(single(nodes, "Body"), depth + 3, inner);
-        emit(depth + 2, `</ActivityAction>`);
+        activityAction(depth + 2, types, itemNames(n, types.length), nodes, scope);
         emit(depth + 1, `</${tag}.${p.name}>`);
       } else {
         emit(depth + 1, `<${tag}.${p.name}>`);
@@ -177,7 +174,53 @@ export function generate(wf: Workflow, cat: Catalog): string {
         emit(depth + 1, `</${tag}.${p.name}>`);
       }
     }
+    if (n.catches?.length) {
+      emit(depth + 1, `<${tag}.Catches>`);
+      for (const c of n.catches) {
+        emit(depth + 2, `<Catch x:TypeArguments="${typeText(c.type)}">`);
+        activityAction(depth + 3, [c.type], [c.var ?? "exception"], c.body, scope);
+        emit(depth + 2, `</Catch>`);
+      }
+      emit(depth + 1, `</${tag}.Catches>`);
+    }
+    if (n.assigns?.length) {
+      const op = prefixFor(a.xmlns) + "AssignOperation";
+      emit(depth + 1, `<${tag}.AssignOperations>`);
+      emit(depth + 2, `<scg:List x:TypeArguments="${op}" Capacity="${Math.max(4, n.assigns.length)}">`);
+      xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      for (const x of n.assigns) {
+        const t = typeText(scope.get(x.to)!);
+        emit(depth + 3, `<${op} sap2010:WorkflowViewState.IdRef="${idRef("AssignOperation")}">`);
+        emit(depth + 4, `<${op}.To>`);
+        emit(depth + 5, `<OutArgument x:TypeArguments="${t}">${esc(`[${x.to}]`)}</OutArgument>`);
+        emit(depth + 4, `</${op}.To>`);
+        emit(depth + 4, `<${op}.Value>`);
+        emit(depth + 5, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(x.value)}]`)}</InArgument>`);
+        emit(depth + 4, `</${op}.Value>`);
+        emit(depth + 3, `</${op}>`);
+      }
+      emit(depth + 2, `</scg:List>`);
+      emit(depth + 1, `</${tag}.AssignOperations>`);
+    }
+    // Switch.Cases はコンテンツプロパティなので、x:Key 付きで子をそのまま並べる
+    for (const [k, nodes] of Object.entries(n.cases ?? {})) emitNode(single(nodes, k), depth + 1, new Map(scope), k);
     emit(depth, `</${tag}>`);
+  }
+
+  // ActivityAction / ActivityAction<T> / ActivityAction<T1, T2> を書く
+  function activityAction(depth: number, types: string[], names: string[], nodes: Node[], scope: Map<string, string>) {
+    const ta = types.length ? ` x:TypeArguments="${types.map(typeText).join(", ")}"` : "";
+    emit(depth, `<ActivityAction${ta}>`);
+    const inner = new Map(scope);
+    types.forEach((t, i) => {
+      const prop = types.length === 1 ? "Argument" : `Argument${i + 1}`;
+      emit(depth + 1, `<ActivityAction.${prop}>`);
+      emit(depth + 2, `<DelegateInArgument x:TypeArguments="${typeText(t)}" Name="${esc(names[i])}" />`);
+      emit(depth + 1, `</ActivityAction.${prop}>`);
+      inner.set(names[i], t);
+    });
+    emitNode(single(nodes, "Body"), depth + 1, inner);
+    emit(depth, `</ActivityAction>`);
   }
 
   function variable(v: VariableDecl) {

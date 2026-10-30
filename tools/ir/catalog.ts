@@ -9,6 +9,7 @@ export type Prop = {
   type: string;
   required: boolean;
   enum?: string[];
+  overloadGroups?: string[];
   obsolete: boolean;
 };
 
@@ -36,7 +37,11 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
   const activities: Activity[] = [];
   for (const f of catalogFiles) {
     const c = JSON.parse(readFileSync(join(root, f), "utf8"));
-    for (const a of c.activities) activities.push({ ...a, package: c.package });
+    for (const a of c.activities) {
+      // 型が ActivityDelegate のプロパティ（RetryScope.ActivityBody など）は、抽出器では prop になるが中身は引数なしの ActivityAction
+      const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
+      activities.push({ ...a, props, package: c.package });
+    }
   }
 
   const defaults = new Map<string, Record<string, string>>();
@@ -84,6 +89,19 @@ export function defaultSlot(a: Activity): Prop | undefined {
     slots.find((p) => p.name === "Activities") ??
     slots.find((p) => p.name === "Body") ??
     slots.find((p) => p.name === "ActivityBody") ??
+    slots.find((p) => p.name === "Try") ??
     slots.find((p) => p.kind === "children" || p.kind === "delegate")
   );
+}
+
+// While.Condition のような Activity<T> 型の子は、IR では式として props に書く
+export const isExpressionChild = (p: Prop) => p.kind === "child" && p.type.startsWith("System.Activities.Activity<");
+
+// delegate の引数の型（ActivityAction<A, B> なら [A, B]、引数なしなら []）。ジェネリックの仮引数（T）は typeArg で置き換える。
+// ActivityFunc（戻り値のある delegate）はまだ書けないので undefined
+export function delegateArgs(p: Prop, typeArg: string | undefined): string[] | undefined {
+  if (p.type === "System.Activities.ActivityAction" || p.type === "System.Activities.ActivityDelegate") return [];
+  const m = p.type.match(/^(?:System\.Activities\.)?ActivityAction<(.+)>$/);
+  if (!m) return undefined;
+  return m[1].split(",").map((s) => s.trim()).map((t) => (/^T\d*$/.test(t) ? typeArg ?? "Object" : t));
 }

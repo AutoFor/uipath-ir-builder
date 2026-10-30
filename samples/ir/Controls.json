@@ -1,0 +1,66 @@
+{
+  "workflow": "Controls",
+  "variables": [
+    { "name": "i", "type": "Int32", "default": "0" },
+    { "name": "total", "type": "Int32", "default": "0" },
+    { "name": "color", "type": "String", "default": "\"blue\"" },
+    { "name": "label", "type": "String" },
+    { "name": "text", "type": "String" },
+    { "name": "items", "type": "List<String>", "default": "New List(Of String)" }
+  ],
+  "body": [
+    {
+      "act": "While", "name": "3回まわす", "props": { "Condition": "i < 3" },
+      "body": [
+        { "act": "Assign", "props": { "To": "i", "Value": "i + 1" } },
+        { "act": "AddToCollection", "typeArg": "String", "props": { "Collection": "items", "Item": "\"item\" & i.ToString" } }
+      ]
+    },
+    {
+      "act": "DoWhile", "name": "2回まわす", "props": { "Condition": "total < 2" },
+      "body": [{ "act": "Assign", "props": { "To": "total", "Value": "total + 1" } }]
+    },
+    {
+      "act": "MultipleAssign", "name": "まとめて代入",
+      "assigns": [
+        { "to": "label", "value": { "lit": "開始" } },
+        { "to": "color", "value": { "lit": "red" } }
+      ]
+    },
+    {
+      "act": "Switch", "typeArg": "String", "name": "色で分ける", "props": { "Expression": "color" },
+      "cases": {
+        "red": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "label & \": 赤\"" } }],
+        "blue": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "label & \": 青\"" } }]
+      },
+      "slots": { "Default": [{ "act": "LogMessage", "props": { "Level": "Warn", "Message": "\"知らない色\"" } }] }
+    },
+    {
+      "act": "TryCatch", "name": "例外を捕まえる",
+      "body": [{ "act": "Throw", "props": { "Exception": "New InvalidOperationException(\"わざと\")" } }],
+      "catches": [
+        { "type": "InvalidOperationException", "var": "ex", "body": [{ "act": "LogMessage", "props": { "Level": "Warn", "Message": "\"捕まえた: \" & ex.Message" } }] }
+      ],
+      "slots": { "Finally": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "\"finally を通った\"" } }] }
+    },
+    { "act": "WriteTextFile", "props": { "FileName": { "lit": "controls-out.txt" }, "Text": "String.Join(\",\", items)" } },
+    { "act": "ReadTextFile", "props": { "FileName": { "lit": "controls-out.txt" }, "Content": "text" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"ファイルの中身: \" & text" } },
+    {
+      "act": "RetryScope", "name": "リトライ", "props": { "NumberOfRetries": "2", "RetryInterval": "TimeSpan.FromMilliseconds(100)" },
+      "body": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "\"リトライの中\"" } }]
+    },
+    { "act": "Delay", "props": { "Duration": "TimeSpan.FromMilliseconds(100)" } },
+    {
+      "act": "ForEach", "typeArg": "String", "item": "it", "props": { "Values": "items" },
+      "body": [
+        {
+          "act": "If", "props": { "Condition": "it = \"item2\"" },
+          "then": [{ "act": "Break" }],
+          "else": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "\"要素: \" & it" } }]
+        }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"i=\" & i.ToString & \", total=\" & total.ToString" } }
+  ]
+}

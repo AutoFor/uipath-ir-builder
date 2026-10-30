@@ -29,9 +29,16 @@ export type Node = {
   then?: Node[]; // If.Then
   else?: Node[]; // If.Else
   slots?: Record<string, Node[]>; // それ以外の子（プロパティ名で指定）
-  item?: string; // ForEach などのデリゲート引数名（既定 "item"）
+  item?: string | string[]; // ForEach などのデリゲート引数名（既定 "item"）。ForEachFileX のように2つ取るものは配列
   args?: InvokeArg[]; // InvokeWorkflowFile の引数
+  cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
+  catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
+  assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）
 };
+
+export type CatchDecl = { type: string; var?: string; body: Node[] }; // var の既定は "exception"
+
+export type AssignOp = { to: string; value: Value };
 
 export type InvokeArg = { name: string; dir: "In" | "Out" | "InOut"; type: string; value: Value };
 

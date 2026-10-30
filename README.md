@@ -68,6 +68,9 @@ IR の例：
 
 - `props` の文字列は VB の式（`[...]` は生成器が付ける）。文字列リテラルは `{ "lit": "..." }`、enum はメンバー名をそのまま書く
 - 子は `body`（既定の置き場所）、`then` / `else`、それ以外は `slots`
+- `While` / `DoWhile` の `Condition` のような `Activity<Boolean>` 型の子は、式として `props` に書く
+- `Switch` は `cases`（キーごとの子）と `slots.Default`、`TryCatch` は `body`（Try）と `catches`（`{ type, var, body }`）と `slots.Finally`、`MultipleAssign` は `assigns`（`{ to, value }`）
+- delegate の引数名は `item`。`ForEachFileX` のように2つ取るものは `["file", "index"]` のように配列で書く
 - XAML の xmlns、`x:TypeArguments`、`Assign` の型（代入先の変数の宣言から決める）、IdRef、imports は生成器が付ける
 - `get-default-xaml` で取った既定値（`Version=V5` など）は自動で足す
 
@@ -85,7 +88,21 @@ IR の例：
 
 実行には `uip login` だけでなく、ロボット（Assistant / Studio）のサインインによるライセンスが要る。ないと「ローカル ライセンスが必要です」で止まる。
 
-対応しているのは、属性と単純な子だけで書けるアクティビティ。UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`MultipleAssign` の `AssignOperations`、Try/Catch はまだ。
+`samples/ir/Controls.json`（While / DoWhile / MultipleAssign / Switch / TryCatch / Throw / WriteTextFile / ReadTextFile / RetryScope / Delay / ForEach + Break / AddToCollection）も、生成した XAML がそのまま `uip rpa run` で動いた：
+
+```
+[Information] 開始: 赤
+[Warning] 捕まえた: わざと
+[Information] finally を通った
+[Information] ファイルの中身: item1,item2,item3
+[Information] リトライの中
+[Information] 要素: item1
+[Information] i=3, total=2
+```
+
+OverloadGroup（`WriteTextFile` の `File` か `FileName` のどちらか）は、どれか1つのグループがそろっていれば必須を満たすとみなす。
+
+まだ書けないもの：UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`ActivityFunc` の delegate（`RetryScope.Condition` など）、`InvokeCode` の引数、`IfElseIf`。
 
 ## わかっている穴
 

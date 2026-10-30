@@ -6,6 +6,7 @@ export type XamlType = { text: string; xmlns: Record<string, string> };
 const S = "clr-namespace:System;assembly=System.Private.CoreLib";
 const SCG = "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib";
 const SD = "clr-namespace:System.Data;assembly=System.Data.Common";
+const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
   String: ["x:String", {}],
@@ -18,6 +19,13 @@ const simple: Record<string, [string, Record<string, string>]> = {
   TimeSpan: ["x:TimeSpan", {}],
   DateTime: ["s:DateTime", { s: S }],
   Exception: ["s:Exception", { s: S }],
+  ArgumentException: ["s:ArgumentException", { s: S }],
+  InvalidOperationException: ["s:InvalidOperationException", { s: S }],
+  TimeoutException: ["s:TimeoutException", { s: S }],
+  IOException: ["sio:IOException", { sio: SIO }],
+  FileNotFoundException: ["sio:FileNotFoundException", { sio: SIO }],
+  FileInfo: ["sio:FileInfo", { sio: SIO }],
+  DirectoryInfo: ["sio:DirectoryInfo", { sio: SIO }],
   DataTable: ["sd:DataTable", { sd: SD }],
   DataRow: ["sd:DataRow", { sd: SD }],
 };
@@ -35,7 +43,8 @@ const alias: Record<string, string> = {
 };
 
 export function toXamlType(t: string): XamlType | { error: string } {
-  const s = t.trim();
+  // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
+  const s = t.trim().replace(/^System\.(?:(?:IO|Data|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {
     const inner = toXamlType(s.slice(0, -2));
     if ("error" in inner) return inner;

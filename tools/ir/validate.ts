@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot } from "./catalog.ts";
+import { resolve, defaultSlot, isExpressionChild, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 
@@ -42,7 +42,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       const p = a.props.find((p) => p.name === k);
       const at = `${path}.props.${k}`;
       if (!p) { add(at, "UNKNOWN_PROP", `${a.className} に "${k}" は無い`); continue; }
-      if (p.kind === "child" || p.kind === "children" || p.kind === "delegate") {
+      if ((p.kind === "child" && !isExpressionChild(p)) || p.kind === "children" || p.kind === "delegate") {
         add(at, "SLOT_AS_PROP", `"${k}" は子アクティビティの置き場所。slots に書く`);
         continue;
       }
@@ -73,7 +73,12 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       }
       given.add(k);
       const inner = new Map(scope);
-      if (p.kind === "delegate") inner.set(n.item ?? "item", n.typeArg ?? "Object");
+      if (p.kind === "delegate") {
+        const types = delegateArgs(p, n.typeArg);
+        if (!types) { add(`${path}.${k}`, "UNSUPPORTED_SLOT", `"${k}"（${p.type}）はまだ書けない`); continue; }
+        const names = itemNames(n, types.length);
+        types.forEach((t, i) => inner.set(names[i], t));
+      }
       nodes.forEach((c, i) => visit(c, `${path}.${k}[${i}]`, inner));
     }
 
@@ -85,7 +90,34 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       });
     }
 
-    for (const p of a.props.filter((p) => p.required && !given.has(p.name)))
+    if (n.cases) {
+      if (!a.props.some((p) => p.name === "Cases")) add(`${path}.cases`, "BAD_SLOT", `cases は Switch だけ`);
+      for (const [key, nodes] of Object.entries(n.cases)) nodes.forEach((c, i) => visit(c, `${path}.cases.${key}[${i}]`, new Map(scope)));
+    }
+    if (n.catches) {
+      if (!a.props.some((p) => p.name === "Catches")) add(`${path}.catches`, "BAD_SLOT", `catches は TryCatch だけ`);
+      n.catches.forEach((c, i) => {
+        checkType(c.type, `${path}.catches[${i}].type`, add);
+        const inner = new Map(scope).set(c.var ?? "exception", c.type);
+        c.body.forEach((x, j) => visit(x, `${path}.catches[${i}].body[${j}]`, inner));
+      });
+    }
+    if (n.assigns) {
+      if (!a.props.some((p) => p.name === "AssignOperations")) add(`${path}.assigns`, "BAD_SLOT", `assigns は MultipleAssign だけ`);
+      else given.add("AssignOperations");
+      n.assigns.forEach((x, i) => {
+        checkLValue(x.to, `${path}.assigns[${i}].to`, scope);
+        if (scope.has(x.to.match(/^[A-Za-z_]\w*/)?.[0] ?? "") && !scope.has(x.to))
+          add(`${path}.assigns[${i}].to`, "TYPE_UNKNOWN", `代入先の型が決まらない。変数名をそのまま書く`);
+      });
+    }
+
+    // OverloadGroup（WriteTextFile の File / FileName など）は、どれか1つのグループがそろっていればよい
+    const required = a.props.filter((p) => p.required);
+    const groups = new Map<string, string[]>();
+    for (const p of required) for (const g of p.overloadGroups ?? []) groups.set(g, [...(groups.get(g) ?? []), p.name]);
+    const groupOk = [...groups.values()].some((names) => names.every((x) => given.has(x)));
+    for (const p of required.filter((p) => !given.has(p.name) && !(p.overloadGroups?.length && groupOk)))
       add(path, "REQUIRED_MISSING", `${a.className} の必須プロパティ "${p.name}" が無い`);
   }
 
@@ -108,6 +140,12 @@ function declare(vars: VariableDecl[], path: string, scope: Scope, add: (p: stri
 function checkType(t: string, path: string, add: (p: string, c: string, m: string) => void) {
   const r = toXamlType(t);
   if ("error" in r) add(path, "UNKNOWN_TYPE", r.error);
+}
+
+// delegate の引数名。足りない分は item, item2, ... で埋める
+export function itemNames(n: Node, count: number): string[] {
+  const given = n.item === undefined ? [] : Array.isArray(n.item) ? n.item : [n.item];
+  return Array.from({ length: count }, (_, i) => given[i] ?? (i === 0 ? "item" : `item${i + 1}`));
 }
 
 // 非ジェネリックの InArgument / OutArgument（Assign.To など）は、要素形式で型を書く必要がある
