@@ -62,9 +62,10 @@
               "lit": "Sheet2"
             },
             "Range": {
-              "lit": "A1:C8"
+              "lit": "A1:C5"
             },
-            "DataTable": "back"
+            "DataTable": "back",
+            "AddHeaders": false
           }
         }
       ]
@@ -80,7 +81,14 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"最後の行: \" & back.Rows(back.Rows.Count - 1).Item(0).ToString"
+        "Message": "\"2 行目: \" & back.Rows(1).Item(0).ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"5 行目: \" & back.Rows(4).Item(0).ToString"
       }
     }
   ]

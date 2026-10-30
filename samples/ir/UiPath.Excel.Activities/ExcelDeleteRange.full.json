@@ -3,11 +3,11 @@
   "variables": [
     {
       "name": "v",
-      "type": "String"
+      "type": "Object"
     },
     {
       "name": "w",
-      "type": "String"
+      "type": "Object"
     }
   ],
   "body": [
@@ -77,14 +77,14 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"A2: \" & v"
+        "Message": "\"A2: \" & Convert.ToString(v)"
       }
     },
     {
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"A4: \" & w"
+        "Message": "\"A4: \" & Convert.ToString(w)"
       }
     }
   ]

@@ -7,7 +7,7 @@
     },
     {
       "name": "w",
-      "type": "String"
+      "type": "Object"
     }
   ],
   "body": [
@@ -89,7 +89,7 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"Sheet2!D3: \" & w"
+        "Message": "\"Sheet2!D3: \" & Convert.ToString(w)"
       }
     }
   ]

@@ -7,7 +7,7 @@
     },
     {
       "name": "w",
-      "type": "String"
+      "type": "Object"
     }
   ],
   "body": [
@@ -85,7 +85,7 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"C4: \" & w"
+        "Message": "\"C4: \" & Convert.ToString(w)"
       }
     }
   ]

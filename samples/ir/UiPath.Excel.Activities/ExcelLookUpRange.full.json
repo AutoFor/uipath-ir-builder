@@ -3,11 +3,11 @@
   "variables": [
     {
       "name": "v",
-      "type": "String"
+      "type": "Object"
     },
     {
       "name": "w",
-      "type": "String"
+      "type": "Object"
     }
   ],
   "body": [
@@ -106,7 +106,7 @@
         },
         {
           "act": "ExcelLookUpRange",
-          "name": "25 以下で最大の行を探す",
+          "name": "2 列の範囲から探す",
           "props": {
             "SheetName": {
               "lit": "Sheet1"
@@ -115,7 +115,7 @@
               "lit": "A1:B3"
             },
             "Value": {
-              "lit": "25"
+              "lit": "30"
             },
             "Result": "v"
           }
@@ -126,7 +126,7 @@
       "act": "LogMessage",
       "props": {
         "Level": "Info",
-        "Message": "\"結果: \" & v"
+        "Message": "\"結果: \" & Convert.ToString(v)"
       }
     }
   ]
