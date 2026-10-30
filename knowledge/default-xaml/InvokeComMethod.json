@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"InvokeComMethod\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:InvokeComMethod CLSID=\"{x:Null}\" ContinueOnError=\"{x:Null}\" MethodName=\"{x:Null}\" ProgID=\"{x:Null}\" BindingFlags=\"InvokeMethod\">\r\n    <ui:InvokeComMethod.Arguments>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, Argument\" />\r\n    </ui:InvokeComMethod.Arguments>\r\n  </ui:InvokeComMethod>\r\n</Activity>"
+  }
+}

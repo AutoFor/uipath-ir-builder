@@ -1,0 +1,49 @@
+{
+  "workflow": "InvokeVBScript_Full",
+  "variables": [
+    {
+      "name": "outText",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "スクリプトを書く",
+      "props": {
+        "FileName": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb-vbs-full.vbs\")",
+        "Text": {
+          "lit": "WScript.Echo WScript.Arguments(0) & \"-\" & WScript.Arguments(1)"
+        }
+      }
+    },
+    {
+      "act": "InvokeVBScript",
+      "name": "引数つきで呼ぶ",
+      "props": {
+        "FileName": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb-vbs-full.vbs\")",
+        "Result": "outText",
+        "WaitForOutput": true,
+        "TimeoutMS": 20000,
+        "KillOnTimeout": true,
+        "RunInBatchMode": false,
+        "UnicodeSupport": false
+      },
+      "lists": {
+        "Arguments": [
+          {
+            "lit": "alpha"
+          },
+          "\"be\" & \"ta\""
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "outText.Trim()"
+      }
+    }
+  ]
+}

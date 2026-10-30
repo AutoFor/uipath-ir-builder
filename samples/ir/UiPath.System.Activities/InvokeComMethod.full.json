@@ -1,0 +1,45 @@
+{
+  "workflow": "InvokeComMethod_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeComMethod",
+      "name": "CLSID で呼ぶ",
+      "props": {
+        "CLSID": {
+          "lit": "{0D43FE01-F093-11CF-8940-00A0C9054228}"
+        },
+        "MethodName": {
+          "lit": "GetExtensionName"
+        },
+        "BindingFlags": "InvokeMethod",
+        "ContinueOnError": false,
+        "Result": "res"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "path",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "C:/dir/sample.txt"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "res.ToString()"
+      }
+    }
+  ]
+}

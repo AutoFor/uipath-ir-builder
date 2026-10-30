@@ -1,0 +1,14 @@
+{
+  "activity": "GetProcesses",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{Processes:-_} = new System.Collections.ObjectModel.Collection<System.Diagnostics.Process>(System.Diagnostics.Process.GetProcesses());",
+      "usings": [
+        "System.Diagnostics",
+        "System.Collections.ObjectModel"
+      ]
+    }
+  ],
+  "notes": "ISystemService には無いので、Process.GetProcesses を直接呼ぶ。アクティビティの出力型 Collection<Process> に合わせて包む"
+}

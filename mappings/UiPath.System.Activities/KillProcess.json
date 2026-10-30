@@ -1,0 +1,28 @@
+{
+  "activity": "KillProcess",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Process"
+      ],
+      "code": "{Process}.Kill();",
+      "usings": [
+        "System.Diagnostics"
+      ]
+    },
+    {
+      "when": [
+        "ProcessName"
+      ],
+      "code": "foreach (var p in System.Diagnostics.Process.GetProcessesByName({ProcessName})) { p.Kill(); }",
+      "usings": [
+        "System.Diagnostics"
+      ]
+    }
+  ],
+  "ignore": [
+    "AppliesTo"
+  ],
+  "notes": "ISystemService には無いので、Process.Kill を直接呼ぶ。AppliesTo（All / OnlyCurrentUser / OnlyCurrentSession / OnlyCurrentDesktop）の絞り込みは Coded では行わない（名前が合うものを全部止める）"
+}

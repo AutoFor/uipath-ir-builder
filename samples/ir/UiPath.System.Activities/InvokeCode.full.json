@@ -1,0 +1,97 @@
+{
+  "workflow": "InvokeCode_Full",
+  "variables": [
+    {
+      "name": "name",
+      "type": "String",
+      "default": "\"world\""
+    },
+    {
+      "name": "greeting",
+      "type": "String"
+    },
+    {
+      "name": "count",
+      "type": "Int32",
+      "default": "1"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeCode",
+      "name": "C# のコードを呼ぶ",
+      "props": {
+        "Code": "greeting = \"Hello, \" + who + \"!\"; counter = counter + 10;",
+        "Language": "CSharp",
+        "ContinueOnError": false
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "who",
+            "dir": "In",
+            "type": "String",
+            "value": "name"
+          },
+          {
+            "name": "greeting",
+            "dir": "Out",
+            "type": "String",
+            "value": "greeting"
+          },
+          {
+            "name": "counter",
+            "dir": "InOut",
+            "type": "Int32",
+            "value": "count"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "greeting"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"count=\" & count.ToString"
+      }
+    },
+    {
+      "act": "InvokeCode",
+      "name": "VB のコードを呼ぶ",
+      "props": {
+        "Code": "greeting = who.ToUpper()",
+        "Language": "VBNet"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "who",
+            "dir": "In",
+            "type": "String",
+            "value": "name"
+          },
+          {
+            "name": "greeting",
+            "dir": "Out",
+            "type": "String",
+            "value": "greeting"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "greeting"
+      }
+    }
+  ]
+}

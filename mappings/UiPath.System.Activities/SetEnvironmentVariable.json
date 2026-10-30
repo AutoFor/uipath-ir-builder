@@ -1,0 +1,9 @@
+{
+  "activity": "SetEnvironmentVariable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "code": "System.Environment.SetEnvironmentVariable({Name}, {Value});" }
+  ],
+  "ignore": ["TargetFramework"],
+  "notes": "ISystemService には無いので、.NET の Environment.SetEnvironmentVariable を直接呼ぶ（既定のスコープ = 実行中のプロセスだけ。ユーザーの環境変数は変わらない）"
+}

@@ -1,0 +1,64 @@
+{
+  "workflow": "KillProcess_Full",
+  "variables": [
+    {
+      "name": "copy",
+      "type": "FileInfo"
+    },
+    {
+      "name": "sleeper",
+      "type": "Process"
+    }
+  ],
+  "body": [
+    {
+      "act": "Assign",
+      "name": "ping を別名でコピー",
+      "typeArg": "FileInfo",
+      "props": {
+        "To": "copy",
+        "Value": {
+          "vb": "New System.IO.FileInfo(\"C:/Windows/System32/PING.EXE\").CopyTo(System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb_sleeper.exe\"), True)",
+          "cs": "new System.IO.FileInfo(\"C:/Windows/System32/PING.EXE\").CopyTo(System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irb_sleeper.exe\"), true)"
+        }
+      }
+    },
+    {
+      "act": "Assign",
+      "name": "コピーを起動",
+      "typeArg": "Process",
+      "props": {
+        "To": "sleeper",
+        "Value": {
+          "vb": "System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(copy.FullName, \"-n 60 127.0.0.1\") With {.UseShellExecute = False, .CreateNoWindow = True})",
+          "cs": "System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(copy.FullName, \"-n 60 127.0.0.1\") { UseShellExecute = false, CreateNoWindow = true })"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"running=\" & System.Diagnostics.Process.GetProcessesByName(\"irb_sleeper\").Length.ToString"
+      }
+    },
+    {
+      "act": "KillProcess",
+      "name": "名前で止める",
+      "props": {
+        "ProcessName": {
+          "lit": "irb_sleeper"
+        },
+        "AppliesTo": "OnlyCurrentUser",
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"exited=\" & sleeper.WaitForExit(5000).ToString"
+      }
+    }
+  ]
+}

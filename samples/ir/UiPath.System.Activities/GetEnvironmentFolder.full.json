@@ -1,0 +1,71 @@
+{
+  "workflow": "GetEnvironmentFolder_Full",
+  "variables": [
+    {
+      "name": "folder",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetEnvironmentFolder",
+      "name": "ローミングの場所",
+      "props": {
+        "SpecialFolder": "ApplicationData",
+        "FolderPath": "folder"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(folder)"
+      }
+    },
+    {
+      "act": "GetEnvironmentFolder",
+      "name": "ローカルの場所",
+      "props": {
+        "SpecialFolder": "LocalApplicationData",
+        "FolderPath": "folder"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(folder)"
+      }
+    },
+    {
+      "act": "GetEnvironmentFolder",
+      "name": "Program Files",
+      "props": {
+        "SpecialFolder": "ProgramFiles",
+        "FolderPath": "folder"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(folder)"
+      }
+    },
+    {
+      "act": "GetEnvironmentFolder",
+      "name": "システム",
+      "props": {
+        "SpecialFolder": "System",
+        "FolderPath": "folder"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(folder)"
+      }
+    }
+  ]
+}

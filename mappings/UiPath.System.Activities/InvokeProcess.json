@@ -1,0 +1,16 @@
+{
+  "activity": "InvokeProcess",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    { "when": ["Arguments"], "reason": "引数（Arguments / OutputArguments）を渡す形は、InvokeProcessAsync が辞書で受け渡すので対応表にできない（Out の引数を変数に戻す仕組みが生成器に無い）" },
+    { "when": ["ArgumentsVariable"], "reason": "ArgumentsVariable を渡す形は、InvokeProcessAsync が辞書で受け渡すので対応表にできない" },
+    { "when": ["EntryPointPath"], "call": "system.InvokeProcess",
+      "args": { "processName": "{ProcessName}", "folderPath": "{FolderPath}", "entryPointPath": "{EntryPointPath}",
+                "targetSession": "UiPath.Core.Activities.InvokeProcessTargetSession.{TargetSession}",
+                "logEntry": "UiPath.Core.Activities.LogEntryType.{LogEntry}", "logExit": "UiPath.Core.Activities.LogExitType.{LogExit}",
+                "level": "UiPath.Core.Activities.LogLevel.{Level}", "usePackage": "{UsePackage}", "timeout": "{Timeout}" } },
+    { "call": "system.InvokeProcess", "args": { "processName": "{ProcessName}", "folderPath": "{FolderPath}" } }
+  ],
+  "ignore": ["BindingsKey", "Elevated"],
+  "notes": "ISystemService.InvokeProcess（戻り値なし）。引数なしで呼ぶ形だけ。9 引数のオーバーロードは全部渡す（EntryPointPath があるとき）、1〜2 引数のものは ProcessName / FolderPath だけ"
+}

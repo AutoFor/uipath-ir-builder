@@ -1,0 +1,29 @@
+{
+  "workflow": "GetProcesses_Full",
+  "variables": [
+    {
+      "name": "procs",
+      "type": "Collection<Process>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetProcesses",
+      "name": "プロセス一覧",
+      "props": {
+        "Processes": "procs",
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"self=\" & procs.Any(Function(p) p.Id = System.Diagnostics.Process.GetCurrentProcess().Id).ToString",
+          "cs": "\"self=\" + procs.Any(p => p.Id == System.Diagnostics.Process.GetCurrentProcess().Id).ToString()"
+        }
+      }
+    }
+  ]
+}
