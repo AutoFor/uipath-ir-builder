@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30de\u30a6\u30b9 \u30b9\u30af\u30ed\u30fc\u30eb\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NMouseScroll KeyModifiers=\"{x:Null}\" Direction=\"Down\" DisplayName=\"\u30de\u30a6\u30b9 \u30b9\u30af\u30ed\u30fc\u30eb\" HealingAgentBehavior=\"SameAsCard\" InteractionMode=\"HardwareEvents\" MovementUnits=\"10\" Version=\"V5\">\r\n    <uix:NMouseScroll.SearchedElement>\r\n      <uix:SearchedElement>\r\n        <uix:SearchedElement.Timeout>\r\n          <InArgument x:TypeArguments=\"x:Double\" />\r\n        </uix:SearchedElement.Timeout>\r\n      </uix:SearchedElement>\r\n    </uix:NMouseScroll.SearchedElement>\r\n  </uix:NMouseScroll>\r\n</Activity>"
+  }
+}

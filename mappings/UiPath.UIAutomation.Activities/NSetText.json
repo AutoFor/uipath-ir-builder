@@ -1,0 +1,34 @@
+{
+  "activity": "NSetText",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SetValue",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "setValueOptions": {
+          "new": "SetValueOptions",
+          "always": true,
+          "set": {
+            "Value": "{Text}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "AlterIfDisabled",
+    "CacheTargetElement"
+  ],
+  "notes": "NSetText.Text は SetValueOptions.Value。AlterIfDisabled と CacheTargetElement は SetValueOptions に無いのでまだ扱わない（Coded 未対応）"
+}

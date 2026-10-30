@@ -160,7 +160,7 @@ const specialProps: Record<string, string> = {
   "TryCatch.Catches": "catches",
   "MultipleAssign.AssignOperations": "assigns",
 };
-const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo"]);
+const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo", "System.Drawing.Color"]);
 
 // List<InArgument<T>> / IEnumerable<InArgument<T>>（IR では lists に式の配列で書く）
 export const isArgumentList = (t: string) => /^(System\.Collections\.Generic\.)?(List|IEnumerable)<(System\.Activities\.)?InArgument<[^<>]+>>$/.test(t);

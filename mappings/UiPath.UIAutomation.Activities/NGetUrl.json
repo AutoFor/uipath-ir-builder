@@ -1,0 +1,30 @@
+{
+  "activity": "NGetUrl",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.GetUrl",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "CurrentUrl",
+      "args": {
+        "getUrlOptions": {
+          "new": "GetUrlOptions",
+          "always": true,
+          "set": {
+            "Timeout": "{Timeout}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target",
+    "WaitForReady"
+  ],
+  "notes": "GetUrl は対象のブラウザを app から取るので Target は使わない。WaitForReady は GetUrlOptions に無い（Coded 未対応）"
+}

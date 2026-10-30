@@ -30,6 +30,7 @@ const TA = "UiPath.UIAutomationNext.TargetAnchorable";
 const TAPP = "UiPath.UIAutomationNext.TargetApp";
 const CLASSIC_TARGET = "UiPath.Core.Activities.Target";
 const CARD = "UiPath.UIAutomationNext.Activities.NApplicationCard";
+const ELEMENT_SCOPE = "UiPath.UIAutomationNext.Activities.NElementScope";
 
 // 生成器が足す既定値（Studio が書く値）。"guid" は毎回新しい GUID
 const objDefaults: Record<string, Record<string, string>> = {
@@ -154,13 +155,19 @@ export function prepareUia(root: Node, cat: Catalog): Node {
     let inner = scopeId;
     if ("activity" in r) {
       const a = r.activity;
-      if (a.clrType === CARD) {
+      if (a.clrType === CARD || a.clrType === ELEMENT_SCOPE) {
         const g = n.props?.ScopeGuid;
         inner = typeof g === "object" && "lit" in g ? g.lit : typeof g === "string" ? g : randomUUID();
         out.props = { ...n.props, ScopeGuid: inner };
+        // NElementScope は NApplicationCard の中に置くので、外側のスコープの ID も付ける。子は自分の ScopeGuid を ScopeIdentifier にする
+        if (a.clrType === ELEMENT_SCOPE && scopeId && n.props?.ScopeIdentifier === undefined && a.props.some((p) => p.name === "ScopeIdentifier"))
+          out.props = { ...out.props, ScopeIdentifier: scopeId };
       } else if (scopeId && n.props?.ScopeIdentifier === undefined && a.props.some((p) => p.name === "ScopeIdentifier" && p.type === "System.String" && !p.obsolete)) {
         out.props = { ...n.props, ScopeIdentifier: scopeId };
       }
+      // NDragAndDrop は移動先のターゲットにも同じスコープの ID を付ける（Studio と同じ）
+      if (scopeId && n.objs?.DestinationTarget && n.props?.DestinationScopeIdentifier === undefined && a.props.some((p) => p.name === "DestinationScopeIdentifier"))
+        out.props = { ...(out.props ?? n.props), DestinationScopeIdentifier: scopeId };
     }
     const map = (list?: Node[]) => list?.map((c) => copy(c, inner));
     if (n.body) out.body = map(n.body);
@@ -255,6 +262,9 @@ const codedModels: Record<string, ModelMap> = {
   "UiPath.UIAutomationNext.ClickOffset": { type: "PointOffsetModel", props: { OffsetPosition: "Position", OffsetX: "X", OffsetY: "Y" } },
   "UiPath.UIAutomationNext.PointOffset": { type: "PointOffsetModel", props: { Position: "Position", X: "X", Y: "Y" } },
   "UiPath.UIAutomationNext.RegionOffset": { type: "RegionOffsetModel", props: { Position: "Position", X: "X", Y: "Y", Width: "Width", Height: "Height", Area: null, IsAreaResolved: null } },
+  "UiPath.UIAutomationNext.Activities.SearchedElement": {
+    type: "SearchedElementOptions", props: { Target: "Target", Timeout: "Timeout", DisplayName: null, InUiElement: null, OutUiElement: null },
+  },
   "UiPath.UIAutomationNext.Activities.VerifyExecutionOptions": {
     type: "VerifyOptions", props: { Target: "Target", Mode: "Mode", Retry: "Retry", Timeout: "Timeout", DelayBefore: "DelayBefore", IsLoose: "IsLoose", DisplayName: null },
   },

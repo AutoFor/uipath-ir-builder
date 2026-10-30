@@ -1,0 +1,38 @@
+{
+  "activity": "NMouseScroll",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.MouseScroll",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "mouseScrollOptions": {
+          "new": "MouseScrollOptions",
+          "always": true,
+          "set": {
+            "InteractionMode": "{InteractionMode|enum}",
+            "CursorMotionType": "{CursorMotionType|enum}",
+            "KeyModifiers": "{KeyModifiers|enum}",
+            "Direction": "{Direction|enum}",
+            "MovementUnits": "{MovementUnits}",
+            "SearchedElement": "{SearchedElement}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "SearchedElement は SearchedElementOptions（Target と Timeout）",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

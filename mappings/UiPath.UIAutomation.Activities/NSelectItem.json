@@ -1,0 +1,33 @@
+{
+  "activity": "NSelectItem",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.SelectItem",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "selectItemOptions": {
+          "new": "SelectItemOptions",
+          "always": true,
+          "set": {
+            "Item": "{Item}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "Items（List<String>）は IR で書けない。OutUiElement と InUiElement はまだ扱わない",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

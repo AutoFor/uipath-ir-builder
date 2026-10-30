@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30ad\u30fc\u30dc\u30fc\u30c9 \u30b7\u30e7\u30fc\u30c8\u30ab\u30c3\u30c8\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NKeyboardShortcuts ActivateBefore=\"True\" ClickBeforeMode=\"None\" DisplayName=\"\u30ad\u30fc\u30dc\u30fc\u30c9 \u30b7\u30e7\u30fc\u30c8\u30ab\u30c3\u30c8\" HealingAgentBehavior=\"SameAsCard\" InteractionMode=\"HardwareEvents\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

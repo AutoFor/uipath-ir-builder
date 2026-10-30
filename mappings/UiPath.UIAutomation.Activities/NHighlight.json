@@ -1,0 +1,35 @@
+{
+  "activity": "NHighlight",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.Highlight",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums",
+        "System.Drawing"
+      ],
+      "args": {
+        "target": "{Target}",
+        "highlightOptions": {
+          "new": "HighlightOptions",
+          "always": true,
+          "set": {
+            "HighlightTime": "{HighlightTime}",
+            "Color": "KnownColor.{Color}",
+            "HighlightMode": "{HighlightMode|enum}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "Color は XAML では Gold のような色名（属性）、Coded では System.Drawing.KnownColor のメンバー",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

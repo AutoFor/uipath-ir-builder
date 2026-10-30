@@ -1,0 +1,118 @@
+{
+  "workflow": "NDragAndDrop_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "result",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><div id='result'>ready</div><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox' onchange=\"document.getElementById('result').textContent='agree='+this.checked\">agree</label><select id='fruit' onchange=\"document.getElementById('result').textContent='fruit='+this.value\"><option>apple</option><option>banana</option><option>cherry</option></select><div id='hoverbox' style='border:1px solid;padding:6px;width:120px' onmouseover=\"document.getElementById('result').textContent='hovered'\">hover me</div><input id='focusme' type='text' onfocus=\"document.getElementById('result').textContent='focused'\"><input id='kbd' type='text' onkeydown=\"document.getElementById('result').textContent='key:'+event.key\"><div id='scrollbox' style='height:60px;width:200px;overflow:auto' onscroll=\"document.getElementById('result').textContent=(this.scrollTop>0?'scrolled':'top')\"><div style='height:400px'>scroll me</div><p id='scrollend'>end</p></div><div id='src' style='border:1px solid;padding:6px;width:80px;background:#cde' onmousedown=\"window.dragging=true\">drag me</div><div id='dst' style='border:1px solid;padding:6px;width:80px;background:#edc' onmouseup=\"if(window.dragging){document.getElementById('result').textContent='dropped'}\">drop here</div><ul id='fruits'><li>apple</li><li>banana</li><li>cherry</li></ul><table id='tbl'><tr><th>Name</th><th>Qty</th></tr><tr><td>apple</td><td>3</td></tr><tr><td>banana</td><td>5</td></tr><tr><td>cherry</td><td>7</td></tr></table><script>document.onmouseup=function(){setTimeout(function(){window.dragging=false},0)}</script></body></html>"
+        }
+      }
+    },
+    {
+      "act": "NApplicationCard",
+      "name": "UIA Test Form を開く",
+      "item": "WSSessionData",
+      "objs": {
+        "TargetApp": {
+          "Url": "New Uri(htmlPath).AbsoluteUri",
+          "BrowserType": "Edge",
+          "Selector": {
+            "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+          }
+        }
+      },
+      "props": {
+        "OpenMode": "Always",
+        "CloseMode": "Always"
+      },
+      "body": [
+        {
+          "act": "NDragAndDrop",
+          "name": "src を dst へ（全部入り）",
+          "objs": {
+            "Target": {
+              "FullSelectorArgument": {
+                "lit": "<webctrl id='src' tag='DIV' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+              },
+              "SearchSteps": "Selector",
+              "WaitForReadyArgument": "Interactive"
+            },
+            "DestinationTarget": {
+              "FullSelectorArgument": {
+                "lit": "<webctrl id='dst' tag='DIV' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+              },
+              "SearchSteps": "Selector"
+            },
+            "PointOffset": {
+              "Position": "Center",
+              "X": 0,
+              "Y": 0
+            },
+            "SecondaryPointOffset": {
+              "Position": "Center",
+              "X": 0,
+              "Y": 0
+            }
+          },
+          "props": {
+            "MouseButton": "Left",
+            "KeyModifiers": "None",
+            "CursorMotionType": "Smooth",
+            "UseSourceHover": false,
+            "DelayBetweenActions": 0.3,
+            "Timeout": 20,
+            "DelayBefore": 0.1,
+            "DelayAfter": 0.3,
+            "ContinueOnError": false,
+            "HealingAgentBehavior": "Disabled"
+          }
+        },
+        {
+          "act": "NGetText",
+          "name": "結果を読む",
+          "objs": {
+            "Target": {
+              "FullSelectorArgument": {
+                "lit": "<webctrl id='result' tag='DIV' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+              },
+              "SearchSteps": "Selector"
+            }
+          },
+          "props": {
+            "TextString": "result"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"結果: \" & result"
+      }
+    }
+  ]
+}

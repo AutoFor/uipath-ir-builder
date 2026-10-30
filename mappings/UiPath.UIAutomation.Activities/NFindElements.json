@@ -1,0 +1,21 @@
+{
+  "activity": "NFindElements",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "code": "{Children} = {app}.GetChildren({Target}, new GetChildrenOptions { Timeout = {Timeout:-20} }).Select(c => {app}.GetUiElement(c)).ToList();",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums",
+        "UiPath.Core"
+      ]
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "FilterTarget",
+    "Mode"
+  ],
+  "notes": "GetChildren は RuntimeTarget の列を返すので、GetUiElement で UiElement にして Children に入れる。FilterTarget は SelectorFilter（文字列）に直せないので Coded 未対応"
+}

@@ -1,0 +1,3 @@
+{
+  "noRun": "ExtractMetadata は Studio の「データ抽出」ウィザードが作る XML で、手で正しく書けるか確かめられていない（ここの文字列は仮）。build まで"
+}

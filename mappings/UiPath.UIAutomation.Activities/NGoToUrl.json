@@ -1,0 +1,30 @@
+{
+  "activity": "NGoToUrl",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.GoToUrl",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "urlOptions": {
+          "new": "GoToUrlOptions",
+          "always": true,
+          "set": {
+            "Url": "{Url}",
+            "Timeout": "{Timeout}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target",
+    "Mode"
+  ],
+  "notes": "GoToUrl は対象のブラウザを app から取るので Target は使わない。Mode（OpenInSameTab / OpenInNewTab）は GoToUrlOptions に無い（Coded 未対応）"
+}

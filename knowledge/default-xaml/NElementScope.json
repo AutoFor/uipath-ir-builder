@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u8981\u7d20\u30b9\u30b3\u30fc\u30d7\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NElementScope DisplayName=\"\u8981\u7d20\u30b9\u30b3\u30fc\u30d7\" HealingAgentBehavior=\"SameAsCard\" InteractionMode=\"HardwareEvents\" IsLoose=\"False\" ScopeGuid=\"984846cb-7e87-4449-bec6-ba3107d348b5\" Version=\"V5\">\r\n    <uix:NElementScope.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"ContextTarget\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </uix:NElementScope.Body>\r\n  </uix:NElementScope>\r\n</Activity>"
+  }
+}
