@@ -1,0 +1,89 @@
+{
+  "workflow": "ExcelInsertDeleteRows_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "Object"
+    },
+    {
+      "name": "w",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelInsertDeleteRows_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelInsertDeleteRows_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelInsertDeleteRows",
+          "name": "2 行目から 2 行消す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Mode": "Remove",
+            "Position": 2,
+            "NoRows": 2
+          }
+        },
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A2"
+            },
+            "Result": "v"
+          }
+        },
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "A3"
+            },
+            "Result": "w"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A2: \" & Convert.ToString(v)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A3: \" & Convert.ToString(w)"
+      }
+    }
+  ]
+}

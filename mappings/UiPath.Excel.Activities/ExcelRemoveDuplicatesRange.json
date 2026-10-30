@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelRemoveDuplicatesRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（重複の削除は IWorkHandle の拡張メソッドに無い）"
+}

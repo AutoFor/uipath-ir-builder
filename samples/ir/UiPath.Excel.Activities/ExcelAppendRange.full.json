@@ -1,0 +1,95 @@
+{
+  "workflow": "ExcelAppendRange_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "back",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelAppendRange_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelAppendRange_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:C4"
+            },
+            "DataTable": "dt"
+          }
+        },
+        {
+          "act": "ExcelAppendRange",
+          "name": "Sheet2 の末尾に足す",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "DataTable": "dt"
+          }
+        },
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Range": {
+              "lit": "A1:C5"
+            },
+            "DataTable": "back",
+            "AddHeaders": false
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"行数: \" & back.Rows.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"2 行目: \" & back.Rows(1).Item(0).ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"5 行目: \" & back.Rows(4).Item(0).ToString"
+      }
+    }
+  ]
+}

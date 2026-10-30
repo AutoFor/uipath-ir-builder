@@ -1,0 +1,97 @@
+{
+  "workflow": "ExcelWriteRange_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "back",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B4"
+            },
+            "DataTable": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelWriteRange_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelWriteRange",
+          "name": "C3 から見出し付きで書く",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "StartingCell": {
+              "lit": "C3"
+            },
+            "AddHeaders": true,
+            "DataTable": "dt"
+          }
+        },
+        {
+          "act": "ExcelReadRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "C3:D6"
+            },
+            "DataTable": "back"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"書いた行数: \" & back.Rows.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"見出し: \" & back.Columns(0).ColumnName & \",\" & back.Columns(1).ColumnName"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"最後の行: \" & back.Rows(2).Item(0).ToString & \" \" & back.Rows(2).Item(1).ToString"
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "workflow": "ExcelSetRangeColor_Full",
+  "variables": [
+    {
+      "name": "c",
+      "type": "System.Drawing.Color"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelSetRangeColor_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelSetRangeColor_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelSetRangeColor",
+          "name": "Sheet2 の A1 に色を付ける",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Range": {
+              "lit": "A1"
+            },
+            "Color": "System.Drawing.Color.FromArgb(0, 128, 255)"
+          }
+        },
+        {
+          "act": "ExcelGetCellColor",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Cell": {
+              "lit": "A1"
+            },
+            "Color": "c"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"RGB=\" & c.R.ToString & \",\" & c.G.ToString & \",\" & c.B.ToString"
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelCreateTable",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（表の作成は IWorkHandle の拡張メソッドに無い）"
+}

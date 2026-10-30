@@ -1,0 +1,18 @@
+{
+  "activity": "ExcelGetCellColor",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.GetCellColor",
+      "args": {
+        "sheetName": "{SheetName}",
+        "cell": "{Cell}"
+      },
+      "returns": "Color",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.GetCellColor(this IWorkHandle, string sheetName, string cell) が System.Drawing.Color を返す"
+}

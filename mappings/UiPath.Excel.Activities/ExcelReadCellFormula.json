@@ -1,0 +1,18 @@
+{
+  "activity": "ExcelReadCellFormula",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.ReadCellFormula",
+      "args": {
+        "sheetName": "{SheetName}",
+        "cell": "{Cell}"
+      },
+      "returns": "Formula",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.ReadCellFormula(this IWorkHandle handle, string sheetName, string cell) が式の文字列を返す。{@IWorkHandle} は外側の Excel Application Scope（using の変数）"
+}

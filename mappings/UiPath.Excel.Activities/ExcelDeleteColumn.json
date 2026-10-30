@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelDeleteColumn",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（表の列の削除は IWorkHandle の拡張メソッドに無い）"
+}

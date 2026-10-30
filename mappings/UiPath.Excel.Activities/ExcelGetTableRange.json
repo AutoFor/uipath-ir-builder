@@ -1,0 +1,22 @@
+{
+  "activity": "ExcelGetTableRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.GetTableRange",
+      "args": {
+        "sheetName": "{SheetName}",
+        "tableName": "{TableName}",
+        "isPivot": "{IsPivot}"
+      },
+      "returns": "Range",
+      "defaults": {
+        "IsPivot": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.GetTableRange(this IWorkHandle, string sheetName, string tableName, bool isPivot)。isPivot は API に既定値が無いので defaults（false）"
+}

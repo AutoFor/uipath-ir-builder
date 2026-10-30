@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelCopyPasteRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（コピー＆貼り付けは IWorkHandle の拡張メソッドに無い）"
+}

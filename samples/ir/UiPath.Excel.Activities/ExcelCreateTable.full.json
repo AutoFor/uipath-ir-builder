@@ -1,0 +1,69 @@
+{
+  "workflow": "ExcelCreateTable_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExcelCreateTable_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExcelCreateTable_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ExcelCreateTable",
+          "name": "小さな表を作る",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B3"
+            },
+            "TableName": {
+              "lit": "SmallTable"
+            }
+          }
+        },
+        {
+          "act": "ExcelGetTableRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "TableName": {
+              "lit": "SmallTable"
+            },
+            "Range": "r"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"範囲: \" & r"
+      }
+    }
+  ]
+}

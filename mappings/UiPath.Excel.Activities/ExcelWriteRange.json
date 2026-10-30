@@ -1,0 +1,25 @@
+{
+  "activity": "ExcelWriteRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.WriteRange",
+      "args": {
+        "sheetName": "{SheetName}",
+        "startingCell": "{StartingCell}",
+        "table": "{DataTable}",
+        "addHeaders": "{AddHeaders}"
+      },
+      "defaults": {
+        "StartingCell": {
+          "lit": "A1"
+        },
+        "AddHeaders": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.WriteRange(this IWorkHandle, string sheetName, string startingCell, DataTable table, bool addHeaders)。StartingCell / AddHeaders の既定はアクティビティと同じ A1 / false"
+}

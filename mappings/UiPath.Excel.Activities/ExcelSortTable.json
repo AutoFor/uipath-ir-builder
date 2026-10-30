@@ -1,0 +1,6 @@
+{
+  "activity": "ExcelSortTable",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（表の並べ替えは IWorkHandle の拡張メソッドに無い）"
+}

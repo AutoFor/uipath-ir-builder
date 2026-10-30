@@ -1,0 +1,22 @@
+{
+  "activity": "ExcelReadRow",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.ReadRow",
+      "args": {
+        "sheetName": "{SheetName}",
+        "startingCell": "{StartingCell}",
+        "preserveFormat": "{PreserveFormat}"
+      },
+      "returns": "Result",
+      "defaults": {
+        "PreserveFormat": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.ReadRow(this IWorkHandle, string sheetName, string startingCell, bool preserveFormat)"
+}

@@ -1,0 +1,67 @@
+{
+  "workflow": "ExcelReadCellFormula_Full",
+  "variables": [
+    {
+      "name": "f",
+      "type": "String"
+    },
+    {
+      "name": "plain",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelReadCellFormula",
+          "name": "式を読む",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "C4"
+            },
+            "Formula": "f"
+          }
+        },
+        {
+          "act": "ExcelReadCellFormula",
+          "name": "式でないセルを読む",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Cell": {
+              "lit": "B4"
+            },
+            "Formula": "plain"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"C4 の式: \" & f"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"B4 の式: \" & plain"
+      }
+    }
+  ]
+}

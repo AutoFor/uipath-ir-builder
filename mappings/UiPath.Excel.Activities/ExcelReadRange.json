@@ -1,0 +1,30 @@
+{
+  "activity": "ExcelReadRange",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.ReadRange",
+      "args": {
+        "sheetName": "{SheetName}",
+        "range": "{Range}",
+        "addHeaders": "{AddHeaders}",
+        "preserveFormat": "{PreserveFormat}"
+      },
+      "returns": "DataTable",
+      "defaults": {
+        "AddHeaders": true,
+        "PreserveFormat": false,
+        "Range": {
+          "lit": ""
+        }
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "ignore": [
+    "UseFilter"
+  ],
+  "notes": "ExcelOperations.ReadRange(this IWorkHandle, string sheetName, string range, bool addHeaders, bool preserveFormat)。UseFilter（フィルターで見えている行だけ読む）は API に無いので捨てる（フィルターをかけたブックの結果が XAML と変わる）。AddHeaders の既定はアクティビティと同じ true"
+}
