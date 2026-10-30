@@ -1,0 +1,38 @@
+{
+  "workflow": "MonitorEvents_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "MonitorEvents",
+      "name": "イベントを監視",
+      "item": "args",
+      "props": {
+        "RepeatForever": "False",
+        "ContinueOnError": false
+      },
+      "slots": {
+        "Triggers": [
+          {
+            "act": "MouseTrigger",
+            "props": {
+              "EventMode": "EVENT_FORWARD",
+              "KeyModifiers": "None",
+              "MouseButton": "BTN_LEFT"
+            }
+          }
+        ]
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": {
+              "lit": "MonitorEvents が発火した"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

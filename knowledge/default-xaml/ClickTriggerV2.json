@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ClickTriggerV2\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ClickTriggerV2 ClippingRegion=\"{x:Null}\" Selector=\"{x:Null}\" BlockEvent=\"False\" Enabled=\"True\" IncludeChildren=\"True\" KeyModifiers=\"None\" MouseButton=\"BTN_LEFT\" SchedulingMode=\"Sequential\" TriggerId=\"b101e222-a8f5-458a-bb28-3eb4129c55ca\" TriggerMode=\"TriggerDown\" />\r\n</Activity>"
+  }
+}

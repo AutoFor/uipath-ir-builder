@@ -1,0 +1,38 @@
+{
+  "workflow": "MouseTriggerV2_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "MouseTriggerV2",
+            "props": {
+              "BlockEvent": false,
+              "Enabled": true,
+              "KeyModifiers": "None",
+              "MouseButton": "BTN_LEFT",
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000016"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "MouseTriggerV2 が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

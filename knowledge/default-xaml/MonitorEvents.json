@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"MonitorEvents\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:MonitorEvents ContinueOnError=\"{x:Null}\" RepeatForever=\"True\">\r\n    <ui:MonitorEvents.Handler>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"args\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u30a4\u30d9\u30f3\u30c8 \u30cf\u30f3\u30c9\u30e9\u30fc\" />\r\n      </ActivityAction>\r\n    </ui:MonitorEvents.Handler>\r\n  </ui:MonitorEvents>\r\n</Activity>"
+  }
+}

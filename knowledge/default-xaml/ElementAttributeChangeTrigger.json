@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ElementAttributeChangeTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ElementAttributeChangeTrigger AttributeName=\"{x:Null}\" Selector=\"{x:Null}\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"7e6a3fdd-00d7-41f1-99e1-afb19289775c\" VisibilityType=\"Accessible\" />\r\n</Activity>"
+  }
+}

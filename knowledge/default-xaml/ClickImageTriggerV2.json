@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ClickImageTriggerV2\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ClickImageTriggerV2 ClippingRegion=\"{x:Null}\" Selector=\"{x:Null}\" BlockEvent=\"False\" Enabled=\"True\" KeyModifiers=\"None\" MouseButton=\"BTN_LEFT\" SchedulingMode=\"Sequential\" TriggerId=\"11a3675e-1bb4-4e71-a28a-4ffe937c5725\" TriggerMode=\"TriggerDown\">\r\n    <ui:ClickImageTriggerV2.Image>\r\n      <ui:ImageTarget Image=\"{x:Null}\" TargetImageBase64=\"{x:Null}\" Accuracy=\"0.8\" Profile=\"Basic\" />\r\n    </ui:ClickImageTriggerV2.Image>\r\n  </ui:ClickImageTriggerV2>\r\n</Activity>"
+  }
+}

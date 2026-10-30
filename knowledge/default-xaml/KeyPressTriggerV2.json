@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"KeyPressTriggerV2\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:KeyPressTriggerV2 Key=\"{x:Null}\" Selector=\"{x:Null}\" BlockEvent=\"False\" Enabled=\"True\" IncludeChildren=\"True\" KeyModifiers=\"None\" SchedulingMode=\"Sequential\" TriggerId=\"003878a3-1426-4311-b69a-d53be0f3b404\" TriggerMode=\"TriggerDown\" />\r\n</Activity>"
+  }
+}

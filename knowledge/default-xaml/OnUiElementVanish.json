@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"OnUiElementVanish\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:OnUiElementVanish ContinueOnError=\"{x:Null}\" WaitNotActive=\"{x:Null}\" WaitNotVisible=\"{x:Null}\" RepeatForever=\"True\">\r\n    <ui:OnUiElementVanish.Body>\r\n      <Sequence DisplayName=\"Do\" />\r\n    </ui:OnUiElementVanish.Body>\r\n    <ui:OnUiElementVanish.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"5259efb8-0aa8-4703-a3d1-6a16c977eb5b\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:OnUiElementVanish.Target>\r\n  </ui:OnUiElementVanish>\r\n</Activity>"
+  }
+}
