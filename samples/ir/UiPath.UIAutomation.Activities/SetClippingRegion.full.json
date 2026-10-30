@@ -23,37 +23,50 @@
       }
     },
     {
-      "act": "OpenApplication",
-      "name": "メモ帳を開く（Classic）",
-      "item": "ContextTarget",
-      "props": {
-        "FileName": {
-          "lit": "notepad.exe"
-        },
-        "Arguments": "notePath",
-        "Selector": {
-          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
-        }
-      },
+      "act": "Sequence",
+      "name": "メモ帳を起動して入る",
       "body": [
         {
-          "act": "SetClippingRegion",
-          "name": "クリップ領域を決める",
+          "act": "StartProcess",
+          "name": "メモ帳を起動する",
           "props": {
-            "Element": "el",
-            "Direction": "RECTANGLE",
-            "Region": "New UiPath.Core.Region(New System.Drawing.Rectangle(0, 0, 50, 50))",
-            "ContinueOnError": false
+            "FileName": {
+              "lit": "notepad.exe"
+            },
+            "Arguments": "notePath"
           }
         },
         {
-          "act": "CloseWindow",
-          "name": "メモ帳を閉じる",
+          "act": "WindowScope",
+          "name": "メモ帳を開く（Classic）",
+          "item": "ContextTarget",
           "props": {
             "Selector": {
               "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            },
+            "TimeoutMS": 15000
+          },
+          "body": [
+            {
+              "act": "SetClippingRegion",
+              "name": "クリップ領域を決める",
+              "props": {
+                "Element": "el",
+                "Direction": "RECTANGLE",
+                "Region": "New UiPath.Core.Region(New System.Drawing.Rectangle(0, 0, 50, 50))",
+                "ContinueOnError": false
+              }
+            },
+            {
+              "act": "CloseWindow",
+              "name": "メモ帳を閉じる",
+              "props": {
+                "Selector": {
+                  "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+                }
+              }
             }
-          }
+          ]
         }
       ]
     }

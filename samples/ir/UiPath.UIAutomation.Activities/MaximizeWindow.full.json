@@ -23,50 +23,63 @@
       }
     },
     {
-      "act": "OpenApplication",
-      "name": "メモ帳を開く（Classic）",
-      "item": "ContextTarget",
-      "props": {
-        "FileName": {
-          "lit": "notepad.exe"
-        },
-        "Arguments": "notePath",
-        "Selector": {
-          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
-        },
-        "ApplicationWindow": "win"
-      },
+      "act": "Sequence",
+      "name": "メモ帳を起動して入る",
       "body": [
         {
-          "act": "MaximizeWindow",
-          "name": "MaximizeWindow",
+          "act": "StartProcess",
+          "name": "メモ帳を起動する",
           "props": {
-            "Window": "win",
-            "ContinueOnError": false
+            "FileName": {
+              "lit": "notepad.exe"
+            },
+            "Arguments": "notePath"
           }
         },
         {
-          "act": "RestoreWindow",
-          "name": "RestoreWindow",
-          "props": {
-            "Window": "win"
-          }
-        },
-        {
-          "act": "LogMessage",
-          "props": {
-            "Level": "Info",
-            "Message": "\"MaximizeWindow done\""
-          }
-        },
-        {
-          "act": "CloseWindow",
-          "name": "メモ帳を閉じる",
+          "act": "WindowScope",
+          "name": "メモ帳を開く（Classic）",
+          "item": "ContextTarget",
           "props": {
             "Selector": {
               "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            },
+            "TimeoutMS": 15000,
+            "ApplicationWindow": "win"
+          },
+          "body": [
+            {
+              "act": "MaximizeWindow",
+              "name": "MaximizeWindow",
+              "props": {
+                "Window": "win",
+                "ContinueOnError": false
+              }
+            },
+            {
+              "act": "RestoreWindow",
+              "name": "RestoreWindow",
+              "props": {
+                "Window": "win"
+              }
+            },
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"MaximizeWindow done\""
+              }
+            },
+            {
+              "act": "CloseWindow",
+              "name": "メモ帳を閉じる",
+              "props": {
+                "Selector": {
+                  "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+                }
+              }
             }
-          }
+          ]
         }
       ]
     }

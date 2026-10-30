@@ -66,20 +66,23 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="uuia:Window" Name="win" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="メモ帳に開かせるファイルを書く" FileName="[notePath]" Text="uia-c3" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <ui:OpenApplication ApplicationWindow="[win]" Arguments="[notePath]" DisplayName="メモ帳を開く（Classic）" FileName="notepad.exe" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" sap2010:WorkflowViewState.IdRef="OpenApplication_1">
-      <ui:OpenApplication.Body>
-        <ActivityAction x:TypeArguments="x:Object">
-          <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
-          </ActivityAction.Argument>
-          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <ui:HideWindow DisplayName="HideWindow" Window="[win]" sap2010:WorkflowViewState.IdRef="HideWindow_1" />
-            <ui:ShowWindow ContinueOnError="False" DisplayName="ShowWindow" Window="[win]" sap2010:WorkflowViewState.IdRef="ShowWindow_1" />
-            <ui:LogMessage Level="Info" Message="[&quot;ShowWindow done&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-            <ui:CloseWindow DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
-          </Sequence>
-        </ActivityAction>
-      </ui:OpenApplication.Body>
-    </ui:OpenApplication>
+    <Sequence DisplayName="メモ帳を起動して入る" sap2010:WorkflowViewState.IdRef="Sequence_2">
+      <ui:StartProcess Arguments="[notePath]" DisplayName="メモ帳を起動する" FileName="notepad.exe" sap2010:WorkflowViewState.IdRef="StartProcess_1" />
+      <ui:WindowScope ApplicationWindow="[win]" DisplayName="メモ帳を開く（Classic）" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="15000" sap2010:WorkflowViewState.IdRef="WindowScope_1">
+        <ui:WindowScope.Body>
+          <ActivityAction x:TypeArguments="x:Object">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <ui:HideWindow DisplayName="HideWindow" Window="[win]" sap2010:WorkflowViewState.IdRef="HideWindow_1" />
+              <ui:ShowWindow ContinueOnError="False" DisplayName="ShowWindow" Window="[win]" sap2010:WorkflowViewState.IdRef="ShowWindow_1" />
+              <ui:LogMessage Level="Info" Message="[&quot;ShowWindow done&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+              <ui:CloseWindow DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
+            </Sequence>
+          </ActivityAction>
+        </ui:WindowScope.Body>
+      </ui:WindowScope>
+    </Sequence>
   </Sequence>
 </Activity>

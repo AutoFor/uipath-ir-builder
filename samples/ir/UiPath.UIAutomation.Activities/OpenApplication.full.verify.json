@@ -1,1 +1,1 @@
-{"requires":"Windows 11 のメモ帳（notepad.exe）。ワークフローが一時フォルダに uia-c3-note.txt を書いてメモ帳で開き、最後に閉じる。内容は変更しない"}
+{"noRun":"Win11 のメモ帳は notepad.exe が起動用の薄い exe（本体は別プロセス）で、OpenApplication は起動したプロセスのウィンドウを待ち続けて TimeoutMS で失敗する（run で確認）。フルパスでは FileNotFoundException。build まで"}

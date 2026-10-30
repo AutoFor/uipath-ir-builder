@@ -64,27 +64,30 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-c3-note.txt&quot;)]" Name="notePath" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="メモ帳に開かせるファイルを書く" FileName="[notePath]" Text="uia-c3" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <ui:OpenApplication Arguments="[notePath]" DisplayName="メモ帳を開く（Classic）" FileName="notepad.exe" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" sap2010:WorkflowViewState.IdRef="OpenApplication_1">
-      <ui:OpenApplication.Body>
-        <ActivityAction x:TypeArguments="x:Object">
-          <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
-          </ActivityAction.Argument>
-          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <ui:UseForegroundScope ContinueOnError="False" DisplayName="前面で実行する" WaitForeground="[TimeSpan.FromSeconds(2)]" sap2010:WorkflowViewState.IdRef="UseForegroundScope_1">
-              <ui:UseForegroundScope.Body>
-                <ActivityAction x:TypeArguments="x:Object">
-                  <ActivityAction.Argument>
-                    <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
-                  </ActivityAction.Argument>
-                  <ui:LogMessage Level="Info" Message="[&quot;foreground&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-                </ActivityAction>
-              </ui:UseForegroundScope.Body>
-            </ui:UseForegroundScope>
-            <ui:CloseWindow DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
-          </Sequence>
-        </ActivityAction>
-      </ui:OpenApplication.Body>
-    </ui:OpenApplication>
+    <Sequence DisplayName="メモ帳を起動して入る" sap2010:WorkflowViewState.IdRef="Sequence_2">
+      <ui:StartProcess Arguments="[notePath]" DisplayName="メモ帳を起動する" FileName="notepad.exe" sap2010:WorkflowViewState.IdRef="StartProcess_1" />
+      <ui:WindowScope DisplayName="メモ帳を開く（Classic）" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="15000" sap2010:WorkflowViewState.IdRef="WindowScope_1">
+        <ui:WindowScope.Body>
+          <ActivityAction x:TypeArguments="x:Object">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <ui:UseForegroundScope ContinueOnError="False" DisplayName="前面で実行する" WaitForeground="[TimeSpan.FromSeconds(2)]" sap2010:WorkflowViewState.IdRef="UseForegroundScope_1">
+                <ui:UseForegroundScope.Body>
+                  <ActivityAction x:TypeArguments="x:Object">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                    </ActivityAction.Argument>
+                    <ui:LogMessage Level="Info" Message="[&quot;foreground&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+                  </ActivityAction>
+                </ui:UseForegroundScope.Body>
+              </ui:UseForegroundScope>
+              <ui:CloseWindow DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
+            </Sequence>
+          </ActivityAction>
+        </ui:WindowScope.Body>
+      </ui:WindowScope>
+    </Sequence>
   </Sequence>
 </Activity>

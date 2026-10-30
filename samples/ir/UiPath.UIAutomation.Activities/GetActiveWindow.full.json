@@ -23,52 +23,65 @@
       }
     },
     {
-      "act": "OpenApplication",
-      "name": "メモ帳を開く（Classic）",
-      "item": "ContextTarget",
-      "props": {
-        "FileName": {
-          "lit": "notepad.exe"
-        },
-        "Arguments": "notePath",
-        "Selector": {
-          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
-        }
-      },
+      "act": "Sequence",
+      "name": "メモ帳を起動して入る",
       "body": [
         {
-          "act": "GetActiveWindow",
-          "name": "手前のウィンドウに入る",
+          "act": "StartProcess",
+          "name": "メモ帳を起動する",
+          "props": {
+            "FileName": {
+              "lit": "notepad.exe"
+            },
+            "Arguments": "notePath"
+          }
+        },
+        {
+          "act": "WindowScope",
+          "name": "メモ帳を開く（Classic）",
           "item": "ContextTarget",
           "props": {
-            "ApplicationWindow": "active",
-            "ContinueOnError": false
+            "Selector": {
+              "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            },
+            "TimeoutMS": 15000
           },
           "body": [
+            {
+              "act": "GetActiveWindow",
+              "name": "手前のウィンドウに入る",
+              "item": "ContextTarget",
+              "props": {
+                "ApplicationWindow": "active",
+                "ContinueOnError": false
+              },
+              "body": [
+                {
+                  "act": "LogMessage",
+                  "props": {
+                    "Level": "Info",
+                    "Message": "\"active\""
+                  }
+                }
+              ]
+            },
             {
               "act": "LogMessage",
               "props": {
                 "Level": "Info",
-                "Message": "\"active\""
+                "Message": "\"got:\" & Convert.ToString(active IsNot Nothing)"
+              }
+            },
+            {
+              "act": "CloseWindow",
+              "name": "メモ帳を閉じる",
+              "props": {
+                "Selector": {
+                  "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+                }
               }
             }
           ]
-        },
-        {
-          "act": "LogMessage",
-          "props": {
-            "Level": "Info",
-            "Message": "\"got:\" & Convert.ToString(active IsNot Nothing)"
-          }
-        },
-        {
-          "act": "CloseWindow",
-          "name": "メモ帳を閉じる",
-          "props": {
-            "Selector": {
-              "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
-            }
-          }
         }
       ]
     }
