@@ -1,0 +1,13 @@
+{
+  "activity": "FormatRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.FormatRange",
+      "args": { "format": "{Format}", "alignment": "{Alignment}", "font": "{Font}" },
+      "defaults": { "Format": "Nothing", "Alignment": "Nothing", "Font": "Nothing" },
+      "usings": ["UiPath.Excel.Activities.API"]
+    }
+  ],
+  "notes": "ExcelOperations.FormatRange(this IReadRangeRef range, ICellFormat format, AlignmentOptions alignment, FontOptions font)。Format / Alignment / Font は IR の objs（要素構文）で書く。Format は ICellFormat の実装（$type: GeneralFormat / TextFormat / NumberFormat / CurrencyFormat / PercentageFormat / CustomFormat / TimeFormat / DateFormat）。Coded でも同じクラスを new する（tools/ir/uia.ts の codedModels）。IR に無いものは null を渡す"
+}

@@ -1,0 +1,352 @@
+{
+  "package": "UiPath.Excel.Activities",
+  "version": "3.6.1",
+  "objects": [
+    {
+      "className": "CurrencyFormat",
+      "clrType": "UiPath.Excel.Activities.Business.CurrencyFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Currency",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyFormat"
+        },
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "SetAtTheEnd",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "CustomFormat",
+      "clrType": "UiPath.Excel.Activities.Business.CustomFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "FormatAsString",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CustomFormat"
+        }
+      ]
+    },
+    {
+      "className": "DateFormat",
+      "clrType": "UiPath.Excel.Activities.Business.DateFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Type",
+          "kind": "prop",
+          "type": "UiPath.Excel.DateType",
+          "required": false,
+          "enum": [
+            "Long",
+            "Short"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DateFormat"
+        }
+      ]
+    },
+    {
+      "className": "GeneralFormat",
+      "clrType": "UiPath.Excel.Activities.Business.GeneralFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "NumberFormat",
+      "clrType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "PercentageFormat",
+      "clrType": "UiPath.Excel.Activities.Business.PercentageFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "TextFormat",
+      "clrType": "UiPath.Excel.Activities.Business.TextFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "TimeFormat",
+      "clrType": "UiPath.Excel.Activities.Business.TimeFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "IsAMPM",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TimeFormat"
+        },
+        {
+          "name": "Type",
+          "kind": "prop",
+          "type": "UiPath.Excel.TimeType",
+          "required": false,
+          "enum": [
+            "HoursMinutes",
+            "HoursMinutesSeconds"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TimeFormat"
+        }
+      ]
+    },
+    {
+      "className": "AlignmentOptions",
+      "clrType": "UiPath.Excel.AlignmentOptions",
+      "assembly": "UiPath.Excel",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "HorizontalAlignment",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelRangeHorizontalAlignment",
+          "required": false,
+          "enum": [
+            "xlHAlignGeneral",
+            "xlHAlignLeft",
+            "xlHAlignCenter",
+            "xlHAlignRight",
+            "xlHAlignFill",
+            "xlHAlignJustify",
+            "xlHAlignCenterAcrossSelection",
+            "xlHAlignDistributed"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AlignmentOptions"
+        },
+        {
+          "name": "VerticalAlignment",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelRangeVerticalAlignment",
+          "required": false,
+          "enum": [
+            "xlVAlignTop",
+            "xlVAlignCenter",
+            "xlVAlignBottom",
+            "xlVAlignJustify",
+            "xlVAlignDistributed"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AlignmentOptions"
+        },
+        {
+          "name": "WrapText",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AlignmentOptions"
+        }
+      ]
+    },
+    {
+      "className": "FontOptions",
+      "clrType": "UiPath.Excel.FontOptions",
+      "assembly": "UiPath.Excel",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Color",
+          "kind": "prop",
+          "type": "System.Drawing.Color",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        },
+        {
+          "name": "FillColor",
+          "kind": "prop",
+          "type": "System.Drawing.Color",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        },
+        {
+          "name": "FontFamilyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        },
+        {
+          "name": "Size",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        },
+        {
+          "name": "Style",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelRangeFontStyle",
+          "required": false,
+          "enum": [
+            "Regular",
+            "Italic",
+            "Bold",
+            "BoldItalic"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        },
+        {
+          "name": "UnderlineStyle",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelRangeUnderlineStyle",
+          "required": false,
+          "enum": [
+            "None",
+            "Single",
+            "Double",
+            "SingleAccounting",
+            "DoubleAccounting"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FontOptions"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
