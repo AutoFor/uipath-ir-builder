@@ -75,7 +75,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="ue:IWorkbookQuickHandle" Name="Excel" />
           </ActivityAction.Argument>
-          <ueab:ReadRangeX Range="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;A1:B4&quot;)]" SaveTo="[dt]" sap2010:WorkflowViewState.IdRef="ReadRangeX_1" />
+          <ueab:ReadRangeX Range="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;A1:B4&quot;)]" SaveTo="[dt]" VisibleOnly="False" sap2010:WorkflowViewState.IdRef="ReadRangeX_1" />
         </ActivityAction>
       </ueab:ExcelApplicationCard.Body>
     </ueab:ExcelApplicationCard>
@@ -87,7 +87,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ueab:WriteRangeX Append="False" Destination="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;B2&quot;)]" ExcludeHeaders="False" IgnoreEmptySource="True" Source="[dt]" sap2010:WorkflowViewState.IdRef="WriteRangeX_1" />
-            <ueab:ReadRangeX Range="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;B2:C5&quot;)]" SaveTo="[back]" sap2010:WorkflowViewState.IdRef="ReadRangeX_2" />
+            <ueab:ReadRangeX Range="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;B2:C5&quot;)]" SaveTo="[back]" VisibleOnly="False" sap2010:WorkflowViewState.IdRef="ReadRangeX_2" />
           </Sequence>
         </ActivityAction>
       </ueab:ExcelApplicationCard.Body>

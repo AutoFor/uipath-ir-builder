@@ -21,12 +21,12 @@ namespace CatalogProbeNet8
             DataTable back = default;
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
             {
-                dt = Excel.Sheet["Sheet1"].Range["A1:B4"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
+                dt = Excel.Sheet["Sheet1"].Range["A1:B4"].ReadRange(hasHeaders: true, visibleRowsOnly: false);
             }
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\WriteRangeX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
             {
                 Excel.Sheet["Sheet1"].Range["B2"].WriteRange(source: dt, append: false, excludeHeaders: false, ignoreEmptySource: true);
-                back = Excel.Sheet["Sheet1"].Range["B2:C5"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
+                back = Excel.Sheet["Sheet1"].Range["B2:C5"].ReadRange(hasHeaders: true, visibleRowsOnly: false);
             }
             Log(message: "書いた行数: " + back.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: "最後の行: " + back.Rows[2]["Name"].ToString() + " " + back.Rows[2]["Age"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
