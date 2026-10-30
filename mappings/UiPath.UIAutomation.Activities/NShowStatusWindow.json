@@ -1,0 +1,40 @@
+{
+  "activity": "NShowStatusWindow",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.ShowStatusWindow",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "options": {
+          "new": "StatusWindowOptions",
+          "always": true,
+          "set": {
+            "Title": "{Title}",
+            "Message": "{Message}",
+            "MaxHistoryCount": "{HistoryCount}",
+            "Opacity": "{Opacity}",
+            "Position": "{Position|enum}",
+            "ShowTimestamps": "{ShowTimestamps}",
+            "Theme": "{Theme|enum}",
+            "X": "{X}",
+            "Y": "{Y}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target"
+  ],
+  "notes": "ステータス ウィンドウはターゲットを使わないので Target は捨てる。HistoryCount は StatusWindowOptions.MaxHistoryCount"
+}

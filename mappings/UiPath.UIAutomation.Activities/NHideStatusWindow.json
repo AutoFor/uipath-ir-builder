@@ -1,0 +1,23 @@
+{
+  "activity": "NHideStatusWindow",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.HideStatusWindow",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ]
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target",
+    "Timeout",
+    "DelayAfter",
+    "DelayBefore",
+    "HealingAgentBehavior"
+  ],
+  "notes": "HideStatusWindow() は引数が無い（Timeout などは Coded 未対応）"
+}

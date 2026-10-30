@@ -1,0 +1,6 @@
+{
+  "activity": "NClosePopup",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ClosePopup は戻り値が無く、XAML の PopupHandled（NotFound / Handled など）を受け取れない。同じ結果にならないので対応させない）"
+}

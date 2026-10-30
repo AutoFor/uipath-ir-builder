@@ -77,7 +77,7 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
       const attrs: Record<string, string> = {};
       for (const [, k, v] of m[2].matchAll(/([\w.]+)="([^"]*)"/g)) {
         // {x:Null} は「値なし」、DisplayName はロケール依存なので既定値として使わない
-        if (v !== "{x:Null}" && k !== "DisplayName" && k !== "IsDisplayNameAuto") attrs[k] = v;
+        if (v !== "{x:Null}" && k !== "DisplayName" && k !== "IsDisplayNameAuto") attrs[k] = v.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#xD;/g, "\r").replace(/&#xA;/g, "\n").replace(/&amp;/g, "&"); // XML の実体参照を戻す（出力時にもう一度エスケープするため）
       }
       defaults.set(m[1], attrs);
     }

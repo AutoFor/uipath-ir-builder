@@ -1,0 +1,6 @@
+{
+  "activity": "NGetBrowserData",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ブラウザのセッション データを読む API が無い）。利用者の Cookie などの実データを読むので run もしない"
+}

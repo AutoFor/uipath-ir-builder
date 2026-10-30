@@ -1,0 +1,32 @@
+{
+  "activity": "NSetClipboard",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.SetClipboard",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "setClipboardOptions": {
+          "new": "SetClipboardOptions",
+          "always": true,
+          "set": {
+            "Text": "{Text}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Target"
+  ],
+  "notes": "クリップボードはターゲットを使わないので Target は捨てる（uiAutomation のサービスを直接呼ぶ）"
+}

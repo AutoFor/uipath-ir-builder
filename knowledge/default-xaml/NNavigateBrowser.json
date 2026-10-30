@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30d6\u30e9\u30a6\u30b6\u30fc\u5185\u3092\u79fb\u52d5 - \u524d\u306b\u623b\u308b\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NNavigateBrowser DisplayName=\"\u30d6\u30e9\u30a6\u30b6\u30fc\u5185\u3092\u79fb\u52d5 - \u524d\u306b\u623b\u308b\" Version=\"V5\" />\r\n</Activity>"
+  }
+}
