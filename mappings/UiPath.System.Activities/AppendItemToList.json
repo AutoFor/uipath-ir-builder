@@ -1,0 +1,16 @@
+{
+  "activity": "AppendItemToList",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ItemIndex"
+      ],
+      "code": "{List}.Add({ItemToAppend}); {ItemIndex} = {List}.Count - 1;"
+    },
+    {
+      "code": "{List}.Add({ItemToAppend});"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（ItemIndex は足した要素の位置）"
+}

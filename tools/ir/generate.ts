@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs, argumentListElement } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
@@ -138,7 +138,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
     const hasContent =
-      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -157,6 +157,19 @@ export function generate(wf: Workflow, cat: Catalog): string {
         emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
       }
       if (wrap) emit(depth + 2, `</scg:Dictionary>`);
+      emit(depth + 1, `</${tag}.${prop}>`);
+    }
+    for (const [prop, list] of Object.entries(n.lists ?? {})) {
+      // List<InArgument<T>>。Studio の既定 XAML と同じく <scg:List x:TypeArguments="InArgument(T)"> に要素を並べる
+      const t = typeText(argumentListElement(a.props.find((x) => x.name === prop)!.type, n.typeArg)!);
+      xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      emit(depth + 1, `<${tag}.${prop}>`);
+      if (list.length === 0) emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="0" />`);
+      else {
+        emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="${Math.max(4, list.length)}">`);
+        for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(v)}]`)}</InArgument>`);
+        emit(depth + 2, `</scg:List>`);
+      }
       emit(depth + 1, `</${tag}.${prop}>`);
     }
     if (n.variables?.length) {

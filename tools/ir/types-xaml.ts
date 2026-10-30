@@ -50,6 +50,8 @@ const generic: Record<string, [string, Record<string, string>]> = {
   List: ["scg:List", { scg: SCG }],
   Dictionary: ["scg:Dictionary", { scg: SCG }],
   IEnumerable: ["scg:IEnumerable", { scg: SCG }],
+  IList: ["scg:IList", { scg: SCG }],
+  ICollection: ["scg:ICollection", { scg: SCG }],
 };
 
 // エイリアス（VB / C# の書き方も受ける）

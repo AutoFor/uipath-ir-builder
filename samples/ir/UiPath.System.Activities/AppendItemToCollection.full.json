@@ -1,0 +1,75 @@
+{
+  "workflow": "AppendItemToCollection_Full",
+  "variables": [
+    {
+      "name": "items",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"x\"}"
+    },
+    {
+      "name": "suffix",
+      "type": "String",
+      "default": "\"!\""
+    },
+    {
+      "name": "updated",
+      "type": "List<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "AppendItemToCollection",
+      "name": "3つ足す（元を変える）",
+      "typeArg": "String",
+      "props": {
+        "Collection": "items"
+      },
+      "lists": {
+        "Items": [
+          {
+            "lit": "a"
+          },
+          "\"b\" & suffix",
+          "suffix & suffix"
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", items)"
+      }
+    },
+    {
+      "act": "AppendItemToCollection",
+      "name": "Result に新しいリストを受ける",
+      "typeArg": "String",
+      "props": {
+        "Collection": "items",
+        "Result": "updated"
+      },
+      "lists": {
+        "Items": [
+          {
+            "lit": "z"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", items)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", updated)"
+      }
+    }
+  ]
+}

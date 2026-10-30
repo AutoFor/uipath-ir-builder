@@ -37,6 +37,7 @@ export type Node = {
   cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
   catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）
+  lists?: Record<string, Value[]>; // InArgument<T> の一覧のプロパティ（AppendItemToCollection.Items、BuildCollection.NextItems など）。要素は式
   objs?: Record<string, ObjValue>; // 要素で書くオブジェクトのプロパティ（UI のターゲット Target / TargetApp など）。書き方は tools/ir/uia.ts
 };
 

@@ -46,7 +46,8 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
       // 戻り値のある基底（BaseStorageActivity<String> など。最後の型引数 T が決まっているもの）の Result は、リフレクションでは
       // 取れない（Activity<T>.Result）が、XAML では Result="[変数]" の属性で書ける。out のプロパティとして足す
-      const res = typeof a.baseType === "string" && a.genericArity === 0 && !props.some((p: Prop) => p.name === "Result") ? resultType(a.baseType) : undefined;
+      // ジェネリックのアクティビティ（genericArity > 0）では、T が自分の型引数（CodeActivity<List<T>> の List<T> など）なので Result も書ける
+      const res = typeof a.baseType === "string" && !props.some((p: Prop) => p.name === "Result") ? resultType(a.baseType, a.genericArity > 0) : undefined;
       if (res) props.push({ name: "Result", kind: "out", type: res, required: false, obsolete: false });
       activities.push({ ...a, props, package: c.package });
     }
@@ -75,11 +76,12 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
 
 // 基底クラスの型引数から Result の型を取る。Activity<T> 系（CodeActivity<T>、NativeActivity<T>、AsyncTaskCodeActivity<T>、
 // Base…Activity<T> など）で、T が決まっている（T、T1 のような仮引数でない）ときだけ
-function resultType(baseType: string): string | undefined {
+function resultType(baseType: string, ownGeneric: boolean): string | undefined {
   const m = baseType.match(/(?:^|\.)(\w*Activity)<(.+)>$/);
   if (!m) return undefined;
   const t = m[2];
-  if (/(^|[<, ])T\d?(?=[>, ]|$)/.test(t)) return undefined;
+  if (/(^|[<, ])T\d?(?=[>, ]|$)/.test(t)) return ownGeneric && /^[\w.]+<T>$/.test(t) && !/^ForEachBase/.test(m[1]) ? t : undefined;
+  if (ownGeneric) return undefined; // 型引数のあるアクティビティで T を含まない戻り値は、これまでどおり扱わない
   return t;
 }
 
@@ -139,6 +141,15 @@ const specialProps: Record<string, string> = {
 };
 const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan"]);
 
+// List<InArgument<T>> / IEnumerable<InArgument<T>>（IR では lists に式の配列で書く）
+export const isArgumentList = (t: string) => /^(System\.Collections\.Generic\.)?(List|IEnumerable)<(System\.Activities\.)?InArgument<[^<>]+>>$/.test(t);
+
+// InArgument の一覧の要素の型。ジェネリックの T なら typeArg、決まった型（RemoveLogFields.Fields の String など）ならその型
+export const argumentListElement = (propType: string, typeArg: string | undefined) => {
+  const t = propType.match(/InArgument<([^<>]+)>>$/)?.[1];
+  return t === undefined || /^T\d?$/.test(t) ? typeArg : t;
+};
+
 export type Writable = { ok: true; how: string } | { ok: false; reason: string; group: string };
 
 export function writable(a: Activity, p: Prop): Writable {
@@ -146,6 +157,7 @@ export function writable(a: Activity, p: Prop): Writable {
   if (sp) return { ok: true, how: sp };
   // BindingsKey は Studio が実行時のバインド用に内部で持つ。XAML の属性に書くと「unknown member」で build が落ちる（storage / RunJob / StartJob で確認）
   if (p.name === "BindingsKey") return { ok: false, group: "Studio の内部", reason: "XAML に書けない（書くと build が「unknown member」で落ちる。Studio がバインド用に内部で持つ）" };
+  if (isArgumentList(p.type)) return { ok: true, how: "lists" };
   switch (p.kind) {
     case "in": case "out": case "inout": return { ok: true, how: "式" };
     case "child": return { ok: true, how: isExpressionChild(p) ? "式" : "slots" };

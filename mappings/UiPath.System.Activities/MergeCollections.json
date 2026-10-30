@@ -1,0 +1,16 @@
+{
+  "activity": "MergeCollections",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Result"
+      ],
+      "code": "{Result} = {Collection}.Concat({SecondCollection}).ToList();"
+    },
+    {
+      "code": "_ = {Collection}.Concat({SecondCollection}).ToList();"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（Collection のあとに SecondCollection が続く新しい List を Result に入れる。元のコレクションは変えない。Result を Collection と同じ変数にしたときの「その場で足す」は、変数の代入で同じ結果になる）"
+}

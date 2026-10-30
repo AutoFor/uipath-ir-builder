@@ -1,0 +1,10 @@
+{
+  "activity": "CreateList",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{NewList} = new List<{typeArg}>();"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く"
+}

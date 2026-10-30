@@ -1,0 +1,52 @@
+{
+  "workflow": "MergeCollections_Full",
+  "variables": [
+    {
+      "name": "first",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\"}"
+    },
+    {
+      "name": "second",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"b\", \"c\"}"
+    },
+    {
+      "name": "merged",
+      "type": "List<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "MergeCollections",
+      "name": "2つをまとめる",
+      "typeArg": "String",
+      "props": {
+        "Collection": "first",
+        "SecondCollection": "second",
+        "Result": "merged"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", merged)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", first)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", second)"
+      }
+    }
+  ]
+}

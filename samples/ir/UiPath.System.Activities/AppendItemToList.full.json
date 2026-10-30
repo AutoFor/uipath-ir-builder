@@ -1,0 +1,42 @@
+{
+  "workflow": "AppendItemToList_Full",
+  "variables": [
+    {
+      "name": "names",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\"}"
+    },
+    {
+      "name": "idx",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "AppendItemToList",
+      "name": "末尾に足す",
+      "typeArg": "String",
+      "props": {
+        "List": "names",
+        "ItemToAppend": {
+          "lit": "b"
+        },
+        "ItemIndex": "idx"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"index=\" & idx.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", names)"
+      }
+    }
+  ]
+}

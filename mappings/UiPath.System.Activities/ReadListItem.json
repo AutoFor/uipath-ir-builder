@@ -1,0 +1,10 @@
+{
+  "activity": "ReadListItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{Value} = {List}[{ItemIndex}];"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く"
+}

@@ -1,0 +1,68 @@
+{
+  "workflow": "ExistsInCollection_Full",
+  "variables": [
+    {
+      "name": "items",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\", \"b\"}"
+    },
+    {
+      "name": "found",
+      "type": "Boolean"
+    },
+    {
+      "name": "pos",
+      "type": "Int32"
+    },
+    {
+      "name": "found2",
+      "type": "Boolean"
+    },
+    {
+      "name": "pos2",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExistsInCollection",
+      "name": "b を探す",
+      "typeArg": "String",
+      "props": {
+        "Collection": "items",
+        "Item": {
+          "lit": "b"
+        },
+        "Exists": "found",
+        "Index": "pos"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"found=\" & found.ToString & \", index=\" & pos.ToString"
+      }
+    },
+    {
+      "act": "ExistsInCollection",
+      "name": "z を探す",
+      "typeArg": "String",
+      "props": {
+        "Collection": "items",
+        "Item": {
+          "lit": "z"
+        },
+        "Exists": "found2",
+        "Index": "pos2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"found=\" & found2.ToString"
+      }
+    }
+  ]
+}

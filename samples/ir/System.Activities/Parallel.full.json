@@ -1,0 +1,92 @@
+{
+  "workflow": "Parallel_Full",
+  "variables": [
+    {
+      "name": "done",
+      "type": "Int32",
+      "default": "0"
+    }
+  ],
+  "body": [
+    {
+      "act": "System.Activities.Statements.Parallel",
+      "name": "2つ終わったら止める",
+      "variables": [
+        {
+          "name": "tag",
+          "type": "String",
+          "default": "\"p\""
+        }
+      ],
+      "props": {
+        "CompletionCondition": "done >= 2"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "tag & \"1\""
+              }
+            },
+            {
+              "act": "Assign",
+              "props": {
+                "To": "done",
+                "Value": "done + 1"
+              }
+            }
+          ]
+        },
+        {
+          "act": "Sequence",
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "tag & \"2\""
+              }
+            },
+            {
+              "act": "Assign",
+              "props": {
+                "To": "done",
+                "Value": "done + 1"
+              }
+            }
+          ]
+        },
+        {
+          "act": "Sequence",
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "tag & \"3\""
+              }
+            },
+            {
+              "act": "Assign",
+              "props": {
+                "To": "done",
+                "Value": "done + 1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"done=\" & done.ToString"
+      }
+    }
+  ]
+}
