@@ -78,7 +78,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NKeyboardShortcuts ActivateBefore="True" ClickBeforeMode="Single" ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DelayBetweenKeys="0.01" DelayBetweenShortcuts="0.05" DisplayName="Enter を押す（全部入り）" HealingAgentBehavior="Disabled" InteractionMode="HardwareEvents" ScopeIdentifier="9d32f8e5-aec8-5429-b766-0fb803f367b2" ShortcutsArgument="[&quot;[k(enter)]&quot;]" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NKeyboardShortcuts_1">
+            <uix:NKeyboardShortcuts ActivateBefore="True" ClickBeforeMode="Single" ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DelayBetweenKeys="0.01" DelayBetweenShortcuts="0.05" DisplayName="Enter を押す（全部入り）" HealingAgentBehavior="Disabled" InteractionMode="HardwareEvents" ScopeIdentifier="9d32f8e5-aec8-5429-b766-0fb803f367b2" ShortcutsArgument="[&quot;[d(hk)][k(enter)][u(hk)]&quot;]" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NKeyboardShortcuts_1">
               <uix:NKeyboardShortcuts.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='kbd' tag='INPUT' /&gt;" Guid="2bec4ce7-1f36-5d37-acbc-de8d011460a2" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NKeyboardShortcuts.Target>
