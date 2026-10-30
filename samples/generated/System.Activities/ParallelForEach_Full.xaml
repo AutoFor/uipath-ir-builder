@@ -72,7 +72,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:String" Name="it" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <ui:LogMessage Level="Info" Message="[&quot;item=&quot; &amp; it]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+            <ui:LogMessage Level="Info" Message="[&quot;item&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
             <Assign sap2010:WorkflowViewState.IdRef="Assign_1">
               <Assign.To>
                 <OutArgument x:TypeArguments="x:Int32">[done]</OutArgument>

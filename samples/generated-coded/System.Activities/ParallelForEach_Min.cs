@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             List<String> names = new List<String>() { "a", "b", "c" };
             foreach (String it in names)
             {
-                Log(message: "item=" + it, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "item", level: UiPath.CodedWorkflows.LogLevel.Info);
             }
         }
     }
