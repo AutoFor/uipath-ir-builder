@@ -52,6 +52,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       given.add(k);
       const w = writable(a, p);
       if (!w.ok) { add(at, "UNSUPPORTED_PROP", `"${k}": ${w.reason}`); continue; }
+      if (w.how === "lists" || w.how === "dicts") { add(at, "UNSUPPORTED_PROP", `"${k}" は props ではなく ${w.how} に書く`); continue; }
       if (p.type === "System.Type") {
         if (typeof v !== "string") add(at, "BAD_TYPE_VALUE", `"${k}" は型名（"String" など）で書く`);
         else checkType(v, at, add);
@@ -117,6 +118,12 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
         if (inOnly && x.dir !== "In") add(`${at}[${i}]`, "BAD_DICT", `"${k}" には In の引数しか入らない`);
         if (x.dir !== "In") checkLValue(x.value, `${at}[${i}]`, scope);
       });
+    }
+
+    for (const k of Object.keys(n.lists ?? {})) {
+      const p = a.props.find((p) => p.name === k);
+      if (!p || writable(a, p).ok !== true || (writable(a, p) as { how: string }).how !== "lists") add(`${path}.lists.${k}`, "BAD_LIST", `${a.className} に List<InArgument<String>> のプロパティ "${k}" は無い`);
+      else given.add(k);
     }
 
     if (n.cases) {

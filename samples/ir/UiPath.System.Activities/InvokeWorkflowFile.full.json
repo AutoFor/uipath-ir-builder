@@ -1,0 +1,57 @@
+{
+  "workflow": "InvokeWorkflowFile_Full",
+  "variables": [
+    {
+      "name": "msg",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeWorkflowFile",
+      "name": "全部のプロパティ",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "InvokeWorkflowFile_Callee.xaml"
+        },
+        "ContinueOnError": "False",
+        "Elevated": false,
+        "Level": "Warn",
+        "LogEntry": "WithArguments",
+        "LogExit": "WithArguments",
+        "TargetSession": "Current",
+        "Timeout": "TimeSpan.FromSeconds(30)",
+        "UnSafe": false
+      },
+      "args": [
+        {
+          "name": "in_Name",
+          "dir": "In",
+          "type": "String",
+          "value": {
+            "lit": "次郎"
+          }
+        },
+        {
+          "name": "in_Count",
+          "dir": "In",
+          "type": "Int32",
+          "value": "3"
+        },
+        {
+          "name": "out_Message",
+          "dir": "Out",
+          "type": "String",
+          "value": "msg"
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"戻り値: \" & msg"
+      }
+    }
+  ]
+}

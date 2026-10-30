@@ -1,0 +1,36 @@
+{
+  "workflow": "StartTimer_Full",
+  "variables": [
+    {
+      "name": "t1",
+      "type": "Timer"
+    },
+    {
+      "name": "t2",
+      "type": "Timer"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartTimer",
+      "name": "1つ目",
+      "props": {
+        "Timer": "t1"
+      }
+    },
+    {
+      "act": "StartTimer",
+      "name": "2つ目",
+      "props": {
+        "Timer": "t2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"別のタイマー: \" & (Not Object.ReferenceEquals(t1, t2)).ToString"
+      }
+    }
+  ]
+}

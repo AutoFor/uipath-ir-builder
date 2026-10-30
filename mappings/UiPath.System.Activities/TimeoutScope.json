@@ -1,0 +1,6 @@
+{
+  "activity": "TimeoutScope",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（時間切れで中の処理を打ち切って例外にする API が無い。Task と CancellationToken で自分で組むことになり、同じ意味の機械的な変換にならない）"
+}

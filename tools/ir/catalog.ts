@@ -159,6 +159,7 @@ export function writable(a: Activity, p: Prop): Writable {
   if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
   if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  if (p.type === "System.Collections.Generic.List<System.Activities.InArgument<System.String>>") return { ok: true, how: "lists" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))
     return { ok: false, group: "コレクション", reason: `${p.type} は要素構文が要るのでまだ書けない` };
   if (objectTypes.has(p.type)) return { ok: true, how: "objs" };

@@ -138,7 +138,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
     const hasContent =
-      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -157,6 +157,15 @@ export function generate(wf: Workflow, cat: Catalog): string {
         emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
       }
       if (wrap) emit(depth + 2, `</scg:Dictionary>`);
+      emit(depth + 1, `</${tag}.${prop}>`);
+    }
+    for (const [prop, list] of Object.entries(n.lists ?? {})) {
+      // List<InArgument<String>>（RemoveLogFields.Fields）。Studio の既定 XAML と同じ <scg:List x:TypeArguments="InArgument(x:String)">
+      xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      emit(depth + 1, `<${tag}.${prop}>`);
+      emit(depth + 2, `<scg:List x:TypeArguments="InArgument(x:String)" Capacity="${list.length}">`);
+      for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="x:String">${esc(`[${exprText(v)}]`)}</InArgument>`);
+      emit(depth + 2, `</scg:List>`);
       emit(depth + 1, `</${tag}.${prop}>`);
     }
     if (n.variables?.length) {
@@ -228,6 +237,8 @@ export function generate(wf: Workflow, cat: Catalog): string {
     emit(depth, `<ActivityAction${ta}>`);
     const inner = new Map(scope);
     types.forEach((t, i) => {
+      // ActivityAction<Activity>（TimeoutScope.Body）は、Studio の既定 XAML でも引数の DelegateInArgument を書かない
+      if (t === "System.Activities.Activity") return;
       const prop = types.length === 1 ? "Argument" : `Argument${i + 1}`;
       emit(depth + 1, `<ActivityAction.${prop}>`);
       emit(depth + 2, `<DelegateInArgument x:TypeArguments="${typeText(t)}" Name="${esc(names[i])}" />`);

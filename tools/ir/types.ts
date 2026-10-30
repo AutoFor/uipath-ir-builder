@@ -34,6 +34,7 @@ export type Node = {
   item?: string | string[]; // ForEach などのデリゲート引数名（既定 "item"）。ForEachFileX のように2つ取るものは配列
   args?: InvokeArg[]; // InvokeWorkflowFile の引数（dicts.Arguments と同じ）
   dicts?: Record<string, InvokeArg[]>; // Dictionary<String, Argument> 型のプロパティ（InvokeCode.Arguments、AddLogFields.Fields など）
+  lists?: Record<string, Value[]>; // List<InArgument<String>> 型のプロパティ（RemoveLogFields.Fields）。値は式か { lit }
   cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
   catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）

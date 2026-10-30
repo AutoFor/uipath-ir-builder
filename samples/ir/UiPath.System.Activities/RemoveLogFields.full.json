@@ -1,0 +1,93 @@
+{
+  "workflow": "RemoveLogFields_Full",
+  "variables": [
+    {
+      "name": "key",
+      "type": "String",
+      "default": "\"step\""
+    }
+  ],
+  "body": [
+    {
+      "act": "AddLogFields",
+      "dicts": {
+        "Fields": [
+          {
+            "name": "case_id",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "A-010"
+            }
+          },
+          {
+            "name": "step",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "1"
+            }
+          },
+          {
+            "name": "keep",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "残す"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "3項目あり"
+        }
+      }
+    },
+    {
+      "act": "RemoveLogFields",
+      "name": "固定名と式で2項目を消す",
+      "lists": {
+        "Fields": [
+          {
+            "lit": "case_id"
+          },
+          "key"
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "keep だけ残った"
+        }
+      }
+    },
+    {
+      "act": "RemoveLogFields",
+      "name": "無い名前を消しても落ちない",
+      "lists": {
+        "Fields": [
+          {
+            "lit": "no_such_field"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "無い名前を消した後"
+        }
+      }
+    }
+  ]
+}

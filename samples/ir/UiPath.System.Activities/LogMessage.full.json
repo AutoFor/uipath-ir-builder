@@ -1,0 +1,68 @@
+{
+  "workflow": "LogMessage_Full",
+  "variables": [
+    {
+      "name": "n",
+      "type": "Int32",
+      "default": "42"
+    }
+  ],
+  "body": [
+    {
+      "act": "LogMessage",
+      "name": "トレース（Information では出ない）",
+      "props": {
+        "Level": "Trace",
+        "Message": {
+          "lit": "trace は出ない"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "name": "情報",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "info の行"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "name": "警告",
+      "props": {
+        "Level": "Warn",
+        "Message": "\"warn n=\" & n.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "name": "エラー",
+      "props": {
+        "Level": "Error",
+        "Message": {
+          "lit": "error の行"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "name": "致命",
+      "props": {
+        "Level": "Fatal",
+        "Message": {
+          "lit": "fatal の行"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "name": "Object の Message",
+      "props": {
+        "Level": "Info",
+        "Message": "n"
+      }
+    }
+  ]
+}

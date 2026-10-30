@@ -1,0 +1,6 @@
+{
+  "activity": "StartTimer",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiPath.Core.Timer を作る・測る API が無い）"
+}

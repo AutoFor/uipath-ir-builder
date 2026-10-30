@@ -1,0 +1,36 @@
+{
+  "workflow": "InvokeWorkflowFile_Callee",
+  "arguments": [
+    {
+      "name": "in_Name",
+      "dir": "In",
+      "type": "String"
+    },
+    {
+      "name": "in_Count",
+      "dir": "In",
+      "type": "Int32"
+    },
+    {
+      "name": "out_Message",
+      "dir": "Out",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"callee: \" & in_Name & \" x\" & in_Count.ToString"
+      }
+    },
+    {
+      "act": "Assign",
+      "props": {
+        "To": "out_Message",
+        "Value": "\"こんにちは、\" & in_Name"
+      }
+    }
+  ]
+}

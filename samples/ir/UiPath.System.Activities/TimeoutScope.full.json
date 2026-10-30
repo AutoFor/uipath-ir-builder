@@ -1,0 +1,70 @@
+{
+  "workflow": "TimeoutScope_Full",
+  "body": [
+    {
+      "act": "TryCatch",
+      "name": "タイムアウトを受ける",
+      "body": [
+        {
+          "act": "TimeoutScope",
+          "name": "1秒で打ち切る",
+          "props": {
+            "ThrowExceptionAfter": "TimeSpan.FromSeconds(1)",
+            "TimeoutMessage": {
+              "lit": "時間切れです"
+            }
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "遅い処理を始める"
+                }
+              }
+            },
+            {
+              "act": "Delay",
+              "props": {
+                "Duration": "TimeSpan.FromSeconds(10)"
+              }
+            },
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "ここには来ない"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "catches": [
+        {
+          "type": "Exception",
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"捕まえた: \" & exception.Message"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "終わり"
+        }
+      }
+    }
+  ]
+}

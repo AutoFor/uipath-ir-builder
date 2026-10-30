@@ -1,0 +1,61 @@
+{
+  "workflow": "ResetTimer_Full",
+  "variables": [
+    {
+      "name": "t",
+      "type": "Timer"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartTimer",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "Delay",
+      "props": {
+        "Duration": "TimeSpan.FromMilliseconds(200)"
+      }
+    },
+    {
+      "act": "ResetTimer",
+      "name": "動いている途中でリセット",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "動作中にリセットした"
+        }
+      }
+    },
+    {
+      "act": "StopTimer",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "ResetTimer",
+      "name": "止めた後でリセット",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "停止後にリセットした"
+        }
+      }
+    }
+  ]
+}
