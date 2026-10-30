@@ -31,6 +31,7 @@ const cat = loadCatalog(root, [
   "catalog/UiPath.System.Activities/26.10.0.json",
   "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
   "catalog/UiPath.Excel.Activities/3.6.1.json",
+  "catalog/UiPath.Persistence.Activities/1.13.0.json",
 ]);
 const { maps, errors: mapErrors } = loadMappings(root);
 const ctx = loadContext();

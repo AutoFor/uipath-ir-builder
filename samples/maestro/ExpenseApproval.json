@@ -1,0 +1,15 @@
+{
+  "process": "ExpenseApproval",
+  "inputs": [ { "name": "amount", "type": "number" } ],
+  "steps": [
+    { "kind": "human", "id": "review", "title": "経費の確認",
+      "fields": [
+        { "id": "amount", "label": "金額", "type": "number", "direction": "input", "value": { "input": "amount" } },
+        { "id": "comment", "label": "コメント", "type": "string", "direction": "output" }
+      ],
+      "outcomes": [ "Approve", "Reject" ] },
+    { "kind": "decide", "id": "isApproved", "on": "review", "equals": "Approve",
+      "then": [ { "kind": "script", "id": "pay", "flow": "return { paid: true };", "bpmn": "return { paid: true };" } ],
+      "else": [ { "kind": "script", "id": "notify", "flow": "return { paid: false };", "bpmn": "return { paid: false };" } ] }
+  ]
+}
