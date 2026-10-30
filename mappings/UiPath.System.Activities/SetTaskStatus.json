@@ -1,0 +1,6 @@
+{
+  "activity": "SetTaskStatus",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に SetTaskStatus が無い）"
+}

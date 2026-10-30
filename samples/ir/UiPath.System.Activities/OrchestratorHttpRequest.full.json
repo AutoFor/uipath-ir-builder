@@ -1,0 +1,54 @@
+{
+  "workflow": "OrchestratorHttpRequest_Full",
+  "variables": [
+    {
+      "name": "status",
+      "type": "Int32"
+    },
+    {
+      "name": "headers",
+      "type": "Dictionary<String, String>"
+    },
+    {
+      "name": "body",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "OrchestratorHttpRequest",
+      "name": "Orchestrator に問い合わせる",
+      "props": {
+        "Method": "POST",
+        "RelativeEndpoint": {
+          "lit": "/odata/Assets"
+        },
+        "JSONPayload": {
+          "lit": "{\"Name\":\"ir-asset\",\"ValueScope\":\"Global\",\"ValueType\":\"Text\",\"StringValue\":\"ir\"}"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "StatusCode": "status",
+        "ResponseHeaders": "headers",
+        "Result": "body"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ステータス: \" & status.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"本文の長さ: \" & body.Length.ToString"
+      }
+    }
+  ]
+}

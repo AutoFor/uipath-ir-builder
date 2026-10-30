@@ -1,0 +1,6 @@
+{
+  "activity": "SendEmailNotification",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に SendEmailNotification が無い）"
+}

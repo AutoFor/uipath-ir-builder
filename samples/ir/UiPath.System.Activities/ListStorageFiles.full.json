@@ -1,0 +1,40 @@
+{
+  "workflow": "ListStorageFiles_Full",
+  "variables": [
+    {
+      "name": "files",
+      "type": "IEnumerable<StorageFileInfo>"
+    }
+  ],
+  "body": [
+    {
+      "act": "ListStorageFiles",
+      "name": "ストレージの一覧",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Directory": {
+          "lit": "reports"
+        },
+        "Recursive": true,
+        "Filter": {
+          "lit": "*.csv"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "Result": "files"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ファイル数: \" & files.Count().ToString"
+      }
+    }
+  ]
+}

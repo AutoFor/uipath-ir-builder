@@ -1,0 +1,6 @@
+{
+  "activity": "ProcessTrackingScope",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に Process Tracking Scope が無い）"
+}

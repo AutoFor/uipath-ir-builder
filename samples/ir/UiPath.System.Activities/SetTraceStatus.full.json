@@ -1,0 +1,40 @@
+{
+  "workflow": "SetTraceStatus_Full",
+  "body": [
+    {
+      "act": "ProcessTrackingScope",
+      "name": "トラッキングの範囲",
+      "props": {
+        "ProcessLogMode": "NewTrace",
+        "ProcessCaseName": {
+          "lit": "IrProcess"
+        },
+        "TaskName": {
+          "lit": "IrTask"
+        },
+        "ScopeId": "ir-scope"
+      },
+      "slots": {
+        "Sequence": [
+          {
+            "act": "SetTraceStatus",
+            "name": "状態を失敗にする",
+            "props": {
+              "Status": "Failed",
+              "TraceGuid": "ir-scope"
+            }
+          },
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "トレースの状態を設定した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

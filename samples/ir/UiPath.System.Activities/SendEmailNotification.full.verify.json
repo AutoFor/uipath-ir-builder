@@ -1,0 +1,3 @@
+{
+  "noRun": "Orchestrator のメール通知（SMTP の設定）が要るため、この環境では run しない（build まで）"
+}

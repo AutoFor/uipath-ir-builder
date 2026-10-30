@@ -1,0 +1,25 @@
+{
+  "activity": "RunJob",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Input"
+      ],
+      "code": "({Job:-_}, {Output:-_}) = system.RunJob(processName: {ProcessName}, orchestratorFolderPath: {FolderPath:-null}, inputArguments: {Input}, doNotWait: {ExecutionMode|is_None:-false}, runJobOptionalParameters: new UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters { TimeoutMS = {TimeoutMS:-600000}, FailWhenJobFails = {FailWhenFaulted:-true}, Priority = UiPath.Activities.System.Jobs.JobPriorityV2.{Priority:-Inherited}, EntryPointPath = {EntryPointPath:-null}, RuntimeType = UiPath.Activities.System.Jobs.JobRuntimeType.{RuntimeType:-Default}, Machine = {Machine:-null}, Account = {Account:-null} });",
+      "usings": [
+        "UiPath.Core.Activities"
+      ]
+    },
+    {
+      "code": "({Job:-_}, {Output:-_}) = system.RunJob(processName: {ProcessName}, orchestratorFolderPath: {FolderPath:-null}, inputArguments: {Arguments|dict:-null}, doNotWait: {ExecutionMode|is_None:-false}, runJobOptionalParameters: new UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters { TimeoutMS = {TimeoutMS:-600000}, FailWhenJobFails = {FailWhenFaulted:-true}, Priority = UiPath.Activities.System.Jobs.JobPriorityV2.{Priority:-Inherited}, EntryPointPath = {EntryPointPath:-null}, RuntimeType = UiPath.Activities.System.Jobs.JobRuntimeType.{RuntimeType:-Default}, Machine = {Machine:-null}, Account = {Account:-null} });",
+      "usings": [
+        "UiPath.Core.Activities"
+      ]
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "戻りのタプル（Job, 出力の JSON 文字列）を Job と Output で受ける。ExecutionMode は None なら doNotWait: true（Suspend は Coded に無いので Busy と同じ扱い）。Arguments（辞書）は inputArguments の Dictionary<string, object> に直す（In 引数のみ。OutArgument は Coded に直せない）。Input は inputArguments にそのまま渡す。Output は JSON 文字列が入るので、String の変数でだけ使える"
+}

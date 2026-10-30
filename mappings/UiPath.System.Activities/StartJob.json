@@ -1,0 +1,26 @@
+{
+  "activity": "StartJob",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.StartJob",
+      "returns": "Key",
+      "args": {
+        "processName": "{ProcessName}",
+        "folderPath": "{FolderPath:-null}",
+        "jobPriority": "UiPath.Orchestrator.Client.Models.StartProcessDtoJobPriority.{JobPriority:-Normal}",
+        "resumeOnSameContext": "{ResumeOnSameContext:-false}",
+        "jobId": "out {JobId:-_}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey",
+    "Arguments",
+    "ArgumentsVariable",
+    "ModernFolder",
+    "NumberOfRobots",
+    "TimeoutMS"
+  ],
+  "notes": "いつも 5 引数の形。戻り値の文字列を Key で、out の jobId を JobId で受ける。Coded の StartJob には Arguments / ArgumentsVariable / ModernFolder / NumberOfRobots / TimeoutMS に当たる引数が無いので、これらは ignore（引数付きで起動したいときは system.RunJob の doNotWait: true を使う）"
+}

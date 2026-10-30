@@ -1,0 +1,90 @@
+{
+  "activity": "UploadStorageFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path",
+        "FileName"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-\"\"} + {FileName}",
+        "fileResource": "LocalResource.FromPath({Path})",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      }
+    },
+    {
+      "when": [
+        "FileResource",
+        "FileName"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-\"\"} + {FileName}",
+        "fileResource": "{FileResource}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      }
+    },
+    {
+      "when": [
+        "Path",
+        "TimeoutMS"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-null}",
+        "fileResource": "LocalResource.FromPath({Path})",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "FileResource",
+        "TimeoutMS"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-null}",
+        "fileResource": "{FileResource}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath:-null}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "Path"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-null}",
+        "fileResource": "LocalResource.FromPath({Path})",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    },
+    {
+      "when": [
+        "FileResource"
+      ],
+      "call": "system.UploadStorageFile",
+      "args": {
+        "destination": "{Destination:-null}",
+        "fileResource": "{FileResource}",
+        "storageBucketName": "{StorageBucketName}",
+        "folderPath": "{FolderPath}"
+      }
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "Path（ローカルのパス）は LocalResource.FromPath で IResource にする。Coded の destination 引数には FileName に当たるものが無いので、FileName があるときは Destination（末尾が / か \\ のディレクトリ）の後ろに FileName を足して渡す"
+}

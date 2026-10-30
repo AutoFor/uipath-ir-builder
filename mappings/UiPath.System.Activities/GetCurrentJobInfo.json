@@ -1,0 +1,6 @@
+{
+  "activity": "GetCurrentJobInfo",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に GetCurrentJobInfo が無い。docs の Notes には「Coded 対応」とあるが、26.10.0 のサービス API には出ていない）"
+}

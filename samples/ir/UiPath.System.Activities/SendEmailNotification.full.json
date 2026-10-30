@@ -1,0 +1,42 @@
+{
+  "workflow": "SendEmailNotification_Full",
+  "variables": [
+    {
+      "name": "toList",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"ir-to@example.com\"}"
+    },
+    {
+      "name": "ccList",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"ir-cc@example.com\"}"
+    }
+  ],
+  "body": [
+    {
+      "act": "SendEmailNotification",
+      "name": "通知メールを送る",
+      "props": {
+        "Recipients": "toList",
+        "Cc": "ccList",
+        "Subject": {
+          "lit": "IR テスト（全部入り）"
+        },
+        "Body": {
+          "lit": "本文です\n二行目"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "通知メールを送った"
+        }
+      }
+    }
+  ]
+}

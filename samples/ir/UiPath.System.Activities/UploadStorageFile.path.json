@@ -1,0 +1,37 @@
+{
+  "workflow": "UploadStorageFile_Path",
+  "body": [
+    {
+      "act": "UploadStorageFile",
+      "name": "パス指定でアップロード",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Path": {
+          "lit": "C:\\Temp\\ir-upload.txt"
+        },
+        "Destination": {
+          "lit": "reports/"
+        },
+        "FileName": {
+          "lit": "ir-upload.txt"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "アップロードした"
+        }
+      }
+    }
+  ]
+}

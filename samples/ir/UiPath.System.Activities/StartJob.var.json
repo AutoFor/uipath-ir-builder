@@ -1,0 +1,34 @@
+{
+  "workflow": "StartJob_Var",
+  "variables": [
+    {
+      "name": "argsVar",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object) From {{\"in_Name\", \"太郎\"}}"
+    },
+    {
+      "name": "jobId",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartJob",
+      "name": "ジョブを開始（辞書の変数）",
+      "props": {
+        "ProcessName": {
+          "lit": "IrChildProcess"
+        },
+        "ArgumentsVariable": "argsVar",
+        "JobId": "jobId"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ジョブを開始した: \" & jobId"
+      }
+    }
+  ]
+}

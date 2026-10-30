@@ -1,0 +1,54 @@
+{
+  "workflow": "StartJob_Full",
+  "variables": [
+    {
+      "name": "jobId",
+      "type": "String"
+    },
+    {
+      "name": "jobKey",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartJob",
+      "name": "ジョブを開始",
+      "props": {
+        "ProcessName": {
+          "lit": "IrChildProcess"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "JobPriority": "High",
+        "ResumeOnSameContext": false,
+        "ModernFolder": true,
+        "NumberOfRobots": 1,
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "JobId": "jobId",
+        "Key": "jobKey"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "太郎"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"ジョブを開始した: \" & jobKey"
+      }
+    }
+  ]
+}

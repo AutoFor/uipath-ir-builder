@@ -1,0 +1,105 @@
+{
+  "activity": "GetJobs",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {
+        "filter": "{Filter:-null}",
+        "filterBuilder": "null",
+        "folderPath": "{FolderPath:-null}",
+        "top": "{Top:-100}",
+        "skip": "{Skip:-0}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ],
+      "when": [
+        "Filter"
+      ]
+    },
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {
+        "filter": "{Filter:-null}",
+        "filterBuilder": "null",
+        "folderPath": "{FolderPath:-null}",
+        "top": "{Top:-100}",
+        "skip": "{Skip:-0}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ],
+      "when": [
+        "FolderPath"
+      ]
+    },
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {
+        "filter": "{Filter:-null}",
+        "filterBuilder": "null",
+        "folderPath": "{FolderPath:-null}",
+        "top": "{Top:-100}",
+        "skip": "{Skip:-0}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ],
+      "when": [
+        "Top"
+      ]
+    },
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {
+        "filter": "{Filter:-null}",
+        "filterBuilder": "null",
+        "folderPath": "{FolderPath:-null}",
+        "top": "{Top:-100}",
+        "skip": "{Skip:-0}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ],
+      "when": [
+        "Skip"
+      ]
+    },
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {
+        "filter": "{Filter:-null}",
+        "filterBuilder": "null",
+        "folderPath": "{FolderPath:-null}",
+        "top": "{Top:-100}",
+        "skip": "{Skip:-0}",
+        "timeoutMS": "{TimeoutMS:-30000}"
+      },
+      "usings": [
+        "UiPath.Core.Activities"
+      ],
+      "when": [
+        "TimeoutMS"
+      ]
+    },
+    {
+      "call": "system.GetJobs",
+      "returns": "Result",
+      "args": {},
+      "usings": [
+        "UiPath.Core.Activities"
+      ]
+    }
+  ],
+  "notes": "何か指定があるときは 6 引数の形（filterBuilder は null、Top の既定は 100、Skip は 0、TimeoutMS は 30000 を補う）。FilterBuilder（JobFilterSettings）は IR でまだ書けない"
+}

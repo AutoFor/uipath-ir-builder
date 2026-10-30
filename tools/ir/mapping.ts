@@ -23,6 +23,9 @@
 //   enum のプロパティ → メンバー名そのまま（"UiPath.CodedWorkflows.LogLevel.{Level}" のように使う）
 //   {Prop|str} → 文字列にする（文字列だと分かる式はそのまま、それ以外は Convert.ToString(...)）
 //   {typeArg} → ジェネリックの型引数（C# の型名）
+//   {Prop:-既定} → IR にその props が無いときは「既定」の文字列を入れる（その引数は省かれない。out 引数の捨て先 `out {Prop:-_}` にも使える）
+//   {Dict|dict} → 引数の辞書（IR の dicts）を new Dictionary<string, object> { ["名前"] = 値 } にする（In のみ）
+//   {Prop|is_Member} → enum の値が Member なら true、でなければ false（ExecutionMode が None か、など）
 // args の値が、IR に無いプロパティを参照していたら、その引数ごと省く（省略可能な引数かどうかはチェッカーが確かめる）。
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -79,5 +82,10 @@ export function loadMappings(root: string): { maps: Map<string, Mapping>; errors
 
 // テンプレートが参照するプロパティ名
 export function refs(template: string): string[] {
-  return [...template.matchAll(/\{(\w+)(?:\|\w+)?\}/g)].map((m) => m[1]).filter((n) => n !== "typeArg");
+  return [...template.matchAll(/\{(\w+)(?:\|\w+)?(?::-[^}]*)?\}/g)].map((m) => m[1]).filter((n) => n !== "typeArg");
+}
+
+// 既定（{Prop:-既定}）を持たない参照だけ。これが IR に無いと、その引数は省かれる
+export function requiredRefs(template: string): string[] {
+  return [...template.matchAll(/\{(\w+)(?:\|\w+)?(:-[^}]*)?\}/g)].filter((m) => m[2] === undefined).map((m) => m[1]).filter((n) => n !== "typeArg");
 }

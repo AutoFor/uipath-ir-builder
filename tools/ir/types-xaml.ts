@@ -9,6 +9,8 @@ const SD = "clr-namespace:System.Data;assembly=System.Data.Common";
 const UCORE = "clr-namespace:UiPath.Core;assembly=UiPath.System.Activities";
 const UCA = "clr-namespace:UiPath.Core.Activities;assembly=UiPath.System.Activities";
 const SSEC = "clr-namespace:System.Security;assembly=System.Private.CoreLib";
+const UCAS = "clr-namespace:UiPath.Core.Activities.Storage;assembly=UiPath.System.Activities";
+const UPRH = "clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
 const simple: Record<string, [string, Record<string, string>]> = {
@@ -34,6 +36,12 @@ const simple: Record<string, [string, Record<string, string>]> = {
   PasswordCredentials: ["uca:PasswordCredentials", { uca: UCA }],
   SecureString: ["ssec:SecureString", { ssec: SSEC }],
   DataRow: ["sd:DataRow", { sd: SD }],
+  // UiPath.System.Activities / UiPath.Platform の型
+  OrchestratorJob: ["uca:OrchestratorJob", { uca: UCA }],
+  CurrentJobInfo: ["uca:CurrentJobInfo", { uca: UCA }],
+  StorageFileInfo: ["ucas:StorageFileInfo", { ucas: UCAS }],
+  ILocalResource: ["upr:ILocalResource", { upr: UPRH }],
+  IResource: ["upr:IResource", { upr: UPRH }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {

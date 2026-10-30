@@ -1,0 +1,37 @@
+{
+  "workflow": "WriteStorageText_Full",
+  "body": [
+    {
+      "act": "WriteStorageText",
+      "name": "ストレージへ文字を書く",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Path": {
+          "lit": "ir/hello.txt"
+        },
+        "Text": {
+          "lit": "こんにちは"
+        },
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "書き込んだ"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "workflow": "ReportStatus_Full",
+  "variables": [
+    {
+      "name": "pct",
+      "type": "Int32",
+      "default": "50"
+    }
+  ],
+  "body": [
+    {
+      "act": "ReportStatus",
+      "name": "進み具合を知らせる",
+      "props": {
+        "StatusText": "\"進捗: \" & pct.ToString & \"%\""
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"状態を報告した: \" & pct.ToString"
+      }
+    }
+  ]
+}

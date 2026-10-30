@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"DownloadStorageFile\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucas=\"clr-namespace:UiPath.Core.Activities.Storage;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucas:DownloadStorageFile Destination=\"{x:Null}\" Path=\"{x:Null}\" StorageBucketName=\"{x:Null}\" TimeoutMS=\"{x:Null}\" />\r\n</Activity>"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "workflow": "ReadStorageText_Full",
+  "variables": [
+    {
+      "name": "text",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ReadStorageText",
+      "name": "ストレージの文字を読む",
+      "props": {
+        "StorageBucketName": {
+          "lit": "ir-bucket"
+        },
+        "Path": {
+          "lit": "ir/hello.txt"
+        },
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "ContinueOnError": false,
+        "Result": "text"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"内容: \" & text"
+      }
+    }
+  ]
+}

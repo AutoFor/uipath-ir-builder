@@ -1,0 +1,6 @@
+{
+  "activity": "SetTraceStatus",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に SetTraceStatus が無い）"
+}

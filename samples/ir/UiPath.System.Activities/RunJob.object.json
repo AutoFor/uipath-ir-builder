@@ -1,0 +1,40 @@
+{
+  "workflow": "RunJob_Object",
+  "variables": [
+    {
+      "name": "inp",
+      "type": "String",
+      "default": "\"{\"\"Name\"\":\"\"太郎\"\"}\""
+    },
+    {
+      "name": "outp",
+      "type": "String"
+    },
+    {
+      "name": "job",
+      "type": "OrchestratorJob"
+    }
+  ],
+  "body": [
+    {
+      "act": "RunJob",
+      "name": "子のプロセスを実行（オブジェクト）",
+      "props": {
+        "ProcessName": {
+          "lit": "IrChildProcess"
+        },
+        "ExecutionMode": "Busy",
+        "Input": "inp",
+        "Output": "outp",
+        "Job": "job"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"出力: \" & outp"
+      }
+    }
+  ]
+}
