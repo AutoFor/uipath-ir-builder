@@ -234,20 +234,26 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = Object.keys(n.props ?? {});
-    for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).includes(k))
-      add(`${at}.dicts.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（引数の辞書）はまだ Coded に直せない`);
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
+    // 引数の辞書は、テンプレートが {Name|dict} で参照したものだけ Coded に直せる（Dictionary<string, object> にする）
+    const tpls = [v.code ?? "", ...Object.values(v.args ?? {})];
+    for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tpls.some((t) => t.includes(`{${k}|dict}`)))
+      add(`${at}.dicts.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（引数の辞書）はまだ Coded に直せない（対応表で {${k}|dict} と書くと Dictionary<string, object> にする）`);
     for (const u of v.usings ?? []) usings.add(u);
 
     if (v.special === "invokeWorkflow") return invoke(n, v, m, depth, at, sc);
 
     // どの props を使ったか（使わなかった props は意味が落ちるのでエラー）
-    const used = new Set<string>(m.ignore ?? []);
+    const used = new Set<string>((m.ignore ?? []).concat(v.ignore ?? []));
     const fill = (tpl: string) => {
       for (const r of refs(tpl)) used.add(r);
       return tpl.replace(/\{(\w+)(?:\|(\w+))?\}/g, (_, name: string, filter?: string) => {
         if (name === "typeArg") return n.typeArg ? csType(n.typeArg) : "object";
+        if (filter === "dict") {
+          const items = (n.dicts?.[name] ?? []).map((x) => `["${x.name}"] = ${expr(x.value, `${at}.dicts.${name}.${x.name}`, sc)}`);
+          return `new Dictionary<string, object> { ${items.join(", ")} }`;
+        }
         const val = n.props?.[name];
         if (val === undefined) return "";
         const prop = resolve(cat, n.act, n.typeArg !== undefined);
@@ -262,7 +268,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (v.code) stmt = fill(v.code);
     else if (v.call) {
       const args = Object.entries(v.args ?? {})
-        .filter(([, tpl]) => refs(tpl).every((r) => n.props?.[r] !== undefined))
+        .filter(([, tpl]) => refs(tpl).every((r) => n.props?.[r] !== undefined || n.dicts?.[r] !== undefined))
         .map(([param, tpl]) => `${param}: ${fill(tpl)}`);
       const call = `${v.call}(${args.join(", ")})`;
       if (v.returns) used.add(v.returns);

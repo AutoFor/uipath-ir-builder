@@ -1,0 +1,29 @@
+{
+  "workflow": "SetAsset_Full",
+  "body": [
+    {
+      "act": "SetAsset",
+      "name": "アセットを設定",
+      "props": {
+        "AssetName": {
+          "lit": "IRAsset"
+        },
+        "ContinueOnError": false,
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 30000,
+        "Value": {
+          "lit": "v2"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"アセットを設定した\""
+      }
+    }
+  ]
+}

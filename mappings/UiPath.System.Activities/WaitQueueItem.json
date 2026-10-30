@@ -1,0 +1,57 @@
+{
+  "activity": "WaitQueueItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "FolderPath",
+        "PollTimeMS",
+        "FilterStrategy",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.WaitQueueItem",
+      "args": {
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}",
+        "pollTimeMS": "{PollTimeMS}",
+        "filterStrategy": "UiPath.Core.Activities.ReferenceFilterStrategy.{FilterStrategy}",
+        "reference": "{Reference}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "Result"
+    },
+    {
+      "when": [
+        "FolderPath"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.WaitQueueItem",
+      "args": {
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "Result"
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.WaitQueueItem",
+      "args": {
+        "queueName": "{QueueName}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "ignore": [
+    "BindingsKey",
+    "ConvertDatesToLocalTime"
+  ],
+  "notes": "Result（QueueItem）は戻り値で受ける。全部の形は FolderPath・PollTimeMS・FilterStrategy・Reference・TimeoutMS がそろっているときだけ。ConvertDatesToLocalTime は Coded に対応する引数が無いので捨てる。"
+}

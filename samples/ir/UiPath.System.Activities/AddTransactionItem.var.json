@@ -1,0 +1,40 @@
+{
+  "workflow": "AddTransactionItem_Var",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    },
+    {
+      "name": "tinfo",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object)"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddTransactionItem",
+      "props": {
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-002"
+        },
+        "TimeoutMS": 30000,
+        "TransactionInformationVariable": "tinfo",
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"追加した: \" & item.Reference"
+      }
+    }
+  ]
+}

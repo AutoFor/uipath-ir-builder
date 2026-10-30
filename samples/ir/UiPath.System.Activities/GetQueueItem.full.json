@@ -1,0 +1,42 @@
+{
+  "workflow": "GetQueueItem_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItem"
+    },
+    {
+      "name": "sd",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItem",
+      "name": "キューから取得",
+      "props": {
+        "ContinueOnError": false,
+        "FilterStrategy": "Equals",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-001"
+        },
+        "SpecificData": "sd",
+        "TimeoutMS": 30000,
+        "TransactionItem": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"取得した: \" & item.Reference"
+      }
+    }
+  ]
+}

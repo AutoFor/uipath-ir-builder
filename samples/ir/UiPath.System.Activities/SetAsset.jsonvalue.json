@@ -1,0 +1,27 @@
+{
+  "workflow": "SetAsset_Json",
+  "body": [
+    {
+      "act": "SetAsset",
+      "props": {
+        "AssetName": {
+          "lit": "IRJsonAsset"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "JsonValue": {
+          "lit": "{\"a\":1}"
+        },
+        "TimeoutMS": 30000
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"JSON アセットを設定した\""
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "activity": "BulkAddQueueItems",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "FolderPath",
+        "CommitType",
+        "TimeoutMS"
+      ],
+      "call": "system.BulkAddQueueItems",
+      "args": {
+        "queueItemsDataTable": "{QueueItemsDataTable}",
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}",
+        "commitType": "UiPath.Core.Activities.BulkAddQueueItems.CommitTypeEnum.{CommitType}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "Result"
+    },
+    {
+      "when": [
+        "FolderPath"
+      ],
+      "call": "system.BulkAddQueueItems",
+      "args": {
+        "queueItemsDataTable": "{QueueItemsDataTable}",
+        "queueName": "{QueueName}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "Result"
+    },
+    {
+      "call": "system.BulkAddQueueItems",
+      "args": {
+        "queueItemsDataTable": "{QueueItemsDataTable}",
+        "queueName": "{QueueName}"
+      },
+      "returns": "Result"
+    }
+  ],
+  "ignore": [
+    "BindingsKey"
+  ],
+  "notes": "Result（追加に失敗した行の DataTable）は戻り値で受ける。全部の形は FolderPath・CommitType・TimeoutMS がそろっているときだけ。"
+}

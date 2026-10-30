@@ -1,0 +1,37 @@
+{
+  "activity": "PostponeTransactionItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "DeferDate",
+        "DueDate",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.PostponeTransactionItem",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "deferDate": "{DeferDate}",
+        "dueDate": "{DueDate}",
+        "timeoutMS": "{TimeoutMS}"
+      }
+    },
+    {
+      "when": [
+        "DeferDate"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.PostponeTransactionItem",
+      "args": {
+        "transactionItem": "{TransactionItem}",
+        "deferDate": "{DeferDate}"
+      }
+    }
+  ],
+  "notes": "Coded API に DeferDate なしの形が無いので、DeferDate が要る。DueDate を渡す形は TimeoutMS も要る。"
+}

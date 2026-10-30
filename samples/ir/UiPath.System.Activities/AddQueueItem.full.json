@@ -1,0 +1,50 @@
+{
+  "workflow": "AddQueueItem_Full",
+  "body": [
+    {
+      "act": "AddQueueItem",
+      "name": "キューに追加",
+      "props": {
+        "ContinueOnError": false,
+        "DeferDate": "DateTime.Now.AddDays(1)",
+        "DueDate": "DateTime.Now.AddDays(2)",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "Priority": "High",
+        "QueueType": {
+          "lit": "IRQueue"
+        },
+        "Reference": {
+          "lit": "IR-REF-003"
+        },
+        "TimeoutMS": 30000
+      },
+      "dicts": {
+        "ItemInformation": [
+          {
+            "name": "customer",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "A-001"
+            }
+          },
+          {
+            "name": "count",
+            "dir": "In",
+            "type": "Int32",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"キューに追加した\""
+      }
+    }
+  ]
+}

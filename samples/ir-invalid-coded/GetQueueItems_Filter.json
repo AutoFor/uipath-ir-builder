@@ -1,0 +1,33 @@
+{
+  "workflow": "GetQueueItems_Filter",
+  "variables": [
+    {
+      "name": "items",
+      "type": "IEnumerable<QueueItem>"
+    }
+  ],
+  "body": [
+    {
+      "act": "GetQueueItems",
+      "props": {
+        "Filter": {
+          "lit": "Status eq 'New'"
+        },
+        "QueueName": {
+          "lit": "IRQueue"
+        },
+        "Result": "items"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"取得した件数: \" & items.Count().ToString()",
+          "cs": "\"取得した件数: \" + items.Count()"
+        }
+      }
+    }
+  ]
+}

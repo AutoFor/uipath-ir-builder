@@ -1,0 +1,101 @@
+{
+  "activity": "AddTransactionItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "TransactionInformationVariable",
+        "FolderPath",
+        "Reference",
+        "TimeoutMS",
+        "SpecificData",
+        "TransactionItem"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "code": "{TransactionItem} = system.AddTransactionItem(queueType: {QueueType}, folderPath: {FolderPath}, reference: {Reference}, transactionInformation: {TransactionInformationVariable}, timeoutMS: {TimeoutMS});\n{SpecificData} = {TransactionItem}.SpecificContent;"
+    },
+    {
+      "when": [
+        "TransactionInformationVariable",
+        "FolderPath",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.AddTransactionItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}",
+        "reference": "{Reference}",
+        "transactionInformation": "{TransactionInformationVariable}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "TransactionItem"
+    },
+    {
+      "when": [
+        "FolderPath",
+        "Reference",
+        "TimeoutMS",
+        "SpecificData",
+        "TransactionItem"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "code": "{TransactionItem} = system.AddTransactionItem(queueType: {QueueType}, folderPath: {FolderPath}, reference: {Reference}, transactionInformation: {TransactionInformation|dict}, timeoutMS: {TimeoutMS});\n{SpecificData} = {TransactionItem}.SpecificContent;"
+    },
+    {
+      "when": [
+        "FolderPath",
+        "Reference",
+        "TimeoutMS"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.AddTransactionItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}",
+        "reference": "{Reference}",
+        "transactionInformation": "{TransactionInformation|dict}",
+        "timeoutMS": "{TimeoutMS}"
+      },
+      "returns": "TransactionItem"
+    },
+    {
+      "when": [
+        "FolderPath"
+      ],
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.AddTransactionItem",
+      "args": {
+        "queueType": "{QueueType}",
+        "folderPath": "{FolderPath}"
+      },
+      "returns": "TransactionItem"
+    },
+    {
+      "usings": [
+        "UiPath.Core"
+      ],
+      "call": "system.AddTransactionItem",
+      "args": {
+        "queueType": "{QueueType}"
+      },
+      "returns": "TransactionItem"
+    }
+  ],
+  "ignore": [
+    "BindingsKey",
+    "FilterStrategy"
+  ],
+  "notes": "Coded の AddTransactionItem は引数の組が3通り（queueType / +folderPath / 全部）。全部の形は FolderPath・Reference・TimeoutMS と、TransactionInformation（辞書）か TransactionInformationVariable がそろっているときだけ。SpecificData（out）は戻り値の QueueItem.SpecificContent を代入する。FilterStrategy は XAML 側でも使われない既定値なので捨てる。"
+}
