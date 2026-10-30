@@ -110,7 +110,9 @@ IR の例：
 
 OverloadGroup（`WriteTextFile` の `File` か `FileName` のどちらか）は、どれか1つのグループがそろっていれば必須を満たすとみなす。
 
-まだ書けないもの：UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`ActivityFunc` の delegate（`RetryScope.Condition` など）、`InvokeCode` の引数、`IfElseIf`。
+UI 操作のターゲット（`Target` / `TargetApp` / セレクタ）は、ノードの `objs` に書く（`tools/ir/uia.ts`、手順は [docs/worker-guide.md](docs/worker-guide.md) の 8.）。
+
+まだ書けないもの：`ActivityFunc` の delegate（`RetryScope.Condition` など）、`InvokeCode` の引数、`IfElseIf`。
 
 ### Coded Workflow（`samples/coded`）
 

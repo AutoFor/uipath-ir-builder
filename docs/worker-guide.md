@@ -207,7 +207,135 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 ## 8. UI 操作（UIAutomation）と Excel
 
-後で追記（別のワーカーが IR の形と手順を設計する）。それまでは UIAutomation の `Target` / `TargetAnchorable` などは coverage で「UI のターゲット」として書けない扱いになる。
+Excel の部分は別のワーカーが書く。ここは UIAutomation（`UiPath.UIAutomation.Activities`、イシューは Linear の親 AUT-615 の子）。
+
+### 8-1. UIAutomation の考え方
+
+- UI の画面要素（ターゲット）は、XAML では**要素で書くオブジェクト**（`<uix:NClick.Target><uix:TargetAnchorable ... /></uix:NClick.Target>`）。IR ではノードの `objs` に書く。処理は `tools/ir/uia.ts` にまとめてある
+- `objs` のキーは**アクティビティのプロパティ名**（`Target`、`TargetApp`、`VerifyOptions`、`CursorPosition`、`DialogHandling` など）、中身のキーは**そのオブジェクトの型のプロパティ名**（XAML の属性名と同じ。別名は付けていない）
+- 書ける型とプロパティは `catalog/UiPath.UIAutomation.Activities/26.10.6.objects.json`。`coverage.ts --activity` で「objs」と出るものが `objs` に書くプロパティ
+- 値の書き方は `props` と同じ（`{ "lit": "..." }` は文字列リテラル、文字列は VB の式、enum はメンバー名、フラグの enum は `"Selector, FuzzySelector"`）。入れ子のオブジェクト（`TargetAnchorable.PointOffset` など）はそのまま JSON のオブジェクト、アンカー（`Anchors`）は配列
+- 生成器が足すもの：`TargetAnchorable` の `Guid` と `Version="V6"`、`TargetApp` の `Version="V3"`、Classic の `Target` の `Id`、`NApplicationCard` の `ScopeGuid` と、その中のアクティビティの `ScopeIdentifier`（Studio と同じ）
+
+| 系統 | ターゲットの型（objs のキー） | 置き場所 | Coded |
+| --- | --- | --- | --- |
+| Modern（`N*`） | `TargetAnchorable`（`Target`） | `NApplicationCard` の `body` の中（または `props.InUiElement`） | `uiAutomation.Open(...)` の戻り値 `app` のメソッド |
+| Classic（`Click`、`TypeInto` など） | `UiPath.Core.Activities.Target`（`Target`） | Classic のスコープ（`OpenBrowser` / `OpenApplication` / `WindowScope` / `BrowserScope`）の中で部分セレクタ | なし（`"coded": null`） |
+| SAP / CV / Semantic | 上と同じ形（Modern の SAP は `TargetAnchorable`） | 同上 | Modern の SAP と Semantic の一部は `app` のメソッド（`SAPCallTransaction`、`FillForm`、`SetValue` など）。Classic と CV はなし |
+
+### 8-2. Modern の書き方（例：Use Application/Browser の中で Click）
+
+```json
+{ "act": "NApplicationCard", "name": "UIA Test Form を開く", "item": "WSSessionData",
+  "objs": { "TargetApp": { "Url": "New Uri(htmlPath).AbsoluteUri", "BrowserType": "Edge",
+                           "Selector": { "lit": "<html app='msedge.exe' title='UIA Test Form' />" } } },
+  "props": { "OpenMode": "Always", "CloseMode": "Always" },
+  "body": [
+    { "act": "NClick", "name": "Greet を押す",
+      "objs": { "Target": {
+        "FullSelectorArgument": { "lit": "<webctrl id='greet' tag='BUTTON' />" },
+        "ScopeSelectorArgument": { "lit": "<html app='msedge.exe' title='UIA Test Form' />" },
+        "SearchSteps": "Selector",
+        "PointOffset": { "Position": "Center", "X": 0, "Y": 0 } } },
+      "props": { "ClickType": "Single", "MouseButton": "Left" } }
+  ] }
+```
+
+- **TargetApp**（`NApplicationCard` に必須）：`Selector`（ウィンドウのセレクタ）、`FilePath`（アプリ）か `Url` ＋ `BrowserType`（ブラウザ）、`Arguments`、`WorkingDirectory`、`IsExactTitleEnabled`
+- **Target**（`TargetAnchorable`）：
+  - `FullSelectorArgument`（Studio の「厳密なセレクター」。アプリのウィンドウから見た部分セレクタ）、`FuzzySelectorArgument`（あいまいセレクター）、`ScopeSelectorArgument`（ウィンドウのセレクタ。Studio は毎回書く）
+  - `SearchSteps`（**必須**。ターゲットの検索方法：`Selector` / `FuzzySelector` / `Image` / `TextNative` / `CV` / `SemanticSelector` などをフラグで並べる）
+  - `WaitForReadyArgument`（`None` / `Interactive` / `Complete`）、`ElementVisibilityArgument`、`ElementType`
+  - 画像・テキストで探すとき：`ImageBase64` ＋ `ImageAccuracyArgument`、`NativeTextArgument` ＋ `NativeTextOccurrenceArgument`、`CvTextArgument` など
+  - クリック位置（ClickOffset）：`PointOffset: { Position, X, Y }`（アクティビティの `ClickOffset` は非推奨。使わない）
+  - アンカー：`Anchors: [ { "FullSelectorArgument": {...}, "SearchSteps": "Selector" } ]`（XAML は build で確かめた。Coded のモデルに無いので、使うと C# は作れない → `samples/ir-invalid-coded/UiaAnchors.json`）
+- `VerifyOptions`（実行の検証）：`{ "Mode": "Appears", "Target": { ...TargetAnchorable... }, "Retry": false, "Timeout": 5 }`
+- `NApplicationCard` の `body` は ActivityAction。`"item": "WSSessionData"`（Studio の名前）にしておく
+
+### 8-3. Classic の書き方（例：OpenBrowser の中で TypeInto）
+
+```json
+{ "act": "OpenBrowser", "item": "ContextTarget", "props": { "Url": "New Uri(htmlPath).AbsoluteUri", "BrowserType": "Edge" },
+  "body": [
+    { "act": "TypeInto", "objs": { "Target": { "Selector": { "lit": "<webctrl id='name' tag='INPUT' />" }, "TimeoutMS": 10000, "WaitForReady": "COMPLETE" } },
+      "props": { "Text": { "lit": "Hanako" }, "SimulateType": true } },
+    { "act": "CloseTab" }
+  ] }
+```
+
+- `Target` は `Selector`（または `Element`）が要る。`TimeoutMS`、`WaitForReady`（`NONE` / `INTERACTIVE` / `COMPLETE`）
+- クリック位置は `objs.CursorPosition: { "Position": "Center", "OffsetX": 0, "OffsetY": 0 }`
+- **Classic のスコープの外でフルセレクタ（`<html ...>` や `<wnd ...>` から始まるもの）を使うと、build の分析で `UI-DBP-006` のエラーになる**（Modern の `NApplicationCard` の中でも同じ）。Classic は Classic のスコープの中で部分セレクタを使う
+- Classic は Coded の API が無い。対応表は `"coded": null, "reason": "Coded API なし（Classic の UI 操作。…）"`（例 `mappings/UiPath.UIAutomation.Activities/Click.json`）
+
+### 8-4. Coded（C#）の対応表
+
+`uiAutomation`（`IUiAutomationAppService`）の `Open` が返す `UiTargetApp` に、`Click` / `TypeInto` / `GetText` / `WaitState` などがある（引数はターゲットの `TargetAnchorableModel` とオプション）。API の一覧は `catalog/UiPath.UIAutomation.Activities/26.10.6.json` の `services`（`UiTargetApp` のメソッドはカタログに無いので、下の表と既存の対応表を見本にする）。
+
+| IR | C# |
+| --- | --- |
+| `NApplicationCard`（`"special": "scope"`） | `using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { ... }, targetAppOptions: new TargetAppOptions { ... })) { body }` |
+| `objs.Target`（TargetAnchorable） | `new TargetAnchorableModel { PartialSelector = FullSelectorArgument, ScopeSelector = ScopeSelectorArgument, FuzzyPartialSelector = FuzzySelectorArgument, SearchSteps = ..., WaitForReady = ..., PointOffset = new PointOffsetModel { ... } }` |
+| `objs.TargetApp` | `new TargetAppModel { Selector, FilePath, Url, BrowserType, Arguments }` |
+| `objs.VerifyOptions` | `new VerifyOptions { Mode, Target, Retry, Timeout, ExpectedText }` |
+| `NClick` | `app1.Click(target: ..., clickOptions: new ClickOptions { ClickType = ..., ... })` |
+| `NTypeInto` | `app1.TypeInto(target: ..., typeIntoOptions: new TypeIntoOptions { Text = ..., ... })` |
+| `NGetText` | `result = app1.GetText(target: ..., getTextOptions: new GetTextOptions { ... })` |
+| `NCheckState`（`"branches"`） | `var s = app1.WaitState(target: ..., checkStateOptions: new CheckStateOptions { ... }); if (s) { IfExists } else { IfNotExists }` |
+| `props.InUiElement` があるとき | `uiAutomation.Click(uiElement: ..., clickOptions: ...)`（`"when": ["InUiElement"]` の形。まだ run していない） |
+
+対応表の書き方（`tools/ir/mapping.ts` の先頭にも説明）。例は `mappings/UiPath.UIAutomation.Activities/NClick.json`：
+
+```json
+{ "activity": "NClick", "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    { "call": "{app}.Click", "usings": ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutomationNext.Enums"],
+      "args": { "target": "{Target}",
+                "clickOptions": { "new": "ClickOptions", "set": { "ClickType": "{ClickType|enum}", "Timeout": "{Timeout}", "VerifyOptions": "{VerifyOptions}" } } } } ],
+  "ignore": ["ScopeIdentifier", "Version"] }
+```
+
+- `{app}`：いちばん内側の `NApplicationCard` のアプリの変数。`{Target}` など `objs` のプロパティは、モデルの式（`new TargetAnchorableModel { ... }`）になる
+- `{Prop|enum}`：enum の完全名（`UiPath.UIAutomationNext.Enums.NClickType.Single`。フラグは `A | B`）。enum は必ずこれで書く
+- `args` の値を `{ "new": "型", "set": { ... } }` にすると、IR にある props の分だけ入ったオプションのオブジェクトになる。1つも無ければ引数ごと省く。オプションが必須のオーバーロードしか無いときは `"always": true`
+- `objs` の型 → Coded のモデルの対応（プロパティ名の読み替え）は `tools/ir/uia.ts` の `codedModels`。新しい型を Coded で使うときはそこに足す（共有ファイルなので小さく）
+- オプションに無いプロパティ（例 `NCheckState.CheckWindowActive`）は対応表に書かない（使うと `MAPPING_UNUSED_PROP`）。full のサンプルからは外し、対応表の `notes` に「Coded 未対応」と書く
+- `UiTargetApp` のメソッドはチェッカー（`tools/coded/check.ts`）が見ない。引数名の間違いは build で分かるので、必ず `verify.mjs` で C# も build する
+
+### 8-5. run の方針
+
+- **run の対象は、ワークフローが自分で書き出すローカルの HTML を Edge で開くもの**に統一する（Edge と Chrome には UiPath の拡張機能が入っている）。1つのサンプルで「HTML を書く → 開く → 操作 → 結果を読む → ログ → 閉じる」まで完結させる。見本は `samples/ir/UiPath.UIAutomation.Activities/NTypeInto.min.json`
+  - HTML は `WriteTextFile` で `System.IO.Path.Combine(System.IO.Path.GetTempPath(), "uia-test-form.html")` に書き、`New Uri(htmlPath).AbsoluteUri` を開く。ページのタイトルは `UIA Test Form`、要素は `#name`（入力）、`#greet`（ボタン。押すと `#result` が `Hello, [名前]` になる）、`#agree`（チェックボックス）、`#result`（結果）
+  - 要素が足りないとき（ドロップダウン、表など）は HTML に足してよい。ほかのサンプルと同じ HTML でなくてもよいが、タイトルと既存の id は変えない
+  - 結果は `NGetText`（Classic なら `GetValue`）で読んで `LogMessage` で出し、`*.expected.log` と突き合わせる
+  - 横に `*.verify.json` を置き、`{ "requires": "Microsoft Edge と UiPath の Web 拡張機能..." }` と書く（verify.mjs は読まない。人とマネージャー向けのメモ）
+- デスクトップのアプリが要るもの（ウィンドウ操作など）は、メモ帳（`notepad.exe`）を使ってよい。Windows 11 のメモ帳はタブ付きの新しいアプリなので、セレクタは実際の UI を見て決める（決められなければ build までにして、理由を書く）
+- **run できないもの**（`*.verify.json` に `noRun` を書き、build までで完了）：SAP（SAP GUI が無い）、Computer Vision（CV サーバーが要る）、Semantic（AI の UI 理解のサービスが要る）、トリガー（人の操作を待つ）、OCR のクラウドサービス
+- 今はこのシェルから run できない（BATCH-BRIEF.md）。run するものは build まで通したら Linear を In Progress にして「run 待ち」とコメントする
+
+### 8-6. 1イシューの進め方（UIAutomation）
+
+1. `node tools/ir/coverage.ts --activity <ClassName>` で、`objs` に書くプロパティ（「objs」）と、必須・Coded の対応表の有無を見る
+2. 既定 XAML を取る（1-2 と同じ。クラス名は `UiPath.UIAutomationNext.Activities.NHover` / `UiPath.Core.Activities.Hover` など）
+3. 見本（`samples/ir/UiPath.UIAutomation.Activities/` の同じ系統のもの）を写して min / full を書く。min はそのアクティビティの必須だけ（HTML を開くなどの前後の手順は入れてよい）
+4. `node tools/ir/gen.ts <ir> --check` → `node tools/ir/gen-coded.ts <ir> --check --print` → `node --test "tools/ir/*.test.ts"`
+5. `node tools/verify/verify.mjs --name <作業名> --build-only <ir...>`（XAML と C# の両方）
+6. 対応表：Modern は 8-4、Classic・CV・Classic の SAP は `"coded": null`
+7. Linear：run するものは In Progress ＋「run 待ち」、`noRun` のものは Done
+
+### 8-7. まだ書けないもの・気をつけること
+
+- `objects.json` に無い型（`UiPath.CV.*` の記述子、`SearchedElement` 以外の Activities.Models など）は「UI のターゲット」として書けない。足すときは抽出器の `--types` で `objects.json` を作り直す（正規表現に型を足す）：
+  ```bash
+  L=~/.nuget/packages/uipath.uiautomation.activities.runtime/26.10.6/lib/net6.0-windows7.0
+  tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath.UIAutomation.Activities --version 26.10.6 \
+    --types '^UiPath\.(UIAutomationNext\.(TargetAnchorable|Target|TargetApp|ClickOffset|PointOffset|RegionOffset|DialogHandling|Activities\.(VerifyExecutionOptions|VerifyExecutionTypeIntoOptions|SearchedElement))|Core\.(Activities\.(Target|ImageTarget|CursorPosition)|Region))$' \
+    --dll $L/UiPath.UIAutomationNext.Activities.dll --dll $L/UiPath.UIAutomationNext.dll --dll $L/UiPath.UiAutomation.Activities.dll --dll $L/UiPath.UIAutomationCore.dll \
+    --out catalog/UiPath.UIAutomation.Activities/26.10.6.objects.json
+  ```
+- `UiElement` / `Browser` / `Window` 型の変数は `types-xaml.ts` にまだ無い（`InUiElement` / `OutUiElement` を使うサンプルは、型を足してから）
+- `System.Drawing.Rectangle`（`Region` の中身、CV の `InRegion`）、`List<String>`（SAP の `Items`）、`SecureString` はまだ書けない
+- 検証のエラー：`UIA_NO_SCOPE`（Modern のターゲットが `NApplicationCard` の外）、`UIA_TARGET_MISSING`（`Target` / `TargetApp` が無い）、`UIA_SEARCH_STEPS`（`SearchSteps` が無い）、`UIA_TARGET_EMPTY`（セレクタなど探す手がかりが無い）、`BAD_OBJ`（オブジェクトの形が違う）。例は `samples/ir-invalid/Uia.json`
 
 ## 9. XAML → IR の取り込みに向けて気づいた点
 
