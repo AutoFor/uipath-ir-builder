@@ -1,0 +1,104 @@
+{
+  "workflow": "SetWebAttribute_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "page2Path",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-page2.html\")"
+    },
+    {
+      "name": "result",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox' onchange=\"document.getElementById('result').textContent='agree:'+this.checked\">agree</label><select id='color' onchange=\"document.getElementById('result').textContent='color:'+this.value\"><option>Red</option><option>Green</option><option>Blue</option></select><select id='multi' multiple size='3' onchange=\"document.getElementById('result').textContent='multi:'+Array.from(this.selectedOptions).map(function(o){return o.text}).join(',')\"><option>Apple</option><option>Banana</option><option>Cherry</option></select><span id='note' title='tip-abc'>visible note</span><div id='hidden' style='display:none'>secret</div><div id='result'>ready</div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "OpenBrowser",
+      "name": "UIA Test Form を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "Url": "New Uri(htmlPath).AbsoluteUri",
+        "BrowserType": "Edge"
+      },
+      "body": [
+        {
+          "act": "SetWebAttribute",
+          "name": "value 属性を設定",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='name' tag='INPUT' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "Attribute": {
+              "lit": "value"
+            },
+            "Value": {
+              "lit": "set-by-attr"
+            },
+            "DelayBefore": 100,
+            "DelayAfter": 300,
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "Click",
+          "name": "Greet を押す",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='greet' tag='BUTTON' />"
+              }
+            }
+          },
+          "props": {
+            "SimulateClick": true
+          }
+        },
+        {
+          "act": "GetValue",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='result' tag='DIV' />"
+              }
+            }
+          },
+          "props": {
+            "Value": "result"
+          }
+        },
+        {
+          "act": "CloseTab",
+          "name": "タブを閉じる"
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"結果: \" & result"
+      }
+    }
+  ]
+}
