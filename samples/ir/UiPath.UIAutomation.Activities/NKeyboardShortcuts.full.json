@@ -76,7 +76,7 @@
           },
           "props": {
             "ShortcutsArgument": {
-              "lit": "[k(enter)]"
+              "lit": "[d(hk)][k(enter)][u(hk)]"
             },
             "ClickBeforeMode": "Single",
             "ActivateBefore": true,
