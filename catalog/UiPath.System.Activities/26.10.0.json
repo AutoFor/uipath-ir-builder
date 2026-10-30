@@ -2,7 +2,8 @@
   "package": "UiPath.System.Activities",
   "version": "26.10.0",
   "assemblies": [
-    "UiPath.System.Activities.dll"
+    "UiPath.System.Activities.dll",
+    "UiPath.System.Activities.Api.dll"
   ],
   "activities": [
     {
@@ -14837,6 +14838,3922 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "WriteTextFile"
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "ISystemService",
+      "clrType": "UiPath.Core.Activities.API.ISystemService",
+      "assembly": "UiPath.System.Activities.Api",
+      "bases": [],
+      "methods": [
+        {
+          "name": "AddDataRow",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "dataRow",
+              "type": "System.Data.DataRow",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddOrSubtractFromDate",
+          "returns": "System.DateTime",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "unitOfTime",
+              "type": "UiPath.Core.Activities.DateTimeUtilities.UnitsOfTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "amountOfTime",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "selectedOperation",
+              "type": "UiPath.Activities.System.Date.AddOrSubtractFromDate+DateOperations",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "itemInformationCollection",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "dueDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "itemInformationCollection",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "deferDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "priority",
+              "type": "UiPath.Core.QueueItemPriority",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "transactionInformation",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AppendLine",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AppendLine",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "useDefaultEncoding",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encoding",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddQueueItems",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddQueueItems",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddQueueItems",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "commitType",
+              "type": "UiPath.Core.Activities.BulkAddQueueItems+CommitTypeEnum",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ChangeCase",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "changeCaseOptions",
+              "type": "UiPath.Activities.System.Text.ChangeCaseOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ClearDataTable",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CombineText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.Collections.Generic.IEnumerable<System.String>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "separatorKey",
+              "type": "UiPath.Activities.System.Text.SeparatorOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CombineText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.Collections.Generic.IEnumerable<System.String>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "separator",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CompressZipFiles",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "resourcesToArchive",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.IResource>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "compressedFileName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CompressZipFiles",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "resourcesToArchive",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.IResource>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "compressedFileName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "compressionLevel",
+              "type": "UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "codePage",
+              "type": "UiPath.Activities.System.Encode.CodePages",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "overrideExistingFile",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CopyFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destination",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "overwrite",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CopyFolder",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "from",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "to",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CopyFolder",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "from",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "to",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "overwrite",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "includeSubfolder",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CreateFile",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "name",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CreateFolder",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteFileOrFolder",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "resourceFile",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueItems",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueItems",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "DeleteQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueItems",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueItems",
+              "type": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "DeleteStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DownloadFileFromURLAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.Platform.ResourceHandling.ILocalResource>",
+          "params": [
+            {
+              "name": "url",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "fileName",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "conflictResolution",
+              "type": "UiPath.Activities.System.FileOperations.FileConflictBehavior",
+              "optional": true,
+              "default": "2",
+              "params": false
+            },
+            {
+              "name": "timeout",
+              "type": "System.Int32",
+              "optional": true,
+              "default": "600",
+              "params": false
+            },
+            {
+              "name": "cancellationToken",
+              "type": "System.Threading.CancellationToken",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "userAgentHeaderValue",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DownloadStorageFile",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DownloadStorageFile",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DownloadStorageFile",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destination",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractDateAndTimeFromText",
+          "returns": "System.Collections.Generic.IEnumerable<System.DateTime>",
+          "params": [
+            {
+              "name": "format",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "localizationCode",
+              "type": "System.Globalization.CultureInfo",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractEmails",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "ignoreDuplicates",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractTextFromHTML",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractTextOccurrences",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "startingText",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "endingText",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "ignoreDuplicates",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "matchCase",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractUnzipFiles",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource[]",
+          "params": [
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractUnzipFiles",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource[]",
+          "params": [
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destinationFolder",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractUnzipFiles",
+          "returns": "UiPath.Platform.ResourceHandling.ILocalResource[]",
+          "params": [
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destinationFolder",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "extractToADedicatedFolder",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "codePage",
+              "type": "UiPath.Activities.System.Encode.CodePages",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractUrls",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "extractBaseURLOnly",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "ignoreDuplicates",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "FileExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "FindAndReplace",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "valueToFind",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "replaceWith",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "matchCase",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "FolderExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "FormatDateAsText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "format",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "localizationCode",
+              "type": "System.Globalization.CultureInfo",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAsset",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAsset",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAsset",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cacheStrategy",
+              "type": "UiPath.Core.Activities.CacheStrategyEnum",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetCredential",
+          "returns": "System.ValueTuple<System.String, System.Security.SecureString>",
+          "params": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": true,
+              "default": "1000",
+              "params": false
+            },
+            {
+              "name": "cacheStrategy",
+              "type": "UiPath.Core.Activities.CacheStrategyEnum",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetCredential",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.Security.SecureString",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cacheStrategy",
+              "type": "UiPath.Core.Activities.CacheStrategyEnum",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetJobs",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.OrchestratorJob>",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "GetJobs",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.OrchestratorJob>",
+          "params": [
+            {
+              "name": "filter",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterBuilder",
+              "type": "UiPath.Activities.System.Jobs.JobFilterSettings",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetJobs",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.OrchestratorJob>",
+          "params": [
+            {
+              "name": "filter",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterBuilder",
+              "type": "UiPath.Activities.System.Jobs.JobFilterSettings",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "top",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "skip",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterStrategy",
+              "type": "UiPath.Core.Activities.ReferenceFilterStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItems",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItems",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetQueueItems",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.QueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "duration",
+              "type": "System.Nullable<System.Int32>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "from",
+              "type": "System.Nullable<System.DateTime>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "priority",
+              "type": "System.Nullable<System.Int32>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueItemStates",
+              "type": "UiPath.Core.Activities.QueueItemStates",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "to",
+              "type": "System.Nullable<System.DateTime>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterStrategy",
+              "type": "UiPath.Core.Activities.ReferenceFilterStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "skip",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "top",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetResourceForLocalPath",
+          "returns": "UiPath.Platform.ResourceHandling.IResource",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pathType",
+              "type": "UiPath.Core.Activities.PathType",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetRowItem",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "row",
+              "type": "System.Data.DataRow",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "columnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTransactionItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueType",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterStrategy",
+              "type": "UiPath.Core.Activities.ReferenceFilterStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InvokeProcess",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InvokeProcess",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InvokeProcess",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "entryPointPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetSession",
+              "type": "UiPath.Core.Activities.InvokeProcessTargetSession",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "logEntry",
+              "type": "UiPath.Core.Activities.LogEntryType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "logExit",
+              "type": "UiPath.Core.Activities.LogExitType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "level",
+              "type": "UiPath.Core.Activities.LogLevel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "usePackage",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeout",
+              "type": "System.TimeSpan",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "InvokeProcessAsync",
+          "returns": "System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<System.String, System.Object>>",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InvokeProcessAsync",
+          "returns": "System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<System.String, System.Object>>",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InvokeProcessAsync",
+          "returns": "System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<System.String, System.Object>>",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "inArguments",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "inOutArguments",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "logEntry",
+              "type": "UiPath.Core.Activities.LogEntryType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "logExit",
+              "type": "UiPath.Core.Activities.LogExitType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "level",
+              "type": "UiPath.Core.Activities.LogLevel",
+              "optional": true,
+              "default": "8",
+              "params": false
+            },
+            {
+              "name": "targetSession",
+              "type": "UiPath.Core.Activities.InvokeProcessTargetSession",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "timeout",
+              "type": "System.TimeSpan",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "elevated",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ListStorageFiles",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo>",
+          "params": [
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ListStorageFiles",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo>",
+          "params": [
+            {
+              "name": "directory",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ListStorageFiles",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo>",
+          "params": [
+            {
+              "name": "directory",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ListStorageFiles",
+          "returns": "System.Collections.Generic.IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo>",
+          "params": [
+            {
+              "name": "directory",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "recursive",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filter",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "LookupDataTable",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lookupValue",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lookupColumnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetColumnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "LookupDataTable",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lookupValue",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lookupColumnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetColumnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "rowIndex",
+              "type": "System.Int32",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "MergeDataTable",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "sourceDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destinationDataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "MergeDataTable",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "sourceDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destinationDataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "missingSchemaAction",
+              "type": "System.Data.MissingSchemaAction",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "MoveFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "pathResource",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "destinationResource",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "overwrite",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OrchestratorHTTPRequest",
+          "returns": "System.Int32",
+          "params": [
+            {
+              "name": "method",
+              "type": "UiPath.Core.Activities.OrchestratorAPIHttpMethods",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "relativeEndpoint",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OrchestratorHTTPRequest",
+          "returns": "System.Int32",
+          "params": [
+            {
+              "name": "method",
+              "type": "UiPath.Core.Activities.OrchestratorAPIHttpMethods",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "relativeEndpoint",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jSONPayload",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OrchestratorHTTPRequest",
+          "returns": "System.Int32",
+          "params": [
+            {
+              "name": "method",
+              "type": "UiPath.Core.Activities.OrchestratorAPIHttpMethods",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "relativeEndpoint",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "responseHeaders",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "result",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OrchestratorHTTPRequest",
+          "returns": "System.Int32",
+          "params": [
+            {
+              "name": "method",
+              "type": "UiPath.Core.Activities.OrchestratorAPIHttpMethods",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "relativeEndpoint",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jSONPayload",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "responseHeaders",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "result",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OrchestratorHTTPRequest",
+          "returns": "System.Int32",
+          "params": [
+            {
+              "name": "method",
+              "type": "UiPath.Core.Activities.OrchestratorAPIHttpMethods",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "relativeEndpoint",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jSONPayload",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "responseHeaders",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "result",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OutputDataTable",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PathExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PathExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pathType",
+              "type": "UiPath.Core.Activities.PathType",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PathExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "resource",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PathExists",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pathType",
+              "type": "UiPath.Core.Activities.PathType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "resource",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PostponeTransactionItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "deferDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PostponeTransactionItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "deferDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "PostponeTransactionItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "deferDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "dueDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "PostponeTransactionItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "deferDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "dueDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "RaiseAlert",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "severity",
+              "type": "UiPath.Core.Activities.AlertSeverity",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "notification",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RaiseAlert",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "severity",
+              "type": "UiPath.Core.Activities.AlertSeverity",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "notification",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RaiseAlert",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "severity",
+              "type": "UiPath.Core.Activities.AlertSeverity",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "notification",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadStorageText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadStorageText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadStorageText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encoding",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadTextFile",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadTextFile",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encoding",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RemoveDataColumn",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "columnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RemoveDataRow",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "modifier": "ref",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "rowIndex",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RemoveDuplicateRows",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Replace",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "input",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pattern",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "replacement",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Replace",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "input",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pattern",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "replacement",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "regexOption",
+              "type": "System.Text.RegularExpressions.RegexOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RunJob",
+          "returns": "System.ValueTuple<UiPath.Core.Activities.OrchestratorJob, System.String>",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "orchestratorFolderPath",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "inputArguments",
+              "type": "System.Object",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "doNotWait",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "runJobOptionalParameters",
+              "type": "UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RunJobAsync",
+          "returns": "System.Threading.Tasks.Task<System.ValueTuple<UiPath.Core.Activities.OrchestratorJob, System.String>>",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "orchestratorFolderPath",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "inputArguments",
+              "type": "System.Object",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "doNotWait",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            },
+            {
+              "name": "runJobOptionalParameters",
+              "type": "UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetAsset",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetAsset",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetAsset",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCredential",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "userName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "credentialName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCredential",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "userName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "credentialName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCredential",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "userName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "password",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "credentialName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetTransactionProgress",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetTransactionProgress",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "SetTransactionProgress",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetTransactionProgress",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "SetTransactionStatus",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "status",
+              "type": "UiPath.Core.ProcessingStatus",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetTransactionStatus",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "status",
+              "type": "UiPath.Core.ProcessingStatus",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "SetTransactionStatus",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "status",
+              "type": "UiPath.Core.ProcessingStatus",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "analytics",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "output",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "details",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "errorType",
+              "type": "UiPath.Core.Activities.ErrorType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reason",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetTransactionStatus",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "transactionItem",
+              "type": "UiPath.Core.QueueItem",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "status",
+              "type": "UiPath.Core.ProcessingStatus",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "analytics",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "output",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "details",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "errorType",
+              "type": "UiPath.Core.Activities.ErrorType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reason",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": true
+        },
+        {
+          "name": "SortDataTable",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "columnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SortDataTable",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "dataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "columnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sortOrder",
+              "type": "UiPath.Core.Activities.SortOrder",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SplitText",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "separatorKey",
+              "type": "UiPath.Activities.System.Text.SeparatorOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SplitText",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "source",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "separator",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StartJob",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StartJob",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StartJob",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jobId",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StartJob",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jobId",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StartJob",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "processName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jobPriority",
+              "type": "UiPath.Orchestrator.Client.Models.StartProcessDtoJobPriority",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "resumeOnSameContext",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "jobId",
+              "type": "System.String",
+              "modifier": "out",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StopJob",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "job",
+              "type": "UiPath.Core.Activities.OrchestratorJob",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "strategy",
+              "type": "UiPath.Core.Activities.StopStrategy",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StopJob",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "job",
+              "type": "UiPath.Core.Activities.OrchestratorJob",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "strategy",
+              "type": "UiPath.Core.Activities.StopStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "StopJob",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "job",
+              "type": "UiPath.Core.Activities.OrchestratorJob",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "strategy",
+              "type": "UiPath.Core.Activities.StopStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UpdateRowItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "row",
+              "type": "System.Data.DataRow",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "columnName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UploadStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "destination",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "fileResource",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UploadStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "destination",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "fileResource",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UploadStorageFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "destination",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "fileResource",
+              "type": "UiPath.Platform.ResourceHandling.IResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WaitQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WaitQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WaitQueueItem",
+          "returns": "UiPath.Core.QueueItem",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pollTimeMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "filterStrategy",
+              "type": "UiPath.Core.Activities.ReferenceFilterStrategy",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "reference",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteStorageText",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteStorageText",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteStorageText",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "storageBucketName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encoding",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMS",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteTextFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteTextFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "file",
+              "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encoding",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
         }
       ]
     }

@@ -4,7 +4,8 @@
   "assemblies": [
     "UiPath.UIAutomationNext.Activities.dll",
     "UiPath.UiAutomation.Activities.dll",
-    "UiPath.CV.Activities.dll"
+    "UiPath.CV.Activities.dll",
+    "UiPath.UIAutomationNext.API.dll"
   ],
   "activities": [
     {
@@ -33665,9 +33666,2282 @@
       ]
     }
   ],
+  "services": [
+    {
+      "name": "IInProcessUIAService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IInProcessUIAService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "ExtractData",
+          "returns": "System.Threading.Tasks.Task<System.Data.DataTable>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ExtractDataOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractTableData",
+          "returns": "System.Threading.Tasks.Task<System.Data.DataTable>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ExtractTableDataOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAttribute",
+          "returns": "Task<T>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetAttributeOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "typeParams": [
+            "T"
+          ],
+          "obsolete": false
+        }
+      ]
+    },
+    {
+      "name": "IRuntimeHelperService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IRuntimeHelperService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "Resolve",
+          "returns": "UiPath.UIAutomationNext.TargetApp",
+          "params": [
+            {
+              "name": "targetAppModel",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Resolve",
+          "returns": "UiPath.UIAutomationNext.TargetAnchorable",
+          "params": [
+            {
+              "name": "targetAnchorableModel",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAnchorableModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Resolve",
+          "returns": "UiPath.UIAutomationNext.TargetAnchorable",
+          "params": [
+            {
+              "name": "targetAnchorableModel",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAnchorableModel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "getAdditionalData",
+              "type": "System.Action<System.Object>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    },
+    {
+      "name": "IUIARepositoryService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IUIARepositoryService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "GetScreen",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.TargetAppModel>",
+          "params": [
+            {
+              "name": "model",
+              "type": "UiPath.UIAutomationNext.API.Models.RepositoryScreenModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    },
+    {
+      "name": "IUIAService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IUIAService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "Attach",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.RuntimeTargetApp>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BlockUserInput",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.BlockUserInputOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Check",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.CheckOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Click",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ClickOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Close",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "runtimeTargetApp",
+              "type": "UiPath.UIAutomationNext.API.Models.RuntimeTargetApp",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ClosePopup",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ClosePopupOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DragAndDrop",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.DragAndDropOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ExtractData",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ExtractDataOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "FillForm",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.FillFormOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAccessibilityCheck",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetAccessibilityCheckOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAttribute",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetAttributeOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetAttributeAsJson",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetAttributeOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetChildren",
+          "returns": "System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UiPath.UIAutomationNext.API.Models.RuntimeTarget>>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetChildrenOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetClipboard",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetClipboardOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetRuntimeTarget",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.RuntimeTarget>",
+          "params": [
+            {
+              "name": "getRuntimeTargetOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.GetRuntimeTargetOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetText",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetTextOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetUrl",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetUrlOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GoToUrl",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GoToUrlOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "HideStatusWindow",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.HideStatusWindowOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Highlight",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.HighlightOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Hover",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.HoverOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InjectJsScript",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.InjectJsScriptOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "IsEnabled",
+          "returns": "System.Threading.Tasks.Task<System.Boolean>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.IsEnabledOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "KeyboardShortcut",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.KeyboardShortcutOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "MouseScroll",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.MouseScrollOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.RuntimeTargetApp>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPCallTransaction",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SAPCallTransactionOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPClickToolbarButton",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SelectItemOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPExpandALVTree",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SAPExpandALVTreeOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPExpandTree",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SAPExpandTreeOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPReadStatusbar",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.SAPReadStatusbarResult>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SAPReadStatusbarOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPSelectDatesInCalendar",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SAPSelectDatesInCalendarOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SAPSelectMenuItem",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SelectItemOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SelectItem",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SelectItemOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetClipboard",
+          "returns": "System.Threading.Tasks.Task<System.Boolean>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SetClipboardOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCVServer",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SetCVServerOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetProjectSetting",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SetProjectSettingOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRuntimeBrowser",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SetRuntimeBrowserOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetValue",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SetValueOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusMessage",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ShowStatusMessageOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusWindow",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ShowStatusWindowOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TakeScreenshot",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.TakeScreenshotOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TypeInto",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.TypeIntoOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UITask",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UITaskResult>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.UITaskOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UnblockUserInput",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "UpdateUIElement",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.UpdateUIElementOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WaitState",
+          "returns": "System.Threading.Tasks.Task<System.Boolean>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.CheckStateOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WindowOperation",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.WindowOperationOptionsModel",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    },
+    {
+      "name": "IUiAutomationAppService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IUiAutomationAppService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "Attach",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Attach",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "targetApp",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppModel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Attach",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Attach",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appAttachMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppAttachMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Attach",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appAttachMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppAttachMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "targetApp",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppModel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appAttachMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppAttachMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appAttachMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppAttachMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BlockUserInput",
+          "returns": "UiPath.UIAutomationNext.API.Models.BlockUserInputScope",
+          "params": [
+            {
+              "name": "blockUserInputOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.BlockUserInputOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BlockUserInput",
+          "returns": "UiPath.UIAutomationNext.API.Models.BlockUserInputScope",
+          "params": [
+            {
+              "name": "blockType",
+              "type": "UiPath.UIAutomationNext.Enums.NBlockInputType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "keyModifiers",
+              "type": "UiPath.UIAutomationNext.Enums.NKeyModifiers",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "keys",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"F10\"",
+              "params": false
+            },
+            {
+              "name": "allow3rdPartyApps",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BlockUserInputAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.BlockUserInputScope>",
+          "params": [
+            {
+              "name": "blockUserInputOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.BlockUserInputOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BlockUserInputAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.BlockUserInputScope>",
+          "params": [
+            {
+              "name": "blockType",
+              "type": "UiPath.UIAutomationNext.Enums.NBlockInputType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "keyModifiers",
+              "type": "UiPath.UIAutomationNext.Enums.NKeyModifiers",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "keys",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"F10\"",
+              "params": false
+            },
+            {
+              "name": "allow3rdPartyApps",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Click",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "clickOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.ClickOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ClickAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "clickOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.ClickOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetClipboard",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetClipboardOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetClipboardAsync",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetClipboardOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetText",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetTextOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTextAsync",
+          "returns": "System.Threading.Tasks.Task<System.String>",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.GetTextOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetUiElement",
+          "returns": "UiPath.Core.UiElement",
+          "params": [
+            {
+              "name": "target",
+              "type": "UiPath.UIAutomationNext.API.Models.RuntimeTarget",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetUiElementAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.Core.UiElement>",
+          "params": [
+            {
+              "name": "target",
+              "type": "UiPath.UIAutomationNext.API.Models.RuntimeTarget",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "HideStatusWindow",
+          "returns": "System.Void",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "HideStatusWindowAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "Highlight",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "highlightOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.HighlightOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "HighlightAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "highlightOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.HighlightOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Hover",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "hoverOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.HoverOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "HoverAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "hoverOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.HoverOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "KeyboardShortcut",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "keyboardShortcutOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.KeyboardShortcutOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "KeyboardShortcutAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "keyboardShortcutOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.KeyboardShortcutOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "targetApp",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppModel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "openMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppOpenMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "Open",
+          "returns": "UiPath.UIAutomationNext.API.Models.UiTargetApp",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "openMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppOpenMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OpenAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OpenAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "targetApp",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppModel",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OpenAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetAppOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TargetAppOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OpenAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IScreenDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "openMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppOpenMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "OpenAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UiTargetApp>",
+          "params": [
+            {
+              "name": "screenName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "appName",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "appVersion",
+              "type": "System.String",
+              "optional": true,
+              "default": "\"***\"",
+              "params": false
+            },
+            {
+              "name": "openMode",
+              "type": "UiPath.UIAutomationNext.Enums.NAppOpenMode",
+              "optional": true,
+              "default": "1",
+              "params": false
+            },
+            {
+              "name": "windowResize",
+              "type": "UiPath.UIAutomationNext.Enums.NWindowResize",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "interactionMode",
+              "type": "UiPath.UIAutomationNext.Enums.NInteractionMode",
+              "optional": true,
+              "default": "0",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SelectItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SelectItemOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SelectItemAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.SelectItemOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetClipboard",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "setClipboardOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.SetClipboardOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetClipboardAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "setClipboardOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.SetClipboardOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCVServer",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "server",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "apiKey",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "useLocalServer",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetCVServerAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "server",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "apiKey",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "useLocalServer",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetDefaultRuntimeBrowser",
+          "returns": "System.Void",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "SetDefaultRuntimeBrowserAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "SetProjectSetting",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "key",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetProjectSettingAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "key",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "value",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRuntimeBrowser",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "browserType",
+              "type": "UiPath.UIAutomationNext.Enums.NBrowserType",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRuntimeBrowser",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "setRuntimeBrowserOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.SetRuntimeBrowserOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRuntimeBrowserAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "browserType",
+              "type": "UiPath.UIAutomationNext.Enums.NBrowserType",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRuntimeBrowserAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "setRuntimeBrowserOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.SetRuntimeBrowserOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusMessage",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ShowStatusMessageOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusMessage",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "message",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "level",
+              "type": "UiPath.UIAutomationNext.Enums.NStatusMessageLevel",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.Nullable<System.Double>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "title",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusMessageAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.ShowStatusMessageOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusMessageAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "message",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "level",
+              "type": "UiPath.UIAutomationNext.Enums.NStatusMessageLevel",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "progress",
+              "type": "System.Nullable<System.Double>",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "title",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusWindow",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.StatusWindowOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusWindow",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "title",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "message",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusWindowAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.StatusWindowOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ShowStatusWindowAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "title",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            },
+            {
+              "name": "message",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TakeScreenshot",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "takeScreenshotOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TakeScreenshotOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TakeScreenshotAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "takeScreenshotOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TakeScreenshotOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TypeInto",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "typeIntoOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TypeIntoOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "TypeIntoAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [
+            {
+              "name": "uiElement",
+              "type": "UiPath.Core.UiElement",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "typeIntoOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.TypeIntoOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UITask",
+          "returns": "UiPath.UIAutomationNext.API.Models.UITaskResult",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.UITaskOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UITaskAsync",
+          "returns": "System.Threading.Tasks.Task<UiPath.UIAutomationNext.API.Models.UITaskResult>",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.UIAutomationNext.API.Models.UITaskOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UnblockUserInput",
+          "returns": "System.Void",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "UnblockUserInputAsync",
+          "returns": "System.Threading.Tasks.Task",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "WaitState",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "elementDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IElementDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "checkStateOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.CheckStateOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WaitStateAsync",
+          "returns": "System.Threading.Tasks.Task<System.Boolean>",
+          "params": [
+            {
+              "name": "elementDescriptor",
+              "type": "UiPath.CodedWorkflows.DescriptorIntegration.IElementDescriptor",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "checkStateOptions",
+              "type": "UiPath.UIAutomationNext.API.Models.CheckStateOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    },
+    {
+      "name": "IUiElementUIAService",
+      "clrType": "UiPath.UIAutomationNext.API.Contracts.IUiElementUIAService",
+      "assembly": "UiPath.UIAutomationNext.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "GetUiElement",
+          "returns": "System.Threading.Tasks.Task<UiPath.Core.UiElement>",
+          "params": [
+            {
+              "name": "target",
+              "type": "UiPath.UIAutomationNext.API.Models.RuntimeTarget",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetUiElement",
+          "returns": "System.Threading.Tasks.Task<UiPath.Core.UiElement>",
+          "params": [
+            {
+              "name": "target",
+              "type": "UiPath.UIAutomationNext.API.Models.RuntimeTargetApp",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    }
+  ],
   "warnings": [
-    "UiPath.Core.Activities.Scrape.Tesseract.TesseractScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\SeiyaKawashima\\.nuget\\packages\\uipath.ocr.activities\\3.24.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
-    "UiPath.Core.Activities.Scrape.MicrosoftAzure.MicrosoftAzureComputerVisionScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\SeiyaKawashima\\.nuget\\packages\\uipath.ocr.activities\\3.24.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
-    "UiPath.Core.Activities.Scrape.GoogleCloud.GoogleCloudScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\SeiyaKawashima\\.nuget\\packages\\uipath.ocr.activities\\3.24.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'."
+    "UiPath.Core.Activities.Scrape.Tesseract.TesseractScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
+    "UiPath.Core.Activities.Scrape.MicrosoftAzure.MicrosoftAzureComputerVisionScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
+    "UiPath.Core.Activities.Scrape.GoogleCloud.GoogleCloudScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'."
   ]
 }

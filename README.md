@@ -104,6 +104,12 @@ OverloadGroup（`WriteTextFile` の `File` か `FileName` のどちらか）は�
 
 まだ書けないもの：UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`ActivityFunc` の delegate（`RetryScope.Condition` など）、`InvokeCode` の引数、`IfElseIf`。
 
+### Coded Workflow（`samples/coded`）
+
+XAML と同じ処理を C# の Coded Workflow でも書き、`uip rpa run` で同じログが出ることを確かめた（`samples/coded/CodedMain.cs`）。Coded から呼ぶサービスの API（`system.` / `uiAutomation.` のメソッドと引数）は、カタログ抽出器が `services` としてカタログに書き出す。
+
+制御フローは C# の構文で書けるので、Coded 側に IR は作らない。UI 操作や Excel のように設定が多いアクティビティは、Coded 側も IR から生成する予定。分かったことは [knowledge/coded-workflow.md](knowledge/coded-workflow.md)。
+
 ## わかっている穴
 
 - 既定値は `[DefaultValue]` 属性からしか取れない。コンストラクタで入れる既定値は見えない（`get-default-xaml` に出る `Version=V5` や `HealingAgentBehavior=SameAsCard` などは、カタログには既定値として入っていない）

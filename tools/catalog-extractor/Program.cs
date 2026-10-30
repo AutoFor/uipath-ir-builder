@@ -16,6 +16,7 @@ using var mlc = new MetadataLoadContext(resolver, "System.Runtime");
 
 var warnings = new List<string>();
 var activities = new List<ActivityInfo>();
+var services = new List<ServiceInfo>();
 
 foreach (var dll in opts.Dlls)
 {
@@ -34,6 +35,7 @@ foreach (var dll in opts.Dlls)
     {
         try
         {
+            if (Services.IsService(t)) { services.Add(Services.Describe(t)); continue; }
             if (!t.IsPublic || t.IsAbstract || t.IsInterface || !Activities.IsActivity(t)) continue;
             activities.Add(Activities.Describe(t, xmlnsMap, warnings));
         }
@@ -45,15 +47,22 @@ foreach (var dll in opts.Dlls)
 }
 
 var catalog = new Catalog(opts.Package, opts.Version, opts.Dlls.Select(Path.GetFileName).ToList()!,
-    activities.OrderBy(a => a.ClassName).ToList(), warnings);
+    activities.OrderBy(a => a.ClassName).ToList(), services.Count > 0 ? services.OrderBy(s => s.ClrType).ToList() : null, warnings);
 
 Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.Out))!);
 File.WriteAllText(opts.Out, JsonSerializer.Serialize(catalog, Json.Options));
-Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities, {warnings.Count} warnings -> {opts.Out}");
+Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities, {services.Count} coded services, {warnings.Count} warnings -> {opts.Out}");
 
 // ---------------------------------------------------------------------------
 
-record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<string> Warnings);
+record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<ServiceInfo>? Services, List<string> Warnings);
+
+// Coded Workflow から呼ぶサービス（system.LogMessage(...) の system の型）
+record ServiceInfo(string Name, string ClrType, string Assembly, List<string> Bases, List<MethodSig> Methods);
+
+record MethodSig(string Name, string Returns, List<ParamSig> Params, List<string>? TypeParams, bool Obsolete);
+
+record ParamSig(string Name, string Type, string? Modifier, bool Optional, string? Default, bool Params);
 
 record ActivityInfo(
     string ClassName,
@@ -192,6 +201,41 @@ static class Activities
 // 属性は名前で見る（UiPath は LocalizedDisplayName などの独自派生を使うため、型の厳密一致では拾えない）
 record AttrSummary(bool Required, string? Default, string? Category, string? DisplayName, bool Browsable,
     List<string> OverloadGroups, bool Obsolete);
+
+static class Services
+{
+    // Coded の API は "<名前空間>.API" 配下の公開インターフェース（ISystemService、IUiAutomationAppService など）
+    public static bool IsService(Type t) =>
+        t.IsPublic && t.IsInterface && t.Name.EndsWith("Service") && (t.Namespace ?? "").Split('.').Contains("API");
+
+    public static ServiceInfo Describe(Type t)
+    {
+        var methods = new List<MethodSig>();
+        foreach (var m in t.GetMethods().Where(m => !m.IsSpecialName))
+        {
+            var ps = m.GetParameters().Select(p =>
+            {
+                var pt = p.ParameterType;
+                string? mod = pt.IsByRef ? (p.IsOut ? "out" : "ref") : null;
+                if (pt.IsByRef) pt = pt.GetElementType()!;
+                string? def = null;
+                if (p.HasDefaultValue)
+                {
+                    try { def = p.RawDefaultValue switch { null => "null", string s => $"\"{s}\"", bool b => b ? "true" : "false", var o => o.ToString() }; }
+                    catch { def = "?"; }
+                }
+                var isParams = p.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ParamArrayAttribute");
+                return new ParamSig(p.Name ?? "", TypeNames.Format(pt), mod, p.IsOptional, def, isParams);
+            }).ToList();
+            var tps = m.IsGenericMethodDefinition ? m.GetGenericArguments().Select(a => a.Name).ToList() : null;
+            var obsolete = m.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ObsoleteAttribute");
+            methods.Add(new MethodSig(m.Name, TypeNames.Format(m.ReturnType), ps, tps, obsolete));
+        }
+        var bases = t.GetInterfaces().Select(TypeNames.Format).ToList();
+        return new ServiceInfo(t.Name, TypeNames.Format(t), t.Assembly.GetName().Name!, bases,
+            methods.OrderBy(m => m.Name).ThenBy(m => m.Params.Count).ToList());
+    }
+}
 
 static class Attrs
 {
