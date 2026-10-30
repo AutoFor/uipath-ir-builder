@@ -1,0 +1,6 @@
+{
+  "activity": "MicrosoftOCR",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（OCR エンジン。Coded の API に OCR のエンジンのアクティビティは無い）"
+}

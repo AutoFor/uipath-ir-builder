@@ -1,0 +1,6 @@
+{
+  "activity": "MicrosoftAzureComputerVisionOCR",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い）"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "BlockUserInput",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の入力ブロック。Coded の uiAutomation.BlockUserInput は Modern（NBlockUserInput）のオプションで、Classic の Body を持つ形とは対応しない）"
+}

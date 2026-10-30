@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"AnchorContextAware\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:AnchorContextAware DesignAnchor=\"{x:Null}\" DesignTarget=\"{x:Null}\">\r\n    <ui:AnchorContextAware.AnchorProvider>\r\n      <ActivityAction x:TypeArguments=\"ui:Anchor2Data\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"ui:Anchor2Data\" Name=\"ContextAnchor2Data\" />\r\n        </ActivityAction.Argument>\r\n      </ActivityAction>\r\n    </ui:AnchorContextAware.AnchorProvider>\r\n    <ui:AnchorContextAware.TargetProvider>\r\n      <ActivityAction x:TypeArguments=\"ui:Anchor2Data\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"ui:Anchor2Data\" Name=\"ContextAnchor2Data\" />\r\n        </ActivityAction.Argument>\r\n      </ActivityAction>\r\n    </ui:AnchorContextAware.TargetProvider>\r\n  </ui:AnchorContextAware>\r\n</Activity>"
+  }
+}

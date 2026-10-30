@@ -66,12 +66,15 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Window: ["ui:Window", { ui: UI }],
   Browser: ["ui:Browser", { ui: UI }],
   Region: ["ui:Region", { ui: UI }],
+  Anchor: ["ui:Anchor", { ui: UI }], // AnchorBase.Action の引数
+  Anchor2Data: ["ui:Anchor2Data", { ui: UI }], // AnchorContextAware の AnchorProvider / TargetProvider の引数
   "UiPath.Core.Image": ["ui:Image", { ui: UI }], // "Image" は System.Drawing.Image（CV の OCREngine の引数）。UiPath の Image はこの完全名で書く
   Point: ["sdp:Point", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
   DayOfWeek: ["s:DayOfWeek", { s: S }],
   DataColumn: ["sd:DataColumn", { sd: SD }],
   UInt32: ["x:UInt32", {}],
   Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
+  OcrActivityResult: ["uoc:OcrActivityResult", { uoc: "clr-namespace:UiPath.OCR.Contracts;assembly=UiPath.OCR.Contracts" }], // OCR エンジン（GoogleOCR など）の Output
   Rectangle: ["sdp:Rectangle", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
 };
 

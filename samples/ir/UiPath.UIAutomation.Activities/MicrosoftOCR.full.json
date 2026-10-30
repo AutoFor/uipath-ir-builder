@@ -1,0 +1,56 @@
+{
+  "workflow": "MicrosoftOCR_Full",
+  "variables": [
+    {
+      "name": "img",
+      "type": "Image"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    },
+    {
+      "name": "words",
+      "type": "IEnumerable<KeyValuePair<Rectangle,String>>"
+    },
+    {
+      "name": "ocrOut",
+      "type": "OcrActivityResult"
+    }
+  ],
+  "body": [
+    {
+      "act": "MicrosoftOCR",
+      "name": "MicrosoftOCR（全部入り）",
+      "props": {
+        "Image": "img",
+        "Text": "txt",
+        "Result": "words",
+        "Output": "ocrOut",
+        "ComputeSkewAngle": true,
+        "ExtractWords": true,
+        "NoopExecution": false,
+        "PredictionId": {
+          "lit": "uia-c5"
+        },
+        "Profile": "Screen",
+        "Scale": 1.5,
+        "Language": {
+          "lit": "en-US"
+        }
+      },
+      "objs": {
+        "FilterRegion": {
+          "Rectangle": "10, 20, 300, 200"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"OCR: \" & txt"
+      }
+    }
+  ]
+}

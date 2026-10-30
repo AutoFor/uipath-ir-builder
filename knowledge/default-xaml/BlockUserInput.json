@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"BlockUserInput\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:BlockUserInput TimeoutMS=\"{x:Null}\" BlockType=\"All\" KeyModifiers=\"Alt\" SpecialKey=\"True\">\r\n    <ui:BlockUserInput.Body>\r\n      <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n    </ui:BlockUserInput.Body>\r\n  </ui:BlockUserInput>\r\n</Activity>"
+  }
+}

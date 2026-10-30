@@ -1,0 +1,3 @@
+{
+  "noRun": "BlockUserInput は画面（RDP）の入力を止めるので run しない。build まで"
+}

@@ -1,0 +1,3 @@
+{
+  "noRun": "CalloutForm（吹き出しの描画。ActivityFunc<Rectangle, IntPtr, Task>）は Studio のデザイナーが作る内部のアクティビティで、IR に書けず用意もできない。build まで"
+}
