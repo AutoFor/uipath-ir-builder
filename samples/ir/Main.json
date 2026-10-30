@@ -1,7 +1,7 @@
 {
   "workflow": "Main",
   "variables": [
-    { "name": "names", "type": "String[]", "default": "{\"太郎\", \"花子\", \"Al\"}" },
+    { "name": "names", "type": "String[]", "default": "{\"太郎\", \"花子\", \"Al\", \"A\"}" },
     { "name": "count", "type": "Int32", "default": "0" },
     { "name": "message", "type": "String" }
   ],

@@ -73,7 +73,17 @@ IR の例：
 
 検証で弾くもの：未知のアクティビティ・プロパティ・型、必須の欠け、enum 外の値、宣言されていない出力先、子を置けない場所への子。例は `samples/ir-invalid/Broken.json`。
 
-`samples/ir/Main.json` と `Greet.json`（ForEach / If / Assign / LogMessage / InvokeWorkflowFile）から生成した XAML（`samples/generated/`）は、`uip rpa build` を修正なしで通った（Studio 26.10、System 26.10.0）。実行（run）はまだ試していない。
+`samples/ir/Main.json` と `Greet.json`（ForEach / If / Assign / LogMessage / InvokeWorkflowFile）から生成した XAML（`samples/generated/`）は、`uip rpa build` を修正なしで通った（Studio 26.10、System 26.10.0）。`uip rpa run` でも修正なしで動き、If の両方の分岐と InvokeWorkflowFile の Out 引数まで期待どおりのログが出た（net8 のプロジェクト、Robot 26.0、ロボットのサインイン済み）。
+
+```
+[Information] こんにちは、太郎 さん
+[Information] こんにちは、花子 さん
+[Information] こんにちは、Al さん
+[Warning] 短すぎる名前: A
+[Information] あいさつした人数: 3
+```
+
+実行には `uip login` だけでなく、ロボット（Assistant / Studio）のサインインによるライセンスが要る。ないと「ローカル ライセンスが必要です」で止まる。
 
 対応しているのは、属性と単純な子だけで書けるアクティビティ。UI 操作（`NApplicationCard` の中の `Target` やセレクタ）、`MultipleAssign` の `AssignOperations`、Try/Catch はまだ。
 

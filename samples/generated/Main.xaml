@@ -62,7 +62,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Main" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="s:String[]" Default="[{&quot;太郎&quot;, &quot;花子&quot;, &quot;Al&quot;}]" Name="names" />
+      <Variable x:TypeArguments="s:String[]" Default="[{&quot;太郎&quot;, &quot;花子&quot;, &quot;Al&quot;, &quot;A&quot;}]" Name="names" />
       <Variable x:TypeArguments="x:Int32" Default="[0]" Name="count" />
       <Variable x:TypeArguments="x:String" Name="message" />
     </Sequence.Variables>
