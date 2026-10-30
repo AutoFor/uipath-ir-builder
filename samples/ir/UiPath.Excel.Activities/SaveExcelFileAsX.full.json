@@ -1,0 +1,102 @@
+{
+  "workflow": "SaveExcelFileAsX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    },
+    {
+      "name": "ex",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\SaveExcelFileAsX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\SaveExcelFileAsX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"E1\")",
+            "Value": {
+              "lit": "xlsb で保存"
+            }
+          }
+        },
+        {
+          "act": "SaveExcelFileAsX",
+          "name": "xlsb で保存",
+          "props": {
+            "Workbook": "Excel",
+            "FilePath": {
+              "lit": "output\\SaveExcelFileAsX_Full.copy.xlsb"
+            },
+            "SaveAsFileType": "BinaryWorkbook",
+            "ReplaceExisting": true
+          }
+        }
+      ]
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\SaveExcelFileAsX_Full.copy.xlsb"
+        },
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"xlsb がある: \" & ex.ToString()"
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\SaveExcelFileAsX_Full.copy.xlsb"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"E1\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"xlsb の E1: [\" & Convert.ToString(a1) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

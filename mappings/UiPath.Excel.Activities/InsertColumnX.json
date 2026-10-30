@@ -1,0 +1,20 @@
+{
+  "activity": "InsertColumnX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.InsertColumn",
+      "args": {
+        "columnName": "{RelativeColumnName}",
+        "position": "UiPath.Excel.ColumnRelativePosition.{RelativePosition:-Before}",
+        "hasHeaders": "{HasHeaders:-true}",
+        "newColumnHeader": "{NewColumnName:-null}",
+        "columnFormat": "{ColumnFormat:-null}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ColumnFormat（ICellFormat）は IR で書けない（要素構文）ので常に null。別イシューで追う"
+}

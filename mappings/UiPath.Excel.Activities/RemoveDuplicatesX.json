@@ -1,0 +1,32 @@
+{
+  "activity": "RemoveDuplicatesX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.RemoveDuplicates",
+      "args": {
+        "hasHeaders": "{HasHeaders:-true}",
+        "columnsMode": "UiPath.Excel.ColumnsCompare.{ColumnsCompareMode:-AllColumns}",
+        "columns": "new string[] { {Columns|list} }"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ],
+      "when": [
+        "Columns"
+      ]
+    },
+    {
+      "call": "{Range}.RemoveDuplicates",
+      "args": {
+        "hasHeaders": "{HasHeaders:-true}",
+        "columnsMode": "UiPath.Excel.ColumnsCompare.{ColumnsCompareMode:-AllColumns}",
+        "columns": "null"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "Columns は式の一覧。無いときは null。HasHeaders / ColumnsCompareMode の既定値は get-default-xaml で確かめる"
+}

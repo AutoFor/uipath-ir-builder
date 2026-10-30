@@ -1,0 +1,19 @@
+{
+  "activity": "SaveAsPdfX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.SaveAsPdf",
+      "args": {
+        "filePath": "{DestinationPdfPath}",
+        "replaceExisting": "{ReplaceExisting:-false}",
+        "startPage": "{StartPage:-null}",
+        "endPage": "{EndPage:-null}",
+        "saveQuality": "UiPath.Excel.PdfSaveQuality.{SaveQuality:-StandardQuality}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

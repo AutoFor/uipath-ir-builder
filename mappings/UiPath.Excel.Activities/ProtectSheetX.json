@@ -1,0 +1,33 @@
+{
+  "activity": "ProtectSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Sheet}.ProtectSheet",
+      "args": {
+        "securedPassword": "{SecurePassword}",
+        "additionalPermissions": "UiPath.Excel.ProtectSheetAdditionalPermissions.{AdditionalPermissions:-None}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ],
+      "when": [
+        "SecurePassword"
+      ]
+    },
+    {
+      "call": "{Sheet}.ProtectSheet",
+      "args": {
+        "password": "{Password:-null}",
+        "additionalPermissions": "UiPath.Excel.ProtectSheetAdditionalPermissions.{AdditionalPermissions:-None}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "ignore": [
+    "IsPasswordHidden"
+  ],
+  "notes": "IsPasswordHidden は Studio の画面で伏せるための属性なので Coded では捨てる。パスワードが無いときは password: null"
+}

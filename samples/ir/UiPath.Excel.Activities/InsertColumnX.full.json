@@ -1,0 +1,100 @@
+{
+  "workflow": "InsertColumnX_Full",
+  "variables": [
+    {
+      "name": "b1",
+      "type": "Object"
+    },
+    {
+      "name": "c1",
+      "type": "Object"
+    },
+    {
+      "name": "d1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\InsertColumnX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\InsertColumnX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "InsertColumnX",
+          "name": "Age の前に列を足す",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "RelativeColumnName": {
+              "lit": "Age"
+            },
+            "RelativePosition": "Before",
+            "NewColumnName": {
+              "lit": "追加"
+            },
+            "HasHeaders": true
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B1\")",
+            "SaveTo": "b1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"B1: [\" & Convert.ToString(b1) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"C1\")",
+            "SaveTo": "c1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"C1: [\" & Convert.ToString(c1) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"D1\")",
+            "SaveTo": "d1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"D1: [\" & Convert.ToString(d1) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

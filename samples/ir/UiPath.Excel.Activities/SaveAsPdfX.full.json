@@ -1,0 +1,54 @@
+{
+  "workflow": "SaveAsPdfX_Full",
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\SaveAsPdfX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\SaveAsPdfX_Full.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "SaveAsPdfX",
+          "name": "1 ページ目だけ PDF",
+          "props": {
+            "Workbook": "Excel",
+            "DestinationPdfPath": {
+              "lit": "output\\SaveAsPdfX_Full.pdf"
+            },
+            "ReplaceExisting": true,
+            "StartPage": "1",
+            "EndPage": "1",
+            "SaveQuality": "MinimumQuality"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"PDF: \" & System.IO.File.Exists(\"output\\SaveAsPdfX_Full.pdf\").ToString() & \" \" & System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(\"output\\SaveAsPdfX_Full.pdf\"), 0, 4) & \" \" & (System.IO.File.ReadAllBytes(\"output\\SaveAsPdfX_Full.pdf\").Length > 0).ToString()",
+          "cs": "\"PDF: \" + System.IO.File.Exists(@\"output\\SaveAsPdfX_Full.pdf\").ToString() + \" \" + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@\"output\\SaveAsPdfX_Full.pdf\"), 0, 4) + \" \" + (System.IO.File.ReadAllBytes(@\"output\\SaveAsPdfX_Full.pdf\").Length > 0).ToString()"
+        }
+      }
+    }
+  ]
+}

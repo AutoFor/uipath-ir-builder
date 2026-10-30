@@ -1,0 +1,15 @@
+{
+  "activity": "RenameSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{From}.RenameSheet",
+      "args": {
+        "name": "{To}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "activity": "SaveExcelFileAsX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.SaveExcelFileAs",
+      "args": {
+        "filePath": "{FilePath}",
+        "replaceExisting": "{ReplaceExisting:-false}",
+        "saveAsType": "UiPath.Excel.ExcelSaveAsType.{SaveAsFileType}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

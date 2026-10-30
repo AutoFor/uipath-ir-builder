@@ -1,0 +1,143 @@
+{
+  "workflow": "RemoveDuplicatesX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    },
+    {
+      "name": "a2",
+      "type": "Object"
+    },
+    {
+      "name": "a3",
+      "type": "Object"
+    },
+    {
+      "name": "a4",
+      "type": "Object"
+    },
+    {
+      "name": "a5",
+      "type": "Object"
+    },
+    {
+      "name": "b5",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\RemoveDuplicatesX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\RemoveDuplicatesX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A5\")",
+            "Value": {
+              "lit": "太郎"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B5\")",
+            "Value": "99"
+          }
+        },
+        {
+          "act": "RemoveDuplicatesX",
+          "name": "Name 列だけで重複を消す",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C5\")",
+            "HasHeaders": true,
+            "ColumnsCompareMode": "IndividualColumns"
+          },
+          "lists": {
+            "Columns": [
+              {
+                "lit": "Name"
+              }
+            ]
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A2\")",
+            "SaveTo": "a2"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"A2: [\" & Convert.ToString(a2) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A4\")",
+            "SaveTo": "a4"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"A4: [\" & Convert.ToString(a4) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A5\")",
+            "SaveTo": "a5"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"A5: [\" & Convert.ToString(a5) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B5\")",
+            "SaveTo": "b5"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"B5: [\" & Convert.ToString(b5) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "workflow": "ExportExcelToCsvX_Full",
+  "variables": [
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ExportExcelToCsvX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExportExcelToCsvX_Full.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExportExcelToCsvX",
+          "name": "Sheet1 を CSV に",
+          "props": {
+            "TargetRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "FilePath": {
+              "lit": "output\\ExportExcelToCsvX_Full.csv"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ExportExcelToCsvX_Full.csv"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"CSV: \" & txt.Replace(vbCr, \"\").Replace(vbLf, \"|\")",
+          "cs": "\"CSV: \" + txt.Replace(\"\\r\", \"\").Replace(\"\\n\", \"|\")"
+        }
+      }
+    }
+  ]
+}

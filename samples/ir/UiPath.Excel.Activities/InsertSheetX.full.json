@@ -1,0 +1,73 @@
+{
+  "workflow": "InsertSheetX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    },
+    {
+      "name": "newSheet",
+      "type": "ISheetRef"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\InsertSheetX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\InsertSheetX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "InsertSheetX",
+          "name": "シートを足す",
+          "props": {
+            "Workbook": "Excel",
+            "Name": {
+              "lit": "追加シート"
+            },
+            "ReferenceNewSheetAs": "newSheet"
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"追加シート\").Cell(\"B2\")",
+            "Value": {
+              "lit": "参照を受けた"
+            }
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"追加シート\").Cell(\"B2\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"追加シートの B2: [\" & Convert.ToString(a1) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

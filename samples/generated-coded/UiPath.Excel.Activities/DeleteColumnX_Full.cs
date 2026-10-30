@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using UiPath.CodedWorkflows;
+using UiPath.Platform.ResourceHandling;
+using UiPath.Excel;
+using UiPath.Excel.Activities.API;
+using UiPath.Excel.Activities.API.Models;
+
+namespace CatalogProbeNet8
+{
+    // tools/ir/gen-coded.ts で IR（DeleteColumnX_Full）から生成。手で直さず IR を直す
+    public class DeleteColumnX_Full : CodedWorkflow
+    {
+        [Workflow]
+        public void Execute()
+        {
+            Object c1 = default;
+            Object b1 = default;
+            Object a1 = default;
+            // 元のブックを output に写す
+            system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\DeleteColumnX_Full.xlsx", overwrite: true);
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\DeleteColumnX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            {
+                // Age 列を消す
+                Excel.Sheet["Sheet1"].Range["A1:C4"].DeleteColumn(columnName: "Age", hasHeaders: true);
+                a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
+                Log(message: "A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                b1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B1"].ReadCellValue(getFormattedText: true), typeof(Object));
+                Log(message: "B1: [" + Convert.ToString(b1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                c1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["C1"].ReadCellValue(getFormattedText: true), typeof(Object));
+                Log(message: "C1: [" + Convert.ToString(c1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+            }
+        }
+    }
+}

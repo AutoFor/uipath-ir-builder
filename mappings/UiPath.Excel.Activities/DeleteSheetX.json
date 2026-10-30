@@ -1,0 +1,13 @@
+{
+  "activity": "DeleteSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Sheet}.DeleteSheet",
+      "args": {},
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "workflow": "DuplicateSheetX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    },
+    {
+      "name": "b2",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\DuplicateSheetX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\DuplicateSheetX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "DuplicateSheetX",
+          "name": "Sheet1 を控えに写す",
+          "props": {
+            "SheetToDuplicate": "Excel.Sheet(\"Sheet1\")",
+            "NewSheetName": {
+              "lit": "Sheet1控え"
+            }
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1控え\").Cell(\"A2\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"控えの A2: [\" & Convert.ToString(a1) & \"]\""
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1控え\").Cell(\"B2\")",
+            "SaveTo": "b2"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"控えの B2: [\" & Convert.ToString(b2) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

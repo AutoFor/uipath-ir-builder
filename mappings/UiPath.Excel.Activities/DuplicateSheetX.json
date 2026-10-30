@@ -1,0 +1,15 @@
+{
+  "activity": "DuplicateSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{SheetToDuplicate}.DuplicateSheet",
+      "args": {
+        "name": "{NewSheetName}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}
