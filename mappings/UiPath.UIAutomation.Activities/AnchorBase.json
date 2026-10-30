@@ -1,0 +1,6 @@
+{
+  "activity": "AnchorBase",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic のアンカー。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）で、アンカーは Anchors で別の形）"
+}

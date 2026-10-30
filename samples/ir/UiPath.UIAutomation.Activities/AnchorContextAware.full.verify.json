@@ -1,0 +1,3 @@
+{
+  "noRun": "AnchorProvider / TargetProvider に入る Anchor2Data は Studio のデザイナーが作る内部の情報で、この環境では用意できない。build まで"
+}

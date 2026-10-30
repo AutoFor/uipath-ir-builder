@@ -1,0 +1,35 @@
+{
+  "workflow": "AnchorContextAware_Full",
+  "body": [
+    {
+      "act": "AnchorContextAware",
+      "name": "コンテキスト アンカー（全部入り）",
+      "item": "ContextAnchor2Data",
+      "props": {
+        "DesignAnchor": "New System.Drawing.Rectangle(10, 10, 80, 20)",
+        "DesignTarget": "New System.Drawing.Rectangle(100, 10, 80, 20)",
+        "ContinueOnError": false
+      },
+      "slots": {
+        "AnchorProvider": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": "\"anchor\""
+            }
+          }
+        ],
+        "TargetProvider": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": "\"target\""
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

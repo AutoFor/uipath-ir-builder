@@ -1,0 +1,6 @@
+{
+  "activity": "InvokeActiveX",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の UI 操作（ActiveX の呼び出し）。Coded の API なし）"
+}

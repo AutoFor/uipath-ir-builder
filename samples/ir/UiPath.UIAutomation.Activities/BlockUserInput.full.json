@@ -1,0 +1,27 @@
+{
+  "workflow": "BlockUserInput_Full",
+  "body": [
+    {
+      "act": "BlockUserInput",
+      "name": "入力をブロックする（全部入り）",
+      "props": {
+        "BlockType": "Keyboard",
+        "KeyModifiers": "Ctrl",
+        "Keys": "f10",
+        "SpecialKey": false,
+        "TimeoutMS": 3000,
+        "ContinueOnError": true,
+        "SendTelemetryOnlyOnFailure": false
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"ブロック中\""
+          }
+        }
+      ]
+    }
+  ]
+}

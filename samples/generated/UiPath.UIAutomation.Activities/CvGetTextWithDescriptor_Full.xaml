@@ -95,7 +95,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityFunc.Argument>
             <DelegateInArgument x:TypeArguments="sdc:Image" Name="Image" />
           </ActivityFunc.Argument>
-          <ui:GoogleOCR DisplayName="Google OCR" Image="[Image]" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" />
+          <ui:GoogleOCR ComputeSkewAngle="False" DisplayName="Google OCR" ExtractWords="False" Image="[Image]" NoopExecution="False" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" />
         </ActivityFunc>
       </ns0:CVScope.OCREngine>
     </ns0:CVScope>

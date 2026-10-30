@@ -1,0 +1,22 @@
+{
+  "workflow": "IndicateOnScreen_Full",
+  "variables": [
+    {
+      "name": "el",
+      "type": "UiElement"
+    }
+  ],
+  "body": [
+    {
+      "act": "IndicateOnScreen",
+      "name": "画面で指す（全部入り）",
+      "props": {
+        "SelectedUiElement": "el",
+        "HidePreview": true,
+        "SelectScreenRegion": false,
+        "ContinueOnError": true,
+        "SendTelemetryOnlyOnFailure": false
+      }
+    }
+  ]
+}

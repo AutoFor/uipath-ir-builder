@@ -1,0 +1,6 @@
+{
+  "activity": "AnchorContextAware",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic のアンカー（Anchor2Data）。Coded の API なし）"
+}

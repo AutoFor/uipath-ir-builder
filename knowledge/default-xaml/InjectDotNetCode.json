@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"InjectDotNetCode\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:InjectDotNetCode AssemblyPath=\"{x:Null}\" MethodName=\"{x:Null}\" Result=\"{x:Null}\" TypeName=\"{x:Null}\">\r\n    <ui:InjectDotNetCode.Arguments>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, Argument\" />\r\n    </ui:InjectDotNetCode.Arguments>\r\n    <ui:InjectDotNetCode.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"becbef73-ed97-4e48-893d-1422b1643b6e\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:InjectDotNetCode.Target>\r\n  </ui:InjectDotNetCode>\r\n</Activity>"
+  }
+}

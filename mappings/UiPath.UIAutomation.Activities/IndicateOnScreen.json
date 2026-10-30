@@ -1,0 +1,6 @@
+{
+  "activity": "IndicateOnScreen",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の画面上の指示（人の操作を待つ）。Coded の API なし）"
+}

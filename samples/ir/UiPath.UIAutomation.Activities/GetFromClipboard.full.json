@@ -1,0 +1,10 @@
+{
+  "workflow": "GetFromClipboard_Full",
+  "variables": [{ "name": "got", "type": "Object" }],
+  "body": [
+    { "act": "SetToClipboard", "name": "テスト用の文字列を入れる", "props": { "Text": { "lit": "uia-c5 get full" } } },
+    { "act": "GetFromClipboard", "name": "クリップボードから読む（全部入り）",
+      "props": { "Result": "got", "TimeoutMS": 5000, "ContinueOnError": false, "SendTelemetryOnlyOnFailure": false } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"クリップボード: \" & Convert.ToString(got)" } }
+  ]
+}
