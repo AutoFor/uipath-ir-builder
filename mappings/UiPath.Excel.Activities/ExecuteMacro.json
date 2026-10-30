@@ -1,0 +1,1 @@
+{ "activity": "ExecuteMacro", "package": "UiPath.Excel.Activities", "coded": null, "reason": "Coded API なし（ExecuteMacro は IWorkbookQuickHandle 用で、クラシックの IWorkHandle（UseWorkBook は Excel を起動しない）からは呼べない。モダンは ExecuteMacroX）" }

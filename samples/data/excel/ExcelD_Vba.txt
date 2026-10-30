@@ -1,0 +1,7 @@
+Function Main() As Long
+    Main = 42
+End Function
+
+Function Add(a As Long, b As Long) As Long
+    Add = a + b
+End Function

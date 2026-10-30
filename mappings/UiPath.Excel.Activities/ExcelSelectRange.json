@@ -1,0 +1,1 @@
+{ "activity": "ExcelSelectRange", "package": "UiPath.Excel.Activities", "coded": null, "reason": "Coded API なし（クラシックの選択。IWorkHandle にセルや範囲を選ぶメソッドは無い。モダンは SelectRangeX）" }

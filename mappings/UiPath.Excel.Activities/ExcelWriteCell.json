@@ -1,0 +1,18 @@
+{
+  "activity": "ExcelWriteCell",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{@IWorkHandle}.WriteCell",
+      "args": {
+        "sheetName": "{SheetName}",
+        "cell": "{Cell}",
+        "text": "{Text}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.WriteCell(this IWorkHandle, string sheetName, string cell, string text)"
+}

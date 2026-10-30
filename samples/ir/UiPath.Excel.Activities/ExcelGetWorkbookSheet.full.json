@@ -1,0 +1,42 @@
+{
+  "workflow": "ExcelGetWorkbookSheet_Full",
+  "variables": [
+    {
+      "name": "sheets",
+      "type": "List<String>"
+    },
+    {
+      "name": "nm",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelGetWorkbookSheet",
+          "name": "2番目のシート名",
+          "props": {
+            "Index": "1",
+            "Sheet": "nm"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"sheet1=\" & nm"
+      }
+    }
+  ]
+}

@@ -43,7 +43,7 @@ const ueTypes = [
   "IWellDefinedReadRangeRef", "IWellDefinedReadWriteRangeRef",
 ];
 // UiPath.Excel 名前空間でも、UiPath.Excel.dll にある型は Studio が ui: で書く（ExcelProcessScopeX の IExcelProcess）
-const uiTypes = ["IExcelProcess", "WorkbookApplication", "Workbook"];
+const uiTypes = ["IExcelProcess", "WorkbookApplication", "Workbook", "IExcelLabelObject"];
 
 export const excelXamlTypes: Record<string, [string, Record<string, string>]> = Object.fromEntries([
   ...ueTypes.flatMap((t) => [[t, [`ue:${t}`, { ue: UE }]], [`UiPath.Excel.${t}`, [`ue:${t}`, { ue: UE }]]]),

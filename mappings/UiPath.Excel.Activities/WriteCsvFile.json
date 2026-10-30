@@ -1,0 +1,11 @@
+{
+  "activity": "WriteCsvFile",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    { "when": ["FilePath"], "call": "ExcelOperations.WriteCsvFile",
+      "args": { "filePath": "{FilePath}", "data": "{DataTable}", "delimiter": "UiPath.CSV.DelimitatorOptions.{Delimitator}", "addHeaders": "{AddHeaders}", "encodingStr": "{Encoding:-null}", "shouldQuote": "{ShouldQuote}" },
+      "defaults": { "Delimitator": "Comma", "AddHeaders": true, "ShouldQuote": true }, "usings": ["UiPath.Excel.Activities.API"] }
+  ],
+  "ignore": ["DelimitatorForViewModel"],
+  "notes": "ExcelOperations.WriteCsvFile は拡張メソッドではない static のメソッド。DelimitatorForViewModel は画面用の同じ値なので捨てる"
+}

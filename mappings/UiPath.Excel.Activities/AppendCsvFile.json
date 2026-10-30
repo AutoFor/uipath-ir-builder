@@ -1,0 +1,11 @@
+{
+  "activity": "AppendCsvFile",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    { "when": ["FilePath"], "call": "ExcelOperations.AppendCsvFile",
+      "args": { "filePath": "{FilePath}", "data": "{DataTable}", "delimiter": "UiPath.CSV.DelimitatorOptions.{Delimitator}", "encodingStr": "{Encoding:-null}" },
+      "defaults": { "Delimitator": "Comma" }, "usings": ["UiPath.Excel.Activities.API"] }
+  ],
+  "ignore": ["DelimitatorForViewModel"],
+  "notes": "ExcelOperations.AppendCsvFile(filePath, data, delimiter, encodingStr)"
+}

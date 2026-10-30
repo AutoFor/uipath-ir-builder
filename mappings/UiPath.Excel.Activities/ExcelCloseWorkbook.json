@@ -1,0 +1,1 @@
+{ "activity": "ExcelCloseWorkbook", "package": "UiPath.Excel.Activities", "coded": null, "reason": "Coded API なし（ブックは using の Dispose で閉じる。IWorkHandle に閉じるメソッドは無い）" }

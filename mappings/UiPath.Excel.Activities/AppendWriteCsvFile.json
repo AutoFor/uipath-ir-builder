@@ -1,0 +1,14 @@
+{
+  "activity": "AppendWriteCsvFile",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    { "when": ["FilePath"],
+      "code": "if ({CsvAction|is_Append}) { ExcelOperations.AppendCsvFile({FilePath}, {DataTable}, UiPath.CSV.DelimitatorOptions.{Delimitator}, {Encoding:-null}); } else { ExcelOperations.WriteCsvFile({FilePath}, {DataTable}, UiPath.CSV.DelimitatorOptions.{Delimitator}, {AddHeaders}, {Encoding:-null}, {ShouldQuote}); }",
+      "defaults": { "CsvAction": "Write", "Delimitator": "Comma", "AddHeaders": true, "ShouldQuote": true }, "usings": ["UiPath.Excel.Activities.API"] },
+    { "when": ["PathResource"],
+      "code": "if ({CsvAction|is_Append}) { ExcelOperations.AppendCsvFile(((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath, {DataTable}, UiPath.CSV.DelimitatorOptions.{Delimitator}, {Encoding:-null}); } else { ExcelOperations.WriteCsvFile(((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath, {DataTable}, UiPath.CSV.DelimitatorOptions.{Delimitator}, {AddHeaders}, {Encoding:-null}, {ShouldQuote}); }",
+      "defaults": { "CsvAction": "Write", "Delimitator": "Comma", "AddHeaders": true, "ShouldQuote": true }, "usings": ["UiPath.Excel.Activities.API"] }
+  ],
+  "ignore": ["DelimitatorForViewModel"],
+  "notes": "Coded には Write と Append が別の API（WriteCsvFile / AppendCsvFile）。CsvAction で呼び分ける。AppendCsvFile には addHeaders と shouldQuote が無いので、Append のときは捨てる"
+}

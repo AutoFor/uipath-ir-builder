@@ -1,0 +1,48 @@
+{
+  "workflow": "ExcelGetWorkbookSheets_Full",
+  "variables": [
+    {
+      "name": "sheets",
+      "type": "List<String>"
+    },
+    {
+      "name": "nm",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExcelGetWorkbookSheets",
+          "name": "シート名の一覧を取る",
+          "props": {
+            "Sheets": "sheets"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"count=\" & sheets.Count.ToString"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"names=\" & String.Join(\",\", sheets)"
+      }
+    }
+  ]
+}
