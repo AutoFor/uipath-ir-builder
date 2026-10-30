@@ -1,0 +1,59 @@
+{
+  "workflow": "RenameSheetX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\RenameSheetX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\RenameSheetX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "RenameSheetX",
+          "name": "Sheet1 を改名",
+          "props": {
+            "From": "Excel.Sheet(\"Sheet1\")",
+            "To": {
+              "lit": "名簿"
+            }
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"名簿\").Cell(\"A2\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"名簿の A2: [\" & Convert.ToString(a1) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

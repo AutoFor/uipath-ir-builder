@@ -1,0 +1,19 @@
+{
+  "activity": "InsertRowsX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.InsertRows",
+      "args": {
+        "nbOfRows": "{NbOfRows}",
+        "insertPosition": "UiPath.Excel.InsertRowPosition.{InsertPosition:-End}",
+        "specificIndex": "{SpecificIndex:-0}",
+        "hasHeaders": "{HasHeaders:-true}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "InsertPosition の既定は End（アクティビティと同じ）。SpecificIndex が無いときは 0"
+}

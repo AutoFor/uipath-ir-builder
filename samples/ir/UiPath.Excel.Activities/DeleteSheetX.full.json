@@ -1,0 +1,91 @@
+{
+  "workflow": "DeleteSheetX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\DeleteSheetX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\DeleteSheetX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "DeleteSheetX",
+          "name": "Sheet2 を消す",
+          "props": {
+            "Sheet": "Excel.Sheet(\"Sheet2\")"
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"Sheet1 の A1: [\" & Convert.ToString(a1) & \"]\""
+          }
+        },
+        {
+          "act": "TryCatch",
+          "name": "Sheet2 を読む",
+          "body": [
+            {
+              "act": "ReadCellValueX",
+              "props": {
+                "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"A1\")",
+                "SaveTo": "a1"
+              }
+            },
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"Sheet2 が残っている\""
+              }
+            }
+          ],
+          "catches": [
+            {
+              "type": "Exception",
+              "var": "ex",
+              "body": [
+                {
+                  "act": "LogMessage",
+                  "props": {
+                    "Level": "Info",
+                    "Message": "\"Sheet2 は無い\""
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

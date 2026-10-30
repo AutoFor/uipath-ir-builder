@@ -1,0 +1,91 @@
+{
+  "workflow": "ProtectSheetX_SecureString",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ProtectSheetX_SecureString.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ProtectSheetX_SecureString.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "variables": [
+            {
+              "name": "pw",
+              "type": "System.Security.SecureString",
+              "default": "New System.Net.NetworkCredential(\"\", \"pw123\").SecurePassword"
+            }
+          ],
+          "body": [
+            {
+              "act": "ProtectSheetX",
+              "props": {
+                "Sheet": "Excel.Sheet(\"Sheet1\")",
+                "SecurePassword": "pw"
+              }
+            },
+            {
+              "act": "TryCatch",
+              "name": "保護中のシートに書く",
+              "body": [
+                {
+                  "act": "WriteCellX",
+                  "props": {
+                    "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"E1\")",
+                    "Value": {
+                      "lit": "書けた"
+                    }
+                  }
+                },
+                {
+                  "act": "LogMessage",
+                  "props": {
+                    "Level": "Info",
+                    "Message": "\"保護されていない\""
+                  }
+                }
+              ],
+              "catches": [
+                {
+                  "type": "Exception",
+                  "var": "ex",
+                  "body": [
+                    {
+                      "act": "LogMessage",
+                      "props": {
+                        "Level": "Info",
+                        "Message": "\"保護されていて書けなかった\""
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

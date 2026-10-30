@@ -1,0 +1,17 @@
+{
+  "activity": "DeleteColumnX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.DeleteColumn",
+      "args": {
+        "columnName": "{ColumnName}",
+        "hasHeaders": "{HasHeaders:-true}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.DeleteColumn(this IReadWriteRangeRef range, string columnName, bool hasHeaders)。HasHeaders の既定はアクティビティと同じ true"
+}

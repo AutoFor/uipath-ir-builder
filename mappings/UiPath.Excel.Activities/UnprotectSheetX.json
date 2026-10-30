@@ -1,0 +1,31 @@
+{
+  "activity": "UnprotectSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Sheet}.UnprotectSheet",
+      "args": {
+        "securedPassword": "{SecurePassword}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ],
+      "when": [
+        "SecurePassword"
+      ]
+    },
+    {
+      "call": "{Sheet}.UnprotectSheet",
+      "args": {
+        "password": "{Password:-null}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "ignore": [
+    "IsPasswordHidden"
+  ],
+  "notes": "IsPasswordHidden は Coded では捨てる"
+}

@@ -1,0 +1,27 @@
+{
+  "activity": "CreateTableX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "OutTableName"
+      ],
+      "code": "{OutTableName} = {Range}.CreateTable(hasHeaders: {HasHeaders:-true}, replaceExisting: {ReplaceExisting:-false}, tableName: {TableName:-null});",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    },
+    {
+      "call": "{Range}.CreateTable",
+      "args": {
+        "hasHeaders": "{HasHeaders:-true}",
+        "replaceExisting": "{ReplaceExisting:-false}",
+        "tableName": "{TableName:-null}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "CreateTable は作ったテーブル名（string）を返す。OutTableName があるときだけ受ける"
+}

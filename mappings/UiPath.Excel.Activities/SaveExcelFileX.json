@@ -1,0 +1,13 @@
+{
+  "activity": "SaveExcelFileX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.SaveExcelFile",
+      "args": {},
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

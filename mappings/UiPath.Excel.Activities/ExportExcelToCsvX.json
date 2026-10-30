@@ -1,0 +1,16 @@
+{
+  "activity": "ExportExcelToCsvX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{TargetRange}.ExportExcelToSCV",
+      "args": {
+        "fileName": "{FilePath}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "API の名前は ExportExcelToSCV（綴りの誤りがそのまま）"
+}

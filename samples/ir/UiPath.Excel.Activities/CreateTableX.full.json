@@ -1,0 +1,80 @@
+{
+  "workflow": "CreateTableX_Full",
+  "variables": [
+    {
+      "name": "tableName",
+      "type": "String"
+    },
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\CreateTableX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\CreateTableX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "CreateTableX",
+          "name": "名簿テーブルを作る",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "TableName": {
+              "lit": "PeopleTable"
+            },
+            "HasHeaders": true,
+            "ReplaceExisting": true,
+            "OutTableName": "tableName"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"テーブル名: \" & tableName"
+          }
+        },
+        {
+          "act": "ReadRangeX",
+          "props": {
+            "Range": "Excel.Table(\"PeopleTable\")",
+            "SaveTo": "dt"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"テーブルの行数: \" & dt.Rows.Count.ToString"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"2 行目: \" & dt.Rows(1).Item(\"Name\").ToString"
+          }
+        }
+      ]
+    }
+  ]
+}

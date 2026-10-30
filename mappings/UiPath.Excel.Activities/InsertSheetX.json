@@ -1,0 +1,25 @@
+{
+  "activity": "InsertSheetX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "ReferenceNewSheetAs"
+      ],
+      "code": "{ReferenceNewSheetAs} = {Workbook}.InsertSheet(sheetName: {Name});",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    },
+    {
+      "call": "{Workbook}.InsertSheet",
+      "args": {
+        "sheetName": "{Name}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "InsertSheet は ISheetRef を返す。ReferenceNewSheetAs があるときだけ受ける"
+}

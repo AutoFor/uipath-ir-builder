@@ -1,0 +1,18 @@
+{
+  "activity": "DeleteRowsX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.DeleteColumn",
+      "args": {
+        "deleteOption": "UiPath.Excel.DeleteRowsOption.{DeleteRowsOption:-Specific}",
+        "rowPositions": "{RowPositions:-null}",
+        "hasHeaders": "{HasHeaders:-true}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "API の名前は DeleteColumn だが、(range, DeleteRowsOption, rowPositions, hasHeaders) の形が DeleteRowsX。RowPositions が無いときは null"
+}

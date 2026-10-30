@@ -1,0 +1,84 @@
+{
+  "workflow": "ProtectSheetX_Full",
+  "variables": [
+    {
+      "name": "a1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\ProtectSheetX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ProtectSheetX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ProtectSheetX",
+          "name": "パスワード付きで保護",
+          "props": {
+            "Sheet": "Excel.Sheet(\"Sheet1\")",
+            "Password": {
+              "lit": "pw123"
+            },
+            "IsPasswordHidden": false,
+            "AdditionalPermissions": "AllowSorting"
+          }
+        },
+        {
+          "act": "TryCatch",
+          "name": "保護中のシートに書く",
+          "body": [
+            {
+              "act": "WriteCellX",
+              "props": {
+                "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"E1\")",
+                "Value": {
+                  "lit": "書けた"
+                }
+              }
+            },
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"保護されていない\""
+              }
+            }
+          ],
+          "catches": [
+            {
+              "type": "Exception",
+              "var": "ex",
+              "body": [
+                {
+                  "act": "LogMessage",
+                  "props": {
+                    "Level": "Info",
+                    "Message": "\"保護されていて書けなかった\""
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
