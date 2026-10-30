@@ -30,7 +30,8 @@
     "Version",
     "ForceRefreshView",
     "RequiresInitialization",
-    "Target"
+    "Target",
+    "Items"
   ],
-  "notes": "SAPSelectMenuItem(SelectItemOptions) を使う。ターゲットは取らないので Target は捨てる。Items（複数）は IR でまだ書けない"
+  "notes": "SAPSelectMenuItem(SelectItemOptions) を使う。ターゲットは取らないので Target は捨てる。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる"
 }

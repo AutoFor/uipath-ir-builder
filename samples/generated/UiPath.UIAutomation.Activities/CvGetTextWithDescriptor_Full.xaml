@@ -72,7 +72,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </Sequence.Variables>
     <ns0:CVScope CvMethod="ElementDetection, OCR" DisplayName="CV スコープ" SendOnPremData="False" sap2010:WorkflowViewState.IdRef="CVScope_1">
       <ns0:CVScope.Target>
-        <ui:Target Id="e3d0181d-495d-4a6b-8f2a-45378b90206b" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" />
+        <ui:Target Id="77d19fc5-8ae0-511c-9daf-2e6d050eb520" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" />
       </ns0:CVScope.Target>
       <ns0:CVScope.Body>
         <ActivityAction x:TypeArguments="x:Object">

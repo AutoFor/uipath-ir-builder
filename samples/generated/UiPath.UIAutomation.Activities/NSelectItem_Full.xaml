@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:uix="http://schemas.uipath.com/workflow/activities/uix"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -68,7 +69,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="result" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox' onchange=&quot;document.getElementById('result').textContent='agree='+this.checked&quot;&gt;agree&lt;/label&gt;&lt;select id='fruit' onchange=&quot;document.getElementById('result').textContent='fruit='+this.value&quot;&gt;&lt;option&gt;apple&lt;/option&gt;&lt;option&gt;banana&lt;/option&gt;&lt;option&gt;cherry&lt;/option&gt;&lt;/select&gt;&lt;div id='hoverbox' style='border:1px solid;padding:6px;width:120px' onmouseover=&quot;document.getElementById('result').textContent='hovered'&quot;&gt;hover me&lt;/div&gt;&lt;input id='focusme' type='text' onfocus=&quot;document.getElementById('result').textContent='focused'&quot;&gt;&lt;input id='kbd' type='text' onkeydown=&quot;document.getElementById('result').textContent='key:'+event.key&quot;&gt;&lt;div id='scrollbox' style='height:60px;width:200px;overflow:auto' onscroll=&quot;document.getElementById('result').textContent=(this.scrollTop&gt;0?'scrolled':'top')&quot;&gt;&lt;div style='height:400px'&gt;scroll me&lt;/div&gt;&lt;p id='scrollend'&gt;end&lt;/p&gt;&lt;/div&gt;&lt;div id='src' style='border:1px solid;padding:6px;width:80px;background:#cde' onmousedown=&quot;window.dragging=true&quot;&gt;drag me&lt;/div&gt;&lt;div id='dst' style='border:1px solid;padding:6px;width:80px;background:#edc' onmouseup=&quot;if(window.dragging){document.getElementById('result').textContent='dropped'}&quot;&gt;drop here&lt;/div&gt;&lt;ul id='fruits'&gt;&lt;li&gt;apple&lt;/li&gt;&lt;li&gt;banana&lt;/li&gt;&lt;li&gt;cherry&lt;/li&gt;&lt;/ul&gt;&lt;table id='tbl'&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Qty&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;apple&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;banana&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;cherry&lt;/td&gt;&lt;td&gt;7&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;script&gt;document.onmouseup=function(){setTimeout(function(){window.dragging=false},0)}&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="d5488931-fbe6-42ce-b2a8-e1e9a6acb6ba" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="84c26c0a-30c0-53e8-a131-699361145a2d" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -78,14 +79,21 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSelectItem AlterIfDisabled="False" ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DisplayName="cherry を選ぶ（全部入り）" HealingAgentBehavior="Disabled" Item="cherry" ScopeIdentifier="d5488931-fbe6-42ce-b2a8-e1e9a6acb6ba" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NSelectItem_1">
+            <uix:NSelectItem AlterIfDisabled="False" ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DisplayName="cherry を選ぶ（全部入り）" HealingAgentBehavior="Disabled" Item="cherry" ScopeIdentifier="84c26c0a-30c0-53e8-a131-699361145a2d" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NSelectItem_1">
+              <uix:NSelectItem.Items>
+                <scg:List x:TypeArguments="x:String" Capacity="4">
+                  <x:String>apple</x:String>
+                  <x:String>banana</x:String>
+                  <x:String>cherry</x:String>
+                </scg:List>
+              </uix:NSelectItem.Items>
               <uix:NSelectItem.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='fruit' tag='SELECT' /&gt;" Guid="fdd360f0-9dde-4761-b51c-5f2dee19672b" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='fruit' tag='SELECT' /&gt;" Guid="ecccb7f4-7faa-5534-b6e6-302964a339ae" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NSelectItem.Target>
             </uix:NSelectItem>
-            <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="d5488931-fbe6-42ce-b2a8-e1e9a6acb6ba" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
+            <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="84c26c0a-30c0-53e8-a131-699361145a2d" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
               <uix:NGetText.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="90ed3864-cac3-48fe-89e8-e1ffac5c96af" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="28749c7c-5330-5cd1-805c-df2d4b85655b" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NGetText.Target>
             </uix:NGetText>
           </Sequence>

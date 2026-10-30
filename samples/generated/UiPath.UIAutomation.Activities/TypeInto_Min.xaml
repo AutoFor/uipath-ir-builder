@@ -74,12 +74,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:TypeInto Activate="True" AlterIfDisabled="True" DisplayName="名前を入力（Classic）" Text="Hanako" sap2010:WorkflowViewState.IdRef="TypeInto_1">
               <ui:TypeInto.Target>
-                <ui:Target Id="cb799863-6dc4-4f9d-b1bf-555e09c7c88d" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" />
+                <ui:Target Id="77a1761a-c9cf-5a65-8418-0f7bb3e245c9" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" />
               </ui:TypeInto.Target>
             </ui:TypeInto>
             <ui:Click AlterIfDisabled="True" ClickType="CLICK_SINGLE" DisplayName="Greet を押す（Classic）" KeyModifiers="None" MouseButton="BTN_LEFT" sap2010:WorkflowViewState.IdRef="Click_1">
               <ui:Click.Target>
-                <ui:Target Id="9be3de5b-5c70-4fae-89ca-3838be93957b" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
+                <ui:Target Id="c1694447-cdbc-5b7e-90ac-650afbbb0067" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
               </ui:Click.Target>
             </ui:Click>
             <ui:GetValue DisplayName="結果を読む（Classic）" sap2010:WorkflowViewState.IdRef="GetValue_1">
@@ -87,7 +87,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="2ea9025c-c32d-4291-a042-5e34583f0d99" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="a5ee7293-2a9c-53ac-8b0d-ea0266cffcd5" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

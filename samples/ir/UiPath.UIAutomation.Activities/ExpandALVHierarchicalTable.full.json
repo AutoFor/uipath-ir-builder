@@ -45,6 +45,26 @@
             "SelectLevel1": false,
             "ContinueOnError": false,
             "SendTelemetryOnlyOnFailure": false
+          },
+          "lists": {
+            "AllColumns": [
+              {
+                "lit": "MATNR"
+              },
+              {
+                "lit": "WERKS"
+              }
+            ],
+            "ColumnsLevel0": [
+              {
+                "lit": "MATNR"
+              }
+            ],
+            "ColumnsLevel1": [
+              {
+                "lit": "WERKS"
+              }
+            ]
           }
         }
       ]

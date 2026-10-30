@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:SelectDatesInCalendar Date="[New DateTime(2026, 10, 30)]" SelectType="Date" Week="44" Year="2026" sap2010:WorkflowViewState.IdRef="SelectDatesInCalendar_1">
             <ns0:SelectDatesInCalendar.Target>
-              <ui:Target Id="5180f1c8-b48f-44f5-b7fe-b2c91b599fc0" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
+              <ui:Target Id="5f5df330-d7cb-5114-aece-1409b944f5a0" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
             </ns0:SelectDatesInCalendar.Target>
           </ns0:SelectDatesInCalendar>
         </ActivityAction>

@@ -73,7 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:OnImageAppear ContinueOnError="False" RepeatForever="[False]" sap2010:WorkflowViewState.IdRef="OnImageAppear_1">
               <ui:OnImageAppear.Target>
-                <ui:Target Id="6a77a584-9400-4086-902a-f3a9a085d3f5" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+                <ui:Target Id="3cf9e79b-d931-5130-b8d6-3bc0b5f38097" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
               </ui:OnImageAppear.Target>
               <ui:OnImageAppear.Image>
                 <ui:ImageTarget Accuracy="0.8" Profile="Basic" TargetImageBase64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" />

@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -67,8 +68,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <ui:CellScope ColumnName="CARRID" ContinueOnError="False" RowNumber="2" SendTelemetryOnlyOnFailure="False" sap2010:WorkflowViewState.IdRef="CellScope_1">
+            <ui:CellScope.ColumnNames>
+              <scg:List x:TypeArguments="x:String" Capacity="4">
+                <x:String>MATNR</x:String>
+                <x:String>WERKS</x:String>
+              </scg:List>
+            </ui:CellScope.ColumnNames>
             <ui:CellScope.Target>
-              <ui:Target Id="c90b98ef-8c50-4026-bc4f-0b6a2e850cbe" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="c321ac05-1b7a-53d9-9f06-eae1559bffa7" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ui:CellScope.Target>
             <ui:CellScope.Body>
               <ActivityAction x:TypeArguments="x:Object">

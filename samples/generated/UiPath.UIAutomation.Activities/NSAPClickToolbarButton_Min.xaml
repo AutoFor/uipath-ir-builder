@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPClickToolbarButton_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="f43c087b-8a71-41bf-a8b4-cb9f89f226de" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="d7d90b2a-2657-52d1-942a-a264db7a3408" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPClickToolbarButton DisplayName="ツールバー ボタンをクリック" HealingAgentBehavior="SameAsCard" Item="Save" ScopeIdentifier="f43c087b-8a71-41bf-a8b4-cb9f89f226de" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPClickToolbarButton_1">
+            <uix:NSAPClickToolbarButton DisplayName="ツールバー ボタンをクリック" HealingAgentBehavior="SameAsCard" Item="Save" ScopeIdentifier="d7d90b2a-2657-52d1-942a-a264db7a3408" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPClickToolbarButton_1">
               <uix:NSAPClickToolbarButton.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/tbar[1]' /&gt;" Guid="91d6e122-1117-4eb0-bb47-3b1accfa50af" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/tbar[1]' /&gt;" Guid="a336a5ea-77af-5bb8-a113-f3b08a31a887" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPClickToolbarButton.Target>
             </uix:NSAPClickToolbarButton>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPClickToolbarButton 完了&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

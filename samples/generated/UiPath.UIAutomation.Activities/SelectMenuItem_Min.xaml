@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:SelectMenuItem AlterIfDisabled="True" Item="System" sap2010:WorkflowViewState.IdRef="SelectMenuItem_1">
             <ns0:SelectMenuItem.Target>
-              <ui:Target Id="bebecd2f-c129-4af7-87a2-e8be574bfdd9" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/mbar' /&gt;" />
+              <ui:Target Id="c7b5de7c-596f-555c-9068-926827f470f6" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/mbar' /&gt;" />
             </ns0:SelectMenuItem.Target>
           </ns0:SelectMenuItem>
         </ActivityAction>

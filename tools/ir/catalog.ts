@@ -175,6 +175,18 @@ export const argumentListElement = (propType: string, typeArg: string | undefine
   return t === undefined || /^T\d?$/.test(t) ? typeArg : t;
 };
 
+// 素の値の一覧（List<String> / IEnumerable<String> / List<DayOfWeek>）。要素は式を持てないリテラル。要素の型を返す
+export function plainListElement(t: string): string | undefined {
+  return t.match(/^System\.Collections\.Generic\.(?:List|IEnumerable)<(System\.String|System\.DayOfWeek)>$/)?.[1];
+}
+export const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// 文字列キーの辞書で、値が String（リテラル）か InArgument<String>（式）のもの。"String" / "InArgument" を返す
+export function literalMapValue(t: string): "String" | "InArgument" | undefined {
+  const m = t.match(/^System\.Collections\.Generic\.I?Dictionary<System\.String, (System\.String|System\.Activities\.InArgument<System\.String>)>$/);
+  return m ? (m[1] === "System.String" ? "String" : "InArgument") : undefined;
+}
+
 export const READ_ONLY = "読み取り専用";
 
 export type Writable = { ok: true; how: string } | { ok: false; reason: string; group: string };
@@ -198,6 +210,8 @@ export function writable(a: Activity, p: Prop): Writable {
   if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
   if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  if (literalMapValue(p.type)) return { ok: true, how: "dicts" };
+  if (plainListElement(p.type)) return { ok: true, how: "lists" };
   const listOf = listElementType(p.type);
   if (listOf && (listOf === "System.Activities.InArgument" || objectTypes.has(listOf))) return { ok: true, how: "lists" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))

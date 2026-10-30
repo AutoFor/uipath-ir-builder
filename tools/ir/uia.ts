@@ -19,7 +19,7 @@
 //   UIA_NO_SCOPE       … Modern の Target を持つアクティビティが NApplicationCard の外にあり、InUiElement も無い
 //   UIA_TARGET_MISSING … Modern の Target を持つアクティビティに Target も InUiElement も無い
 
-import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { objectTypes, objTypeFor, resolve } from "./catalog.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
@@ -32,7 +32,17 @@ const CLASSIC_TARGET = "UiPath.Core.Activities.Target";
 const CARD = "UiPath.UIAutomationNext.Activities.NApplicationCard";
 const ELEMENT_SCOPE = "UiPath.UIAutomationNext.Activities.NElementScope";
 
-// 生成器が足す既定値（Studio が書く値）。"guid" は毎回新しい GUID
+// 生成器が足す GUID（Target の Id、ScopeGuid など）。ワークフロー名と通し番号から決めるので、同じ IR からは同じ XAML ができる。
+// generate の最初に resetGuids を呼ぶ。ワークフロー名は全サンプルで重ならないので、ワークフローをまたいでも重ならない
+let guidSeed = "";
+let guidCount = 0;
+export function resetGuids(seed: string) { guidSeed = seed; guidCount = 0; }
+export function nextGuid(): string {
+  const h = createHash("sha1").update(`${guidSeed}#${++guidCount}`).digest("hex");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${"89ab"[parseInt(h[16], 16) % 4]}${h.slice(17, 20)}-${h.slice(20, 32)}`;
+}
+
+// 生成器が足す既定値（Studio が書く値）。"guid" は新しい GUID（nextGuid）
 const objDefaults: Record<string, Record<string, string>> = {
   [TA]: { Guid: "guid", Version: "V6" },
   "UiPath.UIAutomationNext.Target": { Guid: "guid" }, // アンカー
@@ -97,6 +107,14 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
         const head = typeof x === "string" ? x.match(/^[A-Za-z_]\w*/)?.[0] : undefined;
         if (!head || !scope.has(head)) add(kat, "UNDECLARED_NAME", `出力先 "${String(x)}" が宣言されていない`);
       }
+      const drawing = p.type.match(/^System\.Nullable<System\.Drawing\.(Rectangle|Point)>$|^System\.Drawing\.(Rectangle|Point)$/);
+      if (drawing) {
+        // XAML の属性に書く（TypeConverter が読む）。式は書けない
+        const parts = (drawing[1] ?? drawing[2]) === "Rectangle" ? 4 : 2;
+        if (typeof x !== "string" || !new RegExp(`^-?\\d+(, -?\\d+){${parts - 1}}$`).test(x))
+          add(kat, "BAD_OBJ", `"${k}" は ${parts === 4 ? '"X, Y, 幅, 高さ"（"10, 20, 300, 200"）' : '"X, Y"（"10, 20"）'} の文字列で書く`);
+        continue;
+      }
       if (p.kind === "prop" && !p.enum && typeof x === "string" && !/^(System\.(String|Guid|Double|Int32|Boolean))$/.test(p.type))
         add(kat, "BAD_OBJ", `"${k}"（${p.type}）はまだ書けない`);
     }
@@ -157,7 +175,7 @@ export function prepareUia(root: Node, cat: Catalog): Node {
       const a = r.activity;
       if (a.clrType === CARD || a.clrType === ELEMENT_SCOPE) {
         const g = n.props?.ScopeGuid;
-        inner = typeof g === "object" && "lit" in g ? g.lit : typeof g === "string" ? g : randomUUID();
+        inner = typeof g === "object" && "lit" in g ? g.lit : typeof g === "string" ? g : nextGuid();
         out.props = { ...n.props, ScopeGuid: inner };
         // NElementScope は NApplicationCard の中に置くので、外側のスコープの ID も付ける。子は自分の ScopeGuid を ScopeIdentifier にする
         if (a.clrType === ELEMENT_SCOPE && scopeId && n.props?.ScopeIdentifier === undefined && a.props.some((p) => p.name === "ScopeIdentifier"))
@@ -209,7 +227,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
     else elems.push([p, x as ObjValue | ObjValue[]]);
   }
   for (const [k, d] of Object.entries(objDefaults[t.clrType] ?? {}))
-    if (!(k in v)) attrs.push([k, d === "guid" ? randomUUID() : d]);
+    if (!(k in v)) attrs.push([k, d === "guid" ? nextGuid() : d]);
   attrs.sort(([x], [y]) => x.localeCompare(y));
   const attrText = attrs.map(([k, x]) => ` ${k}="${ctx.esc(x)}"`).join("");
   if (!elems.length) { ctx.emit(depth, `<${tag}${attrText} />`); return; }

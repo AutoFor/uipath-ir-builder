@@ -49,6 +49,16 @@
               "lit": "SAP 画面の操作"
             },
             "ForceRefreshView": true
+          },
+          "lists": {
+            "Items": [
+              {
+                "lit": "Menu"
+              },
+              {
+                "lit": "Exit"
+              }
+            ]
           }
         },
         {

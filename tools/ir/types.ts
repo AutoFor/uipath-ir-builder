@@ -33,11 +33,11 @@ export type Node = {
   slots?: Record<string, Node[]>; // それ以外の子（プロパティ名で指定）
   item?: string | string[]; // ForEach などのデリゲート引数名（既定 "item"）。ForEachFileX のように2つ取るものは配列
   args?: InvokeArg[]; // InvokeWorkflowFile の引数（dicts.Arguments と同じ）
-  dicts?: Record<string, InvokeArg[]>; // Dictionary<String, Argument> 型のプロパティ（InvokeCode.Arguments、AddLogFields.Fields など）
+  dicts?: Record<string, InvokeArg[]>; // Dictionary<String, Argument> 型のプロパティ（InvokeCode.Arguments、AddLogFields.Fields など）。IDictionary<String, String> と Dictionary<String, InArgument<String>> は { name, value } だけ（dir と type は書かない）
   cases?: Record<string, Node[]>; // Switch の分岐（キーは値の文字列表記）。既定の分岐は slots.Default
   catches?: CatchDecl[]; // TryCatch の Catch。Try は body、Finally は slots.Finally
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）
-  lists?: Record<string, ListItem[]>; // 一覧のプロパティ。InArgument の一覧（AppendItemToCollection.Items、FilterDataTable.SelectColumns など）は式の配列、オブジェクト型の List（FilterDataTable.Filters、JoinDataTables.Arguments など）はプロパティの辞書の配列
+  lists?: Record<string, ListItem[]>; // 一覧のプロパティ。List<String> / IEnumerable<String>（NSelectItem.Items など）は式を持てないので { lit } の配列、List<DayOfWeek> はメンバー名の配列。InArgument の一覧（AppendItemToCollection.Items、FilterDataTable.SelectColumns など）は式の配列、オブジェクト型の List（FilterDataTable.Filters、JoinDataTables.Arguments など）はプロパティの辞書の配列
   objs?: Record<string, ObjValue>; // 要素で書くオブジェクトのプロパティ（UI のターゲット Target / TargetApp など）。書き方は tools/ir/uia.ts
 };
 

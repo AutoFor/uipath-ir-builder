@@ -30,7 +30,8 @@
     "ScopeIdentifier",
     "Version",
     "ForceRefreshView",
-    "RequiresInitialization"
+    "RequiresInitialization",
+    "Items"
   ],
-  "notes": "SelectItemOptions を使う。Items（複数）は IR でまだ書けない。OutUiElement は扱わない"
+  "notes": "SelectItemOptions を使う。OutUiElement は扱わない。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる"
 }

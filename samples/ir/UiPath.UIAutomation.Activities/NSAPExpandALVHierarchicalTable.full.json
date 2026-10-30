@@ -61,6 +61,16 @@
               "lit": "SAP 画面の操作"
             },
             "ForceRefreshView": true
+          },
+          "lists": {
+            "AllColumns": [
+              {
+                "lit": "MATNR"
+              },
+              {
+                "lit": "WERKS"
+              }
+            ]
           }
         },
         {

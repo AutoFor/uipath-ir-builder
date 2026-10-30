@@ -73,7 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:OnUiElementVanish RepeatForever="[False]" sap2010:WorkflowViewState.IdRef="OnUiElementVanish_1">
               <ui:OnUiElementVanish.Target>
-                <ui:Target Id="208cc314-4e48-4e0b-80fb-a0a379137d7f" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
+                <ui:Target Id="45116bf6-e025-5c92-8724-06b321649996" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
               </ui:OnUiElementVanish.Target>
               <ui:OnUiElementVanish.Body>
                 <ui:LogMessage Level="Info" Message="[&quot;OnUiElementVanish が発火した&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

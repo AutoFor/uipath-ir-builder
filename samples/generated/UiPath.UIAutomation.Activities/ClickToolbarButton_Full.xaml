@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -69,8 +70,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <ns0:ClickToolbarButton AlterIfDisabled="False" ContinueOnError="False" DelayAfter="100" DelayBefore="100" Item="Execute" sap2010:WorkflowViewState.IdRef="ClickToolbarButton_1">
+            <ns0:ClickToolbarButton.Items>
+              <scg:List x:TypeArguments="x:String" Capacity="4">
+                <x:String>Save</x:String>
+                <x:String>Back</x:String>
+              </scg:List>
+            </ns0:ClickToolbarButton.Items>
             <ns0:ClickToolbarButton.Target>
-              <ui:Target Id="90aed9e1-e4dd-42dc-85b5-43257a1e83f6" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="c8b382e5-0369-5b76-9571-2137feb24cec" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:ClickToolbarButton.Target>
           </ns0:ClickToolbarButton>
         </ActivityAction>
