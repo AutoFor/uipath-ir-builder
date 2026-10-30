@@ -131,6 +131,11 @@ export function toXamlType(t: string): XamlType | { error: string } {
   return { text: hit[0], xmlns: hit[1] };
 }
 
+// 表の中身（XAML → IR の逆引き用。tools/ir/import-xaml.ts）
+export function xamlTypeEntries(): { ir: string; text: string; xmlns: Record<string, string> }[] {
+  return [...Object.entries(simple), ...Object.entries(generic), ...Object.entries(excelXamlTypes)].map(([ir, [text, xmlns]]) => ({ ir, text, xmlns }));
+}
+
 function splitArgs(s: string): string[] {
   const out: string[] = [];
   let depth = 0, cur = "";

@@ -43,7 +43,7 @@ export function nextGuid(): string {
 }
 
 // 生成器が足す既定値（Studio が書く値）。"guid" は新しい GUID（nextGuid）
-const objDefaults: Record<string, Record<string, string>> = {
+export const objDefaults: Record<string, Record<string, string>> = {
   [TA]: { Guid: "guid", Version: "V6" },
   "UiPath.UIAutomationNext.Target": { Guid: "guid" }, // アンカー
   [TAPP]: { Version: "V3" },
@@ -272,7 +272,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
 // オブジェクト → Coded のモデル（UiPath.UIAutomationNext.API.Models）。値は「モデルのプロパティ名」、null は Coded では意味がないので捨てる、
 // "!理由" は Coded に直せない（CODED_UNSUPPORTED）
 type ModelMap = { type: string; props: Record<string, string | null> };
-const codedModels: Record<string, ModelMap> = {
+export const codedModels: Record<string, ModelMap> = {
   [TA]: {
     type: "TargetAnchorableModel",
     props: {

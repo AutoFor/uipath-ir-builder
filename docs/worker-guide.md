@@ -505,7 +505,8 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 
 ## 9. XAML → IR の取り込みに向けて気づいた点
 
-今回は作らないが、既存の XAML を読んで IR にする（そこから C# を作る）ときに困らないよう、IR を変えるときは次に気をつける。
+既存の XAML を読んで IR にする（そこから C# を作る）道具は `tools/ir/import-xaml.ts`、置き換えの見積もりは `tools/ir/migrate-report.ts`（使い方は README の「XAML → IR の取り込み」）。IR を変えるときは次に気をつける。
+新しい形を生成器に足したら、`tools/ir/import-xaml.ts` の逆も足す（`samples/generated/**/*.xaml` の全部について、`node --test` が往復を確かめる）。
 
 - **式の言語**：IR の文字列の式は VB 前提。取り込む XAML が C# のプロジェクト（`expressionLanguage: CSharp`）だと式も C# になる。IR に式の言語（ワークフロー単位の `language` か、値ごとの `{ cs }`）を持たせる余地を残しておく。`{ vb, cs }` の形はその足がかり
 - **属性のリテラルと式の区別**：XAML では `Message="abc"`（リテラル）と `Message="[abc]"`（式）が別。IR では `{ lit }` と文字列で分けているので、取り込み時もこの区別を保つ

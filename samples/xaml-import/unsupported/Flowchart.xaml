@@ -1,0 +1,9 @@
+<Activity mc:Ignorable="sap2010" x:Class="Flow" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Flowchart DisplayName="Main">
+    <Flowchart.StartNode>
+      <FlowStep x:Name="__ReferenceID0">
+        <ui:LogMessage Level="Info" Message="[&quot;a&quot;]" />
+      </FlowStep>
+    </Flowchart.StartNode>
+  </Flowchart>
+</Activity>

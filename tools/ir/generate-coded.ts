@@ -272,7 +272,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         (n.assigns ?? []).forEach((x, i) => emit(depth, `${lvalue(x.to, `${at}.assigns[${i}].to`, sc)} = ${expr(x.value, `${at}.assigns[${i}].value`, sc)};`));
         return;
       case "Return": emit(depth, outs.length === 0 ? "return;" : outs.length === 1 ? `return ${outs[0].name};` : `return (${outs.map((x) => x.name).join(", ")});`); return;
-      case "Comment": emit(depth, `// ${String(p.Text ?? "").replace(/\r?\n/g, " ")}`); return;
+      case "Comment": emit(depth, `// ${String(typeof p.Text === "object" && "lit" in p.Text ? p.Text.lit : p.Text ?? "").replace(/\r?\n/g, " ")}`); return;
       case "Placeholder": emit(depth, "// Placeholder"); return;
       case "CommentOut": emit(depth, "// CommentOut（中のアクティビティは実行されない）"); return; // Body は生成しない
       case "CheckTrue":
