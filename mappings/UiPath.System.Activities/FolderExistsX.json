@@ -1,0 +1,22 @@
+{
+  "activity": "FolderExistsX",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Exists"
+      ],
+      "call": "system.FolderExists",
+      "args": {
+        "path": "{Path}"
+      },
+      "returns": "Exists"
+    },
+    {
+      "call": "system.FolderExists",
+      "args": {
+        "path": "{Path}"
+      }
+    }
+  ]
+}

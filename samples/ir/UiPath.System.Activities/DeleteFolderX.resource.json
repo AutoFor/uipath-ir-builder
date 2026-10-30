@@ -1,0 +1,77 @@
+{
+  "workflow": "DeleteFolderX_Resource",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Resource.d"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Resource.d"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\DeleteFolderX_Resource.d\\a.txt"
+        },
+        "Text": {
+          "lit": "x"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Resource.d"
+        },
+        "PathType": "Folder",
+        "Resource": "res"
+      }
+    },
+    {
+      "act": "DeleteFolderX",
+      "name": "リソースで消す",
+      "props": {
+        "FolderResource": "res"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_Resource.d"
+        },
+        "PathType": "Folder",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

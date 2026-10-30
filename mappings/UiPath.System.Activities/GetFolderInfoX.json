@@ -1,0 +1,6 @@
+{
+  "activity": "GetFolderInfoX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（DirectoryInfo は System.IO の型。サービスにメソッドが無い）"
+}

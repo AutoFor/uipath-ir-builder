@@ -1,0 +1,28 @@
+{
+  "activity": "DeleteFolderX",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path"
+      ],
+      "call": "system.DeleteFileOrFolder",
+      "args": {
+        "resourceFile": "LocalResource.FromPath({Path})"
+      }
+    },
+    {
+      "when": [
+        "FolderResource"
+      ],
+      "call": "system.DeleteFileOrFolder",
+      "args": {
+        "resourceFile": "(UiPath.Platform.ResourceHandling.ILocalResource){FolderResource}"
+      }
+    }
+  ],
+  "ignore": [
+    "Recursive"
+  ],
+  "notes": "DeleteFileOrFolder は再帰の指定を取らない（フォルダーは中身ごと消える）。Recursive は無視する（false で中身があるときは XAML だけが失敗する）"
+}

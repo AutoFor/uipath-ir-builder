@@ -1,0 +1,22 @@
+{
+  "activity": "FileExistsX",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Exists"
+      ],
+      "call": "system.FileExists",
+      "args": {
+        "path": "{Path}"
+      },
+      "returns": "Exists"
+    },
+    {
+      "call": "system.FileExists",
+      "args": {
+        "path": "{Path}"
+      }
+    }
+  ]
+}

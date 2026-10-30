@@ -1,0 +1,110 @@
+{
+  "workflow": "ForEachFileX_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFileX_Full.d"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFileX_Full.d"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFileX_Full.d\\sub"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ForEachFileX_Full.d\\a.txt"
+        },
+        "Text": {
+          "lit": "1"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ForEachFileX_Full.d\\b.txt"
+        },
+        "Text": {
+          "lit": "123"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ForEachFileX_Full.d\\c.log"
+        },
+        "Text": {
+          "lit": "12"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ForEachFileX_Full.d\\sub\\d.txt"
+        },
+        "Text": {
+          "lit": "12345"
+        }
+      }
+    },
+    {
+      "act": "ForEachFileX",
+      "name": "txt を大きい順に（サブフォルダーも）",
+      "item": [
+        "CurrentFile",
+        "CurrentIndex"
+      ],
+      "props": {
+        "Folder": {
+          "lit": "output\\ForEachFileX_Full.d"
+        },
+        "Filter": {
+          "lit": "*.txt"
+        },
+        "IncludeSubDirectories": true,
+        "OrderBy": "SizeLargestFirst",
+        "SkipFolderWithoutPermission": true
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "CurrentIndex.ToString & \":\" & CurrentFile.Name"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "CurrentFile.Length.ToString"
+          }
+        }
+      ]
+    }
+  ]
+}

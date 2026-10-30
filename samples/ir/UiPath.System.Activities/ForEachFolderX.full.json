@@ -1,0 +1,83 @@
+{
+  "workflow": "ForEachFolderX_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d\\d1"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d\\d2"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d\\x1"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\ForEachFolderX_Full.d\\d1\\d3"
+        }
+      }
+    },
+    {
+      "act": "ForEachFolderX",
+      "name": "正規表現 ^d を名前の降順に（サブフォルダーも）",
+      "item": [
+        "CurrentFolder",
+        "CurrentIndex"
+      ],
+      "props": {
+        "Folder": {
+          "lit": "output\\ForEachFolderX_Full.d"
+        },
+        "FilterByName": {
+          "lit": "^d"
+        },
+        "IncludeSubFolders": true,
+        "OrderBy": "NameDescFirst",
+        "SkipFoldersWithoutPermission": true
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "CurrentIndex.ToString & \":\" & CurrentFolder.Name"
+          }
+        }
+      ]
+    }
+  ]
+}

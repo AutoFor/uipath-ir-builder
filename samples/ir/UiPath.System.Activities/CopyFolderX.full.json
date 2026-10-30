@@ -1,0 +1,146 @@
+{
+  "workflow": "CopyFolderX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.src"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.dst"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.src"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.src\\sub"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Full.src\\a.txt"
+        },
+        "Text": {
+          "lit": "new"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Full.src\\sub\\b.txt"
+        },
+        "Text": {
+          "lit": "sub"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.dst"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src\\a.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "CopyFolderX",
+      "name": "サブフォルダごと上書きコピー",
+      "props": {
+        "From": {
+          "lit": "output\\CopyFolderX_Full.src"
+        },
+        "To": {
+          "lit": "output\\CopyFolderX_Full.dst"
+        },
+        "IncludeSubfolders": true,
+        "Overwrite": true,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src\\a.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src\\sub\\b.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

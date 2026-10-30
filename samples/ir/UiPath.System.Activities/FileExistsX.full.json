@@ -1,0 +1,98 @@
+{
+  "workflow": "FileExistsX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "ex2",
+      "type": "Boolean"
+    },
+    {
+      "name": "ex3",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\FileExistsX_Full.txt"
+        },
+        "Text": {
+          "lit": "hi"
+        }
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\FileExistsX_Full.none"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\FileExistsX_Full.dir"
+        }
+      }
+    },
+    {
+      "act": "FileExistsX",
+      "name": "あるファイル",
+      "props": {
+        "Path": {
+          "lit": "output\\FileExistsX_Full.txt"
+        },
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "FileExistsX",
+      "name": "無いファイル",
+      "props": {
+        "Path": {
+          "lit": "output\\FileExistsX_Full.none"
+        },
+        "Exists": "ex2"
+      }
+    },
+    {
+      "act": "FileExistsX",
+      "name": "フォルダーはファイルではない",
+      "props": {
+        "Path": {
+          "lit": "output\\FileExistsX_Full.dir"
+        },
+        "Exists": "ex3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex2.ToString()"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex3.ToString()"
+      }
+    }
+  ]
+}

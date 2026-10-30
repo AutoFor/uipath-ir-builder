@@ -1,0 +1,6 @@
+{
+  "activity": "MoveFolderX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い）"
+}

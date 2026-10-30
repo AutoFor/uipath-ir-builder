@@ -1,0 +1,161 @@
+{
+  "workflow": "MoveFolderX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.src"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.dst"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.src"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.src\\sub"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFolderX_Full.src\\a.txt"
+        },
+        "Text": {
+          "lit": "new"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFolderX_Full.src\\sub\\b.txt"
+        },
+        "Text": {
+          "lit": "sub"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.dst"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\a.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "MoveFolderX",
+      "name": "上書きで移動",
+      "props": {
+        "From": {
+          "lit": "output\\MoveFolderX_Full.src"
+        },
+        "To": {
+          "lit": "output\\MoveFolderX_Full.dst"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\a.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\sub\\b.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFolderX_Full.src"
+        },
+        "PathType": "Folder",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

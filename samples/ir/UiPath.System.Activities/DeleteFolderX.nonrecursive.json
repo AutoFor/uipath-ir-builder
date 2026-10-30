@@ -1,0 +1,55 @@
+{
+  "workflow": "DeleteFolderX_NonRecursive",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_NonRecursive.d"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_NonRecursive.d"
+        }
+      }
+    },
+    {
+      "act": "DeleteFolderX",
+      "name": "空のフォルダーを消す",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_NonRecursive.d"
+        },
+        "Recursive": false
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\DeleteFolderX_NonRecursive.d"
+        },
+        "PathType": "Folder",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

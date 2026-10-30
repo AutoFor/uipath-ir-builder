@@ -1,0 +1,90 @@
+{
+  "workflow": "RenameFileX_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "res",
+      "type": "IResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Full.new.dat"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\RenameFileX_Full.txt"
+        },
+        "Text": {
+          "lit": "rename me"
+        }
+      }
+    },
+    {
+      "act": "RenameFileX",
+      "name": "拡張子ごと変える",
+      "props": {
+        "FilePath": {
+          "lit": "output\\RenameFileX_Full.txt"
+        },
+        "NewName": {
+          "lit": "RenameFileX_Full.new.dat"
+        },
+        "KeepExtension": false,
+        "OutputFileResource": "res"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(DirectCast(res, UiPath.Platform.ResourceHandling.ILocalResource).LocalPath)"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Full.new.dat"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\RenameFileX_Full.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

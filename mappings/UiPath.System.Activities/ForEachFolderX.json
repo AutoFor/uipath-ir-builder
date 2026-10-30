@@ -1,0 +1,6 @@
+{
+  "activity": "ForEachFolderX",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（フォルダーの列挙は System.IO.Directory.EnumerateDirectories などの .NET の機能。サービスにメソッドが無い）"
+}

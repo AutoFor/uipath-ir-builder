@@ -1,0 +1,25 @@
+{
+  "activity": "DeleteFileX",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path"
+      ],
+      "call": "system.DeleteFileOrFolder",
+      "args": {
+        "resourceFile": "LocalResource.FromPath({Path})"
+      }
+    },
+    {
+      "when": [
+        "FileResource"
+      ],
+      "call": "system.DeleteFileOrFolder",
+      "args": {
+        "resourceFile": "(UiPath.Platform.ResourceHandling.ILocalResource){FileResource}"
+      }
+    }
+  ],
+  "notes": "API はリソースを取る。パス文字列は LocalResource.FromPath で包む"
+}

@@ -1,0 +1,45 @@
+{
+  "workflow": "GetFolderInfoX_Missing",
+  "variables": [
+    {
+      "name": "di",
+      "type": "DirectoryInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\GetFolderInfoX_Missing.none"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "GetFolderInfoX",
+      "name": "無くても投げない",
+      "props": {
+        "FolderPath": {
+          "lit": "output\\GetFolderInfoX_Missing.none"
+        },
+        "Output": "di",
+        "ThrowIfNotExists": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "di.Name"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "di.Exists.ToString"
+      }
+    }
+  ]
+}
