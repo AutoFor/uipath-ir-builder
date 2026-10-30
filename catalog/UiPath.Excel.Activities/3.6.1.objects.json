@@ -346,6 +346,160 @@
           "declaredOn": "FontOptions"
         }
       ]
+    },
+    {
+      "className": "AdvancedFilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Condition1",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        },
+        {
+          "name": "Condition2",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.Excel.LogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "AdvancedFilterCondition",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelFilterOperator",
+          "required": false,
+          "enum": [
+            "NONE",
+            "LT",
+            "GT",
+            "LTE",
+            "GTE",
+            "EQ",
+            "NOTEQ",
+            "EMPTY",
+            "NOTEMPTY",
+            "STARTSWITH",
+            "ENDSWITH",
+            "CONTAINS",
+            "NOTSTARTSWITH",
+            "NOTENDSWITH",
+            "NOTCONTAINS"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterCondition"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterCondition"
+        }
+      ]
+    },
+    {
+      "className": "BasicFilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.BasicFilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BasicFilters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BasicFilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "FilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.FilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AdvancedFiltersArgument",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "BasicFiltersArgument",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.BasicFilterArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "Mode",
+          "kind": "prop",
+          "type": "UiPath.Excel.FilterMode",
+          "required": false,
+          "enum": [
+            "Basic",
+            "Advanced"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        }
+      ]
     }
   ],
   "warnings": []

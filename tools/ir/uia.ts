@@ -21,7 +21,7 @@
 
 import { createHash } from "node:crypto";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
-import { objectTypes, objTypeFor, resolve } from "./catalog.ts";
+import { isArgumentList, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 
 type Add = (path: string, code: string, message: string) => void;
@@ -99,6 +99,15 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
       if (item && objectTypes.get(item)) {
         if (!Array.isArray(x)) { add(kat, "BAD_OBJ", `"${k}" は配列で書く`); continue; }
         x.forEach((e, i) => obj(objectTypes.get(item)!, e, `${kat}[${i}]`));
+        continue;
+      }
+      // 文字列の一覧。List<String> / IEnumerable<String> は { lit } の配列、List<InArgument<String>> は式の配列
+      if (plainListElement(p.type) === "System.String" || isArgumentList(p.type)) {
+        const plain = !isArgumentList(p.type);
+        if (!Array.isArray(x)) { add(kat, "BAD_OBJ", `"${k}" は配列で書く`); continue; }
+        x.forEach((e, i) => {
+          if (!isValue(e) || (plain && !(typeof e === "object" && "lit" in e))) add(`${kat}[${i}]`, "BAD_OBJ", `"${k}" の要素は ${plain ? "{ lit }" : "式か { lit }"} で書く`);
+        });
         continue;
       }
       if (!isValue(x)) { add(kat, "BAD_OBJ", `"${k}"（${p.type}）は値（式・{ lit }・数値・真偽値）で書く`); continue; }
@@ -234,7 +243,16 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
   ctx.emit(depth, `<${tag}${attrText}>`);
   for (const [p, x] of elems) {
     ctx.emit(depth + 1, `<${tag}.${p.name}>`);
-    if (Array.isArray(x)) {
+    if (Array.isArray(x) && (plainListElement(p.type) === "System.String" || isArgumentList(p.type))) {
+      const sg = ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      const arg = isArgumentList(p.type);
+      ctx.emit(depth + 2, `<${sg}List x:TypeArguments="${arg ? "InArgument(x:String)" : "x:String"}" Capacity="${Math.max(4, x.length)}">`);
+      for (const e of x as unknown as Value[]) {
+        if (arg) ctx.emit(depth + 3, `<InArgument x:TypeArguments="x:String">${ctx.esc(ctx.attrValue(e, { kind: "in", type: "System.Object" } as Prop))}</InArgument>`);
+        else ctx.emit(depth + 3, `<x:String>${ctx.esc((e as { lit: string }).lit)}</x:String>`);
+      }
+      ctx.emit(depth + 2, `</${sg}List>`);
+    } else if (Array.isArray(x)) {
       const item = objectTypes.get(itemTypeOf(p.type)!)!;
       const iface = p.type.match(/<(.+)>$/)![1];
       const ifaceTag = ctx.prefixFor(t.xmlns) + iface.slice(iface.lastIndexOf(".") + 1);

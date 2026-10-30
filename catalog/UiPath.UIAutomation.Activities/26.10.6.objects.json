@@ -2620,6 +2620,137 @@
           "declaredOn": "TargetApp"
         }
       ]
+    },
+    {
+      "className": "FilterArgument",
+      "clrType": "UiPath.UIAutomationNext.Activities.Models.FilterArgument",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Filters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.UIAutomationNext.Activities.Models.FilterEntryArgument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Activities.Models.LogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "FilterEntryArgument",
+      "clrType": "UiPath.UIAutomationNext.Activities.Models.FilterEntryArgument",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Criterion",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        },
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Activities.Models.StringFilterOperator",
+          "required": false,
+          "enum": [
+            "Contains",
+            "DoesNotContain",
+            "Equals",
+            "DoesNotEqual",
+            "StartsWith",
+            "EndsWith",
+            "IsEmpty",
+            "IsNotEmpty"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterEntryArgument"
+        }
+      ]
+    },
+    {
+      "className": "GenerationOptions",
+      "clrType": "UiPath.UIAutomationNext.Models.GenerationOptions",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ExpectedInputs",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "ExpectedOutputs",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "Prompt",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        },
+        {
+          "name": "Url",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GenerationOptions"
+        }
+      ]
     }
   ],
   "warnings": []

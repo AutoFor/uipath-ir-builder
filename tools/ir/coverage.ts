@@ -72,7 +72,7 @@ const rows: Row[] = cat.activities
   .filter((a) => a.browsable && !a.obsolete)
   .map((a) => {
     const ok: string[] = [], ng: Row["ng"] = [];
-    for (const p of a.props.filter((p) => !p.obsolete)) {
+    for (const p of a.props.filter((p) => !p.obsolete && !p.readOnly)) {
       const w = writable(a, p);
       if (w.ok) ok.push(p.name); else ng.push({ name: p.name, reason: w.reason, group: w.group });
     }
@@ -137,6 +137,7 @@ function render(): string {
     "Nullable": "Nullable<T> は属性に書ける。ここに残るのは T が分からないもの",
   };
   for (const [g, n] of [...groups].sort((a, b) => b[1] - a[1])) L.push(`| ${g} | ${n} | ${policy[g] ?? ""} |`);
+  L.push("", "理由と、対応しないものの判断は [coverage-gaps.md](coverage-gaps.md)。");
   L.push("", "対応済みの書き方: Dictionary<String, Argument> は IR の `dicts`、System.Type は型名の文字列（`{x:Type}` で出す）、Nullable<T> は属性。", "");
   L.push("## アクティビティごと", "");
   for (const pkg of [...new Set(rows.map((r) => r.a.package))].sort()) {

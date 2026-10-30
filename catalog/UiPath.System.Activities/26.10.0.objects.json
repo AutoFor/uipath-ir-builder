@@ -294,6 +294,266 @@
           "declaredOn": "PercentageNumberFormatProvider"
         }
       ]
+    },
+    {
+      "className": "JobFilterElement",
+      "clrType": "UiPath.Activities.System.Jobs.JobFilterElement",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Jobs;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Criteria",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.JobFilterField",
+          "required": false,
+          "enum": [
+            "Key",
+            "State",
+            "EndTime",
+            "StartTime",
+            "ReleaseName",
+            "JobPriority",
+            "CreationTime"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "DateOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.DateFilterOperator",
+          "required": false,
+          "enum": [
+            "NewerThan",
+            "OlderThan"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "DateValue",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "EnumOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.EnumFilterOperator",
+          "required": false,
+          "enum": [
+            "Equals",
+            "NotEquals"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "GuidOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.GuidFilterOperator",
+          "required": false,
+          "enum": [
+            "Equals",
+            "NotEquals"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "GuidValue",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "PriorityV2Value",
+          "kind": "prop",
+          "type": "System.Nullable<UiPath.Activities.System.Jobs.JobPriorityV2>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "PriorityValue",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.JobPriority",
+          "required": false,
+          "enum": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "StateValue",
+          "kind": "prop",
+          "type": "UiPath.Core.Activities.JobState",
+          "required": false,
+          "enum": [
+            "Pending",
+            "Running",
+            "Stopping",
+            "Terminating",
+            "Faulted",
+            "Successful",
+            "Stopped",
+            "Suspended",
+            "Resumed"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "StringOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.StringFilterOperator",
+          "required": false,
+          "enum": [
+            "Equals",
+            "EndsWith",
+            "Contains",
+            "NotEquals",
+            "StartsWith",
+            "NotContains"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        },
+        {
+          "name": "StringValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterElement"
+        }
+      ]
+    },
+    {
+      "className": "JobFilterSettings",
+      "clrType": "UiPath.Activities.System.Jobs.JobFilterSettings",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Jobs;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Filters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.Activities.System.Jobs.JobFilterElement>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterSettings"
+        },
+        {
+          "name": "Groups",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.Activities.System.Jobs.JobFilterSettings>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterSettings"
+        },
+        {
+          "name": "Index",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterSettings"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Jobs.JobFilterLogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "JobFilterSettings"
+        }
+      ]
+    },
+    {
+      "className": "QueueItemFilterSettings",
+      "clrType": "UiPath.Activities.System.Queues.QueueItemFilterSettings",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Queues;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Filters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.Activities.System.Queues.QueueItemFilterElement>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueueItemFilterSettings"
+        },
+        {
+          "name": "Groups",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.Activities.System.Queues.QueueItemFilterSettings>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueueItemFilterSettings"
+        },
+        {
+          "name": "Index",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueueItemFilterSettings"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Queues.QueueItemFilterLogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueueItemFilterSettings"
+        }
+      ]
     }
   ],
   "warnings": []

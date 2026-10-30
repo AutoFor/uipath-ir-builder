@@ -126,7 +126,7 @@ const delegateOverrides: Record<string, string[]> = {
   "TriggerScope.Action": ["UiPath.Platform.Triggers.TriggerArgs"],
 };
 
-// ActivityFunc<引数..., 戻り値>（CVScope.OCREngine など）。引数の型と戻り値の型。引数は1つだけ扱う。
+// ActivityFunc<引数..., 戻り値>（CVScope.OCREngine、RetryScope.Condition など）。引数の型と戻り値の型。引数は0か1つだけ扱う。
 // IR では body に Activity<戻り値> の子を1つ書く。引数名は型の短い名前（Image）、戻り値の DelegateOutArgument は書かない
 export function funcInfo(p: Prop): { args: string[]; result: string } | undefined {
   const m = p.type.match(/^(?:System.Activities.)?ActivityFunc<(.+)>$/);
@@ -140,7 +140,7 @@ export function funcInfo(p: Prop): { args: string[]; result: string } | undefine
   }
   parts.push(cur.trim());
   const result = parts.pop()!;
-  return parts.length === 1 ? { args: parts, result } : undefined;
+  return parts.length <= 1 ? { args: parts, result } : undefined;
 }
 export const funcArgName = (t: string) => t.replace(/<.*$/, "").split(".").pop()!;
 
