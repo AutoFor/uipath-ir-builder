@@ -23,6 +23,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const serviceCatalogFiles = [
   "catalog/UiPath.System.Activities/26.10.0.json",
   "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
+  "catalog/UiPath.Excel.Activities/3.6.1.json",
   "catalog/UiPath.CodedWorkflows/24.10.3.json",
 ];
 

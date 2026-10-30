@@ -3,7 +3,7 @@
 //
 // 使い方:
 //   dotnet run -- --package UiPath.System.Activities --version 26.2.6 \
-//     --dll <path>.dll [--dll ...] --nuget-root <~/.nuget/packages> --out catalog/x.json
+//     --dll <path>.dll [--dll ...] --nuget-root <~/.nuget/packages> --out catalog/x.json [--follow-returns]
 
 using System.Reflection;
 using System.Text.Encodings.Web;
@@ -46,19 +46,82 @@ foreach (var dll in opts.Dlls)
     }
 }
 
+// --follow-returns: Coded の API をたどる。
+//   handles    … サービスのメソッドが返す型（excel.UseExcelFile(...) の IWorkbookQuickHandle など）と、そのメソッド・プロパティ・
+//                引数の型を、たどれるだけ（UiPath.* の型だけ）。インデクサーは "this[System.String]" という名前のプロパティ
+//   extensions … 入力 DLL の "<名前空間>.API" 配下の公開 static クラスの拡張メソッド（ExcelOperations.ReadRange(this IReadRangeRef ...) など）。最初の引数が this
+//   enums      … たどった型に出てくる UiPath.* の enum のメンバー名
+var handles = new List<ServiceInfo>();
+var extensions = new List<ServiceInfo>();
+var enums = new SortedDictionary<string, List<string>>();
+if (opts.FollowReturns)
+{
+    var seen = new HashSet<string>(services.Select(s => s.ClrType));
+    var queue = new Queue<Type>();
+    void Enqueue(Type rt)
+    {
+        try
+        {
+            if (rt.IsByRef || rt.IsArray) rt = rt.GetElementType()!;
+            if (Nullable.GetUnderlyingType(rt) is { } nu) rt = nu;
+            if (rt.IsGenericType && !rt.IsGenericTypeDefinition) { foreach (var g in rt.GetGenericArguments()) Enqueue(g); if (!(rt.Namespace ?? "").StartsWith("UiPath.")) return; }
+            if (rt.IsGenericParameter || !(rt.Namespace ?? "").StartsWith("UiPath.")) return;
+            if (rt.IsEnum) { enums.TryAdd(TypeNames.Format(rt), rt.GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => f.Name).ToList()); return; }
+            if (rt.IsValueType && !rt.IsGenericType) return;
+            if (seen.Add(TypeNames.Format(rt))) queue.Enqueue(rt);
+        }
+        catch (Exception ex) { warnings.Add($"follow {rt.Name}: {ex.GetType().Name}: {ex.Message}"); }
+    }
+    void EnqueueSig(MethodInfo m) { Enqueue(m.ReturnType); foreach (var p in m.GetParameters()) Enqueue(p.ParameterType); }
+    foreach (var dll in opts.Dlls)
+        foreach (var t in mlc.LoadFromAssemblyPath(dll).GetTypes().Where(t => t.IsPublic))
+        {
+            try
+            {
+                if (Services.IsService(t)) foreach (var m in t.GetMethods()) EnqueueSig(m);
+                else if (Services.IsExtensionClass(t))
+                {
+                    extensions.Add(Services.Describe(t));
+                    foreach (var m in t.GetMethods(BindingFlags.Public | BindingFlags.Static)) EnqueueSig(m);
+                }
+            }
+            catch (Exception ex) { warnings.Add($"{t.FullName}: {ex.GetType().Name}: {ex.Message}"); }
+        }
+    while (queue.Count > 0)
+    {
+        var t = queue.Dequeue();
+        try
+        {
+            var info = Services.DescribeHandle(t);
+            if (info.Methods.Count == 0 && (info.Properties?.Count ?? 0) == 0) continue;
+            handles.Add(info);
+            foreach (var m in Services.HandleMethods(t)) EnqueueSig(m);
+            foreach (var p in Services.HandleProperties(t)) Enqueue(p.PropertyType);
+        }
+        catch (Exception ex) { warnings.Add($"{t.FullName}: {ex.GetType().Name}: {ex.Message}"); }
+    }
+}
+
 var catalog = new Catalog(opts.Package, opts.Version, opts.Dlls.Select(Path.GetFileName).ToList()!,
-    activities.OrderBy(a => a.ClassName).ToList(), services.Count > 0 ? services.OrderBy(s => s.ClrType).ToList() : null, warnings);
+    activities.OrderBy(a => a.ClassName).ToList(), services.Count > 0 ? services.OrderBy(s => s.ClrType).ToList() : null,
+    handles.Count > 0 ? handles.OrderBy(s => s.ClrType).ToList() : null,
+    extensions.Count > 0 ? extensions.OrderBy(s => s.ClrType).ToList() : null,
+    enums.Count > 0 ? enums : null, warnings);
 
 Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.Out))!);
 File.WriteAllText(opts.Out, JsonSerializer.Serialize(catalog, Json.Options));
-Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities, {services.Count} coded services, {warnings.Count} warnings -> {opts.Out}");
+Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities, {services.Count} coded services{(opts.FollowReturns ? $", {handles.Count} handles, {extensions.Count} extension classes, {enums.Count} enums" : "")}, {warnings.Count} warnings -> {opts.Out}");
 
 // ---------------------------------------------------------------------------
 
-record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<ServiceInfo>? Services, List<string> Warnings);
+record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<ServiceInfo>? Services, List<ServiceInfo>? Handles,
+    List<ServiceInfo>? Extensions, SortedDictionary<string, List<string>>? Enums, List<string> Warnings);
 
 // Coded Workflow から呼ぶサービス（system.LogMessage(...) の system の型）
-record ServiceInfo(string Name, string ClrType, string Assembly, List<string> Bases, List<MethodSig> Methods);
+record ServiceInfo(string Name, string ClrType, string Assembly, List<string> Bases, List<MethodSig> Methods, List<PropSig>? Properties = null);
+
+// handles の読めるプロパティ（ISheet.Name など）
+record PropSig(string Name, string Type, bool CanWrite);
 
 record MethodSig(string Name, string Returns, List<ParamSig> Params, List<string>? TypeParams, bool Obsolete);
 
@@ -210,37 +273,70 @@ static class Services
         (t.IsPublic && t.IsInterface && t.Name.EndsWith("Service") && (t.Namespace ?? "").Split('.').Contains("API"))
         || t.FullName == "UiPath.CodedWorkflows.CodedWorkflowBase";
 
+    // 拡張メソッドを持つ公開 static クラス（サービスと同じく "<名前空間>.API" 配下のもの。例 ExcelOperations）
+    public static bool IsExtensionClass(Type t) =>
+        t.IsPublic && (t.Namespace ?? "").Split('.').Contains("API") && t.IsAbstract && t.IsSealed && t.GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Any(m => m.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ExtensionAttribute"));
+
     public static ServiceInfo Describe(Type t)
     {
-        var methods = new List<MethodSig>();
         // クラスは自分で宣言した public / protected のメソッドだけ（object のメソッドは要らない）
         var all = t.IsInterface
             ? t.GetMethods()
             : t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
                 .Where(m => m.IsPublic || m.IsFamily || m.IsFamilyOrAssembly).ToArray();
-        foreach (var m in all.Where(m => !m.IsSpecialName))
-        {
-            var ps = m.GetParameters().Select(p =>
-            {
-                var pt = p.ParameterType;
-                string? mod = pt.IsByRef ? (p.IsOut ? "out" : "ref") : null;
-                if (pt.IsByRef) pt = pt.GetElementType()!;
-                string? def = null;
-                if (p.HasDefaultValue)
-                {
-                    try { def = p.RawDefaultValue switch { null => "null", string s => $"\"{s}\"", bool b => b ? "true" : "false", var o => o.ToString() }; }
-                    catch { def = "?"; }
-                }
-                var isParams = p.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ParamArrayAttribute");
-                return new ParamSig(p.Name ?? "", TypeNames.Format(pt), mod, p.IsOptional, def, isParams);
-            }).ToList();
-            var tps = m.IsGenericMethodDefinition ? m.GetGenericArguments().Select(a => a.Name).ToList() : null;
-            var obsolete = m.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ObsoleteAttribute");
-            methods.Add(new MethodSig(m.Name, TypeNames.Format(m.ReturnType), ps, tps, obsolete));
-        }
+        var methods = all.Where(m => !m.IsSpecialName).Select(Sig).ToList();
         var bases = t.GetInterfaces().Select(TypeNames.Format).ToList();
         return new ServiceInfo(t.Name, TypeNames.Format(t), t.Assembly.GetName().Name!, bases,
             methods.OrderBy(m => m.Name).ThenBy(m => m.Params.Count).ToList());
+    }
+
+    // 戻り値の型（handle）の public メソッド。インターフェースは継承元のインターフェースのメソッドも含める
+    public static IEnumerable<MethodInfo> HandleMethods(Type t)
+    {
+        var types = t.IsInterface ? new[] { t }.Concat(t.GetInterfaces()) : new[] { t };
+        return types.SelectMany(x => x.GetMethods(BindingFlags.Public | BindingFlags.Instance | (t.IsInterface ? 0 : BindingFlags.Static)))
+            .Where(m => !m.IsSpecialName && m.DeclaringType?.FullName != "System.Object" && !(m.DeclaringType?.Namespace ?? "").StartsWith("System"));
+    }
+
+    public static IEnumerable<PropertyInfo> HandleProperties(Type t)
+    {
+        var types = t.IsInterface ? new[] { t }.Concat(t.GetInterfaces()) : new[] { t };
+        return types.SelectMany(x => x.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            .Where(p => !(p.DeclaringType?.Namespace ?? "").StartsWith("System"));
+    }
+
+    public static ServiceInfo DescribeHandle(Type t)
+    {
+        var methods = HandleMethods(t).Select(Sig).GroupBy(m => $"{m.Name}({string.Join(",", m.Params.Select(p => p.Type))})").Select(g => g.First());
+        // インデクサー（sheet.Range["A1"] など）は "this[System.String]" の名前で書く
+        static string PropName(PropertyInfo p) => p.GetIndexParameters() is { Length: > 0 } ix ? $"this[{string.Join(", ", ix.Select(i => TypeNames.Format(i.ParameterType)))}]" : p.Name;
+        var props = HandleProperties(t).GroupBy(PropName).Select(g => g.First())
+            .Select(p => new PropSig(PropName(p), TypeNames.Format(p.PropertyType), p.SetMethod is { IsPublic: true })).OrderBy(p => p.Name).ToList();
+        var bases = t.GetInterfaces().Select(TypeNames.Format).ToList();
+        return new ServiceInfo(t.Name, TypeNames.Format(t), t.Assembly.GetName().Name!, bases,
+            methods.OrderBy(m => m.Name).ThenBy(m => m.Params.Count).ToList(), props.Count > 0 ? props : null);
+    }
+
+    static MethodSig Sig(MethodInfo m)
+    {
+        var ps = m.GetParameters().Select(p =>
+        {
+            var pt = p.ParameterType;
+            string? mod = pt.IsByRef ? (p.IsOut ? "out" : "ref") : null;
+            if (pt.IsByRef) pt = pt.GetElementType()!;
+            string? def = null;
+            if (p.HasDefaultValue)
+            {
+                try { def = p.RawDefaultValue switch { null => "null", string s => $"\"{s}\"", bool b => b ? "true" : "false", var o => o.ToString() }; }
+                catch { def = "?"; }
+            }
+            var isParams = p.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ParamArrayAttribute");
+            return new ParamSig(p.Name ?? "", TypeNames.Format(pt), mod, p.IsOptional, def, isParams);
+        }).ToList();
+        var tps = m.IsGenericMethodDefinition ? m.GetGenericArguments().Select(a => a.Name).ToList() : null;
+        var obsolete = m.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ObsoleteAttribute");
+        return new MethodSig(m.Name, TypeNames.Format(m.ReturnType), ps, tps, obsolete);
     }
 }
 
@@ -378,15 +474,17 @@ static class ReferencePaths
     }
 }
 
-record Options(string Package, string Version, List<string> Dlls, string NugetRoot, string DotnetRoot, string Out)
+record Options(string Package, string Version, List<string> Dlls, string NugetRoot, string DotnetRoot, string Out, bool FollowReturns)
 {
     public static Options Parse(string[] args)
     {
         string? package = null, version = null, nuget = null, outp = null;
         var dotnet = @"C:\Program Files\dotnet";
         var dlls = new List<string>();
+        var follow = false;
         for (var i = 0; i < args.Length; i++)
         {
+            if (args[i] == "--follow-returns") { follow = true; continue; }
             var v = i + 1 < args.Length ? args[i + 1] : throw new ArgumentException($"missing value for {args[i]}");
             switch (args[i])
             {
@@ -403,7 +501,7 @@ record Options(string Package, string Version, List<string> Dlls, string NugetRo
         nuget ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
         if (package == null || version == null || outp == null || dlls.Count == 0)
             throw new ArgumentException("required: --package --version --dll --out");
-        return new Options(package, version, dlls, nuget, dotnet, outp);
+        return new Options(package, version, dlls, nuget, dotnet, outp, follow);
     }
 }
 

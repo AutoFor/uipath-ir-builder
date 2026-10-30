@@ -29,6 +29,13 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
   --dll $N/uipath.codedworkflows/24.10.3/lib/net6.0-windows7.0/UiPath.CodedWorkflows.dll --out catalog/UiPath.CodedWorkflows/24.10.3.json
 ```
 
+Excel のように Coded の API が「サービスが返す型（handle）のメソッドや拡張メソッド」になっているパッケージは `--follow-returns` を付ける。サービスのメソッドが返す型をたどって `handles`（プロパティ・インデクサー・メソッド）、`*.API` 名前空間の拡張メソッドを `extensions`、出てきた enum を `enums` に書き出す：
+
+```bash
+E=$N/uipath.excel.activities/3.6.1/lib/net6.0-windows7.0
+tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath.Excel.Activities --version 3.6.1   --dll $E/UiPath.Excel.Activities.dll --dll $E/UiPath.Excel.Activities.API.dll --follow-returns --out catalog/UiPath.Excel.Activities/3.6.1.json
+```
+
 ### カタログ（`catalog/`）
 
 | パッケージ | バージョン | アクティビティ数 |
@@ -38,6 +45,7 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.UIAutomation.Activities | 25.10.33 | 202 |
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
 | UiPath.CodedWorkflows | 24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ） |
+| UiPath.Excel.Activities | 3.6.1 | 128（Coded の `IExcelService` と、`--follow-returns` で取った handles / extensions / enums も） |
 
 ### get-default-xaml との突き合わせ（`tools/compare-default-xaml.mjs`）
 
