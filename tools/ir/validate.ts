@@ -177,7 +177,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     // OverloadGroup（WriteTextFile の File / FileName など）は、どれか1つのグループがそろっていればよい
     const required = a.props.filter((p) => p.required);
     const groups = new Map<string, string[]>();
-    for (const p of required) for (const g of p.overloadGroups ?? []) groups.set(g, [...(groups.get(g) ?? []), p.name]);
+    for (const p of a.props) for (const g of p.overloadGroups ?? []) groups.set(g, [...(groups.get(g) ?? []), p.name]);
     const groupOk = [...groups.values()].some((names) => names.every((x) => given.has(x)));
     for (const p of required.filter((p) => !given.has(p.name) && !(p.overloadGroups?.length && groupOk)))
       add(path, "REQUIRED_MISSING", `${a.className} の必須プロパティ "${p.name}" が無い`);
