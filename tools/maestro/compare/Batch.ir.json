@@ -1,0 +1,16 @@
+{
+  "process": "BatchIr",
+  "inputs": [ { "name": "items", "type": "array" } ],
+  "steps": [
+    { "kind": "loop", "id": "each", "over": "items", "body": [
+      { "kind": "script", "id": "checkItem",
+        "flow": "return { ok: $vars.each.currentItem != null };",
+        "bpmn": "return { ok: iterator[0] != null };" } ] },
+    { "kind": "script", "id": "post",
+      "flow": "return { posted: true };", "bpmn": "return { posted: true };",
+      "onError": [
+        { "kind": "human", "id": "askHuman", "title": "投稿に失敗",
+          "fields": [ { "id": "note", "label": "メモ", "type": "string", "direction": "output" } ],
+          "outcomes": [ "OK" ] } ] }
+  ]
+}

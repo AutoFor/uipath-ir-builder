@@ -15,7 +15,8 @@ import { basename, join } from "node:path";
 type Ref = { input: string } | { field: [string, string] }; // プロセスの入力か、人の入力欄（[ステップ, 欄]）
 type Field = { id: string; label?: string; type: string; direction: "input" | "output"; value?: Ref };
 type Step =
-  | { kind: "script"; id: string; flow: string; bpmn: string } // 式の言語が違うので両方書く（XAML の IR の { vb, cs } と同じ考え方）
+  | { kind: "script"; id: string; flow: string; bpmn: string; onError?: Step[] } // 式の言語が違うので両方書く（XAML の IR の { vb, cs } と同じ考え方）
+  | { kind: "loop"; id: string; over: string; body: Step[] } // BPMN は1つの工程の繰り返しなので、body は script 1つだけ
   | { kind: "human"; id: string; title: string; fields: Field[]; outcomes: string[] }
   | { kind: "decide"; id: string; on: string; equals: string; then: Step[]; else: Step[] };
 type Ir = { process: string; inputs?: { name: string; type: string }[]; steps: Step[] };
@@ -30,7 +31,18 @@ function flowRef(r: Ref): string {
 function flowSteps(steps: Step[], b: string, depth: number): string[] {
   const out: string[] = [];
   for (const s of steps) {
-    if (s.kind === "script") out.push(`${pad(depth)}${b}.step(${q(s.id)}, script({ code: ${q(s.flow)} }))`);
+    if (s.kind === "script") {
+      out.push(`${pad(depth)}${b}.step(${q(s.id)}, script({ code: ${q(s.flow)} }))`);
+      if (s.onError) {
+        out.push(`${pad(depth)}.onError((h) => {`);
+        out.push(...flowSteps(s.onError, "h", depth + 1).map((l) => l + ";"));
+        out.push(`${pad(depth)}})`);
+      }
+    } else if (s.kind === "loop") {
+      out.push(`${pad(depth)}${b}.loop(${q(s.id)}, input(${q(s.over)}), (l) => {`);
+      out.push(...flowSteps(s.body, "l", depth + 1).map((l) => l + ";"));
+      out.push(`${pad(depth)}})`);
+    }
     else if (s.kind === "human") {
       const fields = s.fields.map((f) => `{ id: ${q(f.id)}, label: ${q(f.label ?? f.id)}, type: ${q(f.type)}, direction: ${q(f.direction)}${f.value ? `, value: ${flowRef(f.value)}` : ""} }`);
       out.push(`${pad(depth)}${b}.step(${q(s.id)}, hitl({ variant: "quick-form", title: ${q(s.title)}, fields: [${fields.join(", ")}], outcomes: ${JSON.stringify(s.outcomes)} }))`);
@@ -75,9 +87,22 @@ export function emitBpmn(ir: Ir): string {
   const walk = (steps: Step[], from: From[]): From[] => {
     for (const s of steps) {
       if (s.kind === "script") {
-        nodes.push(`  .scriptTask(${q(s.id)}, { script: ${q(s.bpmn)} })`);
+        // 失敗の経路は線ではなく、タスクの中のコールバックに書く。ここで人のタスクは出力欄だけに限っている
+        const handler = s.onError?.map((h) => {
+          if (h.kind !== "human") throw new Error(`onError は human だけ（${h.kind}）`);
+          for (const f of h.fields) vars.push(`  .var(${q(f.id)}, ${q(f.type)})`);
+          const fields = h.fields.map((f) => `{ id: ${q(f.id)}, label: ${q(f.label ?? f.id)}, type: ${q(f.type)}, direction: "output" }`);
+          return `b.humanTask(${q(h.id)}, { title: ${q(h.title)}, form: { fields: [${fields.join(", ")}], outcomes: ${JSON.stringify(h.outcomes)} } }); b.endEvent(${q(`${s.id}_failed`)});`;
+        });
+        nodes.push(`  .scriptTask(${q(s.id)}, { script: ${q(s.bpmn)} }${handler ? `, (t) => { t.onError((b) => { ${handler.join(" ")} }); }` : ""})`);
         link(from, s.id);
         from = [{ id: s.id }];
+      } else if (s.kind === "loop") {
+        const only = s.body[0];
+        if (s.body.length !== 1 || only.kind !== "script") throw new Error("BPMN の loop の body は script 1つだけ");
+        nodes.push(`  .scriptTask(${q(only.id)}, { script: ${q(only.bpmn)}, inputs: { "iterator[0]": "=iterator[0]" }, loop: { collection: ${q(`=vars.${s.over}`)}, itemVar: "item", sequential: true } })`);
+        link(from, only.id);
+        from = [{ id: only.id }];
       } else if (s.kind === "human") {
         const decision = `${s.id}Decision`;
         vars.push(`  .var(${q(decision)}, "string")`);
