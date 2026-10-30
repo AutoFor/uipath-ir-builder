@@ -166,7 +166,8 @@ export function generate(wf: Workflow, cat: Catalog): string {
       const el = listElementType(p.type)!;
       const t = objectTypes.get(el);
       const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
-      const inArg = (v: Value) => `<InArgument x:TypeArguments="x:String">${esc(`[${exprText(v)}]`)}</InArgument>`;
+      // 数値・真偽値のリテラルは Int32 / Double / Boolean の InArgument、それ以外は String
+      const inArg = (v: Value) => `<InArgument x:TypeArguments="${typeof v === "number" ? (Number.isInteger(v) ? "x:Int32" : "x:Double") : typeof v === "boolean" ? "x:Boolean" : "x:String"}">${esc(`[${exprText(v)}]`)}</InArgument>`;
       emit(depth + 1, `<${tag}.${prop}>`);
       emit(depth + 2, `<${sg}List x:TypeArguments="${t ? prefixFor(t.xmlns) + t.className : "InArgument"}" Capacity="${Math.max(4, list.length)}">`);
       for (const x of list) {

@@ -89,11 +89,11 @@
         "Filters": [
           {
             "Column": {
-              "lit": "Age"
+              "lit": "Name"
             },
-            "Operator": "GT",
+            "Operator": "NOTEQ",
             "Operand": {
-              "lit": "25"
+              "lit": "Carol"
             }
           },
           {
@@ -103,7 +103,7 @@
             },
             "Operator": "NOTEQ",
             "Operand": {
-              "lit": "Carol"
+              "lit": "Bob"
             }
           }
         ],

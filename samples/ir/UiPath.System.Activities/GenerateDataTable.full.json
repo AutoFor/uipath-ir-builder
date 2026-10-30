@@ -12,13 +12,13 @@
       "name": "文字列から表を作る",
       "props": {
         "Input": {
-          "lit": "Name;Age;Note|Alice;30;\"x;y\"|Bob;25"
+          "lit": "Name;Age;Note\nAlice;30;\"x;y\"\nBob;25"
         },
         "ColumnSeparators": {
           "lit": ";"
         },
         "NewLineSeparator": {
-          "lit": "|"
+          "lit": "\n"
         },
         "CSVParsing": true,
         "AutoDetectTypes": true,
