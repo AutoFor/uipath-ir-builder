@@ -58,6 +58,9 @@ const projDir = `${opt.template}-${opt.name}`;
 const reportDir = resolve(opt.report || join(root, "out", "verify", opt.name));
 const logDir = join(reportDir, "logs");
 
+// 下の build / run より前に定義する（withRunLock から使う）
+const runLock = process.env.UIP_RUN_LOCK ?? "C:/Users/Public/uipath-ir-probe.run.lock";
+
 // ---- 入力を集める ----
 const files = [];
 for (const p of inputs) collect(resolve(p));
@@ -268,7 +271,6 @@ function prepareProject() {
 
 // run はマシン全体で1つずつにする。ロボット（Assistant）は1ユーザーに1つで、同時に頼んだときの動きを確かめられていないため。
 // build は作業用プロジェクトごとに別の Helm が受け持つので、並行してよい（4並列で確かめた）
-const runLock = process.env.UIP_RUN_LOCK ?? "C:/Users/Public/uipath-ir-probe.run.lock";
 function withRunLock(fn) {
   const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
   let waited = 0;
