@@ -305,6 +305,8 @@ function attrValue(v: Value, p: Prop): string {
   if (typeof v === "boolean") return v ? "True" : "False";
   if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
   if (typeof v === "string" && p.enum?.includes(v)) return v;
+  // フラグの enum（"Keyboard, Mouse"）も属性にそのまま書く
+  if (typeof v === "string" && v.includes(",") && p.enum && v.split(",").every((x) => p.enum!.includes(x.trim()))) return v;
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
   if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return markupEscape(v.lit);

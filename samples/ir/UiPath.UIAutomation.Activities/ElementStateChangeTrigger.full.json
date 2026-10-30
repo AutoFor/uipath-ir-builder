@@ -1,0 +1,40 @@
+{
+  "workflow": "ElementStateChangeTrigger_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "ElementStateChangeTrigger",
+            "props": {
+              "Selector": {
+                "lit": "<webctrl id='result' tag='DIV' />"
+              },
+              "ElementStateChangeType": "OnAppear",
+              "Enabled": true,
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000013",
+              "VisibilityType": "Accessible"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "ElementStateChangeTrigger が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

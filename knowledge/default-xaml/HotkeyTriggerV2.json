@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"HotkeyTriggerV2\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:HotkeyTriggerV2 Key=\"{x:Null}\" BlockEvent=\"False\" Enabled=\"True\" KeyModifiers=\"None\" SchedulingMode=\"Sequential\" TriggerId=\"2a61179f-929d-4723-bec9-930b526aa498\" UseWindowsHotKey=\"False\" />\r\n</Activity>"
+  }
+}

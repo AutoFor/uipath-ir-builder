@@ -1,0 +1,37 @@
+{
+  "workflow": "SystemTriggerV2_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "item": "args",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "SystemTriggerV2",
+            "props": {
+              "BlockEvent": false,
+              "Enabled": true,
+              "SchedulingMode": "Sequential",
+              "TriggerId": "00000000-0000-4000-8000-000000000017",
+              "TriggerInput": "Keyboard, Mouse"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "SystemTriggerV2 が発火した"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

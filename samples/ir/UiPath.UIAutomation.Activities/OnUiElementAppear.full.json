@@ -1,0 +1,66 @@
+{
+  "workflow": "OnUiElementAppear_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet'>Greet</button><div id='result'>ready</div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "OpenBrowser",
+      "name": "UIA Test Form を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "Url": "New Uri(htmlPath).AbsoluteUri",
+        "BrowserType": "Edge"
+      },
+      "body": [
+        {
+          "act": "OnUiElementAppear",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='greet' tag='BUTTON' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "RepeatForever": "False",
+            "ContinueOnError": false,
+            "WaitActive": true,
+            "WaitVisible": true
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "OnUiElementAppear が発火した"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "act": "CloseTab",
+          "name": "タブを閉じる"
+        }
+      ]
+    }
+  ]
+}

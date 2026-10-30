@@ -1,0 +1,39 @@
+{
+  "workflow": "GetEventInfo_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "MonitorEvents",
+      "name": "イベントを監視",
+      "item": "args",
+      "props": {
+        "RepeatForever": "False"
+      },
+      "slots": {
+        "Triggers": [
+          {
+            "act": "MouseTrigger",
+            "props": {}
+          }
+        ]
+      },
+      "body": [
+        {
+          "act": "GetEventInfo",
+          "props": {
+            "InterceptedEvent": "args"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": {
+              "lit": "GetEventInfo を実行した"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
