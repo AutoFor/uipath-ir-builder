@@ -1,0 +1,61 @@
+{
+  "workflow": "DisableTrigger_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "slots": {
+        "Triggers": [
+          {
+            "act": "RepeatTrigger",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(1)",
+              "TriggerId": "ir-repeat"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "発火した"
+              }
+            }
+          },
+          {
+            "act": "StopTriggers",
+            "props": {
+              "ShouldStop": "stp"
+            }
+          }
+        ]
+      },
+      "variables": [
+        {
+          "name": "stp",
+          "type": "Boolean"
+        }
+      ],
+      "item": "args"
+    },
+    {
+      "act": "DisableTrigger",
+      "name": "DisableTrigger(全部入り)",
+      "props": {
+        "TriggerId": "ir-repeat"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "切り替えた"
+        }
+      }
+    }
+  ]
+}

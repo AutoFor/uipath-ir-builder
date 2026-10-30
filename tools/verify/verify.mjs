@@ -19,7 +19,8 @@
 //   <名前>.expected.log  期待するログ。1行1件、この順に出ること（間に別の行があってもよい）。
 //                        "[Information] こんにちは" のように [レベル] から書くとレベルも比べる。XAML と C# の両方で比べる
 //   <名前>.verify.json   { "args": { "in_Name": "太郎" },       // run の入力引数
-//                          "noRun": "Orchestrator が要るため" }   // run しない（build だけ）理由
+//                          "noRun": "Orchestrator が要るため",   // run しない（build だけ）理由
+//                          "entryPoint": true }                  // このワークフローを project.json のエントリポイントにする（トリガー用）
 //
 // 入力データ: samples/data/ を <プロジェクト>/data/ に写す（Excel のサンプルは "data\excel\Sample.xlsx" を読み、"output\<名前>.xlsx" に書く）。
 //
@@ -107,6 +108,18 @@ for (const { file, wf } of irs) {
   results.push(r);
 }
 if (gen.status && gen.status !== 1) writeFileSync(join(logDir, "_gen.txt"), gen.stdout + gen.stderr);
+
+// *.verify.json の "entryPoint": true は、そのワークフローを project.json のエントリポイントにする（トリガーは Main かエントリポイントにしか置けないため）。
+// 毎回 Main.xaml だけに戻してから足す
+{
+  const pjPath = join(projDir, "project.json");
+  const pj = readJson(pjPath);
+  pj.entryPoints = (pj.entryPoints ?? []).filter((e) => e.filePath === "Main.xaml");
+  for (const { file, wf } of irs) {
+    if (sidecar(file).entryPoint) pj.entryPoints.push({ filePath: `${wf.workflow}.xaml`, uniqueId: randomUUID(), input: [], output: [] });
+  }
+  writeFileSync(pjPath, JSON.stringify(pj, null, 2));
+}
 
 // ---- IR → C#（coded/ に置く。InvokeWorkflowFile の先も coded/ の .cs にする）----
 if (irFiles.length && !opt.noCoded) {

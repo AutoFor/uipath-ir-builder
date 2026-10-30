@@ -1,0 +1,44 @@
+{
+  "workflow": "StopTriggers_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "止める",
+      "slots": {
+        "Triggers": [
+          {
+            "act": "RepeatTrigger",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(1)"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "StopTriggers",
+            "name": "止める",
+            "props": {
+              "ShouldStop": "sb"
+            }
+          },
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "止めた"
+              }
+            }
+          }
+        ]
+      },
+      "item": "args",
+      "variables": [
+        {
+          "name": "sb",
+          "type": "Boolean"
+        }
+      ]
+    }
+  ]
+}

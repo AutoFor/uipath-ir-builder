@@ -1,0 +1,6 @@
+{
+  "activity": "NotifyGlobalVariableChanged",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（グローバル変数の通知 API が無い）"
+}

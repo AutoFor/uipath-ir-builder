@@ -1,0 +1,30 @@
+{
+  "workflow": "InvokeWorkflowInteractive_Var",
+  "variables": [
+    {
+      "name": "av",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object) From {{\"in_Name\", \"三郎\"}}"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeWorkflowInteractive",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "InvokeWorkflowFile_Callee.xaml"
+        },
+        "ArgumentsVariable": "av"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "呼んだ"
+        }
+      }
+    }
+  ]
+}

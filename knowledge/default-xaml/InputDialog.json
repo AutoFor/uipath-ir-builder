@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"InputDialog\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:InputDialog Label=\"{x:Null}\" Options=\"{x:Null}\" OptionsString=\"{x:Null}\" Result=\"{x:Null}\" Title=\"{x:Null}\" IsPassword=\"False\" TopMost=\"False\" />\r\n</Activity>"
+  }
+}

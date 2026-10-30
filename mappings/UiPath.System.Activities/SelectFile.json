@@ -1,0 +1,6 @@
+{
+  "activity": "SelectFile",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ファイル選択ダイアログの API が ISystemService に無い）"
+}

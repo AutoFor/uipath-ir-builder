@@ -1,0 +1,23 @@
+{
+  "workflow": "NotifyGlobalVariableChanged_Full",
+  "body": [
+    {
+      "act": "NotifyGlobalVariableChanged",
+      "name": "変更を通知",
+      "props": {
+        "VariableName": {
+          "lit": "IrVar"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "通知した"
+        }
+      }
+    }
+  ]
+}

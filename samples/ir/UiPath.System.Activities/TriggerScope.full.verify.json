@@ -1,0 +1,1 @@
+{"noRun":"FileChangeTriggerV3 など発火を待つトリガーを含み、止まる保証を確かめていないため（RepeatTrigger だけの TriggerScope.min は run する）"}

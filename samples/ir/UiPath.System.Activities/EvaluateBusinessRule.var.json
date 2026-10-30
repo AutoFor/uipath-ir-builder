@@ -1,0 +1,30 @@
+{
+  "workflow": "EvaluateBusinessRule_Var",
+  "variables": [
+    {
+      "name": "av",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object) From {{\"in_Name\", \"三郎\"}}"
+    }
+  ],
+  "body": [
+    {
+      "act": "EvaluateBusinessRule",
+      "props": {
+        "BusinessRule": {
+          "lit": "IrRule"
+        },
+        "ArgumentsVariable": "av"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "評価した"
+        }
+      }
+    }
+  ]
+}

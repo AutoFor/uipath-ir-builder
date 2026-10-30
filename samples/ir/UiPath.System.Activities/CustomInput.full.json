@@ -1,0 +1,33 @@
+{
+  "workflow": "CustomInput_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CustomInput",
+      "name": "独自の入力画面",
+      "props": {
+        "URI": {
+          "lit": "C:\\Users\\Public\\input.html"
+        },
+        "Height": 300,
+        "Width": 400,
+        "TopMost": true,
+        "Result": "r"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "入力した"
+        }
+      }
+    }
+  ]
+}

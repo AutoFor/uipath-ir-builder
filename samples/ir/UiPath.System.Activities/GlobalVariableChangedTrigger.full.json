@@ -1,0 +1,50 @@
+{
+  "workflow": "GlobalVariableChangedTrigger_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "slots": {
+        "Triggers": [
+          {
+            "act": "GlobalVariableChangedTrigger",
+            "name": "変数の変更",
+            "props": {
+              "VariableName": {
+                "lit": "IrVar"
+              },
+              "Enabled": true,
+              "SchedulingMode": "OneTime",
+              "TriggerId": "ir-gv-trigger"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "発火した"
+              }
+            }
+          },
+          {
+            "act": "StopTriggers",
+            "props": {
+              "ShouldStop": "stp"
+            }
+          }
+        ]
+      },
+      "variables": [
+        {
+          "name": "stp",
+          "type": "Boolean"
+        }
+      ],
+      "item": "args"
+    }
+  ]
+}

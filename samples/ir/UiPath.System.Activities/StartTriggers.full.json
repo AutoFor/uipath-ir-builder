@@ -1,0 +1,44 @@
+{
+  "workflow": "StartTriggers_Full",
+  "body": [
+    {
+      "act": "StartTriggers",
+      "name": "トリガーを開始",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "Triggers.xaml"
+        },
+        "AssemblyName": "",
+        "ContinueOnError": "False",
+        "Level": "Warn",
+        "LogEntry": "WithArguments",
+        "LogExit": "WithArguments",
+        "Timeout": "TimeSpan.FromSeconds(30)",
+        "TargetSession": "Current",
+        "Elevated": false,
+        "UnSafe": false
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "太郎"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "開始した"
+        }
+      }
+    }
+  ]
+}

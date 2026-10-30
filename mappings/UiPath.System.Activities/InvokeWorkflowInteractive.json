@@ -1,0 +1,6 @@
+{
+  "activity": "InvokeWorkflowInteractive",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（対話セッションでのワークフロー呼び出しの API が無い）"
+}

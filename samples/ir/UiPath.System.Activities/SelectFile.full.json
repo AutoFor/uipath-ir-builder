@@ -1,0 +1,37 @@
+{
+  "workflow": "SelectFile_Full",
+  "variables": [
+    {
+      "name": "f",
+      "type": "String"
+    },
+    {
+      "name": "fs",
+      "type": "IEnumerable<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "SelectFile",
+      "name": "ファイルを選ぶ",
+      "props": {
+        "Filter": "テキスト|*.txt|すべて|*.*",
+        "InitialDirectory": {
+          "lit": "C:\\Users\\Public"
+        },
+        "Multiselect": true,
+        "SelectedFile": "f",
+        "SelectedFiles": "fs"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "選んだ"
+        }
+      }
+    }
+  ]
+}

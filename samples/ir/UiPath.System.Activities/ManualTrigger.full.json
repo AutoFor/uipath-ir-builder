@@ -1,0 +1,27 @@
+{
+  "workflow": "ManualTrigger_Full",
+  "variables": [
+    {
+      "name": "ji",
+      "type": "CurrentJobInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "ManualTrigger",
+      "name": "手動トリガー",
+      "props": {
+        "Result": "ji"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "手動で開始した"
+        }
+      }
+    }
+  ]
+}

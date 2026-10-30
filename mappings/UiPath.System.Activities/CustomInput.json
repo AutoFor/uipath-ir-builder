@@ -1,0 +1,6 @@
+{
+  "activity": "CustomInput",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（HTML の入力ダイアログの API が ISystemService に無い）"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "FileChangeTriggerV3",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（トリガーは ISystemService に無い。Coded ではイベントハンドラーで自分で書く）"
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"RepeatTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:RepeatTrigger Interval=\"{x:Null}\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"ea46f3dc-b294-4c53-b7c7-5e3d91b1d0c2\" />\r\n</Activity>"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "workflow": "FileChangeTriggerV2_Full",
+  "body": [
+    {
+      "act": "FileChangeTriggerV2",
+      "name": "ファイルの変更(V2)",
+      "props": {
+        "Path": {
+          "lit": "C:UsersPublicwatch"
+        },
+        "FileName": {
+          "lit": "*.txt"
+        },
+        "IncludeSubdirectories": true,
+        "ChangeType": "Created",
+        "NotifyFilters": "FileName",
+        "ContinueOnError": "True",
+        "ContinueMonitoring": "True"
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": {
+              "lit": "変更を検出した"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

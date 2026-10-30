@@ -1,0 +1,49 @@
+{
+  "workflow": "EvaluateBusinessRule_Full",
+  "variables": [
+    {
+      "name": "o",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "EvaluateBusinessRule",
+      "name": "ルールを評価",
+      "props": {
+        "BusinessRule": {
+          "lit": "IrRule"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMS": 10000,
+        "ContinueOnError": "True",
+        "RuleNeedsMigration": false,
+        "RuleRequiresService": false,
+        "Output": "o"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "太郎"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "評価した"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "workflow": "RepeatTrigger_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "トリガーの範囲",
+      "props": {},
+      "slots": {
+        "Triggers": [
+          {
+            "act": "RepeatTrigger",
+            "name": "繰り返し",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(1)",
+              "Enabled": true,
+              "SchedulingMode": "Sequential",
+              "TriggerId": "ir-repeat"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "発火した"
+              }
+            }
+          },
+          {
+            "act": "StopTriggers",
+            "props": {
+              "ShouldStop": "stp"
+            }
+          }
+        ]
+      },
+      "variables": [
+        {
+          "name": "stp",
+          "type": "Boolean"
+        }
+      ],
+      "item": "args"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "workflow": "QueueTrigger_Full",
+  "variables": [
+    {
+      "name": "qi",
+      "type": "QueueItem"
+    },
+    {
+      "name": "eq",
+      "type": "QueueItem"
+    }
+  ],
+  "body": [
+    {
+      "act": "QueueTrigger",
+      "name": "キュートリガー",
+      "props": {
+        "QueueName": "IRQueue",
+        "FolderPath": "Shared",
+        "ItemsActivationThreshold": 2,
+        "ItemsPerJobActivationTarget": 1,
+        "MaxJobsForActivation": 3,
+        "TransactionItem": "qi",
+        "ExtractedQueueItem": "eq"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "キューで開始した"
+        }
+      }
+    }
+  ]
+}

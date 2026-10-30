@@ -1,0 +1,27 @@
+{
+  "workflow": "ProcessStartTrigger_Full",
+  "body": [
+    {
+      "act": "ProcessStartTrigger",
+      "name": "プロセス開始",
+      "props": {
+        "ProcessName": {
+          "lit": "notepad"
+        },
+        "ContinueOnError": "True",
+        "ContinueMonitoring": "True"
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": {
+              "lit": "検出した"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

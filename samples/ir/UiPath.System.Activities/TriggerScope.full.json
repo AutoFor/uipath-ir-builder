@@ -1,0 +1,61 @@
+{
+  "workflow": "TriggerScope_Full",
+  "body": [
+    {
+      "act": "TriggerScope",
+      "name": "全部入り",
+      "props": {
+        "SchedulingMode": "Concurrent",
+        "ContinueOnError": "False"
+      },
+      "variables": [
+        {
+          "name": "n",
+          "type": "Int32"
+        },
+        {
+          "name": "stp",
+          "type": "Boolean"
+        }
+      ],
+      "slots": {
+        "Triggers": [
+          {
+            "act": "RepeatTrigger",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(1)"
+            }
+          },
+          {
+            "act": "FileChangeTriggerV3",
+            "props": {
+              "Path": {
+                "lit": "output"
+              },
+              "ChangeType": "All",
+              "NotifyFilters": "FileName"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "発火した"
+              }
+            }
+          },
+          {
+            "act": "StopTriggers",
+            "props": {
+              "ShouldStop": "stp"
+            }
+          }
+        ]
+      },
+      "item": "args"
+    }
+  ]
+}
