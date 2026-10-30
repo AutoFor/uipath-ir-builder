@@ -1,0 +1,14 @@
+{
+  "workflow": "InterruptibleDoWhile_Full",
+  "variables": [{ "name": "idx", "type": "Int32" }, { "name": "n", "type": "Int32" }],
+  "body": [
+    {
+      "act": "InterruptibleDoWhile", "name": "最大2回", "props": { "Condition": "True", "MaxIterations": "2", "CurrentIndex": "idx" },
+      "body": [
+        { "act": "Assign", "props": { "To": "n", "Value": "n + 1" } },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"idx=\" & idx.ToString & \", n=\" & n.ToString" } }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"終了 n=\" & n.ToString" } }
+  ]
+}

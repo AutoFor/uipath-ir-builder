@@ -1,0 +1,7 @@
+{
+  "workflow": "Placeholder_Full",
+  "body": [
+    { "act": "Placeholder", "name": "あとで差し替える", "props": { "Description": "ここに処理が入る" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "プレースホルダーの後" } } }
+  ]
+}

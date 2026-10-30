@@ -1,0 +1,15 @@
+{
+  "workflow": "Return_Full",
+  "variables": [{ "name": "i", "type": "Int32" }],
+  "body": [
+    {
+      "act": "While", "props": { "Condition": "True" },
+      "body": [
+        { "act": "Assign", "props": { "To": "i", "Value": "i + 1" } },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"ループ \" & i.ToString" } },
+        { "act": "If", "props": { "Condition": "i = 2" }, "then": [{ "act": "Return", "name": "ワークフローを抜ける" }] }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "ここには来ない" } } }
+  ]
+}

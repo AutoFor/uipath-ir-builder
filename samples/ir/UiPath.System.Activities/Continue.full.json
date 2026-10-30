@@ -1,0 +1,15 @@
+{
+  "workflow": "Continue_Full",
+  "variables": [{ "name": "i", "type": "Int32" }],
+  "body": [
+    {
+      "act": "InterruptibleWhile", "props": { "Condition": "i < 4" },
+      "body": [
+        { "act": "Assign", "props": { "To": "i", "Value": "i + 1" } },
+        { "act": "If", "props": { "Condition": "i Mod 2 = 0" }, "then": [{ "act": "Continue", "name": "偶数は飛ばす" }] },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"奇数: \" & i.ToString" } }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "ループの後" } } }
+  ]
+}

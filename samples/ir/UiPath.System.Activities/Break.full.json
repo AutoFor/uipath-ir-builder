@@ -1,0 +1,26 @@
+{
+  "workflow": "Break_Full",
+  "variables": [{ "name": "i", "type": "Int32" }, { "name": "items", "type": "List<Int32>", "default": "New List(Of Integer) From {1, 2, 3, 4}" }],
+  "body": [
+    {
+      "act": "InterruptibleWhile", "props": { "Condition": "True" },
+      "body": [
+        { "act": "Assign", "props": { "To": "i", "Value": "i + 1" } },
+        { "act": "If", "props": { "Condition": "i > 2" }, "then": [{ "act": "Break", "name": "3回目で抜ける" }] },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"i=\" & i.ToString" } }
+      ]
+    },
+    {
+      "act": "InterruptibleDoWhile", "props": { "Condition": "True" },
+      "body": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "DoWhile の中" } } }, { "act": "Break" }]
+    },
+    {
+      "act": "ForEach", "typeArg": "Int32", "item": "it", "props": { "Values": "items" },
+      "body": [
+        { "act": "If", "props": { "Condition": "it > 1" }, "then": [{ "act": "Break" }] },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"ForEach: \" & it.ToString" } }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "ループの後" } } }
+  ]
+}

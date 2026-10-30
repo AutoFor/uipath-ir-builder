@@ -1,0 +1,12 @@
+{
+  "workflow": "ShouldStop_Full",
+  "variables": [{ "name": "isStopped", "type": "Boolean" }],
+  "body": [
+    { "act": "ShouldStop", "name": "停止要求を調べる", "props": { "Result": "isStopped" } },
+    {
+      "act": "If", "props": { "Condition": "isStopped" },
+      "then": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "停止要求あり" } } }],
+      "else": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "停止要求なし" } } }]
+    }
+  ]
+}

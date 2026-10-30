@@ -34,6 +34,9 @@ const builtin = new Set([
   "System.Activities.Statements.Switch", "System.Activities.Statements.TryCatch", "System.Activities.Statements.Assign",
   "UiPath.Core.Activities.MultipleAssign", "UiPath.Core.Activities.Break", "UiPath.Core.Activities.Continue",
   "System.Activities.Statements.Throw", "System.Activities.Statements.Rethrow", "UiPath.Core.Activities.RetryScope",
+  "UiPath.Core.Activities.Return", "UiPath.Core.Activities.Comment", "UiPath.Core.Activities.CommentOut", "UiPath.Core.Activities.Placeholder",
+  "UiPath.Core.Activities.CheckTrue", "UiPath.Core.Activities.CheckFalse", "UiPath.Core.Activities.ChangeType",
+  "UiPath.Core.Activities.InterruptibleWhile", "UiPath.Core.Activities.InterruptibleDoWhile",
 ]);
 export const isBuiltin = (clrType: string) => builtin.has(clrType);
 
@@ -201,6 +204,35 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       case "MultipleAssign":
         (n.assigns ?? []).forEach((x, i) => emit(depth, `${lvalue(x.to, `${at}.assigns[${i}].to`, sc)} = ${expr(x.value, `${at}.assigns[${i}].value`, sc)};`));
         return;
+      case "Return": emit(depth, outs.length === 0 ? "return;" : outs.length === 1 ? `return ${outs[0].name};` : `return (${outs.map((x) => x.name).join(", ")});`); return;
+      case "Comment": emit(depth, `// ${String(p.Text ?? "").replace(/\r?\n/g, " ")}`); return;
+      case "Placeholder": emit(depth, "// Placeholder"); return;
+      case "CommentOut": emit(depth, "// CommentOut（中のアクティビティは実行されない）"); return; // Body は生成しない
+      case "CheckTrue":
+      case "CheckFalse": {
+        // Expression を評価し、期待と違えば ErrorMessage の例外。Result には Expression の値
+        const c = `__check${++tmp}`;
+        emit(depth, `var ${c} = ${expr(p.Expression, `${at}.props.Expression`, sc)};`);
+        emit(depth, `if (${a.className === "CheckTrue" ? "!" : ""}${c}) throw new Exception(${p.ErrorMessage !== undefined ? str(p.ErrorMessage, `${at}.props.ErrorMessage`, sc) : '""'});`);
+        if (p.Result !== undefined) emit(depth, `${lvalue(p.Result, `${at}.props.Result`, sc)} = ${c};`);
+        return;
+      }
+      case "ChangeType": {
+        const t = csType(n.typeArg ?? "Object");
+        emit(depth, `${lvalue(p.ConvertedValue, `${at}.props.ConvertedValue`, sc)} = (${t})Convert.ChangeType(${expr(p.SourceValue, `${at}.props.SourceValue`, sc)}, typeof(${t}));`);
+        return;
+      }
+      case "InterruptibleWhile":
+      case "InterruptibleDoWhile": {
+        // CurrentIndex は 0 始まりの反復番号。MaxIterations 回まわったら抜ける。割り込み（ジョブの停止）は Coded では扱えない
+        const idx = p.CurrentIndex !== undefined ? lvalue(p.CurrentIndex, `${at}.props.CurrentIndex`, sc) : `__loop${++tmp}`;
+        const cond = expr(p.Condition, `${at}.props.Condition`, sc) + (p.MaxIterations !== undefined ? ` && ${idx} + 1 < ${expr(p.MaxIterations, `${at}.props.MaxIterations`, sc)}` : "");
+        emit(depth, p.CurrentIndex !== undefined ? `${idx} = -1;` : `var ${idx} = -1;`);
+        const inner = () => { emit(depth + 1, `${idx}++;`); block(n.body, depth + 1, `${at}.body`, sc); };
+        if (a.className === "InterruptibleWhile") { emit(depth, `while (${cond})`); braces(depth, inner); }
+        else { emit(depth, "do"); braces(depth, inner, `while (${cond});`); }
+        return;
+      }
       case "Break": emit(depth, "break;"); return;
       case "Continue": emit(depth, "continue;"); return;
       case "Throw": emit(depth, `throw ${expr(p.Exception, `${at}.props.Exception`, sc)};`); return;
