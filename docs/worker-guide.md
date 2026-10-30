@@ -483,6 +483,12 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 ```
 
 - build の警告「Use Excel File を Excel Process Scope の中で使うことを勧める」は無視してよい
+- run の前に、Excel（Office）にサインインしておく。していないと、0x800AC472・「ビジー」・「準備完了ステートにない」・「範囲を読み込めませんでした」・120秒のタイムアウトが、サンプルと関係なく不規則に出る（2026-10-31 に、サインイン後は全サンプルでこれらが消えた）
+- 手で開いた Excel があると、run がそこに相乗りすることがある。比べるときは閉じておく（`/automation` が付いていない Excel は止めない）
+- `Excel.Sheet("名前")` は、無いシートを新しく作る。消えたことを TryCatch では確かめられないので、元の内容が空になったことを読み戻して確かめる
+- `LookupX` は Excel の LOOKUP と同じで、昇順に並んだ範囲が前提（並んでいないと別の値が返る）
+- `DeleteRowsX` の `RowPositions` は、`HasHeaders` が true でも見出しの行を1行目に数える
+- XAML と C# は同じ `output/` に書くので、保存先が既にあると落ちるもの（`SaveAsPdfX`、`SaveExcelFileAsX`）は `ReplaceExisting: true` を書く
 - run には Excel（デスクトップ版）が要る。この PC には入っているが、管理者権限のシェルから起動した Excel はファイルを開けない（「ファイルにアクセスできません」）。run はマネージャーがまとめて流すので、期待ログ（`*.expected.log`）を必ず書き、build まで通ったら Linear を **In Progress** にして「run 待ち」とコメントする
 - run できないもの（パスワード付きのブック、秘密度ラベル、マクロ付きのブック、クリップボード、PDF の出力先の確認など）は `noRun` に理由を書く。その上で build と全テストが通れば Done
 
