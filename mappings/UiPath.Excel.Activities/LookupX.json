@@ -1,0 +1,22 @@
+{
+  "activity": "LookupX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "ResultRange"
+      ],
+      "code": "{Value} = ({Value|type})Convert.ChangeType({SourceRange}.LookupRange(label: {Label}, resultRange: {ResultRange}), typeof({Value|type}));",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    },
+    {
+      "code": "{Value} = ({Value|type})Convert.ChangeType({SourceRange}.LookupRange(label: {Label}), typeof({Value|type}));",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.LookupRange(this IReadRangeRef range, object label[, IReadRangeRef resultRange]) は object を返すので、代入先の型に Convert.ChangeType で変換する"
+}

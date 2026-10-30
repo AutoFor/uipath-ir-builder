@@ -1,0 +1,83 @@
+{
+  "workflow": "TextToColumnsX_Full",
+  "variables": [
+    {
+      "name": "v1",
+      "type": "Object"
+    },
+    {
+      "name": "v2",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\TextToColumnsX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "Value": {
+              "lit": "太郎,30|東京"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A2\")",
+            "Value": {
+              "lit": "花子,25|大阪"
+            }
+          }
+        },
+        {
+          "act": "TextToColumnsX",
+          "name": "カンマと | で分ける",
+          "props": {
+            "SourceRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:A2\")",
+            "DestinationRange": "Excel.Sheet(\"Sheet1\").Range(\"C1\")",
+            "ParsingType": "Delimited",
+            "SplitByComma": true,
+            "SplitBySemicolon": false,
+            "SplitBySpace": false,
+            "SplitByTabs": false,
+            "SplitByLineBreak": false,
+            "SplitByOther": true,
+            "OtherSeparator": "|",
+            "ConsecutiveOperatorsAsOne": true,
+            "TextQualifier": "DoubleQuote"
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"C2\")",
+            "SaveTo": "v1"
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"E2\")",
+            "SaveTo": "v2"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"C2=\" & CStr(v1) & \" E2=\" & CStr(v2)"
+      }
+    }
+  ]
+}

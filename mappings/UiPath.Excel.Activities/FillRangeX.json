@@ -1,0 +1,16 @@
+{
+  "activity": "FillRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{DestinationRange}.FillRange",
+      "args": {
+        "value": "{Value}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.FillRange(this IWellDefinedReadWriteRangeRef destinationRange, object value)"
+}

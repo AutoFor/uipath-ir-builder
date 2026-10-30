@@ -1,0 +1,29 @@
+{
+  "activity": "FindReplaceValueX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{WhereToSearch}.FindReplaceValue",
+      "args": {
+        "valueToFind": "{ValueToFind}",
+        "operation": "UiPath.Excel.FindReplaceOptions.{Operation}",
+        "replaceWith": "{ReplaceWith}",
+        "lookIn": "UiPath.Excel.LookInOptions.{LookIn}",
+        "matchCase": "{MatchCase}",
+        "matchEntireCellContents": "{MatchEntireCellContents}"
+      },
+      "defaults": {
+        "LookIn": "Values",
+        "MatchCase": false,
+        "MatchEntireCellContents": false,
+        "ReplaceWith": "Nothing"
+      },
+      "returns": "FoundAt",
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.FindReplaceValue(this IReadRangeRef whereToFindRange, object valueToFind, FindReplaceOptions operation, object replaceWith, LookInOptions lookIn, bool matchCase, bool matchEntireCellContents) が見つけた場所（string）を返す。replaceWith は必須の引数なので、IR に無いときは null を渡す"
+}

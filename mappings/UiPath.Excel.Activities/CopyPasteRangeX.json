@@ -1,0 +1,27 @@
+{
+  "activity": "CopyPasteRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{DestinationRange}.CopyPasteRange",
+      "args": {
+        "sourceRange": "{SourceRange}",
+        "excludeSourceHeaders": "{ExcludeHeaderFromSourceTable}",
+        "excludeDestinationHeaders": "{ExcludeHeaders}",
+        "transpose": "{Transpose}",
+        "options": "UiPath.Excel.CopyPasteRangeOptions.{PasteOptions}"
+      },
+      "defaults": {
+        "ExcludeHeaderFromSourceTable": false,
+        "ExcludeHeaders": false,
+        "Transpose": false,
+        "PasteOptions": "All"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.CopyPasteRange(this IReadWriteRangeRef destinationRange, IReadRangeRef sourceRange, bool excludeSourceHeaders, bool excludeDestinationHeaders, bool transpose, CopyPasteRangeOptions options)。ExcludeHeaderFromSourceTable → excludeSourceHeaders、ExcludeHeaders → excludeDestinationHeaders に対応させた"
+}

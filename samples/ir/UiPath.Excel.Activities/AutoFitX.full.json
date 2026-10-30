@@ -1,0 +1,75 @@
+{
+  "workflow": "AutoFitX_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "v1",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadRangeX",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")",
+            "SaveTo": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\AutoFitX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteRangeX",
+          "props": {
+            "Destination": "Excel.Sheet(\"Sheet1\").Range(\"A1\")",
+            "Source": "dt"
+          }
+        },
+        {
+          "act": "AutoFitX",
+          "name": "列だけ調整",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")",
+            "Columns": true,
+            "Rows": false
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "SaveTo": "v1"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A1=\" & CStr(v1)"
+      }
+    }
+  ]
+}

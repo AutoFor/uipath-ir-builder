@@ -1,0 +1,14 @@
+{
+  "activity": "GetCellColorX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Cell}.GetCellColorInternal",
+      "returns": "OutputColor",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.GetCellColorInternal(this IReadCellRef cell) が System.Drawing.Color を返す（名前に Internal が付くが public の拡張メソッド）"
+}

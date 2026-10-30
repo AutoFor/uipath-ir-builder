@@ -1,0 +1,13 @@
+{
+  "activity": "AutoFillX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{StartRange}.Autofill",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.Autofill(this IWellDefinedReadRangeRef startRange)（メソッド名は Autofill で f が小文字）"
+}
