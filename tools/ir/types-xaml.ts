@@ -44,6 +44,7 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Timer: ["ucore:Timer", { ucore: UCORE }],
   QueueItem: ["ucore:QueueItem", { ucore: UCORE }],
   "UiPath.Platform.Triggers.TriggerArgs": ["upt:TriggerArgs", { upt: UPT }],
+  EmptyArgs: ["uix:EmptyArgs", { uix: "http://schemas.uipath.com/workflow/activities/uix" }],
   FileChangeInfo: ["ucore:FileChangeInfo", { ucore: UCORE }],
   ProcessInfo: ["ucore:ProcessInfo", { ucore: UCORE }],
   PasswordCredentials: ["uca:PasswordCredentials", { uca: UCA }],

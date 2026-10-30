@@ -1,0 +1,33 @@
+{
+  "workflow": "NBlockUserInput_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "NBlockUserInput",
+      "name": "入力をブロックして処理する（全部入り）",
+      "props": {
+        "BlockType": "Both",
+        "KeyModifiers": "Alt",
+        "Keys": {
+          "lit": "F10"
+        },
+        "Allow3rdPartyApps": false,
+        "DisableUnblock": false,
+        "Timeout": 30,
+        "DelayBefore": 0.1,
+        "DelayAfter": 0.1,
+        "ContinueOnError": false,
+        "HealingAgentBehavior": "Disabled"
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"blocked\""
+          }
+        }
+      ]
+    }
+  ]
+}

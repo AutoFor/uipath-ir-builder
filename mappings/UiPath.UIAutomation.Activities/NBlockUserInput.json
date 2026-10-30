@@ -1,0 +1,27 @@
+{
+  "activity": "NBlockUserInput",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.BlockUserInput",
+      "scope": "using",
+      "scopeType": "UiPath.UIAutomationNext.API.Models.BlockUserInputScope",
+      "scopeVar": "block",
+      "usings": ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutomationNext.Enums"],
+      "args": {
+        "blockUserInputOptions": {
+          "new": "BlockUserInputOptions",
+          "always": true,
+          "set": {
+            "BlockType": "{BlockType|enum}",
+            "KeyModifiers": "{KeyModifiers|enum}",
+            "Keys": "{Keys}",
+            "Allow3rdPartyApps": "{Allow3rdPartyApps}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "using (uiAutomation.BlockUserInput(options)) { body }（BlockUserInputScope を Dispose すると解除される）。DisableUnblock（スコープを抜けても解除しない）は Coded API に無いので扱わない。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior も Coded 未対応。RDP の入力が止まるので run していない",
+  "ignore": ["ScopeIdentifier","Version","Timeout","DelayBefore","DelayAfter","HealingAgentBehavior","DisableUnblock"]
+}

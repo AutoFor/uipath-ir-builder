@@ -1,0 +1,83 @@
+{
+  "workflow": "NClickTrigger_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "NApplicationCard",
+      "name": "UIA Test Form を開く",
+      "item": "WSSessionData",
+      "objs": {
+        "TargetApp": {
+          "Url": "New Uri(htmlPath).AbsoluteUri",
+          "BrowserType": "Edge",
+          "Selector": {
+            "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+          }
+        }
+      },
+      "props": {
+        "OpenMode": "Always",
+        "CloseMode": "Always"
+      },
+      "body": [
+        {
+          "act": "TriggerScope",
+          "name": "トリガーの範囲",
+          "props": {},
+          "item": "args",
+          "slots": {
+            "Triggers": [
+              {
+                "act": "NClickTrigger",
+                "objs": {
+                  "Target": {
+                    "FullSelectorArgument": {
+                      "lit": "<webctrl id='greet' tag='BUTTON' />"
+                    },
+                    "ScopeSelectorArgument": {
+                      "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+                    },
+                    "SearchSteps": "Selector"
+                  }
+                },
+                "props": {
+                  "Button": "Left",
+                  "KeyModifiers": "None",
+                  "Mode": "Down",
+                  "BlockEvent": false,
+                  "IncludeChildren": true,
+                  "SchedulingMode": "Sequential"
+                }
+              }
+            ],
+            "Action": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": "\"NClickTrigger が発火した\""
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

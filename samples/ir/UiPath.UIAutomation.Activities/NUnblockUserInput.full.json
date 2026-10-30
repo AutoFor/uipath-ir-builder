@@ -1,0 +1,17 @@
+{
+  "workflow": "NUnblockUserInput_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "NUnblockUserInput",
+      "name": "入力のブロックを解除する（全部入り）",
+      "props": {
+        "Timeout": 30,
+        "DelayBefore": 0.1,
+        "DelayAfter": 0.1,
+        "ContinueOnError": false,
+        "HealingAgentBehavior": "Disabled"
+      }
+    }
+  ]
+}

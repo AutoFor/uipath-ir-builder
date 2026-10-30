@@ -1,0 +1,12 @@
+{
+  "activity": "NUnblockUserInput",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.UnblockUserInput",
+      "usings": ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutomationNext.Enums"]
+    }
+  ],
+  "notes": "uiAutomation.UnblockUserInput()。引数なし。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応",
+  "ignore": ["ScopeIdentifier","Version","Timeout","DelayBefore","DelayAfter","HealingAgentBehavior"]
+}

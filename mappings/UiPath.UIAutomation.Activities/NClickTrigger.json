@@ -1,0 +1,6 @@
+{
+  "activity": "NClickTrigger",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（トリガー。IUiAutomationAppService / UiTargetApp にイベントを待つ API が無い）"
+}
