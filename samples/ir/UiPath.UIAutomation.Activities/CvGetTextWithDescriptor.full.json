@@ -1,0 +1,79 @@
+{
+  "workflow": "CvGetTextWithDescriptor_Full",
+  "variables": [
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CVScope",
+      "name": "CV スコープ",
+      "item": "CVSessionData",
+      "objs": {
+        "Target": {
+          "Selector": {
+            "lit": "<wnd app='notepad.exe' cls='Notepad' />"
+          }
+        }
+      },
+      "body": [
+        {
+          "act": "CvGetTextWithDescriptor",
+          "name": "CvGetTextWithDescriptor（全部入り）",
+          "objs": {
+            "DesignTimeDescriptor": {
+              "Target": {
+                "ElementType": "Button",
+                "Text": "OK",
+                "ImageAccuracy": 0.8,
+                "TextAccuracy": 0.7,
+                "UseFuzzy": true
+              }
+            }
+          },
+          "props": {
+            "Descriptor": "New UiPath.CV.CvDescriptor()",
+            "Result": "txt",
+            "MethodType": "OCR",
+            "RefreshBefore": true,
+            "Scroll": false,
+            "ScrollDirection": "None",
+            "DelayBefore": 100,
+            "DelayMS": 200,
+            "NumberOfScrolls": 3,
+            "DelayScreenshotAfterScroll": 300,
+            "TimeoutMS": 15000,
+            "ContinueOnError": false
+          }
+        }
+      ],
+      "slots": {
+        "OCREngine": [
+          {
+            "act": "GoogleOCR",
+            "name": "Google OCR",
+            "props": {
+              "Image": "Image"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"テキスト: \" & txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"done\""
+      }
+    }
+  ]
+}

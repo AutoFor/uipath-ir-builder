@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CvSelectItemWithDescriptor\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:p=\"http://schemas.uipath.com/workflow/activities/cv\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <p:CvSelectItemWithDescriptor DelayScreenshotAfterScroll=\"{x:Null}\" DeselectAfter=\"{x:Null}\" DesignTimeScaleFactor=\"{x:Null}\" InRegion=\"{x:Null}\" ScrollDirection=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" SimulateType=\"{x:Null}\" Activate=\"False\" ClickBeforeTyping=\"True\" EmptyField=\"False\" NumberOfScrolls=\"2\">\r\n    <p:CvSelectItemWithDescriptor.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"acb02599-3dd7-4c44-8be8-591654864f59\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </p:CvSelectItemWithDescriptor.Target>\r\n  </p:CvSelectItemWithDescriptor>\r\n</Activity>"
+  }
+}

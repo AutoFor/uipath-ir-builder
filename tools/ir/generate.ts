@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
+import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
@@ -222,6 +222,23 @@ export function generate(wf: Workflow, cat: Catalog): string {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる
         for (const c of nodes) emitNode(c, depth + 1, new Map(scope));
       } else if (p.kind === "delegate") {
+        const fi = funcInfo(p);
+        if (fi) {
+          const ta = [...fi.args, fi.result].map(typeText).join(", ");
+          emit(depth + 1, `<${tag}.${p.name}>`);
+          emit(depth + 2, `<ActivityFunc x:TypeArguments="${ta}">`);
+          const inner = new Map(scope);
+          fi.args.forEach((t) => {
+            emit(depth + 3, `<ActivityFunc.Argument>`);
+            emit(depth + 4, `<DelegateInArgument x:TypeArguments="${typeText(t)}" Name="${esc(funcArgName(t))}" />`);
+            emit(depth + 3, `</ActivityFunc.Argument>`);
+            inner.set(funcArgName(t), t);
+          });
+          emitNode(single(nodes, p.name), depth + 3, inner);
+          emit(depth + 2, `</ActivityFunc>`);
+          emit(depth + 1, `</${tag}.${p.name}>`);
+          continue;
+        }
         const types = delegateArgs(p, n.typeArg)!;
         emit(depth + 1, `<${tag}.${p.name}>`);
         activityAction(depth + 2, types, itemNames(n, types.length), nodes, scope);
