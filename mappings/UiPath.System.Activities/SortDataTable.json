@@ -1,0 +1,43 @@
+{
+  "activity": "SortDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ColumnName"
+      ],
+      "call": "system.SortDataTable",
+      "args": {
+        "dataTable": "{DataTable}",
+        "columnName": "{ColumnName}",
+        "sortOrder": "UiPath.Core.Activities.SortOrder.{SortOrder}"
+      },
+      "returns": "OutputDataTable"
+    },
+    {
+      "when": [
+        "ColumnIndex"
+      ],
+      "call": "system.SortDataTable",
+      "args": {
+        "dataTable": "{DataTable}",
+        "columnName": "{DataTable}.Columns[{ColumnIndex}].ColumnName",
+        "sortOrder": "UiPath.Core.Activities.SortOrder.{SortOrder}"
+      },
+      "returns": "OutputDataTable"
+    },
+    {
+      "when": [
+        "DataColumn"
+      ],
+      "call": "system.SortDataTable",
+      "args": {
+        "dataTable": "{DataTable}",
+        "columnName": "{DataColumn}.ColumnName",
+        "sortOrder": "UiPath.Core.Activities.SortOrder.{SortOrder}"
+      },
+      "returns": "OutputDataTable"
+    }
+  ],
+  "notes": "ISystemService.SortDataTable(DataTable, string columnName[, SortOrder]) は並べ替えた新しい DataTable を返す。列番号・DataColumn は列名にして渡す"
+}

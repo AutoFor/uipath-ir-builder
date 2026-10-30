@@ -1,0 +1,19 @@
+{
+  "activity": "AddDataRow",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "DataRow"
+      ],
+      "code": "system.AddDataRow(ref {DataTable}, {DataRow});"
+    },
+    {
+      "when": [
+        "ArrayRow"
+      ],
+      "code": "{DataTable}.Rows.Add({ArrayRow});"
+    }
+  ],
+  "notes": "DataRow は ISystemService.AddDataRow(ref DataTable, DataRow)。ref の引数は call の args では書けない（out / ref を付けずに呼んでしまう）ので code で書く。ArrayRow は API に無く、DataTable.Rows.Add(object[])"
+}

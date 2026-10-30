@@ -2,10 +2,10 @@
 
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
-import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
+import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs } from "./uia.ts";
 import { excelPrefixes } from "./excel.ts";
 
@@ -138,7 +138,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
     const hasContent =
-      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || slots.length || Object.keys(n.objs ?? {}).length || Object.keys(n.lists ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -157,6 +157,34 @@ export function generate(wf: Workflow, cat: Catalog): string {
         emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
       }
       if (wrap) emit(depth + 2, `</scg:Dictionary>`);
+      emit(depth + 1, `</${tag}.${prop}>`);
+    }
+    // List<T> のプロパティ。要素が InArgument なら <InArgument x:TypeArguments="x:String">[式]</InArgument>、
+    // オブジェクト型なら <ui:FilterOperationArgument 属性...> と、式のプロパティは子要素（InArgument は x:String）
+    for (const [prop, list] of Object.entries(n.lists ?? {})) {
+      const p = a.props.find((x) => x.name === prop)!;
+      const el = listElementType(p.type)!;
+      const t = objectTypes.get(el);
+      const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      const inArg = (v: Value) => `<InArgument x:TypeArguments="x:String">${esc(`[${exprText(v)}]`)}</InArgument>`;
+      emit(depth + 1, `<${tag}.${prop}>`);
+      emit(depth + 2, `<${sg}List x:TypeArguments="${t ? prefixFor(t.xmlns) + t.className : "InArgument"}" Capacity="${Math.max(4, list.length)}">`);
+      for (const x of list) {
+        if (!t || isValueItem(x)) { emit(depth + 3, inArg(x as Value)); continue; }
+        const etag = prefixFor(t.xmlns) + t.className;
+        const props = Object.entries(x as Record<string, Value>).map(([k, v]) => [t.props.find((q) => q.name === k)!, v] as const);
+        const attrsText = props.filter(([q]) => q.kind === "prop").map(([q, v]) => ` ${q.name}="${esc(attrValue(v, q))}"`).join("");
+        const kids = props.filter(([q]) => q.kind !== "prop");
+        if (!kids.length) { emit(depth + 3, `<${etag}${attrsText} />`); continue; }
+        emit(depth + 3, `<${etag}${attrsText}>`);
+        for (const [q, v] of kids) {
+          emit(depth + 4, `<${etag}.${q.name}>`);
+          emit(depth + 5, inArg(v));
+          emit(depth + 4, `</${etag}.${q.name}>`);
+        }
+        emit(depth + 3, `</${etag}>`);
+      }
+      emit(depth + 2, `</${sg}List>`);
       emit(depth + 1, `</${tag}.${prop}>`);
     }
     if (n.variables?.length) {

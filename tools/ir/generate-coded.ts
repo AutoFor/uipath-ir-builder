@@ -30,7 +30,7 @@ const baseUsings = ["System", "System.Collections.Generic", "System.Data", "Syst
 
 const builtin = new Set([
   "System.Activities.Statements.Sequence", "System.Activities.Statements.If", "System.Activities.Statements.ForEach",
-  "UiPath.Core.Activities.ForEach", "System.Activities.Statements.While", "System.Activities.Statements.DoWhile",
+  "UiPath.Core.Activities.ForEach", "UiPath.Core.Activities.ForEachRow", "System.Activities.Statements.While", "System.Activities.Statements.DoWhile",
   "System.Activities.Statements.Switch", "System.Activities.Statements.TryCatch", "System.Activities.Statements.Assign",
   "UiPath.Core.Activities.MultipleAssign", "UiPath.Core.Activities.Break", "UiPath.Core.Activities.Continue",
   "System.Activities.Statements.Throw", "System.Activities.Statements.Rethrow", "UiPath.Core.Activities.RetryScope",
@@ -156,6 +156,25 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         if (idx) emit(depth, `${idx} = -1;`);
         emit(depth, `foreach (${t} ${item} in ${expr(p.Values, `${at}.props.Values`, sc)})`);
         braces(depth, () => { if (idx) emit(depth + 1, `${idx}++;`); block(n.body, depth + 1, `${at}.body`, inner); });
+        return;
+      }
+      case "ForEachRow": {
+        // DataTable の行を foreach で回す。CurrentIndex は 0 始まりの行番号。MaxIterations は先頭から数えて打ち切る。
+        // Condition / Values / ColumnNames など、行の選び方を変えるものはまだ Coded に直せない
+        const [item] = itemNames(n, 1);
+        const inner = new Map(sc).set(item, "DataRow");
+        const idx = p.CurrentIndex !== undefined ? lvalue(p.CurrentIndex, `${at}.props.CurrentIndex`, sc) : undefined;
+        for (const k of Object.keys(p)) if (!["DataTable", "CurrentIndex", "MaxIterations"].includes(k)) add(`${at}.props.${k}`, "CODED_UNSUPPORTED", `ForEachRow.${k} はまだ Coded に直せない`);
+        const i = `__row${++tmp}`;
+        if (idx) emit(depth, `${idx} = -1;`);
+        emit(depth, `var ${i} = 0;`);
+        emit(depth, `foreach (DataRow ${item} in ${expr(p.DataTable, `${at}.props.DataTable`, sc)}.Rows)`);
+        braces(depth, () => {
+          if (p.MaxIterations !== undefined) { emit(depth + 1, `if (${i} >= ${expr(p.MaxIterations, `${at}.props.MaxIterations`, sc)}) break;`); }
+          emit(depth + 1, `${i}++;`);
+          if (idx) emit(depth + 1, `${idx}++;`);
+          block(n.body, depth + 1, `${at}.body`, inner);
+        });
         return;
       }
       case "While":

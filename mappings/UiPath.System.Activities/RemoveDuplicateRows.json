@@ -1,0 +1,14 @@
+{
+  "activity": "RemoveDuplicateRows",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.RemoveDuplicateRows",
+      "args": {
+        "dataTable": "{DataTable}"
+      },
+      "returns": "OutputDataTable"
+    }
+  ],
+  "notes": "ISystemService.RemoveDuplicateRows(DataTable) は新しい DataTable を返す"
+}

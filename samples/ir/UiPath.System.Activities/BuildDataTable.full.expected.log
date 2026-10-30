@@ -1,0 +1,8 @@
+[Information] rows=3
+[Information] columns=4
+[Information] Active.Type=Boolean
+[Information] Score.Type=Double
+[Information] Name.MaxLength=50
+[Information] active0=True
+[Information] active1=False
+[Information] score1=2.25

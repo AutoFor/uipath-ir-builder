@@ -1,0 +1,101 @@
+{
+  "workflow": "BuildDataTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "BuildDataTable",
+      "name": "表を作る",
+      "props": {
+        "TableInfo": {
+          "lit": "<NewDataSet>\n  <xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TableName\" msdata:UseCurrentLocale=\"true\"><xs:complexType><xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:element name=\"TableName\"><xs:complexType><xs:sequence><xs:element name=\"Name\" minOccurs=\"0\"><xs:simpleType><xs:restriction base=\"xs:string\"><xs:maxLength value=\"50\" /></xs:restriction></xs:simpleType></xs:element><xs:element name=\"Age\" type=\"xs:int\" minOccurs=\"0\" /><xs:element name=\"Active\" type=\"xs:boolean\" minOccurs=\"0\" /><xs:element name=\"Score\" type=\"xs:double\" minOccurs=\"0\" /></xs:sequence></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema>\n  <TableName><Name>Alice</Name><Age>30</Age><Active>true</Active><Score>1.5</Score></TableName>\n  <TableName><Name>Bob</Name><Age>25</Age><Active>false</Active><Score>2.25</Score></TableName>\n  <TableName><Name>Carol</Name><Age>35</Age><Active>true</Active><Score>3</Score></TableName>\n</NewDataSet>"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dt.Rows.Count.ToString",
+          "cs": "\"rows=\" + dt.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & dt.Columns.Count.ToString",
+          "cs": "\"columns=\" + dt.Columns.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Active.Type=\" & dt.Columns(\"Active\").DataType.Name",
+          "cs": "\"Active.Type=\" + dt.Columns[\"Active\"].DataType.Name"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Score.Type=\" & dt.Columns(\"Score\").DataType.Name",
+          "cs": "\"Score.Type=\" + dt.Columns[\"Score\"].DataType.Name"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Name.MaxLength=\" & dt.Columns(\"Name\").MaxLength.ToString",
+          "cs": "\"Name.MaxLength=\" + dt.Columns[\"Name\"].MaxLength.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"active0=\" & dt.Rows(0)(\"Active\").ToString",
+          "cs": "\"active0=\" + dt.Rows[0][\"Active\"].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"active1=\" & dt.Rows(1)(\"Active\").ToString",
+          "cs": "\"active1=\" + dt.Rows[1][\"Active\"].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"score1=\" & dt.Rows(1)(\"Score\").ToString",
+          "cs": "\"score1=\" + dt.Rows[1][\"Score\"].ToString()"
+        }
+      }
+    }
+  ]
+}

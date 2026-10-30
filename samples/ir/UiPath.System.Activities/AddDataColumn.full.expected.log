@@ -1,0 +1,7 @@
+[Information] columns=3
+[Information] Id.AutoIncrement=True
+[Information] Id.Unique=True
+[Information] Id.AllowDBNull=False
+[Information] Code.DefaultValue=N/A
+[Information] Code.MaxLength=10
+[Information] Memo.Type=String

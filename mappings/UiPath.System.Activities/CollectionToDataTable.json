@@ -1,0 +1,6 @@
+{
+  "activity": "CollectionToDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に CollectionToDataTable が無い）"
+}

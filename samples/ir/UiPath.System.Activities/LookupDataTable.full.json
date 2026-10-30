@@ -1,0 +1,178 @@
+{
+  "workflow": "LookupDataTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "v1",
+      "type": "Object"
+    },
+    {
+      "name": "v2",
+      "type": "Object"
+    },
+    {
+      "name": "v3",
+      "type": "Object"
+    },
+    {
+      "name": "idx",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "LookupDataTable",
+      "name": "列名で探す",
+      "props": {
+        "DataTable": "dt",
+        "LookupValue": {
+          "lit": "Bob"
+        },
+        "LookupColumnName": {
+          "lit": "Name"
+        },
+        "TargetColumnName": {
+          "lit": "Age"
+        },
+        "CellValue": "v1",
+        "RowIndex": "idx"
+      }
+    },
+    {
+      "act": "LookupDataTable",
+      "name": "列番号で探す",
+      "props": {
+        "DataTable": "dt",
+        "LookupValue": {
+          "lit": "Carol"
+        },
+        "LookupColumnIndex": 0,
+        "TargetColumnIndex": 1,
+        "CellValue": "v2"
+      }
+    },
+    {
+      "act": "LookupDataTable",
+      "name": "DataColumn で探す",
+      "props": {
+        "DataTable": "dt",
+        "LookupValue": {
+          "lit": "Alice"
+        },
+        "LookupDataColumn": {
+          "vb": "dt.Columns(\"Name\")",
+          "cs": "dt.Columns[\"Name\"]"
+        },
+        "TargetDataColumn": {
+          "vb": "dt.Columns(\"Age\")",
+          "cs": "dt.Columns[\"Age\"]"
+        },
+        "CellValue": "v3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byName=\" & v1.ToString",
+          "cs": "\"byName=\" + v1.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rowIndex=\" & idx.ToString",
+          "cs": "\"rowIndex=\" + idx.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byIndex=\" & v2.ToString",
+          "cs": "\"byIndex=\" + v2.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byColumn=\" & v3.ToString",
+          "cs": "\"byColumn=\" + v3.ToString()"
+        }
+      }
+    }
+  ]
+}

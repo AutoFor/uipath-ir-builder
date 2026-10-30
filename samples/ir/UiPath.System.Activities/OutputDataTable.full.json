@@ -1,0 +1,84 @@
+{
+  "workflow": "OutputDataTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "s",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "OutputDataTable",
+      "name": "表を文字列にする",
+      "props": {
+        "DataTable": "dt",
+        "Text": "s"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"hasAge=\" & s.Contains(\"Age\").ToString",
+          "cs": "\"hasAge=\" + s.Contains(\"Age\").ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"has30=\" & s.Contains(\"30\").ToString",
+          "cs": "\"has30=\" + s.Contains(\"30\").ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"hasBob=\" & s.Contains(\"Bob\").ToString",
+          "cs": "\"hasBob=\" + s.Contains(\"Bob\").ToString()"
+        }
+      }
+    }
+  ]
+}

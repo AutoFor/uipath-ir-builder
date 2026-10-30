@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from "./catalog.ts";
+import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -119,6 +119,27 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       });
     }
 
+    // List<T> 型のプロパティ（lists）。要素が InArgument なら式、オブジェクト型ならプロパティの辞書
+    for (const [k, list] of Object.entries(n.lists ?? {})) {
+      const p = a.props.find((p) => p.name === k);
+      const at = `${path}.lists.${k}`;
+      const el = p && listElementType(p.type);
+      const t = el ? objectTypes.get(el) : undefined;
+      if (!p || !el || (el !== "System.Activities.InArgument" && !t)) { add(at, "BAD_LIST", `${a.className} に lists で書ける List のプロパティ "${k}" は無い`); continue; }
+      given.add(k);
+      list.forEach((x, i) => {
+        const iat = `${at}[${i}]`;
+        if (!t) { if (!isValueItem(x)) add(iat, "BAD_LIST", `"${k}" の要素は式で書く`); return; }
+        if (isValueItem(x)) { add(iat, "BAD_LIST", `"${k}" の要素は { "プロパティ名": 値 } のオブジェクトで書く（${t.className}）`); return; }
+        for (const [pk, pv] of Object.entries(x)) {
+          const q = t.props.find((q) => q.name === pk);
+          if (!q) add(`${iat}.${pk}`, "UNKNOWN_PROP", `${t.className} に "${pk}" は無い`);
+          else if (!isValueItem(pv)) add(`${iat}.${pk}`, "BAD_LIST", `"${pk}" は値（式・{ lit }・数値）で書く`);
+          else if (q.enum && !(typeof pv === "string" && q.enum.includes(pv))) add(`${iat}.${pk}`, "BAD_ENUM", `"${pk}" は ${q.enum.join(" / ")} のどれか`);
+        }
+      });
+    }
+
     if (n.cases) {
       if (!a.props.some((p) => p.name === "Cases")) add(`${path}.cases`, "BAD_SLOT", `cases は Switch だけ`);
       for (const [key, nodes] of Object.entries(n.cases)) nodes.forEach((c, i) => visit(c, `${path}.cases.${key}[${i}]`, new Map(scope)));
@@ -189,4 +210,12 @@ export function argumentType(n: Node, a: Activity, scope: Map<string, string>): 
   const out = a.props.find((p) => p.kind === "out" && isUntypedArgument(p.type));
   const v = out && n.props?.[out.name];
   return typeof v === "string" ? scope.get(v) : undefined;
+}
+
+// 値（式・{ lit }・{ vb, cs }・数値・真偽値）か。lists の要素がオブジェクト（プロパティの辞書）かの見分けに使う
+export function isValueItem(v: unknown): v is Value {
+  if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return true;
+  if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
+  const k = Object.keys(v).sort().join();
+  return k === "lit" || k === "cs,vb";
 }

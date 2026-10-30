@@ -1,0 +1,16 @@
+{
+  "activity": "MergeDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "MissingSchemaAction"
+      ],
+      "code": "system.MergeDataTable({Source}, ref {Destination}, System.Data.MissingSchemaAction.{MissingSchemaAction});"
+    },
+    {
+      "code": "system.MergeDataTable({Source}, ref {Destination});"
+    }
+  ],
+  "notes": "ISystemService.MergeDataTable(source, ref destination[, missingSchemaAction])。ref の引数は code で書く"
+}

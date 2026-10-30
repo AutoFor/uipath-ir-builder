@@ -1,0 +1,216 @@
+{
+  "workflow": "FilterDataTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "res",
+      "type": "DataTable"
+    },
+    {
+      "name": "res2",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "FilterDataTable",
+      "name": "Keep: 条件に合う行を残す",
+      "props": {
+        "DataTable": "dt",
+        "OutputDataTable": "res",
+        "FilterRowsMode": "Keep",
+        "SelectColumnsMode": "Keep"
+      },
+      "lists": {
+        "Filters": [
+          {
+            "Column": {
+              "lit": "Age"
+            },
+            "Operator": "GT",
+            "Operand": {
+              "lit": "25"
+            }
+          },
+          {
+            "BooleanOperator": "And",
+            "Column": {
+              "lit": "Name"
+            },
+            "Operator": "NOTEQ",
+            "Operand": {
+              "lit": "Carol"
+            }
+          }
+        ],
+        "SelectColumns": [
+          {
+            "lit": "Name"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & res.Rows.Count.ToString",
+          "cs": "\"rows=\" + res.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"names=\" & String.Join(\",\", res.Rows.Cast(Of DataRow).Select(Function(r) r(\"Name\").ToString))",
+          "cs": "\"names=\" + string.Join(\",\", res.Rows.Cast<DataRow>().Select(r => r[\"Name\"].ToString()))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & String.Join(\",\", res.Columns.Cast(Of DataColumn).Select(Function(c) c.ColumnName))",
+          "cs": "\"columns=\" + string.Join(\",\", res.Columns.Cast<DataColumn>().Select(c => c.ColumnName))"
+        }
+      }
+    },
+    {
+      "act": "FilterDataTable",
+      "name": "Remove: 条件に合う行を消す",
+      "props": {
+        "DataTable": "dt",
+        "OutputDataTable": "res2",
+        "FilterRowsMode": "Remove",
+        "SelectColumnsMode": "Remove"
+      },
+      "lists": {
+        "Filters": [
+          {
+            "Column": {
+              "lit": "Name"
+            },
+            "Operator": "STARTSWITH",
+            "Operand": {
+              "lit": "B"
+            }
+          },
+          {
+            "BooleanOperator": "Or",
+            "Column": {
+              "lit": "Name"
+            },
+            "Operator": "EQ",
+            "Operand": {
+              "lit": "Alice"
+            }
+          }
+        ],
+        "SelectColumns": [
+          {
+            "lit": "Age"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & res2.Rows.Count.ToString",
+          "cs": "\"rows=\" + res2.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"names2=\" & String.Join(\",\", res2.Rows.Cast(Of DataRow).Select(Function(r) r(\"Name\").ToString))",
+          "cs": "\"names2=\" + string.Join(\",\", res2.Rows.Cast<DataRow>().Select(r => r[\"Name\"].ToString()))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns2=\" & String.Join(\",\", res2.Columns.Cast(Of DataColumn).Select(Function(c) c.ColumnName))",
+          "cs": "\"columns2=\" + string.Join(\",\", res2.Columns.Cast<DataColumn>().Select(c => c.ColumnName))"
+        }
+      }
+    }
+  ]
+}

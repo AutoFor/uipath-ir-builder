@@ -1,0 +1,98 @@
+{
+  "workflow": "ForEachRow_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "idx",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "ForEachRow",
+      "name": "先頭3行を回す",
+      "item": "CurrentRow",
+      "props": {
+        "DataTable": "dt",
+        "CurrentIndex": "idx",
+        "MaxIterations": 3
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": {
+              "vb": "idx.ToString & \":\" & CurrentRow(\"Name\").ToString",
+              "cs": "idx + \":\" + CurrentRow[\"Name\"].ToString()"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

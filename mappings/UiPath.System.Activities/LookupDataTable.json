@@ -1,0 +1,28 @@
+{
+  "activity": "LookupDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "LookupColumnName",
+        "TargetColumnName"
+      ],
+      "code": "{CellValue:-_} = system.LookupDataTable(dataTable: {DataTable}, lookupValue: {LookupValue}, lookupColumnName: {LookupColumnName}, targetColumnName: {TargetColumnName}, rowIndex: out {RowIndex:-_});"
+    },
+    {
+      "when": [
+        "LookupColumnIndex",
+        "TargetColumnIndex"
+      ],
+      "code": "{CellValue:-_} = system.LookupDataTable(dataTable: {DataTable}, lookupValue: {LookupValue}, lookupColumnName: {DataTable}.Columns[{LookupColumnIndex}].ColumnName, targetColumnName: {DataTable}.Columns[{TargetColumnIndex}].ColumnName, rowIndex: out {RowIndex:-_});"
+    },
+    {
+      "when": [
+        "LookupDataColumn",
+        "TargetDataColumn"
+      ],
+      "code": "{CellValue:-_} = system.LookupDataTable(dataTable: {DataTable}, lookupValue: {LookupValue}, lookupColumnName: {LookupDataColumn}.ColumnName, targetColumnName: {TargetDataColumn}.ColumnName, rowIndex: out {RowIndex:-_});"
+    }
+  ],
+  "notes": "ISystemService.LookupDataTable(dataTable, lookupValue, lookupColumnName, targetColumnName, out rowIndex)。列名で渡す API なので、列番号・DataColumn は列名にして渡す。out の rowIndex は code で書く（捨てるときは out _）"
+}

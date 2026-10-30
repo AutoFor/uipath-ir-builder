@@ -1,0 +1,126 @@
+{
+  "workflow": "UpdateRowItem_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "row",
+      "type": "DataRow"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "DataRow",
+      "props": {
+        "To": "row",
+        "Value": "dt.Rows(2)"
+      }
+    },
+    {
+      "act": "UpdateRowItem",
+      "name": "列名で更新",
+      "props": {
+        "Row": "row",
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "Value": {
+          "lit": "Zed"
+        }
+      }
+    },
+    {
+      "act": "UpdateRowItem",
+      "name": "列番号で更新",
+      "props": {
+        "Row": "row",
+        "ColumnIndex": 1,
+        "Value": "99"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"name2=\" & dt.Rows(2)(\"Name\").ToString",
+          "cs": "\"name2=\" + dt.Rows[2][\"Name\"].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"age2=\" & dt.Rows(2)(\"Age\").ToString",
+          "cs": "\"age2=\" + dt.Rows[2][\"Age\"].ToString()"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "workflow": "GetRowItem_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "row",
+      "type": "DataRow"
+    },
+    {
+      "name": "v1",
+      "type": "Object"
+    },
+    {
+      "name": "v2",
+      "type": "Object"
+    },
+    {
+      "name": "v3",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "DataRow",
+      "props": {
+        "To": "row",
+        "Value": "dt.Rows(2)"
+      }
+    },
+    {
+      "act": "GetRowItem",
+      "name": "列名で取る",
+      "props": {
+        "Row": "row",
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "Value": "v1"
+      }
+    },
+    {
+      "act": "GetRowItem",
+      "name": "列番号で取る",
+      "props": {
+        "Row": "row",
+        "ColumnIndex": 1,
+        "Value": "v2"
+      }
+    },
+    {
+      "act": "GetRowItem",
+      "name": "DataColumn で取る",
+      "props": {
+        "Row": "row",
+        "Column": {
+          "vb": "dt.Columns(\"Age\")",
+          "cs": "dt.Columns[\"Age\"]"
+        },
+        "Value": "v3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byName=\" & v1.ToString",
+          "cs": "\"byName=\" + v1.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byIndex=\" & v2.ToString",
+          "cs": "\"byIndex=\" + v2.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byColumn=\" & v3.ToString",
+          "cs": "\"byColumn=\" + v3.ToString()"
+        }
+      }
+    }
+  ]
+}
