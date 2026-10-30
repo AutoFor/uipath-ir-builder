@@ -1,0 +1,43 @@
+{
+  "workflow": "SelectDatesInCalendar_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "OpenApplication",
+      "name": "SAP Logon を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": {
+          "lit": "saplogon.exe"
+        },
+        "Selector": {
+          "lit": "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />"
+        }
+      },
+      "body": [
+        {
+          "act": "SelectDatesInCalendar",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "SelectType": "Range",
+            "StartDate": "New DateTime(2026, 10, 1)",
+            "EndDate": "New DateTime(2026, 10, 31)",
+            "Date": "New DateTime(2026, 10, 30)",
+            "Week": 44,
+            "Year": 2026,
+            "ContinueOnError": false,
+            "SendTelemetryOnlyOnFailure": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ClickPictureOnScreen\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucas=\"clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucas:ClickPictureOnScreen ContinueOnError=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayMS=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" ClickType=\"CLICK_SINGLE\" KeyModifiers=\"None\">\r\n    <ucas:ClickPictureOnScreen.PictureOffsetX>\r\n      <InArgument x:TypeArguments=\"x:Int32\" />\r\n    </ucas:ClickPictureOnScreen.PictureOffsetX>\r\n    <ucas:ClickPictureOnScreen.PictureOffsetY>\r\n      <InArgument x:TypeArguments=\"x:Int32\" />\r\n    </ucas:ClickPictureOnScreen.PictureOffsetY>\r\n    <ucas:ClickPictureOnScreen.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"ba601f84-ae7c-464c-b976-c5566c762085\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ucas:ClickPictureOnScreen.Target>\r\n  </ucas:ClickPictureOnScreen>\r\n</Activity>"
+  }
+}

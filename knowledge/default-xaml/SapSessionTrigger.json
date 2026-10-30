@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"SapSessionTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:SapSessionTrigger Attributes=\"[{ &quot;sapTransaction&quot;, &quot;sapProgram&quot;, &quot;sapweb-ses-transaction&quot;, &quot;sapweb-ses-program&quot;, &quot;ui5-ses-appId&quot;, &quot;ui5-ses-technicalName&quot; }]\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"16c80079-4c3c-4847-8a56-b0e027f08f52\" />\r\n</Activity>"
+  }
+}

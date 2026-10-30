@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"Logon\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucas=\"clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucas:Logon ConnectionName=\"{x:Null}\" SAPLogonPath=\"{x:Null}\" Window=\"{x:Null}\" DelayBetweenRetries=\"500\" Retries=\"5\" />\r\n</Activity>"
+  }
+}

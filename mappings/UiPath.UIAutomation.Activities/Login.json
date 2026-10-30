@@ -1,0 +1,6 @@
+{
+  "activity": "Login",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の SAP 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ。Modern の SAP は NSAP* で別）"
+}

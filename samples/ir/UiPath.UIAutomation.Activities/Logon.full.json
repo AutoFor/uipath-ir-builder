@@ -1,0 +1,21 @@
+{
+  "workflow": "Logon_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "Logon",
+      "props": {
+        "ConnectionName": {
+          "lit": "SAP-DEV"
+        },
+        "SAPLogonPath": {
+          "lit": "C:Program Files (x86)SAPFrontEndSAPguisaplogon.exe"
+        },
+        "Retries": 3,
+        "DelayBetweenRetries": 1000,
+        "ContinueOnError": false,
+        "SendTelemetryOnlyOnFailure": false
+      }
+    }
+  ]
+}
