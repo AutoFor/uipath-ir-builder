@@ -1,0 +1,14 @@
+{
+  "workflow": "CommentOut_Full",
+  "variables": [{ "name": "n", "type": "Int32" }],
+  "body": [
+    {
+      "act": "CommentOut", "name": "無効にした処理",
+      "body": [
+        { "act": "Assign", "props": { "To": "n", "Value": "99" } },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "出ない" } } }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"n=\" & n.ToString" } }
+  ]
+}

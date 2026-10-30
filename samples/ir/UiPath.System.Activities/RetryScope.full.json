@@ -1,0 +1,15 @@
+{
+  "workflow": "RetryScope_Full",
+  "variables": [{ "name": "count", "type": "Int32" }],
+  "body": [
+    {
+      "act": "RetryScope", "name": "2回目で成功", "props": { "NumberOfRetries": "3", "RetryInterval": "TimeSpan.FromMilliseconds(100)" },
+      "body": [
+        { "act": "Assign", "props": { "To": "count", "Value": "count + 1" } },
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"試行 \" & count.ToString" } },
+        { "act": "If", "props": { "Condition": "count < 2" }, "then": [{ "act": "Throw", "props": { "Exception": "New InvalidOperationException(\"まだだめ\")" } }] }
+      ]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"成功 count=\" & count.ToString" } }
+  ]
+}

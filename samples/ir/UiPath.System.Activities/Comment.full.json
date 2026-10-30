@@ -1,0 +1,7 @@
+{
+  "workflow": "Comment_Full",
+  "body": [
+    { "act": "Comment", "name": "メモ", "props": { "Text": "1行目\n2行目" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "コメントの後" } } }
+  ]
+}

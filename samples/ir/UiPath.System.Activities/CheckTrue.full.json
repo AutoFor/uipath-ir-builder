@@ -1,0 +1,13 @@
+{
+  "workflow": "CheckTrue_Full",
+  "variables": [{ "name": "ok", "type": "Boolean" }],
+  "body": [
+    { "act": "CheckTrue", "name": "通るチェック", "props": { "Expression": "1 + 1 = 2", "ErrorMessage": { "lit": "ここでは出ない" }, "Result": "ok" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "チェックを通った" } } },
+    {
+      "act": "TryCatch",
+      "body": [{ "act": "CheckTrue", "name": "落ちるチェック", "props": { "Expression": "1 + 1 = 3", "ErrorMessage": { "lit": "値が違う" } } }],
+      "catches": [{ "type": "Exception", "var": "ex", "body": [{ "act": "LogMessage", "props": { "Level": "Info", "Message": "ex.Message" } }] }]
+    }
+  ]
+}

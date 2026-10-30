@@ -1,0 +1,6 @@
+{
+  "activity": "ShouldStop",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ジョブの停止要求を調べる API が ISystemService / CodedWorkflow に無い）"
+}

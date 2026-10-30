@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ChangeType&lt;Object&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ChangeType x:TypeArguments=\"x:Object\" ConvertedValue=\"{x:Null}\" SourceValue=\"{x:Null}\">\r\n    <ui:ChangeType.Format>\r\n      <ui:GeneralNumberFormatProvider DecimalDigits=\"2\" DecimalSeparator=\".\" GroupSeparator=\",\" />\r\n    </ui:ChangeType.Format>\r\n  </ui:ChangeType>\r\n</Activity>"
+  }
+}

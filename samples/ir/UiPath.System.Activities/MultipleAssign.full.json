@@ -1,0 +1,11 @@
+{
+  "workflow": "MultipleAssign_Full",
+  "variables": [{ "name": "a", "type": "Int32" }, { "name": "b", "type": "Int32" }, { "name": "s", "type": "String" }],
+  "body": [
+    {
+      "act": "MultipleAssign", "name": "上から順に代入",
+      "assigns": [{ "to": "a", "value": "10" }, { "to": "b", "value": "a * 2" }, { "to": "a", "value": "b + 1" }, { "to": "s", "value": { "lit": "完了" } }]
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "s & \": a=\" & a.ToString & \", b=\" & b.ToString" } }
+  ]
+}
