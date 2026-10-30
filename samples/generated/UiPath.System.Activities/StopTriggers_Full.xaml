@@ -66,7 +66,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         <Variable x:TypeArguments="x:Boolean" Name="sb" />
       </ui:TriggerScope.Variables>
       <ui:TriggerScope.Triggers>
-        <ui:RepeatTrigger Enabled="True" Interval="[TimeSpan.FromSeconds(1)]" SchedulingMode="Sequential" TriggerId="e95eb0ee-91ac-474f-abf4-087fc95a0784" sap2010:WorkflowViewState.IdRef="RepeatTrigger_1" />
+        <ui:RepeatTrigger Enabled="True" Interval="[TimeSpan.FromSeconds(1)]" SchedulingMode="Sequential" TriggerId="6f772c06-8733-5f60-a89a-9d4cdaa82969" sap2010:WorkflowViewState.IdRef="RepeatTrigger_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

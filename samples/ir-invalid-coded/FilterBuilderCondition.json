@@ -1,0 +1,19 @@
+{
+  "workflow": "FilterBuilderCondition",
+  "variables": [
+    { "name": "jobs", "type": "IEnumerable<OrchestratorJob>" }
+  ],
+  "body": [
+    {
+      "act": "GetJobs",
+      "props": { "Result": "jobs" },
+      "objs": { "FilterBuilder": { "LogicalOperator": "And", "Filters": [ { "Criteria": "State", "EnumOperator": "Equals", "StateValue": "Running" } ] } }
+    },
+    {
+      "act": "RetryScope",
+      "props": { "NumberOfRetries": 2 },
+      "body": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "x" } } } ],
+      "slots": { "Condition": [ { "act": "IsMatch", "props": { "Input": { "lit": "a" }, "Pattern": { "lit": "a" } } } ] }
+    }
+  ]
+}

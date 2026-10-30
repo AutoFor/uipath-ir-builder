@@ -1,0 +1,9 @@
+{
+  "workflow": "PlainLists",
+  "variables": [ { "name": "s", "type": "String" } ],
+  "body": [
+    { "act": "TimeTrigger", "lists": { "WeeklyDaysToRunOn": ["Mon"], "DaysOfMonthToRunOn": ["s"] } },
+    { "act": "ClickTrigger", "objs": { "ClippingRegion": { "Rectangle": "10 20" } } },
+    { "act": "CompressFiles", "props": { "CompressedFileName": { "lit": "a.zip" }, "FilterFiles": { "lit": "*" } } }
+  ]
+}

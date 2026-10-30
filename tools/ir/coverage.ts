@@ -9,7 +9,7 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadCatalog, resolve, defaultSlot, writable } from "./catalog.ts";
+import { loadCatalog, resolve, defaultSlot, writable, READ_ONLY } from "./catalog.ts";
 import type { Activity } from "./catalog.ts";
 import { loadMappings } from "./mapping.ts";
 import { isBuiltin } from "./generate-coded.ts";
@@ -73,7 +73,7 @@ const rows: Row[] = cat.activities
   .filter((a) => a.browsable && !a.obsolete)
   .map((a) => {
     const ok: string[] = [], ng: Row["ng"] = [];
-    for (const p of a.props.filter((p) => !p.obsolete)) {
+    for (const p of a.props.filter((p) => !p.obsolete && !p.readOnly)) {
       const w = writable(a, p);
       if (w.ok) ok.push(p.name); else ng.push({ name: p.name, reason: w.reason, group: w.group });
     }
@@ -124,6 +124,8 @@ function render(): string {
     const c = (k: string) => rs.filter((r) => r.coded.startsWith(k)).length;
     L.push(`| ${pkg} | ${rs.length} | ${total} | ${ok} | ${total - ok} | ${u} | ${c("あり")} / ${c("C#")} / ${c("なし")} / ${c("未作成")} |`);
   }
+  const ro = rows.reduce((n, r) => n + r.a.props.filter((p) => !p.obsolete && p.readOnly).length, 0);
+  L.push("", `読み取り専用（public の setter が無い）のプロパティ ${ro} 件は、そもそも XAML に書けないので上の数に入れていない（${READ_ONLY}。\`--activity\` では「書けない」と出る）。`);
   L.push("", "## 書けないプロパティ（理由別）", "");
   const groups = new Map<string, number>();
   for (const r of rows) for (const n of r.ng) groups.set(n.group, (groups.get(n.group) ?? 0) + 1);
@@ -136,6 +138,7 @@ function render(): string {
     "Nullable": "Nullable<T> は属性に書ける。ここに残るのは T が分からないもの",
   };
   for (const [g, n] of [...groups].sort((a, b) => b[1] - a[1])) L.push(`| ${g} | ${n} | ${policy[g] ?? ""} |`);
+  L.push("", "理由と、対応しないものの判断は [coverage-gaps.md](coverage-gaps.md)。");
   L.push("", "対応済みの書き方: Dictionary<String, Argument> は IR の `dicts`、System.Type は型名の文字列（`{x:Type}` で出す）、Nullable<T> は属性。", "");
   L.push("## アクティビティごと", "");
   for (const pkg of [...new Set(rows.map((r) => r.a.package))].sort()) {

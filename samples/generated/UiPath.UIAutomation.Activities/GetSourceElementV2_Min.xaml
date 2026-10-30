@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="GetSourceElementV2_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ui:TriggerScope DisplayName="トリガーの範囲" SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
       <ui:TriggerScope.Triggers>
-        <ui:MouseTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" TriggerId="a8dc8379-73d6-4487-bcbd-b7bb36b1ca5d" sap2010:WorkflowViewState.IdRef="MouseTriggerV2_1" />
+        <ui:MouseTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" TriggerId="680b0281-23cf-5826-bc8c-e0ee970ce71e" sap2010:WorkflowViewState.IdRef="MouseTriggerV2_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

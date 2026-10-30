@@ -60,7 +60,17 @@
                 "Message": "\"セルの中（全部入り）\""
               }
             }
-          ]
+          ],
+          "lists": {
+            "ColumnNames": [
+              {
+                "lit": "MATNR"
+              },
+              {
+                "lit": "WERKS"
+              }
+            ]
+          }
         },
         {
           "act": "LogMessage",

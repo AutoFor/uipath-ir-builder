@@ -25,9 +25,10 @@
       }
     }
   ],
-  "notes": "Items（List<String>）は IR で書けない。OutUiElement と InUiElement はまだ扱わない",
+  "notes": "OutUiElement と InUiElement はまだ扱わない。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる",
   "ignore": [
     "ScopeIdentifier",
-    "Version"
+    "Version",
+    "Items"
   ]
 }

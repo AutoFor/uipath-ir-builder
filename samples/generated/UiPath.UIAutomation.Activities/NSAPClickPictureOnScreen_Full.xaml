@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPClickPictureOnScreen_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="e01b6aab-8ad1-4d63-8432-88d5dbc2ba51" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="d6aaf182-aa58-5834-9bb5-1a5ccf7a3958" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPClickPictureOnScreen ActivateBefore="True" AlterIfDisabled="True" ClickType="Single" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="画面上の画像をクリック（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" KeyModifiers="None" ScopeIdentifier="e01b6aab-8ad1-4d63-8432-88d5dbc2ba51" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPClickPictureOnScreen_1">
+            <uix:NSAPClickPictureOnScreen ActivateBefore="True" AlterIfDisabled="True" ClickType="Single" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="画面上の画像をクリック（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" KeyModifiers="None" ScopeIdentifier="d6aaf182-aa58-5834-9bb5-1a5ccf7a3958" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPClickPictureOnScreen_1">
               <uix:NSAPClickPictureOnScreen.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlIMAGE/shellcont/shell' /&gt;" Guid="6931e4b9-2c8b-46d0-8187-f7eea8246bfa" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlIMAGE/shellcont/shell' /&gt;" Guid="dca7bdf9-7d45-598c-9807-799acf536e48" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPClickPictureOnScreen.Target>
               <uix:NSAPClickPictureOnScreen.PointOffset>
                 <uix:PointOffset Position="TopLeft" X="0" Y="0" />

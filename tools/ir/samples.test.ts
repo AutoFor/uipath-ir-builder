@@ -35,6 +35,21 @@ const cat = loadCatalog(root, [
 ]);
 const { maps, errors: mapErrors } = loadMappings(root);
 const ctx = loadContext();
+// 横に置く JSON も読めること（不正な JSON で verify.mjs が落ちるのを防ぐ）
+const sidecarJson = (dir: string): string[] => {
+  const d = join(root, dir);
+  if (!existsSync(d)) return [];
+  const out: string[] = [];
+  const walk = (p: string) => {
+    for (const e of readdirSync(p).sort()) {
+      const q = join(p, e);
+      if (statSync(q).isDirectory()) walk(q);
+      else if (/\.(verify|expected)\.json$/i.test(e)) out.push(q);
+    }
+  };
+  walk(d);
+  return out;
+};
 const isSidecar = (f: string) => /\.(verify|expected|args)\.json$/i.test(f);
 const read = (f: string) => readFileSync(f, "utf8").replace(/^﻿/, "");
 const rel = (f: string) => relative(root, f).replaceAll("\\", "/");
@@ -54,7 +69,7 @@ function files(dir: string, ext: string): string[] {
   return out;
 }
 
-// 実行ごとに変わる値（IdRef の番号は決まるが、get-default-xaml 由来の GUID は毎回変わる）
+// GUID は決定的に作る（ワークフロー名と通し番号）。ほかのブランチの古いスナップショットとも比べられるよう、比較では GUID を無視する
 const normalize = (s: string) => s.replace(/^﻿/, "").replace(/\r\n/g, "\n").replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, "<guid>");
 
 function snapshot(path: string, actual: string) {
@@ -73,6 +88,10 @@ test("対応表が読めて、カタログにあるアクティビティを指�
   for (const m of maps.values())
     assert.ok(cat.activities.some((a) => a.className === m.activity && a.package === m.package), `${m.file}: ${m.package} に ${m.activity} が無い`);
 });
+
+for (const dir of ["samples/ir", "samples/ir-invalid", "samples/ir-invalid-coded", "samples/coded-invalid"])
+  for (const f of sidecarJson(dir))
+    test(`JSON ${rel(f)}`, () => { JSON.parse(read(f)); });
 
 for (const f of files("samples/ir", ".json")) {
   const sub = dirname(relative(join(root, "samples", "ir"), f));

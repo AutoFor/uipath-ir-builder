@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:uix="http://schemas.uipath.com/workflow/activities/uix"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -63,7 +64,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPTableCellScope_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="3ded5783-cf2c-4788-8431-e2efcfe2e8dd" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="e27382c3-b54e-572f-bd52-62672eab6cd1" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +74,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPTableCellScope ColumnName="VBELN" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="表のセル スコープ（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" RowIndex="1" RowType="Index" ScopeIdentifier="3ded5783-cf2c-4788-8431-e2efcfe2e8dd" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPTableCellScope_1">
+            <uix:NSAPTableCellScope ColumnName="VBELN" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="表のセル スコープ（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" RowIndex="1" RowType="Index" ScopeIdentifier="e27382c3-b54e-572f-bd52-62672eab6cd1" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPTableCellScope_1">
+              <uix:NSAPTableCellScope.ColumnNames>
+                <scg:List x:TypeArguments="x:String" Capacity="4">
+                  <x:String>MATNR</x:String>
+                  <x:String>WERKS</x:String>
+                </scg:List>
+              </uix:NSAPTableCellScope.ColumnNames>
               <uix:NSAPTableCellScope.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="7a353157-0fa5-439e-8e5d-5836bca182a2" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="c97ad874-f2f5-5280-aeb6-8f18d12277af" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPTableCellScope.Target>
               <uix:NSAPTableCellScope.Body>
                 <ActivityAction x:TypeArguments="x:Object">

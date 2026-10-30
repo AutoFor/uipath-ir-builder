@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="ElementStateChangeTrigger_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ui:TriggerScope DisplayName="トリガーの範囲" SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
       <ui:TriggerScope.Triggers>
-        <ui:ElementStateChangeTrigger ElementStateChangeType="OnAppear" Enabled="True" SchedulingMode="Sequential" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" TriggerId="e4978ce1-9e76-4105-abd2-c26de141ded2" VisibilityType="Accessible" sap2010:WorkflowViewState.IdRef="ElementStateChangeTrigger_1" />
+        <ui:ElementStateChangeTrigger ElementStateChangeType="OnAppear" Enabled="True" SchedulingMode="Sequential" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" TriggerId="796862c1-ed09-5550-88ae-0dce69fca2c1" VisibilityType="Accessible" sap2010:WorkflowViewState.IdRef="ElementStateChangeTrigger_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

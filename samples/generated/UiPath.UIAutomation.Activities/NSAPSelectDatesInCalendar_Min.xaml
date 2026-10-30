@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPSelectDatesInCalendar_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="7dc745e5-9346-480f-a6a1-a0e4ebd703f0" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="7e2e85b1-be01-5ccf-8f39-e62ce00dadfe" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPSelectDatesInCalendar Date="[New DateTime(2026, 10, 30)]" DisplayName="カレンダから日付を選択" HealingAgentBehavior="SameAsCard" ScopeIdentifier="7dc745e5-9346-480f-a6a1-a0e4ebd703f0" SelectType="Date" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectDatesInCalendar_1">
+            <uix:NSAPSelectDatesInCalendar Date="[New DateTime(2026, 10, 30)]" DisplayName="カレンダから日付を選択" HealingAgentBehavior="SameAsCard" ScopeIdentifier="7e2e85b1-be01-5ccf-8f39-e62ce00dadfe" SelectType="Date" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectDatesInCalendar_1">
               <uix:NSAPSelectDatesInCalendar.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlCAL/shellcont/shell' /&gt;" Guid="2eb6a914-1e72-4805-ade4-de66f83b84f5" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlCAL/shellcont/shell' /&gt;" Guid="7fd78a88-cca8-55bc-b8af-24436962cb50" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPSelectDatesInCalendar.Target>
             </uix:NSAPSelectDatesInCalendar>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPSelectDatesInCalendar 完了&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

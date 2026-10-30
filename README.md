@@ -120,7 +120,7 @@ OverloadGroup（`WriteTextFile` の `File` か `FileName` のどちらか）は�
 
 UI 操作のターゲット（`Target` / `TargetApp` / セレクタ）は、ノードの `objs` に書く（`tools/ir/uia.ts`、手順は [docs/worker-guide.md](docs/worker-guide.md) の 8.）。
 
-まだ書けないもの：`ActivityFunc` の delegate（`RetryScope.Condition` など）、`InvokeCode` の引数、`IfElseIf`。
+まだ書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)。
 
 ### Coded Workflow（`samples/coded`）
 

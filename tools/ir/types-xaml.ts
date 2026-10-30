@@ -19,6 +19,8 @@ const SDIAG = "clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Proc
 const SCOM = "clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
 
+const UI = "http://schemas.uipath.com/workflow/activities";
+
 const simple: Record<string, [string, Record<string, string>]> = {
   String: ["x:String", {}],
   Int32: ["x:Int32", {}],
@@ -61,6 +63,14 @@ const simple: Record<string, [string, Record<string, string>]> = {
   ExternalTaskData: ["upae:ExternalTaskData", { upae: "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities" }],
   // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
   UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
+  Window: ["ui:Window", { ui: UI }],
+  Browser: ["ui:Browser", { ui: UI }],
+  Region: ["ui:Region", { ui: UI }],
+  "UiPath.Core.Image": ["ui:Image", { ui: UI }], // "Image" は System.Drawing.Image（CV の OCREngine の引数）。UiPath の Image はこの完全名で書く
+  Point: ["sdp:Point", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
+  DayOfWeek: ["s:DayOfWeek", { s: S }],
+  DataColumn: ["sd:DataColumn", { sd: SD }],
+  UInt32: ["x:UInt32", {}],
   Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
   Rectangle: ["sdp:Rectangle", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
 };
@@ -82,6 +92,7 @@ const alias: Record<string, string> = {
 };
 
 export function toXamlType(t: string): XamlType | { error: string } {
+  if (simple[t.trim()]) return { text: simple[t.trim()][0], xmlns: simple[t.trim()][1] }; // 完全名で登録したもの（UiPath.Core.Image）
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
   const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Drawing|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {

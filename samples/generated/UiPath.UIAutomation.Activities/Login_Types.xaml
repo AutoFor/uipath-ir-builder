@@ -1,0 +1,107 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="Login_Types" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ns0="clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities"
+xmlns:sdc="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
+xmlns:sdp="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives"
+xmlns:ssec="clr-namespace:System.Security;assembly=System.Private.CoreLib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:uuia="clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core.Activities.SAP</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Login_Types" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="ui:Window" Name="win" />
+      <Variable x:TypeArguments="ui:Window" Name="appWin" />
+      <Variable x:TypeArguments="ui:Browser" Name="browser" />
+      <Variable x:TypeArguments="uuia:UiElement" Name="element" />
+      <Variable x:TypeArguments="ui:Image" Name="image" />
+      <Variable x:TypeArguments="sdc:Image" Name="drawingImage" />
+      <Variable x:TypeArguments="ui:Region" Name="region" />
+      <Variable x:TypeArguments="sdp:Rectangle" Default="[New Rectangle(10, 20, 300, 200)]" Name="rect" />
+      <Variable x:TypeArguments="sdp:Point" Default="[New Point(10, 20)]" Name="pt" />
+    </Sequence.Variables>
+    <ui:OpenApplication ApplicationWindow="[appWin]" DisplayName="SAP Logon を開く（Classic）" FileName="saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" sap2010:WorkflowViewState.IdRef="OpenApplication_1">
+      <ui:OpenApplication.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <Sequence DisplayName="ログイン" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <Sequence.Variables>
+                <Variable x:TypeArguments="ssec:SecureString" Name="securePwd" />
+              </Sequence.Variables>
+              <ns0:Login Client="100" IsSecure="True" Language="JA" MultiLogonOptionToChoose="Single" SecurePassword="[securePwd]" Timeout="5000" Username="sapuser" Window="[win]" sap2010:WorkflowViewState.IdRef="Login_1">
+                <ns0:Login.Target>
+                  <ui:Target Id="9738fb67-8885-55d4-904e-6732b139baac" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]' /&gt;">
+                    <ui:Target.ClippingRegion>
+                      <ui:Region Rectangle="10, 20, 300, 200" />
+                    </ui:Target.ClippingRegion>
+                  </ui:Target>
+                </ns0:Login.Target>
+              </ns0:Login>
+            </Sequence>
+            <ui:CloseTab Browser="[browser]" sap2010:WorkflowViewState.IdRef="CloseTab_1" />
+          </Sequence>
+        </ActivityAction>
+      </ui:OpenApplication.Body>
+    </ui:OpenApplication>
+  </Sequence>
+</Activity>

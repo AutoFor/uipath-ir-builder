@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { funcInfo, funcArgName, resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
+import { funcInfo, funcArgName, resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue, DAYS_OF_WEEK } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -118,6 +118,16 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     for (const [k, list] of Object.entries(n.dicts ?? {})) {
       const p = a.props.find((p) => p.name === k);
       const at = `${path}.dicts.${k}`;
+      const mapValue = p && literalMapValue(p.type);
+      if (mapValue) {
+        given.add(k);
+        (list as { name?: unknown; value?: unknown }[]).forEach((x, i) => {
+          if (typeof x.name !== "string") add(`${at}[${i}]`, "BAD_DICT", `"${k}" の要素は { "name": キー, "value": 値 } で書く`);
+          if (!isValueItem(x.value) || (mapValue === "String" && !(typeof x.value === "object" && "lit" in x.value)))
+            add(`${at}[${i}]`, "BAD_DICT", `"${k}" の値は ${mapValue === "String" ? "{ lit }（式は書けない）" : "式か { lit }"} で書く`);
+        });
+        continue;
+      }
       if (!p || !isArgumentDict(p.type)) { add(at, "BAD_DICT", `${a.className} に引数の辞書のプロパティ "${k}" は無い`); continue; }
       given.add(k);
       const inOnly = /InArgument>$/.test(p.type);
@@ -132,6 +142,16 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     for (const [k, list] of Object.entries(n.lists ?? {})) {
       const p = a.props.find((p) => p.name === k);
       const at = `${path}.lists.${k}`;
+      const plain = p && plainListElement(p.type);
+      if (plain) {
+        given.add(k);
+        if (!Array.isArray(list)) { add(at, "BAD_LIST", `"${k}" は配列で書く`); continue; }
+        list.forEach((x, i) => {
+          if (plain === "System.String" ? !(typeof x === "object" && x !== null && Object.keys(x).join() === "lit") : !(typeof x === "string" && DAYS_OF_WEEK.includes(x)))
+            add(`${at}[${i}]`, "BAD_LIST", plain === "System.String" ? `"${k}" は List<String> なので式を持てない。要素は { "lit": "..." } で書く` : `"${k}" の要素は ${DAYS_OF_WEEK.join(" / ")} のどれか`);
+        });
+        continue;
+      }
       const typed = !!p && isArgumentList(p.type);
       const el = p && listElementType(p.type);
       const t = el ? objectTypes.get(el) : undefined;

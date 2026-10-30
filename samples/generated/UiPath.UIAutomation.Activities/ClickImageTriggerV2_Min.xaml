@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="ClickImageTriggerV2_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ui:TriggerScope DisplayName="トリガーの範囲" SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
       <ui:TriggerScope.Triggers>
-        <ui:ClickImageTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" TriggerId="9524c08f-58d1-4cd0-8d9c-4d191b487a27" TriggerMode="TriggerDown" sap2010:WorkflowViewState.IdRef="ClickImageTriggerV2_1" />
+        <ui:ClickImageTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" TriggerId="bed76fa5-fb99-57ba-981c-270121967afd" TriggerMode="TriggerDown" sap2010:WorkflowViewState.IdRef="ClickImageTriggerV2_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

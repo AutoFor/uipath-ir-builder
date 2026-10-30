@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -69,8 +70,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <ns0:ExpandTree AlterIfDisabled="False" ContinueOnError="False" DelayAfter="100" DelayBefore="100" Item="Node1" sap2010:WorkflowViewState.IdRef="ExpandTree_1">
+            <ns0:ExpandTree.Items>
+              <scg:List x:TypeArguments="x:String" Capacity="4">
+                <x:String>Node1</x:String>
+                <x:String>Node2</x:String>
+              </scg:List>
+            </ns0:ExpandTree.Items>
             <ns0:ExpandTree.Target>
-              <ui:Target Id="e9472dde-227a-4268-8c97-38231307b8df" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="415f4f62-b809-5971-a0a3-3917594c9d94" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:ExpandTree.Target>
           </ns0:ExpandTree>
         </ActivityAction>

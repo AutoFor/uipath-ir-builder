@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ClickToolbarButton AlterIfDisabled="True" Item="Execute" sap2010:WorkflowViewState.IdRef="ClickToolbarButton_1">
             <ns0:ClickToolbarButton.Target>
-              <ui:Target Id="bc779e02-7aa1-46b5-80ef-4c9c2b3931d5" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" />
+              <ui:Target Id="6993734e-09b2-57c3-a5ef-cf334670cec7" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" />
             </ns0:ClickToolbarButton.Target>
           </ns0:ClickToolbarButton>
         </ActivityAction>

@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="KeyPressTriggerV2_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ui:TriggerScope DisplayName="トリガーの範囲" SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
       <ui:TriggerScope.Triggers>
-        <ui:KeyPressTriggerV2 BlockEvent="False" Enabled="True" IncludeChildren="True" Key="a" KeyModifiers="None" SchedulingMode="Sequential" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" TriggerId="6e349dae-6926-4a68-a27b-c22f922cb318" TriggerMode="TriggerDown" sap2010:WorkflowViewState.IdRef="KeyPressTriggerV2_1" />
+        <ui:KeyPressTriggerV2 BlockEvent="False" Enabled="True" IncludeChildren="True" Key="a" KeyModifiers="None" SchedulingMode="Sequential" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" TriggerId="dc46f0cf-b7a7-57d5-9c99-6546e1e21bdf" TriggerMode="TriggerDown" sap2010:WorkflowViewState.IdRef="KeyPressTriggerV2_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

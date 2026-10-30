@@ -5,6 +5,8 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:uca="clr-namespace:UiPath.Core.Activities;assembly=UiPath.System.Activities"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -64,7 +66,25 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="uca:CurrentJobInfo" Name="ji" />
     </Sequence.Variables>
-    <ui:TimeTrigger CronExpression="0 0 12 ? * MON-FRI *" DailyRepeat="1" DailyStartingTime="2026-01-01T09:00:00" DisplayName="時刻トリガー" Frequency="CronExpression" HourlyRepeat="2" HourlyStartingMinutes="5" MonthDaySelection="DayOfMonth" MonthlyRepeat="1" MonthlyStartingTime="2026-01-01T11:00:00" Result="[ji]" TimeZone="Tokyo Standard Time" WeeklyStartingTime="2026-01-01T10:00:00" sap2010:WorkflowViewState.IdRef="TimeTrigger_1" />
+    <ui:TimeTrigger CronExpression="0 0 12 ? * MON-FRI *" DailyRepeat="1" DailyStartingTime="2026-01-01T09:00:00" DisplayName="時刻トリガー" Frequency="CronExpression" HourlyRepeat="2" HourlyStartingMinutes="5" MonthDaySelection="DayOfMonth" MonthlyRepeat="1" MonthlyStartingTime="2026-01-01T11:00:00" Result="[ji]" TimeZone="Tokyo Standard Time" WeeklyStartingTime="2026-01-01T10:00:00" sap2010:WorkflowViewState.IdRef="TimeTrigger_1">
+      <ui:TimeTrigger.WeeklyDaysToRunOn>
+        <scg:List x:TypeArguments="s:DayOfWeek" Capacity="4">
+          <s:DayOfWeek>Monday</s:DayOfWeek>
+          <s:DayOfWeek>Friday</s:DayOfWeek>
+        </scg:List>
+      </ui:TimeTrigger.WeeklyDaysToRunOn>
+      <ui:TimeTrigger.MonthlyDaysToRunOn>
+        <scg:List x:TypeArguments="s:DayOfWeek" Capacity="4">
+          <s:DayOfWeek>Monday</s:DayOfWeek>
+        </scg:List>
+      </ui:TimeTrigger.MonthlyDaysToRunOn>
+      <ui:TimeTrigger.DaysOfMonthToRunOn>
+        <scg:List x:TypeArguments="x:String" Capacity="4">
+          <x:String>1</x:String>
+          <x:String>15</x:String>
+        </scg:List>
+      </ui:TimeTrigger.DaysOfMonthToRunOn>
+    </ui:TimeTrigger>
     <ui:LogMessage Level="Info" Message="[&quot;時刻で開始した&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

@@ -1,0 +1,1 @@
+{ "noRun": "SAP GUI が無い。変数の型（SecureString、Window、Browser、UiElement、UiPath.Core.Image、Region、Rectangle、Point）と ClippingRegion の形を build で確かめるためのサンプル" }

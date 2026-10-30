@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="ReplayUserEventV2_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ui:TriggerScope DisplayName="トリガーの範囲" SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
       <ui:TriggerScope.Triggers>
-        <ui:MouseTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" TriggerId="e05d1996-bb1c-4adc-b6c6-e297a7594926" sap2010:WorkflowViewState.IdRef="MouseTriggerV2_1" />
+        <ui:MouseTriggerV2 BlockEvent="False" Enabled="True" KeyModifiers="None" MouseButton="BTN_LEFT" SchedulingMode="Sequential" TriggerId="0dec204c-d3a9-57a8-b5af-ef2f0f730e85" sap2010:WorkflowViewState.IdRef="MouseTriggerV2_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">
