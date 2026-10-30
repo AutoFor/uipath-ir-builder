@@ -1,0 +1,24 @@
+{
+  "activity": "UpdateRowItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ColumnName"
+      ],
+      "call": "system.UpdateRowItem",
+      "args": {
+        "value": "{Value}",
+        "row": "{Row}",
+        "columnName": "{ColumnName}"
+      }
+    },
+    {
+      "when": [
+        "ColumnIndex"
+      ],
+      "code": "{Row}[{ColumnIndex}] = {Value};"
+    }
+  ],
+  "notes": "列名は ISystemService.UpdateRowItem(value, row, columnName)。列番号は API に無く、DataRow のインデクサに代入"
+}

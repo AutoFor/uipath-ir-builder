@@ -1,0 +1,16 @@
+{
+  "activity": "AddDataColumn",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Column"
+      ],
+      "code": "{DataTable}.Columns.Add({Column});"
+    },
+    {
+      "code": "{\n    var __col = {DataTable}.Columns.Add({ColumnName}, typeof({typeArg}));\n    __col.AllowDBNull = {AllowDBNull:-true};\n    __col.AutoIncrement = {AutoIncrement:-false};\n    __col.Unique = {Unique:-false};\n    __col.MaxLength = {MaxLength:--1};\n    __col.DefaultValue = {DefaultValue:-DBNull.Value};\n}"
+    }
+  ],
+  "notes": "サービスの API は無い。DataTable.Columns.Add で書く（型は typeArg、オプションは DataColumn のプロパティに代入）。Column を渡す形は Columns.Add(DataColumn)"
+}

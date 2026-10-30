@@ -1,0 +1,4 @@
+[Information] rows=2
+[Information] columns=2
+[Information] name=Bob
+[Information] Age.Type=Int32

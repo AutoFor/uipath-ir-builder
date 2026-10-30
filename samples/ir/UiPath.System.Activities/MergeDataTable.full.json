@@ -1,0 +1,220 @@
+{
+  "workflow": "MergeDataTable_Full",
+  "variables": [
+    {
+      "name": "dest",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "src",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "src2",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dest"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dest"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dest"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dest"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "src"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "src"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "City"
+        },
+        "DataTable": "src"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35, \"Tokyo\"}",
+          "cs": "new object[] {\"Carol\", 35, \"Tokyo\"}"
+        },
+        "DataTable": "src"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Dave\", 40, \"Osaka\"}",
+          "cs": "new object[] {\"Dave\", 40, \"Osaka\"}"
+        },
+        "DataTable": "src"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "src2"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "src2"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Zip"
+        },
+        "DataTable": "src2"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Eve\", 20, \"100\"}",
+          "cs": "new object[] {\"Eve\", 20, \"100\"}"
+        },
+        "DataTable": "src2"
+      }
+    },
+    {
+      "act": "MergeDataTable",
+      "name": "列を足して結合",
+      "props": {
+        "Source": "src",
+        "Destination": "dest",
+        "MissingSchemaAction": "Add"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dest.Rows.Count.ToString",
+          "cs": "\"rows=\" + dest.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & String.Join(\",\", dest.Columns.Cast(Of DataColumn).Select(Function(c) c.ColumnName))",
+          "cs": "\"columns=\" + string.Join(\",\", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"city2=\" & dest.Rows(2)(\"City\").ToString",
+          "cs": "\"city2=\" + dest.Rows[2][\"City\"].ToString()"
+        }
+      }
+    },
+    {
+      "act": "MergeDataTable",
+      "name": "足りない列は無視",
+      "props": {
+        "Source": "src2",
+        "Destination": "dest",
+        "MissingSchemaAction": "Ignore"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dest.Rows.Count.ToString",
+          "cs": "\"rows=\" + dest.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns2=\" & String.Join(\",\", dest.Columns.Cast(Of DataColumn).Select(Function(c) c.ColumnName))",
+          "cs": "\"columns2=\" + string.Join(\",\", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))"
+        }
+      }
+    }
+  ]
+}

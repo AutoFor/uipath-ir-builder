@@ -1,0 +1,110 @@
+{
+  "workflow": "AddDataRow_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "newRow",
+      "type": "DataRow"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "DataRow",
+      "props": {
+        "To": "newRow",
+        "Value": "dt.NewRow()"
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "Object",
+      "props": {
+        "To": "newRow(\"Name\")",
+        "Value": {
+          "lit": "Bob"
+        }
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "Object",
+      "props": {
+        "To": "newRow(\"Age\")",
+        "Value": "25"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "name": "DataRow で行を足す",
+      "props": {
+        "DataTable": "dt",
+        "DataRow": "newRow"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dt.Rows.Count.ToString",
+          "cs": "\"rows=\" + dt.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"name=\" & dt.Rows(1)(\"Name\").ToString",
+          "cs": "\"name=\" + dt.Rows[1][\"Name\"].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"age=\" & dt.Rows(1)(\"Age\").ToString",
+          "cs": "\"age=\" + dt.Rows[1][\"Age\"].ToString()"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "activity": "RemoveDataRow",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "RowIndex"
+      ],
+      "code": "system.RemoveDataRow(ref {DataTable}, {RowIndex});"
+    },
+    {
+      "when": [
+        "Row"
+      ],
+      "code": "{DataTable}.Rows.Remove({Row});"
+    }
+  ],
+  "notes": "行番号は ISystemService.RemoveDataRow(ref DataTable, int)。DataRow は API に無く、DataTable.Rows.Remove"
+}

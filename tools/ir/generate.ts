@@ -2,10 +2,10 @@
 
 import { randomUUID } from "node:crypto";
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { resolve, defaultSlot, delegateArgs, argumentListElement } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
-import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
+import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs } from "./uia.ts";
 import { excelPrefixes } from "./excel.ts";
 
@@ -159,17 +159,48 @@ export function generate(wf: Workflow, cat: Catalog): string {
       if (wrap) emit(depth + 2, `</scg:Dictionary>`);
       emit(depth + 1, `</${tag}.${prop}>`);
     }
+    // lists はプロパティの型で振り分ける。
+    // InArgument<T> の一覧は要素の型が決まっている。それ以外の List<T> は、要素が素の InArgument なら
+    // <InArgument x:TypeArguments="x:String">[式]</InArgument>、オブジェクト型なら <ui:FilterOperationArgument 属性...> と、式のプロパティは子要素（InArgument は x:String）
     for (const [prop, list] of Object.entries(n.lists ?? {})) {
-      // List<InArgument<T>>。Studio の既定 XAML と同じく <scg:List x:TypeArguments="InArgument(T)"> に要素を並べる
-      const t = typeText(argumentListElement(a.props.find((x) => x.name === prop)!.type, n.typeArg)!);
-      xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
-      emit(depth + 1, `<${tag}.${prop}>`);
-      if (list.length === 0) emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="0" />`);
-      else {
-        emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="${Math.max(4, list.length)}">`);
-        for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(v)}]`)}</InArgument>`);
-        emit(depth + 2, `</scg:List>`);
+      const p = a.props.find((x) => x.name === prop)!;
+      if (isArgumentList(p.type)) {
+        // List<InArgument<T>> / IEnumerable<InArgument<T>>。Studio の既定 XAML と同じく <scg:List x:TypeArguments="InArgument(T)"> に要素を並べる
+        const t = typeText(argumentListElement(p.type, n.typeArg)!);
+        xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+        emit(depth + 1, `<${tag}.${prop}>`);
+        if (list.length === 0) emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="0" />`);
+        else {
+          emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="${Math.max(4, list.length)}">`);
+          for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(v as Value)}]`)}</InArgument>`);
+          emit(depth + 2, `</scg:List>`);
+        }
+        emit(depth + 1, `</${tag}.${prop}>`);
+        continue;
       }
+      const el = listElementType(p.type)!;
+      const t = objectTypes.get(el);
+      const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+      // 数値・真偽値のリテラルは Int32 / Double / Boolean の InArgument、それ以外は String
+      const inArg = (v: Value) => `<InArgument x:TypeArguments="${typeof v === "number" ? (Number.isInteger(v) ? "x:Int32" : "x:Double") : typeof v === "boolean" ? "x:Boolean" : "x:String"}">${esc(`[${exprText(v)}]`)}</InArgument>`;
+      emit(depth + 1, `<${tag}.${prop}>`);
+      emit(depth + 2, `<${sg}List x:TypeArguments="${t ? prefixFor(t.xmlns) + t.className : "InArgument"}" Capacity="${Math.max(4, list.length)}">`);
+      for (const x of list) {
+        if (!t || isValueItem(x)) { emit(depth + 3, inArg(x as Value)); continue; }
+        const etag = prefixFor(t.xmlns) + t.className;
+        const props = Object.entries(x as Record<string, Value>).map(([k, v]) => [t.props.find((q) => q.name === k)!, v] as const);
+        const attrsText = props.filter(([q]) => q.kind === "prop").map(([q, v]) => ` ${q.name}="${esc(attrValue(v, q))}"`).join("");
+        const kids = props.filter(([q]) => q.kind !== "prop");
+        if (!kids.length) { emit(depth + 3, `<${etag}${attrsText} />`); continue; }
+        emit(depth + 3, `<${etag}${attrsText}>`);
+        for (const [q, v] of kids) {
+          emit(depth + 4, `<${etag}.${q.name}>`);
+          emit(depth + 5, inArg(v));
+          emit(depth + 4, `</${etag}.${q.name}>`);
+        }
+        emit(depth + 3, `</${etag}>`);
+      }
+      emit(depth + 2, `</${sg}List>`);
       emit(depth + 1, `</${tag}.${prop}>`);
     }
     if (n.variables?.length) {

@@ -1,0 +1,6 @@
+{
+  "activity": "FilterDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に FilterDataTable が無い。条件の List は DataView.RowFilter などで書き直すことになり、同じ挙動の保証がない）"
+}

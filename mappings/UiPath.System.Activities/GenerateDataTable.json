@@ -1,0 +1,6 @@
+{
+  "activity": "GenerateDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に GenerateDataTable が無い）"
+}

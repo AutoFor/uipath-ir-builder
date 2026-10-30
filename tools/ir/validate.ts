@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement } from "./catalog.ts";
+import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -121,13 +121,28 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       });
     }
 
+    // lists。InArgument の一覧（型付きの InArgument<T> と素の InArgument）は式の配列、オブジェクト型の List はプロパティの辞書の配列
     for (const [k, list] of Object.entries(n.lists ?? {})) {
       const p = a.props.find((p) => p.name === k);
       const at = `${path}.lists.${k}`;
-      if (!p || !isArgumentList(p.type)) { add(at, "BAD_LIST", `${a.className} に InArgument の一覧のプロパティ "${k}" は無い`); continue; }
+      const typed = !!p && isArgumentList(p.type);
+      const el = p && listElementType(p.type);
+      const t = el ? objectTypes.get(el) : undefined;
+      if (!p || (!typed && (!el || (el !== "System.Activities.InArgument" && !t)))) { add(at, "BAD_LIST", `${a.className} に lists で書ける一覧のプロパティ "${k}" は無い`); continue; }
       given.add(k);
-      if (!argumentListElement(p.type, n.typeArg)) add(at, "TYPE_UNKNOWN", `"${k}" の要素の型が決まらない。typeArg を書く`);
-      if (!Array.isArray(list)) add(at, "BAD_LIST", `"${k}" は式の配列で書く`);
+      if (typed && !argumentListElement(p.type, n.typeArg)) add(at, "TYPE_UNKNOWN", `"${k}" の要素の型が決まらない。typeArg を書く`);
+      if (!Array.isArray(list)) { add(at, "BAD_LIST", `"${k}" は配列で書く`); continue; }
+      list.forEach((x, i) => {
+        const iat = `${at}[${i}]`;
+        if (!t) { if (!isValueItem(x)) add(iat, "BAD_LIST", `"${k}" の要素は式で書く`); return; }
+        if (isValueItem(x)) { add(iat, "BAD_LIST", `"${k}" の要素は { "プロパティ名": 値 } のオブジェクトで書く（${t.className}）`); return; }
+        for (const [pk, pv] of Object.entries(x)) {
+          const q = t.props.find((q) => q.name === pk);
+          if (!q) add(`${iat}.${pk}`, "UNKNOWN_PROP", `${t.className} に "${pk}" は無い`);
+          else if (!isValueItem(pv)) add(`${iat}.${pk}`, "BAD_LIST", `"${pk}" は値（式・{ lit }・数値）で書く`);
+          else if (q.enum && !(typeof pv === "string" && q.enum.includes(pv))) add(`${iat}.${pk}`, "BAD_ENUM", `"${pk}" は ${q.enum.join(" / ")} のどれか`);
+        }
+      });
     }
 
     if (n.cases) {
@@ -200,4 +215,12 @@ export function argumentType(n: Node, a: Activity, scope: Map<string, string>): 
   const out = a.props.find((p) => p.kind === "out" && isUntypedArgument(p.type));
   const v = out && n.props?.[out.name];
   return typeof v === "string" ? scope.get(v) : undefined;
+}
+
+// 値（式・{ lit }・{ vb, cs }・数値・真偽値）か。lists の要素がオブジェクト（プロパティの辞書）かの見分けに使う
+export function isValueItem(v: unknown): v is Value {
+  if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return true;
+  if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
+  const k = Object.keys(v).sort().join();
+  return k === "lit" || k === "cs,vb";
 }

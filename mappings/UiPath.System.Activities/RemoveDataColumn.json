@@ -1,0 +1,29 @@
+{
+  "activity": "RemoveDataColumn",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Column"
+      ],
+      "ignore": [
+        "ColumnName",
+        "ColumnIndex"
+      ],
+      "code": "{DataTable}.Columns.Remove({Column});"
+    },
+    {
+      "when": [
+        "ColumnName"
+      ],
+      "code": "system.RemoveDataColumn(ref {DataTable}, {ColumnName});"
+    },
+    {
+      "when": [
+        "ColumnIndex"
+      ],
+      "code": "{DataTable}.Columns.RemoveAt({ColumnIndex});"
+    }
+  ],
+  "notes": "列名は ISystemService.RemoveDataColumn(ref DataTable, string)。列番号・DataColumn は API に無く、DataTable.Columns.RemoveAt / Remove。Column と ColumnName を両方書いたら Column を使う"
+}

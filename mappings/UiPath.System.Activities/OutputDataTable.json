@@ -1,0 +1,14 @@
+{
+  "activity": "OutputDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "call": "system.OutputDataTable",
+      "args": {
+        "dataTable": "{DataTable}"
+      },
+      "returns": "Text"
+    }
+  ],
+  "notes": "ISystemService.OutputDataTable(DataTable) は文字列を返す"
+}

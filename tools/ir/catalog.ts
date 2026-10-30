@@ -185,10 +185,17 @@ export function writable(a: Activity, p: Prop): Writable {
   if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
   if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
   if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  const listOf = listElementType(p.type);
+  if (listOf && (listOf === "System.Activities.InArgument" || objectTypes.has(listOf))) return { ok: true, how: "lists" };
   if (/^System\.Collections\.(Generic|ObjectModel)\.(Dictionary|IDictionary|List|Collection|IEnumerable)<|^(List|IEnumerable|IDictionary)</.test(p.type) || p.type.endsWith("[]"))
     return { ok: false, group: "コレクション", reason: `${p.type} は要素構文が要るのでまだ書けない` };
   if (objectTypes.has(p.type) || objectImpls[p.type]) return { ok: true, how: "objs" };
   if (/^UiPath\.(Core\.Activities\.(Target|ImageTarget|CursorPosition)|UIAutomationNext\.(TargetAnchorable|TargetApp|ClickOffset|PointOffset)|CV\.|Core\.Region)/.test(p.type))
     return { ok: false, group: "UI のターゲット", reason: `${p.type} はまだ書けない（catalog/UiPath.UIAutomation.Activities/*.objects.json に型が無い。docs/worker-guide.md の 8. で足す）` };
   return { ok: false, group: "オブジェクト", reason: `${p.type} は要素構文が要るのでまだ書けない` };
+}
+
+// List<T> の T（List でなければ undefined）
+export function listElementType(t: string): string | undefined {
+  return t.match(/^System\.Collections\.Generic\.List<(.+)>$/)?.[1];
 }

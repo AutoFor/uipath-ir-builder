@@ -1,0 +1,124 @@
+{
+  "workflow": "AddDataColumn_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "name": "ID列を足す",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Id"
+        },
+        "DataTable": "dt",
+        "AllowDBNull": false,
+        "AutoIncrement": true,
+        "Unique": true
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Code"
+        },
+        "DataTable": "dt",
+        "AllowDBNull": true,
+        "AutoIncrement": false,
+        "Unique": false,
+        "MaxLength": 10,
+        "DefaultValue": {
+          "lit": "N/A"
+        }
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "DataTable": "dt",
+        "Column": {
+          "vb": "New DataColumn(\"Memo\", GetType(String))",
+          "cs": "new DataColumn(\"Memo\", typeof(string))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & dt.Columns.Count.ToString",
+          "cs": "\"columns=\" + dt.Columns.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Id.AutoIncrement=\" & dt.Columns(\"Id\").AutoIncrement.ToString",
+          "cs": "\"Id.AutoIncrement=\" + dt.Columns[\"Id\"].AutoIncrement.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Id.Unique=\" & dt.Columns(\"Id\").Unique.ToString",
+          "cs": "\"Id.Unique=\" + dt.Columns[\"Id\"].Unique.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Id.AllowDBNull=\" & dt.Columns(\"Id\").AllowDBNull.ToString",
+          "cs": "\"Id.AllowDBNull=\" + dt.Columns[\"Id\"].AllowDBNull.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Code.DefaultValue=\" & dt.Columns(\"Code\").DefaultValue.ToString",
+          "cs": "\"Code.DefaultValue=\" + dt.Columns[\"Code\"].DefaultValue.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Code.MaxLength=\" & dt.Columns(\"Code\").MaxLength.ToString",
+          "cs": "\"Code.MaxLength=\" + dt.Columns[\"Code\"].MaxLength.ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"Memo.Type=\" & dt.Columns(\"Memo\").DataType.Name",
+          "cs": "\"Memo.Type=\" + dt.Columns[\"Memo\"].DataType.Name"
+        }
+      }
+    }
+  ]
+}

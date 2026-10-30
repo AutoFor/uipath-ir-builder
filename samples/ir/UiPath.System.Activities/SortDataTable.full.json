@@ -1,0 +1,149 @@
+{
+  "workflow": "SortDataTable_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    },
+    {
+      "name": "r1",
+      "type": "DataTable"
+    },
+    {
+      "name": "r2",
+      "type": "DataTable"
+    },
+    {
+      "name": "r3",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddDataColumn",
+      "typeArg": "String",
+      "props": {
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataColumn",
+      "typeArg": "Int32",
+      "props": {
+        "ColumnName": {
+          "lit": "Age"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Alice\", 30}",
+          "cs": "new object[] {\"Alice\", 30}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Carol\", 35}",
+          "cs": "new object[] {\"Carol\", 35}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AddDataRow",
+      "props": {
+        "ArrayRow": {
+          "vb": "New Object() {\"Bob\", 25}",
+          "cs": "new object[] {\"Bob\", 25}"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "SortDataTable",
+      "name": "列名・降順",
+      "props": {
+        "DataTable": "dt",
+        "ColumnName": {
+          "lit": "Name"
+        },
+        "SortOrder": "Descending",
+        "OutputDataTable": "r1"
+      }
+    },
+    {
+      "act": "SortDataTable",
+      "name": "列番号・昇順",
+      "props": {
+        "DataTable": "dt",
+        "ColumnIndex": 1,
+        "SortOrder": "Ascending",
+        "OutputDataTable": "r2"
+      }
+    },
+    {
+      "act": "SortDataTable",
+      "name": "DataColumn・降順",
+      "props": {
+        "DataTable": "dt",
+        "DataColumn": {
+          "vb": "dt.Columns(\"Age\")",
+          "cs": "dt.Columns[\"Age\"]"
+        },
+        "SortOrder": "Descending",
+        "OutputDataTable": "r3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byName=\" & String.Join(\",\", r1.Rows.Cast(Of DataRow).Select(Function(r) r(\"Name\").ToString))",
+          "cs": "\"byName=\" + string.Join(\",\", r1.Rows.Cast<DataRow>().Select(r => r[\"Name\"].ToString()))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byIndex=\" & String.Join(\",\", r2.Rows.Cast(Of DataRow).Select(Function(r) r(\"Name\").ToString))",
+          "cs": "\"byIndex=\" + string.Join(\",\", r2.Rows.Cast<DataRow>().Select(r => r[\"Name\"].ToString()))"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"byColumn=\" & String.Join(\",\", r3.Rows.Cast(Of DataRow).Select(Function(r) r(\"Name\").ToString))",
+          "cs": "\"byColumn=\" + string.Join(\",\", r3.Rows.Cast<DataRow>().Select(r => r[\"Name\"].ToString()))"
+        }
+      }
+    }
+  ]
+}

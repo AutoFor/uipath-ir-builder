@@ -1,0 +1,13 @@
+{
+  "activity": "BuildDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "DataTable"
+      ],
+      "code": "{\n    var __ds = new DataSet();\n    __ds.ReadXml(new StringReader({TableInfo}));\n    {DataTable} = __ds.Tables[0];\n}"
+    }
+  ],
+  "notes": "サービスの API は無い。TableInfo はスキーマ付きの DataSet の XML なので、DataSet.ReadXml で読んで最初の表を使う"
+}

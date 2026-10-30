@@ -1,0 +1,25 @@
+{
+  "activity": "GetRowItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ColumnName"
+      ],
+      "code": "{Value} = ({Value|type})system.GetRowItem(row: {Row}, columnName: {ColumnName});"
+    },
+    {
+      "when": [
+        "ColumnIndex"
+      ],
+      "code": "{Value} = ({Value|type}){Row}[{ColumnIndex}];"
+    },
+    {
+      "when": [
+        "Column"
+      ],
+      "code": "{Value} = ({Value|type}){Row}[{Column}];"
+    }
+  ],
+  "notes": "ISystemService.GetRowItem(DataRow, string) は object を返すので、代入先の型にキャストする。列番号・DataColumn は API に無く、DataRow のインデクサ"
+}

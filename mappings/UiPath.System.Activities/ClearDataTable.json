@@ -1,0 +1,10 @@
+{
+  "activity": "ClearDataTable",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "system.ClearDataTable(ref {DataTable});"
+    }
+  ],
+  "notes": "ISystemService.ClearDataTable(ref DataTable)。ref の引数は call の args では書けないので code で書く"
+}
