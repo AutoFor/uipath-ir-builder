@@ -77,12 +77,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NShowStatusWindow ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="ステータス ウィンドウを出す" HealingAgentBehavior="Disabled" HistoryCount="5" Message="status window" Opacity="0.8" Position="TopRight" ScopeIdentifier="b551408a-ce90-534c-8bda-26b20cc20cb9" ShowTimestamps="True" Theme="Dark" Timeout="20" Title="uia-m2" X="20" Y="20" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
+            <uix:NShowStatusWindow ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="ステータス ウィンドウを出す" HealingAgentBehavior="Disabled" HistoryCount="5" Message="status window" Opacity="0.8" Position="TopRight" ScopeIdentifier="b551408a-ce90-534c-8bda-26b20cc20cb9" ShowTimestamps="True" Theme="Dark" Timeout="20" Title="uia-m2" Version="V5" X="20" Y="20" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
               <uix:NShowStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="9d7ffeea-2f7e-55dc-8bb2-a1d2e4437537" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NShowStatusWindow.Target>
             </uix:NShowStatusWindow>
-            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="b551408a-ce90-534c-8bda-26b20cc20cb9" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
+            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="b551408a-ce90-534c-8bda-26b20cc20cb9" Version="V5" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
               <uix:NHideStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="e44f8956-242f-58a1-b8ab-62042c313b25" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NHideStatusWindow.Target>

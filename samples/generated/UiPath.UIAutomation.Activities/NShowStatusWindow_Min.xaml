@@ -77,12 +77,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NShowStatusWindow DisplayName="ステータス ウィンドウを出す" Message="status window" ScopeIdentifier="68b24636-9364-5296-bc7b-f689a67d8b7d" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
+            <uix:NShowStatusWindow DisplayName="ステータス ウィンドウを出す" Message="status window" ScopeIdentifier="68b24636-9364-5296-bc7b-f689a67d8b7d" Version="V5" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
               <uix:NShowStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="5b8e961a-0192-5ca7-bd55-0618c117987c" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NShowStatusWindow.Target>
             </uix:NShowStatusWindow>
-            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="68b24636-9364-5296-bc7b-f689a67d8b7d" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
+            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="68b24636-9364-5296-bc7b-f689a67d8b7d" Version="V5" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
               <uix:NHideStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="685fd207-d46f-5959-a3eb-e3ab30489b85" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NHideStatusWindow.Target>

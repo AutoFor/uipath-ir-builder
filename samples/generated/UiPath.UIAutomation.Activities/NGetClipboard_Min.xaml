@@ -78,12 +78,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSetClipboard DisplayName="クリップボードに入れる" ScopeIdentifier="682b2cf7-0103-5d08-ae9e-22a5f2feefaf" Text="uia-m2-clip-test" sap2010:WorkflowViewState.IdRef="NSetClipboard_1">
+            <uix:NSetClipboard DisplayName="クリップボードに入れる" HealingAgentBehavior="SameAsCard" ScopeIdentifier="682b2cf7-0103-5d08-ae9e-22a5f2feefaf" Text="uia-m2-clip-test" Version="V5" sap2010:WorkflowViewState.IdRef="NSetClipboard_1">
               <uix:NSetClipboard.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="cf37bd55-37cb-58d8-91bd-ba7d5d69b771" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSetClipboard.Target>
             </uix:NSetClipboard>
-            <uix:NGetClipboard DisplayName="クリップボードを読む" Result="[clip]" ScopeIdentifier="682b2cf7-0103-5d08-ae9e-22a5f2feefaf" sap2010:WorkflowViewState.IdRef="NGetClipboard_1">
+            <uix:NGetClipboard DisplayName="クリップボードを読む" HealingAgentBehavior="SameAsCard" Result="[clip]" ScopeIdentifier="682b2cf7-0103-5d08-ae9e-22a5f2feefaf" Version="V5" sap2010:WorkflowViewState.IdRef="NGetClipboard_1">
               <uix:NGetClipboard.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="7408d6ba-2ce9-5ef0-acc6-cb40aed24c53" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NGetClipboard.Target>

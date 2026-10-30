@@ -77,17 +77,17 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NShowStatusWindow DisplayName="ステータス ウィンドウを出す" Message="status window" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" Title="uia-m2" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
+            <uix:NShowStatusWindow DisplayName="ステータス ウィンドウを出す" Message="status window" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" Title="uia-m2" Version="V5" sap2010:WorkflowViewState.IdRef="NShowStatusWindow_1">
               <uix:NShowStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="12000680-e543-5a31-8ff0-5ad832bace5e" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NShowStatusWindow.Target>
             </uix:NShowStatusWindow>
-            <uix:NShowStatusMessage ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="メッセージを出す（全部入り）" HealingAgentBehavior="Disabled" Level="Warning" Message="step 2" Progress="50" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" Timeout="20" Title="uia-m2" sap2010:WorkflowViewState.IdRef="NShowStatusMessage_1">
+            <uix:NShowStatusMessage ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="メッセージを出す（全部入り）" HealingAgentBehavior="Disabled" Level="Warning" Message="step 2" Progress="50" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" Timeout="20" Title="uia-m2" Version="V5" sap2010:WorkflowViewState.IdRef="NShowStatusMessage_1">
               <uix:NShowStatusMessage.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="9cb3ee02-749e-567b-b0d1-199fd6bc2540" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NShowStatusMessage.Target>
             </uix:NShowStatusMessage>
-            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
+            <uix:NHideStatusWindow DisplayName="ステータス ウィンドウを閉じる" ScopeIdentifier="eff28a29-77ab-5cfa-a091-e92dd698e77b" Version="V5" sap2010:WorkflowViewState.IdRef="NHideStatusWindow_1">
               <uix:NHideStatusWindow.Target>
                 <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='BODY' /&gt;" Guid="74541971-9f05-5b2d-b43e-9a420c1d76bb" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NHideStatusWindow.Target>
