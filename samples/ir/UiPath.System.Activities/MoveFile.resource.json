@@ -1,0 +1,94 @@
+{
+  "workflow": "MoveFile_Resource",
+  "variables": [
+    {
+      "name": "src",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "dst",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Resource.src.txt"
+        },
+        "Text": {
+          "lit": "move by resource"
+        }
+      }
+    },
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFile_Resource.dir"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Resource.dir\\MoveFile_Resource.src.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFile_Resource.src.txt"
+        },
+        "PathType": "File",
+        "Resource": "src"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFile_Resource.dir"
+        },
+        "PathType": "Folder",
+        "Resource": "dst"
+      }
+    },
+    {
+      "act": "MoveFile",
+      "name": "リソースでフォルダーへ移動",
+      "props": {
+        "PathResource": "src",
+        "DestinationResource": "dst",
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Resource.dir\\MoveFile_Resource.src.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

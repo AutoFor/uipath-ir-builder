@@ -1,0 +1,52 @@
+{
+  "workflow": "Delete_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "ex",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "Delete_Full.txt"
+        },
+        "Output": "res"
+      }
+    },
+    {
+      "act": "Delete",
+      "name": "リソースを削除",
+      "props": {
+        "ResourceFile": "res",
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\Delete_Full.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    }
+  ]
+}

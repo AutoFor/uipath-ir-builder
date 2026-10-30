@@ -1,0 +1,50 @@
+{
+  "activity": "MoveFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path",
+        "Destination"
+      ],
+      "code": "System.IO.File.Move({Path}, {Destination}, {Overwrite:-false});"
+    },
+    {
+      "when": [
+        "PathResource",
+        "Destination"
+      ],
+      "call": "system.MoveFile",
+      "args": {
+        "pathResource": "{PathResource}",
+        "destinationResource": "LocalResource.FromPath({Destination})",
+        "overwrite": "{Overwrite:-false}"
+      }
+    },
+    {
+      "when": [
+        "Path",
+        "DestinationResource"
+      ],
+      "call": "system.MoveFile",
+      "args": {
+        "pathResource": "LocalResource.FromPath({Path})",
+        "destinationResource": "{DestinationResource}",
+        "overwrite": "{Overwrite:-false}"
+      }
+    },
+    {
+      "when": [
+        "PathResource",
+        "DestinationResource"
+      ],
+      "call": "system.MoveFile",
+      "args": {
+        "pathResource": "{PathResource}",
+        "destinationResource": "{DestinationResource}",
+        "overwrite": "{Overwrite:-false}"
+      }
+    }
+  ],
+  "notes": "XAML の Path / Destination（文字列）は移動先のファイルパスを取る（名前の変更もできる）が、API の MoveFile は移動先が「フォルダーのリソース」でないと「移動先はフォルダーである必要があります。」で落ちる（run で確認）。そのため文字列どうしの形は System.IO.File.Move で書く。リソースを渡す形は API をそのまま使う（移動先はフォルダー）"
+}

@@ -1,0 +1,63 @@
+{
+  "workflow": "WriteTextFile_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "outRes",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "WriteTextFile_Full.txt"
+        },
+        "Output": "res"
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "name": "リソースへ書く",
+      "props": {
+        "File": "res",
+        "Text": {
+          "lit": "全部入り"
+        },
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "ContinueOnError": false,
+        "Output": "outRes"
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "File": "outRes",
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

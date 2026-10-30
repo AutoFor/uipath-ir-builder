@@ -1,0 +1,16 @@
+{
+  "activity": "DownloadFileFromUrl",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ResponseAttachment"
+      ],
+      "code": "{ResponseAttachment} = system.DownloadFileFromURLAsync({Url}, fileName: {FileName:-null}, conflictResolution: UiPath.Activities.System.FileOperations.FileConflictBehavior.{ConflictResolution:-Rename}, timeout: {Timeout:-600}, userAgentHeaderValue: {UserAgentHeader:-null}).GetAwaiter().GetResult();"
+    },
+    {
+      "code": "system.DownloadFileFromURLAsync({Url}, fileName: {FileName:-null}, conflictResolution: UiPath.Activities.System.FileOperations.FileConflictBehavior.{ConflictResolution:-Rename}, timeout: {Timeout:-600}, userAgentHeaderValue: {UserAgentHeader:-null}).GetAwaiter().GetResult();"
+    }
+  ],
+  "notes": "API は Task を返す非同期（DownloadFileFromURLAsync）。Coded のワークフローは同期なので .GetAwaiter().GetResult() で待つ"
+}

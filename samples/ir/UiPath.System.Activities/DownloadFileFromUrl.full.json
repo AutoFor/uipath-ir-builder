@@ -1,0 +1,44 @@
+{
+  "workflow": "DownloadFileFromUrl_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "DownloadFileFromUrl",
+      "name": "example.com を保存",
+      "props": {
+        "Url": {
+          "lit": "https://example.com/"
+        },
+        "FileName": {
+          "lit": "output\\DownloadFileFromUrl_Full.html"
+        },
+        "ConflictResolution": "Replace",
+        "Timeout": 60,
+        "UserAgentHeader": {
+          "lit": "ir-builder-test"
+        },
+        "ContinueOnError": false,
+        "ResponseAttachment": "res"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(res.LocalPath)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "(New System.IO.FileInfo(res.LocalPath).Length > 0).ToString()"
+      }
+    }
+  ]
+}

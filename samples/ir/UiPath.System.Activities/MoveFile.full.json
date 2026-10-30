@@ -1,0 +1,63 @@
+{
+  "workflow": "MoveFile_Full",
+  "variables": [
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Full.src.txt"
+        },
+        "Text": {
+          "lit": "new"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Full.dst.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "MoveFile",
+      "name": "上書きで移動",
+      "props": {
+        "Path": {
+          "lit": "output\\MoveFile_Full.src.txt"
+        },
+        "Destination": {
+          "lit": "output\\MoveFile_Full.dst.txt"
+        },
+        "Overwrite": true,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\MoveFile_Full.dst.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

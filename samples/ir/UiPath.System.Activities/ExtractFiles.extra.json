@@ -1,0 +1,59 @@
+{
+  "workflow": "ExtractFiles_Extra",
+  "variables": [
+    {
+      "name": "destInfo",
+      "type": "DirectoryInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ExtractFiles_Extra.a.txt"
+        },
+        "Text": {
+          "lit": "extract me"
+        }
+      }
+    },
+    {
+      "act": "CompressFiles",
+      "props": {
+        "CompressedFileName": {
+          "lit": "output\\ExtractFiles_Extra.zip"
+        }
+      },
+      "lists": {
+        "ContentToArchive": [
+          {
+            "lit": "output\\ExtractFiles_Extra.a.txt"
+          }
+        ]
+      }
+    },
+    {
+      "act": "ExtractFiles",
+      "name": "展開（Coded に無い設定）",
+      "props": {
+        "FileToExtract": {
+          "lit": "output\\ExtractFiles_Extra.zip"
+        },
+        "DestinationFolder": {
+          "lit": "output\\ExtractFiles_Extra"
+        },
+        "ConflictResolution": "Replace",
+        "SkipUnsupportedFiles": true,
+        "DestinationFolderInfo": "destInfo"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.File.Exists(System.IO.Path.Combine(destInfo.FullName, \"ExtractFiles_Extra.a.txt\")).ToString()"
+      }
+    }
+  ]
+}

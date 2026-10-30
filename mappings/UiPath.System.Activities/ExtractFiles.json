@@ -1,0 +1,58 @@
+{
+  "activity": "ExtractFiles",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "ConflictResolution"
+      ],
+      "reason": "Coded API なし（ConflictResolution: ExtractUnzipFiles に引数が無い）"
+    },
+    {
+      "when": [
+        "SkipUnsupportedFiles"
+      ],
+      "reason": "Coded API なし（SkipUnsupportedFiles: 引数が無い）"
+    },
+    {
+      "when": [
+        "DestinationFolderInfo"
+      ],
+      "reason": "Coded API なし（DestinationFolderInfo: 戻り値は ILocalResource[]（Content）だけ）"
+    },
+    {
+      "when": [
+        "FileToExtract",
+        "DestinationFolder"
+      ],
+      "call": "system.ExtractUnzipFiles",
+      "args": {
+        "file": "LocalResource.FromPath({FileToExtract})",
+        "destinationFolder": "{DestinationFolder}",
+        "extractToADedicatedFolder": "{ExtractToADedicatedFolder:-true}",
+        "password": "{Password:-null}",
+        "codePage": "UiPath.Activities.System.Encode.CodePages.{CodePage:-Default}"
+      },
+      "returns": "Content"
+    },
+    {
+      "when": [
+        "File",
+        "DestinationFolder"
+      ],
+      "call": "system.ExtractUnzipFiles",
+      "args": {
+        "file": "{File}",
+        "destinationFolder": "{DestinationFolder}",
+        "extractToADedicatedFolder": "{ExtractToADedicatedFolder:-true}",
+        "password": "{Password:-null}",
+        "codePage": "UiPath.Activities.System.Encode.CodePages.{CodePage:-Default}"
+      },
+      "returns": "Content"
+    },
+    {
+      "reason": "Coded API なし（DestinationFolder が無い形。5 引数のオーバーロードは destinationFolder が必須）"
+    }
+  ],
+  "notes": "ExtractUnzipFiles は ILocalResource[] を返す（Content）。FileToExtract（パス文字列）は LocalResource.FromPath で包む。FilterFiles はクラスに setter が無く（読み取り専用）XAML でも設定できないので扱わない"
+}

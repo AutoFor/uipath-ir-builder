@@ -1,0 +1,59 @@
+{
+  "activity": "AppendLine",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "FileName",
+        "Encoding"
+      ],
+      "call": "system.AppendLine",
+      "args": {
+        "text": "{Text}",
+        "file": "LocalResource.FromPath({FileName})",
+        "useDefaultEncoding": "{UseDefaultEncoding:-false}",
+        "encoding": "{Encoding}"
+      }
+    },
+    {
+      "when": [
+        "File",
+        "Encoding"
+      ],
+      "call": "system.AppendLine",
+      "args": {
+        "text": "{Text}",
+        "file": "{File}",
+        "useDefaultEncoding": "{UseDefaultEncoding:-false}",
+        "encoding": "{Encoding}"
+      }
+    },
+    {
+      "when": [
+        "FileName"
+      ],
+      "call": "system.AppendLine",
+      "args": {
+        "text": "{Text}",
+        "file": "LocalResource.FromPath({FileName})"
+      },
+      "ignore": [
+        "UseDefaultEncoding"
+      ]
+    },
+    {
+      "when": [
+        "File"
+      ],
+      "call": "system.AppendLine",
+      "args": {
+        "text": "{Text}",
+        "file": "{File}"
+      },
+      "ignore": [
+        "UseDefaultEncoding"
+      ]
+    }
+  ],
+  "notes": "file は ILocalResource。パスの文字列は LocalResource.FromPath で包む。Encoding が無いときは 2 引数のオーバーロード（UseDefaultEncoding は捨てる）"
+}

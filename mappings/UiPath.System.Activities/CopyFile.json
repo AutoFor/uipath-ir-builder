@@ -1,0 +1,55 @@
+{
+  "activity": "CopyFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path",
+        "Destination"
+      ],
+      "call": "system.CopyFile",
+      "args": {
+        "path": "{Path}",
+        "destination": "{Destination}",
+        "overwrite": "{Overwrite:-false}"
+      }
+    },
+    {
+      "when": [
+        "PathResource",
+        "Destination"
+      ],
+      "call": "system.CopyFile",
+      "args": {
+        "path": "((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath",
+        "destination": "{Destination}",
+        "overwrite": "{Overwrite:-false}"
+      }
+    },
+    {
+      "when": [
+        "Path",
+        "DestinationResource"
+      ],
+      "call": "system.CopyFile",
+      "args": {
+        "path": "{Path}",
+        "destination": "((UiPath.Platform.ResourceHandling.ILocalResource){DestinationResource}).LocalPath",
+        "overwrite": "{Overwrite:-false}"
+      }
+    },
+    {
+      "when": [
+        "PathResource",
+        "DestinationResource"
+      ],
+      "call": "system.CopyFile",
+      "args": {
+        "path": "((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath",
+        "destination": "((UiPath.Platform.ResourceHandling.ILocalResource){DestinationResource}).LocalPath",
+        "overwrite": "{Overwrite:-false}"
+      }
+    }
+  ],
+  "notes": "CopyFile(string, string, bool) はパス文字列だけ取る。リソース（IResource）は ILocalResource にして LocalPath を渡す。ContinueOnError は生成器の try / catch"
+}

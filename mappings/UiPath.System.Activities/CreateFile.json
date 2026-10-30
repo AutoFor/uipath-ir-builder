@@ -1,0 +1,55 @@
+{
+  "activity": "CreateFile",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Path",
+        "Name",
+        "Output"
+      ],
+      "call": "system.CreateFile",
+      "args": {
+        "name": "{Name}",
+        "path": "{Path}"
+      },
+      "returns": "Output"
+    },
+    {
+      "when": [
+        "Path",
+        "Name"
+      ],
+      "call": "system.CreateFile",
+      "args": {
+        "name": "{Name}",
+        "path": "{Path}"
+      }
+    },
+    {
+      "when": [
+        "PathResource",
+        "Name",
+        "Output"
+      ],
+      "call": "system.CreateFile",
+      "args": {
+        "name": "{Name}",
+        "path": "((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath"
+      },
+      "returns": "Output"
+    },
+    {
+      "when": [
+        "PathResource",
+        "Name"
+      ],
+      "call": "system.CreateFile",
+      "args": {
+        "name": "{Name}",
+        "path": "((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath"
+      }
+    }
+  ],
+  "notes": "Path はフォルダ、Name はファイル名（API の引数も name, path）。PathResource は ILocalResource にして LocalPath を渡す"
+}

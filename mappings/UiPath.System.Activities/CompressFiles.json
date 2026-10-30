@@ -1,0 +1,66 @@
+{
+  "activity": "CompressFiles",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "EncryptionAlgorithm"
+      ],
+      "reason": "Coded API なし（EncryptionAlgorithm: CompressZipFiles に暗号化方式の引数が無い）"
+    },
+    {
+      "when": [
+        "AllowDuplicateContentNames"
+      ],
+      "reason": "Coded API なし（AllowDuplicateContentNames: 引数が無い）"
+    },
+    {
+      "when": [
+        "SecurePassword"
+      ],
+      "reason": "Coded API なし（SecurePassword: Password（文字列）だけ）"
+    },
+    {
+      "when": [
+        "CompressedFileInfo"
+      ],
+      "reason": "Coded API なし（CompressedFileInfo: 戻り値は ILocalResource（CompressedResource）だけ）"
+    },
+    {
+      "when": [
+        "ContentToArchive",
+        "ResourcesToArchive"
+      ],
+      "reason": "Coded API なし（ContentToArchive と ResourcesToArchive を同時に使う形）"
+    },
+    {
+      "when": [
+        "ContentToArchive",
+        "CompressedResource"
+      ],
+      "code": "{CompressedResource} = system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { {ContentToArchive|list} }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: {CompressedFileName}, password: {Password:-null}, compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.{CompressionLevel:-Normal}, codePage: UiPath.Activities.System.Encode.CodePages.{CodePage:-Default}, overrideExistingFile: {OverrideExistingFile:-true});"
+    },
+    {
+      "when": [
+        "ContentToArchive"
+      ],
+      "code": "system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { {ContentToArchive|list} }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: {CompressedFileName}, password: {Password:-null}, compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.{CompressionLevel:-Normal}, codePage: UiPath.Activities.System.Encode.CodePages.{CodePage:-Default}, overrideExistingFile: {OverrideExistingFile:-true});"
+    },
+    {
+      "when": [
+        "ResourcesToArchive"
+      ],
+      "call": "system.CompressZipFiles",
+      "args": {
+        "resourcesToArchive": "{ResourcesToArchive}",
+        "compressedFileName": "{CompressedFileName}",
+        "password": "{Password:-null}",
+        "compressionLevel": "UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.{CompressionLevel:-Normal}",
+        "codePage": "UiPath.Activities.System.Encode.CodePages.{CodePage:-Default}",
+        "overrideExistingFile": "{OverrideExistingFile:-true}"
+      },
+      "returns": "CompressedResource"
+    }
+  ],
+  "notes": "ContentToArchive（パス文字列の一覧）は LocalResource.FromPath で IResource にして渡す。API の引数は password, compressionLevel, codePage, overrideExistingFile だけ。FilterFiles はクラスに setter が無く（読み取り専用）XAML でも設定できないので、IR のサンプルにも対応表にも入れない"
+}

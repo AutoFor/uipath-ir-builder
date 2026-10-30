@@ -1,0 +1,6 @@
+{
+  "activity": "GetLastDownloadedFile",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に Get Last Downloaded File 相当が無い。Body の中で起きたダウンロードを待つ ActivityAction 型）"
+}
