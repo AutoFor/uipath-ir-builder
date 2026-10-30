@@ -1,0 +1,3 @@
+{ "activity": "GetSensitivityLabelX", "package": "UiPath.Excel.Activities",
+  "coded": [ { "call": "{Workbook}.GetSensitivityLabel", "args": {}, "returns": "SensitivityLabel", "usings": ["UiPath.Excel.Activities.API"] } ],
+  "notes": "ExcelOperations.GetSensitivityLabel(this IWorkbookQuickHandle handle) は IExcelLabelObject を返す" }

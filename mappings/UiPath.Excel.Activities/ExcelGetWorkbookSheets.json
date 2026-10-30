@@ -1,0 +1,3 @@
+{ "activity": "ExcelGetWorkbookSheets", "package": "UiPath.Excel.Activities",
+  "coded": [ { "code": "{Sheets} = {@IWorkHandle}.GetSheets(false).ToList();", "usings": ["System.Linq", "UiPath.Excel.Activities.API"] } ],
+  "notes": "ExcelOperations.GetSheets(this IWorkHandle handle, bool onlyVisibleSheets) は IEnumerable<string>。Sheets は List<String> なので ToList() する" }

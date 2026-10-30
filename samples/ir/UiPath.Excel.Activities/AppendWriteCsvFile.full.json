@@ -1,0 +1,80 @@
+{
+  "workflow": "AppendWriteCsvFile_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "BuildDataTable",
+      "name": "Alice と Bob の表を作る",
+      "props": {
+        "TableInfo": {
+          "lit": "<NewDataSet>\n  <xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TableName\" msdata:UseCurrentLocale=\"true\"><xs:complexType><xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:element name=\"TableName\"><xs:complexType><xs:sequence><xs:element name=\"Name\" minOccurs=\"0\"><xs:simpleType><xs:restriction base=\"xs:string\"><xs:maxLength value=\"100\" /></xs:restriction></xs:simpleType></xs:element><xs:element name=\"Age\" type=\"xs:int\" minOccurs=\"0\" /></xs:sequence></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema>\n  <TableName><Name>Alice</Name><Age>30</Age></TableName>\n  <TableName><Name>Bob</Name><Age>25</Age></TableName>\n</NewDataSet>"
+        },
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "AppendWriteCsvFile",
+      "name": "書く",
+      "props": {
+        "DataTable": "dt",
+        "FilePath": {
+          "lit": "output\\AppendWriteCsvFile_Full.csv"
+        },
+        "CsvAction": "Write",
+        "Delimitator": "Tab",
+        "DelimitatorForViewModel": "Tab",
+        "AddHeaders": true,
+        "ShouldQuote": false,
+        "Encoding": {
+          "lit": "utf-8"
+        }
+      }
+    },
+    {
+      "act": "AppendWriteCsvFile",
+      "name": "見出し無しで追記",
+      "props": {
+        "DataTable": "dt",
+        "FilePath": {
+          "lit": "output\\AppendWriteCsvFile_Full.csv"
+        },
+        "CsvAction": "Append",
+        "Delimitator": "Tab",
+        "DelimitatorForViewModel": "Tab",
+        "AddHeaders": false,
+        "ShouldQuote": false,
+        "Encoding": {
+          "lit": "utf-8"
+        }
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\AppendWriteCsvFile_Full.csv"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"CSV: \" & txt.Replace(vbCr, \"\").Replace(vbLf, \"/\")",
+          "cs": "\"CSV: \" + txt.Replace(\"\\r\", \"\").Replace(\"\\n\", \"/\")"
+        }
+      }
+    }
+  ]
+}

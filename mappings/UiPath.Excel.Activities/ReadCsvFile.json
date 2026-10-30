@@ -1,0 +1,14 @@
+{
+  "activity": "ReadCsvFile",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    { "when": ["FilePath"], "call": "ExcelOperations.ReadCsvFile",
+      "args": { "filePath": "{FilePath}", "delimiter": "UiPath.CSV.DelimitatorOptions.{Delimitator}", "includeColumnNames": "{IncludeColumnNames}", "encodingStr": "{Encoding:-null}", "ignoreQuotes": "{IgnoreQuotes}" },
+      "returns": "DataTable", "defaults": { "Delimitator": "Comma", "IncludeColumnNames": true, "IgnoreQuotes": false }, "usings": ["UiPath.Excel.Activities.API"] },
+    { "when": ["PathResource"], "call": "ExcelOperations.ReadCsvFile",
+      "args": { "filePath": "((UiPath.Platform.ResourceHandling.ILocalResource){PathResource}).LocalPath", "delimiter": "UiPath.CSV.DelimitatorOptions.{Delimitator}", "includeColumnNames": "{IncludeColumnNames}", "encodingStr": "{Encoding:-null}", "ignoreQuotes": "{IgnoreQuotes}" },
+      "returns": "DataTable", "defaults": { "Delimitator": "Comma", "IncludeColumnNames": true, "IgnoreQuotes": false }, "usings": ["UiPath.Excel.Activities.API"] }
+  ],
+  "ignore": ["DelimitatorForViewModel"],
+  "notes": "ExcelOperations.ReadCsvFile(filePath, delimiter, includeColumnNames, encodingStr, ignoreQuotes)"
+}

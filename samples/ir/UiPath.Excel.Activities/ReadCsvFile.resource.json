@@ -1,0 +1,89 @@
+{
+  "workflow": "ReadCsvFile_Resource",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "CSV を書く",
+      "props": {
+        "FileName": {
+          "lit": "output\\ReadCsvFile_Resource.csv"
+        },
+        "Text": {
+          "lit": "Name,Age\nAlice,30\nBob,25"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\ReadCsvFile_Resource.csv"
+        },
+        "PathType": "File",
+        "Resource": "res"
+      }
+    },
+    {
+      "act": "ReadCsvFile",
+      "name": "リソースで読む",
+      "props": {
+        "PathResource": "res",
+        "DataTable": "dt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dt.Rows.Count.ToString",
+          "cs": "\"rows=\" + dt.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & dt.Columns.Count.ToString",
+          "cs": "\"columns=\" + dt.Columns.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"first=\" & dt.Rows(0)(0).ToString",
+          "cs": "\"first=\" + dt.Rows[0][0].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"col0=\" & dt.Columns(0).ColumnName",
+          "cs": "\"col0=\" + dt.Columns[0].ColumnName"
+        }
+      }
+    }
+  ]
+}

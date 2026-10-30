@@ -1,0 +1,3 @@
+{
+  "noRun": "マクロ付きのブック（.xlsm の vbaProject.bin）をスクリプトで作れないため、ExecuteMacro は build まで"
+}

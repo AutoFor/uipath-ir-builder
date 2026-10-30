@@ -1,0 +1,1 @@
+{ "activity": "ExcelSaveWorkbook", "package": "UiPath.Excel.Activities", "coded": null, "reason": "Coded API なし（IWorkHandle に保存のメソッドは無い。SaveExcelFile は IWorkbookQuickHandle 用でモダンの SaveExcelFileX）" }

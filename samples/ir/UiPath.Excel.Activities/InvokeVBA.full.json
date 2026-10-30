@@ -1,0 +1,44 @@
+{
+  "workflow": "InvokeVBA_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "InvokeVBA",
+          "name": "VBA を実行",
+          "props": {
+            "CodeFilePath": {
+              "lit": "data\\excel\\ExcelD_Vba.txt"
+            },
+            "EntryMethodName": {
+              "lit": "Add"
+            },
+            "EntryMethodParameters": "New Object() {2, 3}",
+            "OutputValue": "res"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"vba: \" & Convert.ToString(res)"
+      }
+    }
+  ]
+}

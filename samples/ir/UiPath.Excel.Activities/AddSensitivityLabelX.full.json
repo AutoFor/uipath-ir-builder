@@ -1,0 +1,41 @@
+{
+  "workflow": "AddSensitivityLabelX_Full",
+  "variables": [
+    {
+      "name": "lbl",
+      "type": "IExcelLabelObject"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\AddSensitivityLabelX_Full.xlsx"
+        },
+        "ReadOnly": false
+      },
+      "body": [
+        {
+          "act": "GetSensitivityLabelX",
+          "props": {
+            "Workbook": "Excel",
+            "SensitivityLabel": "lbl"
+          }
+        },
+        {
+          "act": "AddSensitivityLabelX",
+          "name": "ラベルを付ける",
+          "props": {
+            "Workbook": "Excel",
+            "SensitivityLabel": "lbl",
+            "Justification": {
+              "lit": "テスト用"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

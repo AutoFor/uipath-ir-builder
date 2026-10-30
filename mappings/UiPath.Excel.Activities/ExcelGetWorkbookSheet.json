@@ -1,0 +1,3 @@
+{ "activity": "ExcelGetWorkbookSheet", "package": "UiPath.Excel.Activities",
+  "coded": [ { "code": "{Sheet} = {@IWorkHandle}.GetSheets(false).ElementAt({Index});", "usings": ["System.Linq", "UiPath.Excel.Activities.API"] } ],
+  "notes": "GetSheets の一覧の Index 番目（0 始まり）を取る" }

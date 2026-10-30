@@ -1,0 +1,4 @@
+{ "activity": "AddSensitivityLabelX", "package": "UiPath.Excel.Activities",
+  "coded": [ { "call": "{Workbook}.AddSensitivityLabel", "args": { "label": "(UiPath.Excel.IExcelLabelObject){SensitivityLabel}" }, "usings": ["UiPath.Excel.Activities.API"] } ],
+  "ignore": ["Justification"],
+  "notes": "ExcelOperations.AddSensitivityLabel(this IWorkbookQuickHandle handle, IExcelLabelObject label)。理由（Justification）は IExcelLabelObject.Justification に入れる値なので、API の引数には無く捨てる。SensitivityLabel は Object 型なので IExcelLabelObject にキャストする" }

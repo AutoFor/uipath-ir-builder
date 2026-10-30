@@ -1,0 +1,49 @@
+{
+  "workflow": "ExcelSelectRange_Full",
+  "variables": [
+    {
+      "name": "addr",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true,
+        "Visible": true
+      },
+      "body": [
+        {
+          "act": "ExcelSelectRange",
+          "name": "A1:B4 を選ぶ",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet1"
+            },
+            "Range": {
+              "lit": "A1:B4"
+            }
+          }
+        },
+        {
+          "act": "ExcelGetSelectedRange",
+          "props": {
+            "Range": "addr"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"selected: \" & addr"
+      }
+    }
+  ]
+}

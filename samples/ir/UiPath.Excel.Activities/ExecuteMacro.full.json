@@ -1,0 +1,42 @@
+{
+  "workflow": "ExecuteMacro_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ExecuteMacro",
+          "name": "マクロを実行",
+          "props": {
+            "MacroName": {
+              "lit": "Module1.ExcelD_Add"
+            },
+            "MacroParameters": "New Object() {2, 3}",
+            "MacroOutput": "res",
+            "ContinueOnError": true
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"macro: \" & Convert.ToString(res)"
+      }
+    }
+  ]
+}

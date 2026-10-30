@@ -1,0 +1,3 @@
+{ "activity": "SelectRangeX", "package": "UiPath.Excel.Activities",
+  "coded": [ { "call": "{Range}.SelectRange", "args": {}, "usings": ["UiPath.Excel.Activities.API"] } ],
+  "notes": "ExcelOperations.SelectRange(this IReadRangeRef range)" }

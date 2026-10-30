@@ -1,0 +1,84 @@
+{
+  "workflow": "ReadCsvFile_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "セミコロン区切りの CSV を書く",
+      "props": {
+        "FileName": {
+          "lit": "output\\ReadCsvFile_Full.csv"
+        },
+        "Text": {
+          "lit": "\"Name\";\"Age\"\n\"Alice\";30\n\"Bob\";25"
+        }
+      }
+    },
+    {
+      "act": "ReadCsvFile",
+      "name": "見出し無しで読む",
+      "props": {
+        "FilePath": {
+          "lit": "output\\ReadCsvFile_Full.csv"
+        },
+        "DataTable": "dt",
+        "Delimitator": "Semicolon",
+        "DelimitatorForViewModel": "Semicolon",
+        "IncludeColumnNames": false,
+        "IgnoreQuotes": true,
+        "Encoding": {
+          "lit": "utf-8"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"rows=\" & dt.Rows.Count.ToString",
+          "cs": "\"rows=\" + dt.Rows.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"columns=\" & dt.Columns.Count.ToString",
+          "cs": "\"columns=\" + dt.Columns.Count"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"first=\" & dt.Rows(0)(0).ToString",
+          "cs": "\"first=\" + dt.Rows[0][0].ToString()"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"col0=\" & dt.Columns(0).ColumnName",
+          "cs": "\"col0=\" + dt.Columns[0].ColumnName"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{ "activity": "ExcelGetSelectedRange", "package": "UiPath.Excel.Activities", "coded": null, "reason": "Coded API なし（クラシックの選択範囲の取得。IWorkHandle には無い。モダンは IWorkbookQuickHandle.SelectedRange）" }

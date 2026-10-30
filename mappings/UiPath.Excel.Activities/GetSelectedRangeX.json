@@ -1,0 +1,3 @@
+{ "activity": "GetSelectedRangeX", "package": "UiPath.Excel.Activities",
+  "coded": [ { "code": "{Range} = {Workbook}.SelectedRange;" } ],
+  "notes": "Coded に専用のメソッドは無く、IWorkbookQuickHandle.SelectedRange（RangeValue。IReadRangeRef を実装）を読む" }

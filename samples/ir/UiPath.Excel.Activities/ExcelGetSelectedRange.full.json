@@ -1,0 +1,49 @@
+{
+  "workflow": "ExcelGetSelectedRange_Full",
+  "variables": [
+    {
+      "name": "addr",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true,
+        "Visible": true
+      },
+      "body": [
+        {
+          "act": "ExcelSelectRange",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Range": {
+              "lit": "A1"
+            }
+          }
+        },
+        {
+          "act": "ExcelGetSelectedRange",
+          "name": "選択範囲を取る",
+          "props": {
+            "Range": "addr"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"selected: \" & addr"
+      }
+    }
+  ]
+}
