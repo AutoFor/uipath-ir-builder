@@ -1,0 +1,12 @@
+{
+  "activity": "ReadCellValueX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "code": "{SaveTo} = ({SaveTo|type})Convert.ChangeType({Cell}.ReadCellValue(getFormattedText: {GetFormattedText}), typeof({SaveTo|type}));",
+      "defaults": { "GetFormattedText": true },
+      "usings": ["UiPath.Excel.Activities.API"]
+    }
+  ],
+  "notes": "ExcelOperations.ReadCellValue(this IReadCellRef cell, bool getFormattedText) は object を返すので、代入先の変数の型に Convert.ChangeType で変換する（XAML の OutArgument と同じ）。GetFormattedText の既定は Studio の既定 XAML と同じ true"
+}

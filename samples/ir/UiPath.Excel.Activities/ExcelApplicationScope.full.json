@@ -1,0 +1,54 @@
+{
+  "workflow": "ExcelApplicationScope_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "String"
+    },
+    {
+      "name": "wb",
+      "type": "WorkbookApplication"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationScope",
+      "item": "ExcelWorkbookScope",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "AutoSave": false,
+        "CreateNewFile": false,
+        "InstanceCachePeriod": 3000,
+        "MacroSetting": "ReadFromExcelSettings",
+        "ReadOnly": true,
+        "StartAsProcess": false,
+        "Visible": false,
+        "SensitivityOperation": "None",
+        "Workbook": "wb"
+      },
+      "body": [
+        {
+          "act": "ExcelReadCell",
+          "props": {
+            "SheetName": {
+              "lit": "Sheet2"
+            },
+            "Cell": {
+              "lit": "A1"
+            },
+            "Result": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"Sheet2!A1: \" & v"
+      }
+    }
+  ]
+}

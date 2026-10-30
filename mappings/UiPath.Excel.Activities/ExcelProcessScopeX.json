@@ -1,0 +1,26 @@
+{
+  "activity": "ExcelProcessScopeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "excel.ExcelProcessScope",
+      "scope": "using",
+      "init": {
+        "param": "options",
+        "type": "ScopeOptions",
+        "props": {
+          "DisplayAllerts": "{DisplayAlerts}",
+          "ExistingProcessAction": "UiPath.Excel.ExistingExcelProcessAction.{ExistingProcessAction}",
+          "FileConflictResolution": "UiPath.Excel.ExcelFileConflictResolution.{FileConflictResolution}",
+          "LaunchMethod": "UiPath.Excel.ExcelStartMethod.{LaunchMethod}",
+          "LaunchTimeout": "{LaunchTimeout}",
+          "MacroSetting": "UiPath.Excel.MacroSetting.{MacroSettings}",
+          "ProcessMode": "UiPath.Excel.ExcelProcessMode.{ProcessMode}",
+          "ShowExcelWindow": "{ShowExcelWindow}"
+        }
+      },
+      "usings": ["UiPath.Excel", "UiPath.Excel.Activities.API", "UiPath.Excel.Activities.API.Models"]
+    }
+  ],
+  "notes": "using (var ExcelProcessScopeTag = excel.ExcelProcessScope(new ScopeOptions { ... })) { 子 }。ScopeOptions のプロパティ名は DisplayAllerts（API の綴りのまま）と MacroSetting（アクティビティは MacroSettings）。中の Use Excel File は UseOptions.ExcelProcess にこの変数を渡す（ExcelApplicationCard.json の {@IExcelProcess}）。サンプルと build はまだ（AUT-1065 の担当が確かめる）"
+}

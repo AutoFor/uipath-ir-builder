@@ -1,0 +1,45 @@
+{
+  "workflow": "ExcelApplicationCard_Secure",
+  "variables": [
+    {
+      "name": "name",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Protected.xlsx"
+        },
+        "Password": {
+          "lit": "open"
+        },
+        "EditPassword": {
+          "lit": "edit"
+        },
+        "SensitivityOperation": "None",
+        "SensitivityLabel": "Nothing",
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "SaveTo": "name"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A1: \" & name"
+      }
+    }
+  ]
+}

@@ -11,10 +11,11 @@
 //   InOut → 未対応（Execute の ref / out 引数は Studio の生成コードがコンパイルできない）
 
 import type { Catalog } from "./catalog.ts";
-import { resolve } from "./catalog.ts";
+import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, Issue } from "./types.ts";
 import type { Mapping, Variant } from "./mapping.ts";
-import { refs } from "./mapping.ts";
+import { refs, scopeRefs } from "./mapping.ts";
+import { excelVbForCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames } from "./validate.ts";
 
@@ -85,7 +86,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       if ("lit" in v) return csLit(v.lit);
       return v.cs;
     }
-    const r = vbToCs(v, sc);
+    const r = vbToCs(excelVbForCs(v, sc), sc);
     if ("error" in r) { add(at, "CODED_EXPR", `式 ${JSON.stringify(v)} を C# に直せない: ${r.error}`); return "/* ? */ default"; }
     return r.cs;
   }
@@ -239,17 +240,28 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     for (const u of v.usings ?? []) usings.add(u);
+    // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
+    if (v.reason && !v.call && !v.code && !v.special) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
 
     if (v.special === "invokeWorkflow") return invoke(n, v, m, depth, at, sc);
 
     // どの props を使ったか（使わなかった props は意味が落ちるのでエラー）
     const used = new Set<string>(m.ignore ?? []);
+    const props: Record<string, Value> = { ...(v.defaults ?? {}), ...(n.props ?? {}) };
+    // 外側のスコープ（"scope": "using"）の変数。内側のものほど後ろにある
+    const scopeVar = (t: string) => [...sc].reverse().find(([, ty]) => ty === t || ty.endsWith("." + t))?.[0];
+    const avail = (tpl: string) => refs(tpl).every((r) => props[r] !== undefined) && scopeRefs(tpl).every((t) => scopeVar(t));
     const fill = (tpl: string) => {
       for (const r of refs(tpl)) used.add(r);
-      return tpl.replace(/\{(\w+)(?:\|(\w+))?\}/g, (_, name: string, filter?: string) => {
+      for (const t of scopeRefs(tpl)) if (!scopeVar(t)) add(at, "CODED_SCOPE", `${className} は ${t} のスコープの中に置く（${m.file}）`);
+      return tpl.replace(/\{@([\w.]+)\}/g, (_, t: string) => scopeVar(t) ?? "_").replace(/\{(\w+)(?:\|(\w+))?\}/g, (_, name: string, filter?: string) => {
         if (name === "typeArg") return n.typeArg ? csType(n.typeArg) : "object";
-        const val = n.props?.[name];
+        const val = props[name];
         if (val === undefined) return "";
+        if (filter === "type") {
+          const t = typeof val === "string" ? (sc.get(val.trim()) ?? [...sc].find(([k]) => k.toLowerCase() === val.trim().toLowerCase())?.[1]) : undefined;
+          return t ? csType(t) : "object";
+        }
         const prop = resolve(cat, n.act, n.typeArg !== undefined);
         const pdef = "activity" in prop ? prop.activity.props.find((x) => x.name === name) : undefined;
         const pat = `${at}.props.${name}`;
@@ -262,9 +274,27 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (v.code) stmt = fill(v.code);
     else if (v.call) {
       const args = Object.entries(v.args ?? {})
-        .filter(([, tpl]) => refs(tpl).every((r) => n.props?.[r] !== undefined))
+        .filter(([, tpl]) => avail(tpl))
         .map(([param, tpl]) => `${param}: ${fill(tpl)}`);
-      const call = `${v.call}(${args.join(", ")})`;
+      if (v.init) {
+        // 値が配列なら、使える最初のもの（Password と SecurePassword のどちらか、など）
+        const members = Object.entries(v.init.props).map(([k, t]) => [k, (Array.isArray(t) ? t : [t]).find(avail)] as const)
+          .filter(([, tpl]) => tpl !== undefined).map(([k, tpl]) => `${k} = ${fill(tpl!)}`);
+        args.push(`${v.init.param}: new ${v.init.type} { ${members.join(", ")} }`);
+      }
+      const call = `${fill(v.call)}(${args.join(", ")})`;
+      if (v.scope === "using") {
+        // using (var <item> = call) { body }。子からは {@scopeType} で参照する
+        const a = resolve(cat, n.act, n.typeArg !== undefined);
+        const slot = "activity" in a ? defaultSlot(a.activity) : undefined;
+        const [item] = itemNames(n, 1);
+        const type = v.scopeType ?? (slot ? delegateArgs(slot, n.typeArg)?.[0] : undefined) ?? "Object";
+        for (const k of Object.keys(n.props ?? {})) if (!used.has(k) && k !== "DisplayName")
+          add(`${at}.props.${k}`, "MAPPING_UNUSED_PROP", `${className}.${k} を対応表（${m.file}）が扱っていない。init か args に足すか、意味がなければ ignore に書く`);
+        emit(depth, `using (var ${item} = ${call})`);
+        braces(depth, () => block(n.body, depth + 1, `${at}.body`, new Map(sc).set(item, type)));
+        return;
+      }
       if (v.returns) used.add(v.returns);
       const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
       stmt = target ? `${target} = ${call};` : `${call};`;

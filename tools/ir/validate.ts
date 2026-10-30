@@ -4,6 +4,7 @@ import type { Catalog, Activity } from "./catalog.ts";
 import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
+import { checkExcel } from "./excel.ts";
 
 type Scope = Map<string, string>; // 名前 -> IR の型名
 
@@ -61,6 +62,8 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       if (isUntypedArgument(p.type) && !argumentType(n, a, scope))
         add(at, "TYPE_UNKNOWN", `"${k}" の型が決まらない。typeArg を書くか、宣言済みの変数を代入先にする`);
     }
+
+    checkExcel(n, a, scope, path, add);
 
     // 子の置き場所
     const slotProps = new Map<string, Node[]>();

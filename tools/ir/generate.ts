@@ -6,12 +6,14 @@ import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
+import { excelPrefixes } from "./excel.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
   [ACTIVITIES_NS]: "",
   "http://schemas.uipath.com/workflow/activities": "ui",
   "http://schemas.uipath.com/workflow/activities/uix": "uix",
+  ...excelPrefixes,
 };
 
 // Studio の BlankTemplate の Main.xaml と同じ並び

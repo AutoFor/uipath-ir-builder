@@ -1,0 +1,32 @@
+{
+  "activity": "ExcelApplicationCard",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "excel.UseExcelFile",
+      "scope": "using",
+      "init": {
+        "param": "options",
+        "type": "UseOptions",
+        "props": {
+          "Path": "{WorkbookPath}",
+          "SaveChanges": "{AutoSave}",
+          "CreateIfNotExist": "{CreateNewFile}",
+          "ReadOnly": "{ReadOnly}",
+          "KeepExcelOpen": "{KeepExcelFileOpen}",
+          "Password": ["{Password}", "new System.Net.NetworkCredential(string.Empty, {SecurePassword}).Password"],
+          "EditPassword": ["{EditPassword}", "new System.Net.NetworkCredential(string.Empty, {SecureEditPassword}).Password"],
+          "ReadFormatting": "UiPath.Excel.ReadFormattingOptions.{ReadFormatting}",
+          "ResizeWindow": "UiPath.Excel.Model.ResizeWindowOptions.{ResizeWindow}",
+          "SensitivityOperation": "UiPath.Excel.ExcelLabelOperation.{SensitivityOperation}",
+          "SensitivityLabel": "(UiPath.Excel.IExcelLabelObject){SensitivityLabel}",
+          "ExcelProcess": "{@IExcelProcess}"
+        }
+      },
+      "defaults": { "AutoSave": true, "CreateNewFile": true },
+      "usings": ["UiPath.Excel", "UiPath.Excel.Activities.API", "UiPath.Excel.Activities.API.Models"]
+    }
+  ],
+  "ignore": ["Visible", "UseTemplate", "TemplatePath"],
+  "notes": "using (var Excel = excel.UseExcelFile(new UseOptions { ... })) { 子 } にする。変数名は IR の item（Studio の既定は Excel）。AutoSave / CreateNewFile はアクティビティの既定（true）を defaults で明示する（UseOptions の既定に頼らない）。Excel Process Scope の中なら ExcelProcess にそのスコープの変数を渡す（{@IExcelProcess}）。Visible / UseTemplate / TemplatePath は Studio に出ない（Browsable=false）プロパティで、UseOptions に対応が無いので捨てる"
+}

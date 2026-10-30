@@ -1,0 +1,14 @@
+{
+  "activity": "ReadRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.ReadRange",
+      "args": { "hasHeaders": "{HasHeaders}", "readFormattingOptions": "UiPath.Excel.ReadFormattingOptions.{ReadFormatting}", "visibleRowsOnly": "{VisibleOnly}" },
+      "defaults": { "HasHeaders": true, "VisibleOnly": true },
+      "returns": "SaveTo",
+      "usings": ["UiPath.Excel.Activities.API"]
+    }
+  ],
+  "notes": "ExcelOperations.ReadRange(this IReadRangeRef range, bool hasHeaders, [ReadFormattingOptions? readFormattingOptions,] bool visibleRowsOnly) の拡張メソッド。Range は Excel.Sheet[\"Sheet1\"].Range[\"A1:B3\"] になる（VB の Excel.Sheet(\"Sheet1\").Range(\"A1:B3\") から生成器が直す）。hasHeaders / visibleRowsOnly は API に既定値が無いので、アクティビティの既定（true）を defaults で渡す"
+}

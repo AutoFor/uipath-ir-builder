@@ -1,0 +1,77 @@
+{
+  "workflow": "ExcelBroken",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "v",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "props": {
+        "WorkbookPath": {
+          "lit": "dataexcelSample.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ReadRangeX",
+          "name": "item を書き忘れた（Excel が宣言されていない）",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1\")",
+            "SaveTo": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "dataexcelSample.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "ReadRangeX",
+          "name": "打ち間違い",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Rangee(\"A1\")",
+            "SaveTo": "dt"
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "name": "参照を文字列で書いた",
+          "props": {
+            "Cell": {
+              "lit": "A1"
+            },
+            "Value": {
+              "lit": "x"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "act": "ExcelReadCell",
+      "name": "スコープの外のクラシック",
+      "props": {
+        "SheetName": {
+          "lit": "Sheet1"
+        },
+        "Cell": {
+          "lit": "A1"
+        },
+        "Result": "v"
+      }
+    }
+  ]
+}

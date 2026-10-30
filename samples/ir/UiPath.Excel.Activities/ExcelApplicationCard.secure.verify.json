@@ -1,0 +1,3 @@
+{
+  "noRun": "パスワード付きのブック（data\\excel\\Protected.xlsx）を置いていないため。SecurePassword / SecureEditPassword は Password / EditPassword と同時に書けないので、ここでは平文の方を使う"
+}

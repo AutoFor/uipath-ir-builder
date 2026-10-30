@@ -15,7 +15,19 @@
 //   "notes": "..."
 // }
 // "coded": null と "reason": "..." で「Coded API なし」を表す（生成するとその理由でエラーになる）。
+// 一部の形だけ API が無いときは、その形を { "when": ["ExistingWorkbook"], "reason": "..." } と書く（同じく NO_CODED_API）。
 // InvokeWorkflowFile のように引数の受け渡しが特殊なものは "special": "invokeWorkflow"。
+//
+// スコープ（Excel の Use Excel File など、body に子を持ち、子が参照する値を渡すもの）:
+//   { "call": "excel.UseExcelFile", "scope": "using", "scopeType": "UiPath.Excel.IWorkbookQuickHandle", ... }
+//   → using (var <item> = excel.UseExcelFile(...)) { <body> }。<item> は IR の item（delegate の引数名）。
+//     scopeType は C# でその変数が持つ型（{@型名} で子から参照する。省略時は delegate の引数の型）
+// そのほかの書き方:
+//   "defaults": { "HasHeaders": true }     … IR に無いときに使う値（IR の値の形）。API の引数に既定値が無く、アクティビティにはあるとき
+//   "init": { "param": "options", "type": "UseOptions", "props": { "Path": "{WorkbookPath}", ... } }
+//                                          … 引数 options に new UseOptions { Path = ..., ... } を渡す。IR に無いプロパティの行は省く。
+//                                            値を配列にすると、使える最初のもの（["{Password}", "...{SecurePassword}..."]）
+//   "call": "{Range}.ReadRange"            … call にもテンプレートが使える（戻り値の型の拡張メソッドを呼ぶとき）
 //
 // テンプレートの {Prop}:
 //   in のプロパティ → C# の式（VB から直したもの、{ lit } は C# の文字列リテラル）
@@ -23,6 +35,8 @@
 //   enum のプロパティ → メンバー名そのまま（"UiPath.CodedWorkflows.LogLevel.{Level}" のように使う）
 //   {Prop|str} → 文字列にする（文字列だと分かる式はそのまま、それ以外は Convert.ToString(...)）
 //   {typeArg} → ジェネリックの型引数（C# の型名）
+//   {Prop|type} → out のプロパティの代入先の変数の型（C# の型名）。object を返す API の結果を変換するとき
+//   {@型名} → 外側のスコープ（"scope": "using"）の変数名。型名は scopeType の末尾（{@IWorkHandle} など）。無いときはその引数・行ごと省く
 // args の値が、IR に無いプロパティを参照していたら、その引数ごと省く（省略可能な引数かどうかはチェッカーが確かめる）。
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -36,6 +50,11 @@ export type Variant = {
   code?: string;
   special?: "invokeWorkflow";
   usings?: string[];
+  scope?: "using";
+  scopeType?: string;
+  defaults?: Record<string, string | number | boolean | { lit: string }>;
+  init?: { param: string; type: string; props: Record<string, string | string[]> };
+  reason?: string; // call も code も無く reason だけなら「この形は Coded API なし」
 };
 
 export type Mapping = {
@@ -79,4 +98,9 @@ export function loadMappings(root: string): { maps: Map<string, Mapping>; errors
 // テンプレートが参照するプロパティ名
 export function refs(template: string): string[] {
   return [...template.matchAll(/\{(\w+)(?:\|\w+)?\}/g)].map((m) => m[1]).filter((n) => n !== "typeArg");
+}
+
+// テンプレートが参照するスコープの変数（{@IWorkHandle} の IWorkHandle）
+export function scopeRefs(template: string): string[] {
+  return [...template.matchAll(/\{@([\w.]+)\}/g)].map((m) => m[1]);
 }
