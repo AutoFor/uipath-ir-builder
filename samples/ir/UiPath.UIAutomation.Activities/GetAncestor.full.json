@@ -1,0 +1,85 @@
+{
+  "workflow": "GetAncestor_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "anc",
+      "type": "UiElement"
+    },
+    {
+      "name": "ancId",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div><div id='outer'><div id='inner'><span id='leaf'>leaf</span></div></div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "OpenBrowser",
+      "name": "UIA Test Form を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "Url": "New Uri(htmlPath).AbsoluteUri",
+        "BrowserType": "Edge"
+      },
+      "body": [
+        {
+          "act": "GetAncestor",
+          "name": "leaf の2つ上を得る（Classic・全部入り）",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='leaf' tag='SPAN' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            }
+          },
+          "props": {
+            "UpLevels": 2,
+            "Ancestor": "anc",
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "GetAttribute",
+          "name": "親の id を読む",
+          "objs": {
+            "Target": {
+              "Element": "anc"
+            }
+          },
+          "props": {
+            "Attribute": {
+              "lit": "id"
+            },
+            "Result": "ancId"
+          }
+        },
+        {
+          "act": "CloseTab",
+          "name": "タブを閉じる"
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"親: \" & ancId"
+      }
+    }
+  ]
+}

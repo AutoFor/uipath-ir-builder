@@ -1,0 +1,86 @@
+{
+  "workflow": "FindRelative_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "rel",
+      "type": "UiElement"
+    },
+    {
+      "name": "text",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div><div id='anchor' style='position:absolute;left:300px;top:200px;width:100px;height:30px;background:#ccf'>anchor</div><div id='below' style='position:absolute;left:300px;top:300px;width:100px;height:30px;background:#cfc'>below</div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "OpenBrowser",
+      "name": "UIA Test Form を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "Url": "New Uri(htmlPath).AbsoluteUri",
+        "BrowserType": "Edge"
+      },
+      "body": [
+        {
+          "act": "FindRelative",
+          "name": "anchor の下 100px を探す（Classic・全部入り）",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl id='anchor' tag='DIV' />"
+              },
+              "TimeoutMS": 10000,
+              "WaitForReady": "INTERACTIVE"
+            },
+            "CursorPosition": {
+              "Position": "Center",
+              "OffsetX": 0,
+              "OffsetY": 100
+            }
+          },
+          "props": {
+            "RelativeElement": "rel",
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "GetValue",
+          "name": "見つけた要素の文字を読む",
+          "objs": {
+            "Target": {
+              "Element": "rel"
+            }
+          },
+          "props": {
+            "Value": "text"
+          }
+        },
+        {
+          "act": "CloseTab",
+          "name": "タブを閉じる"
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"相対: \" & text"
+      }
+    }
+  ]
+}

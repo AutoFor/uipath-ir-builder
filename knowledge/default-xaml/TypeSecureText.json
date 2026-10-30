@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"TypeSecureText\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:TypeSecureText ClickBeforeTyping=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayBetweenKeys=\"{x:Null}\" DelayMS=\"{x:Null}\" EmptyField=\"{x:Null}\" SecureText=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" SimulateType=\"{x:Null}\" Activate=\"True\" AlterIfDisabled=\"True\">\r\n    <ui:TypeSecureText.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"ffc5ef18-8d03-484b-8f92-2271bebbb484\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:TypeSecureText.Target>\r\n  </ui:TypeSecureText>\r\n</Activity>"
+  }
+}

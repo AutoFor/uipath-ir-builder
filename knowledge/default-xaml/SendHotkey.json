@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"SendHotkey\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:SendHotkey ClickBeforeTyping=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayBetweenKeys=\"{x:Null}\" DelayMS=\"{x:Null}\" EmptyField=\"{x:Null}\" Key=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" SpecialKey=\"{x:Null}\" Activate=\"True\" KeyModifiers=\"None\">\r\n    <ui:SendHotkey.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"c4f7db0b-d6b0-4e1b-ac66-ead1012fa1ea\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:SendHotkey.Target>\r\n  </ui:SendHotkey>\r\n</Activity>"
+  }
+}

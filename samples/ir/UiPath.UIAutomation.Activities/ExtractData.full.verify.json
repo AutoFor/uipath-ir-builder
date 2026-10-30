@@ -1,0 +1,1 @@
+{"noRun":"ExtractMetadata は Studio のデータスクレイピングのウィザードが作る XML で、手で書いた形（tr / td の webctrl）を実際に run すると、エラーにならず行が 0 件になった。ウィザードの XML を得られないので、値を推測のまま期待ログにせず build まで"}
