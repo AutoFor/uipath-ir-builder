@@ -1,0 +1,38 @@
+{
+  "workflow": "StartJobAndGetReference_Full",
+  "variables": [
+    {
+      "name": "job",
+      "type": "JobData"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartJobAndGetReference",
+      "name": "ジョブを始める",
+      "props": {
+        "ProcessName": {
+          "lit": "ChildProcess"
+        },
+        "JobOutput": "job",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      },
+      "dicts": {
+        "JobArguments": [
+          {
+            "name": "in_No",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "INV-1"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

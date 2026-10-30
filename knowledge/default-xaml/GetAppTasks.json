@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GetAppTasks\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:upau=\"clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upau:GetAppTasks Expand=\"{x:Null}\" Filter=\"{x:Null}\" OrderBy=\"{x:Null}\" Reference=\"{x:Null}\" Select=\"{x:Null}\" Skip=\"{x:Null}\" TaskCatalogName=\"{x:Null}\" TaskObjects=\"{x:Null}\" TimeoutMs=\"{x:Null}\" Top=\"{x:Null}\" />\r\n</Activity>"
+  }
+}

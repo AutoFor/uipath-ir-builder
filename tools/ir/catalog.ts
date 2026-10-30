@@ -77,7 +77,7 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
       const attrs: Record<string, string> = {};
       for (const [, k, v] of m[2].matchAll(/([\w.]+)="([^"]*)"/g)) {
         // {x:Null} は「値なし」、DisplayName はロケール依存なので既定値として使わない
-        if (v !== "{x:Null}" && k !== "DisplayName" && k !== "IsDisplayNameAuto") attrs[k] = v.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#xD;/g, "\r").replace(/&#xA;/g, "\n").replace(/&amp;/g, "&"); // XML の実体参照を戻す（出力時にもう一度エスケープするため）
+        if (v !== "{x:Null}" && !v.startsWith("{x:Reference") && k !== "DisplayName" && k !== "IsDisplayNameAuto") attrs[k] = v.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#xD;/g, "\r").replace(/&#xA;/g, "\n").replace(/&amp;/g, "&"); // XML の実体参照を戻す（出力時にもう一度エスケープするため）
       }
       defaults.set(m[1], attrs);
     }
@@ -164,7 +164,7 @@ const specialProps: Record<string, string> = {
   "TryCatch.Catches": "catches",
   "MultipleAssign.AssignOperations": "assigns",
 };
-const attrTypes = new Set(["System.String", "System.Boolean", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo", "System.Drawing.Color"]);
+const attrTypes = new Set(["System.String", "System.Boolean", "System.Byte", "System.Guid", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo", "System.Drawing.Color"]);
 
 // List<InArgument<T>> / IEnumerable<InArgument<T>>（IR では lists に式の配列で書く）
 export const isArgumentList = (t: string) => /^(System\.Collections\.Generic\.)?(List|IEnumerable)<(System\.Activities\.)?InArgument<[^<>]+>>$/.test(t);

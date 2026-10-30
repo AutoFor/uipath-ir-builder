@@ -1,0 +1,77 @@
+{
+  "workflow": "CreateFormTask_Timer",
+  "variables": [
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "期限付きのフォーム"
+        },
+        "TaskPriority": "Medium",
+        "TaskOutput": "task",
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "TaskTimerEnabled": true,
+        "TimerDuration": "TimeSpan.FromHours(4)",
+        "StartCriteria": "TaskCreated",
+        "EndCriteria": "TaskCompleted",
+        "Outcome": "Reassign",
+        "ReassignUser": {
+          "lit": "user@example.com"
+        },
+        "ReassignGroup": {
+          "lit": "Reviewers"
+        },
+        "AutoCompleteOutcome": "Approve",
+        "BucketName": {
+          "lit": "Forms"
+        },
+        "BucketFolderPath": {
+          "lit": "Shared"
+        },
+        "EnableBulkEdit": false,
+        "EnableDynamicForms": false,
+        "EnableV2": false
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        },
+        "ReassignCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    }
+  ]
+}

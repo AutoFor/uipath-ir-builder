@@ -1,0 +1,41 @@
+{
+  "workflow": "AssignTasks_Multi",
+  "arguments": [
+    {
+      "name": "in_Assignments",
+      "dir": "In",
+      "type": "List<TaskUserAssignment>"
+    }
+  ],
+  "variables": [
+    {
+      "name": "failed",
+      "type": "List<TaskAssignmentResponse>"
+    }
+  ],
+  "body": [
+    {
+      "act": "AssignTasks",
+      "props": {
+        "TaskAssignmentType": "Assign",
+        "EnableMultipleAssignments": true,
+        "TaskUserAssignments": "in_Assignments",
+        "FailedTaskAssignments": "failed",
+        "MigrateV144": false
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    }
+  ]
+}

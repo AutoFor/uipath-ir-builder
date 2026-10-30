@@ -1,0 +1,40 @@
+{
+  "workflow": "WaitForExternalTaskAndResume_Full",
+  "variables": [
+    {
+      "name": "task",
+      "type": "ExternalTaskData"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateExternalTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "確認"
+        },
+        "TaskPriority": "Medium",
+        "TaskOutput": "task"
+      }
+    },
+    {
+      "act": "WaitForExternalTaskAndResume",
+      "name": "外部の処理を待つ",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task",
+        "WaitItemDataObject": "task",
+        "StatusMessage": {
+          "lit": "処理待ち"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

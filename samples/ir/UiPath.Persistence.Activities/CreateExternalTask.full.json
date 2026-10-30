@@ -1,0 +1,67 @@
+{
+  "workflow": "CreateExternalTask_Full",
+  "variables": [
+    {
+      "name": "task",
+      "type": "ExternalTaskData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateExternalTask",
+      "name": "外部タスクを作る",
+      "props": {
+        "TaskTitle": {
+          "lit": "外部システムで処理"
+        },
+        "TaskPriority": "High",
+        "TaskOutput": "task",
+        "TaskCatalog": {
+          "lit": "External"
+        },
+        "Labels": {
+          "lit": "invoice"
+        },
+        "ExternalTag": {
+          "lit": "INV-1"
+        },
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      },
+      "dicts": {
+        "TaskData": [
+          {
+            "name": "No",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "INV-1"
+            }
+          }
+        ]
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    }
+  ]
+}

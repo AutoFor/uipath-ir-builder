@@ -72,7 +72,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="action" />
       <Variable x:TypeArguments="x:String" Name="comment" />
     </Sequence.Variables>
-    <upaf:CreateFormTask DisplayName="承認タスクを作る" ExternalTag="[in_InvoiceNo]" GenerateInputFields="True" Labels="invoice" TaskCatalog="InvoiceApproval" TaskOutput="[task]" TaskPriority="High" TaskTitle="[&quot;請求書の確認: &quot; &amp; in_InvoiceNo]" sap2010:WorkflowViewState.IdRef="CreateFormTask_1">
+    <upaf:CreateFormTask BulkFormLayoutGuid="72b34f31-eef5-54e0-9e6c-f482f61ea87c" DisplayName="承認タスクを作る" EnableBulkEdit="False" EnableDynamicForms="False" EnableV2="False" EndCriteria="TaskAssigned" ExternalTag="[in_InvoiceNo]" FormLayoutGuid="a3896b66-46a1-549d-aa28-543cb4235bb1" GenerateInputFields="True" Labels="invoice" Outcome="Notify" StartCriteria="TaskCreated" TaskCatalog="InvoiceApproval" TaskOutput="[task]" TaskPriority="High" TaskTimerEnabled="False" TaskTitle="[&quot;請求書の確認: &quot; &amp; in_InvoiceNo]" sap2010:WorkflowViewState.IdRef="CreateFormTask_1">
       <upaf:CreateFormTask.FormData>
         <scg:Dictionary x:TypeArguments="x:String, Argument">
           <InArgument x:TypeArguments="x:String" x:Key="InvoiceNo">[in_InvoiceNo]</InArgument>

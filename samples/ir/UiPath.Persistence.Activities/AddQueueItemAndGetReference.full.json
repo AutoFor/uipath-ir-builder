@@ -1,0 +1,44 @@
+{
+  "workflow": "AddQueueItemAndGetReference_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItemData"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddQueueItemAndGetReference",
+      "name": "キューに足す",
+      "props": {
+        "QueueName": {
+          "lit": "Invoices"
+        },
+        "QueueItemOutput": "item",
+        "Priority": "High",
+        "Reference": {
+          "lit": "INV-1"
+        },
+        "DeferDate": "DateTime.Now.AddHours(1)",
+        "DueDate": "DateTime.Now.AddDays(1)",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      },
+      "dicts": {
+        "ItemInformation": [
+          {
+            "name": "No",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "INV-1"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

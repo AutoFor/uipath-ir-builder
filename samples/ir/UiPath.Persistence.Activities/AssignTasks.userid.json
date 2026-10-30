@@ -1,0 +1,25 @@
+{
+  "workflow": "AssignTasks_UserId",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    },
+    {
+      "name": "in_UserId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "AssignTasks",
+      "props": {
+        "TaskAssignmentType": "Assign",
+        "TaskId": "in_TaskId",
+        "UserId": "in_UserId"
+      }
+    }
+  ]
+}

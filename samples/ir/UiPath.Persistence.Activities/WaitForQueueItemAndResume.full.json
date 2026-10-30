@@ -1,0 +1,55 @@
+{
+  "workflow": "WaitForQueueItemAndResume_Full",
+  "variables": [
+    {
+      "name": "item",
+      "type": "QueueItemData"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddQueueItemAndGetReference",
+      "props": {
+        "QueueName": {
+          "lit": "Invoices"
+        },
+        "QueueItemOutput": "item"
+      },
+      "dicts": {
+        "ItemInformation": [
+          {
+            "name": "No",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "INV-1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "WaitForQueueItemAndResume",
+      "name": "キューの項目を待つ",
+      "props": {
+        "QueueItemInput": "item",
+        "QueueItemOutput": "item",
+        "StatusMessage": {
+          "lit": "処理待ち"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False",
+        "WaitItemDataObject": "item"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "再開した"
+        }
+      }
+    }
+  ]
+}

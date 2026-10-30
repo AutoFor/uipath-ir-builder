@@ -18,6 +18,7 @@ import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadCatalog } from "./catalog.ts";
 import { validate } from "./validate.ts";
+import { hasSuspending } from "./persistence.ts";
 import { generate } from "./generate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { loadMappings } from "./mapping.ts";
@@ -98,6 +99,10 @@ for (const f of files("samples/ir", ".json")) {
   test(`IR ${rel(f)}`, () => {
     const wf: Workflow = JSON.parse(read(f));
     assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
+    if (hasSuspending(wf)) {
+      const side = f.replace(/\.json$/, ".verify.json");
+      assert.ok(existsSync(side) && JSON.parse(read(side)).entryPoint === true, "中断するアクティビティがあるので verify.json に entryPoint: true が要る（ST-DBP-024）");
+    }
     snapshot(join(root, "samples", "generated", sub, `${wf.workflow}.xaml`), generate(wf, cat));
 
     const r = generateCoded(wf, cat, maps, { namespace: "CatalogProbeNet8", invokePath: (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, "coded/$2.cs") });

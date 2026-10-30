@@ -1,0 +1,27 @@
+{
+  "workflow": "AddTaskComment_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddTaskComment",
+      "name": "コメントを足す",
+      "props": {
+        "TaskId": "in_TaskId",
+        "Comment": {
+          "lit": "確認しました"
+        },
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

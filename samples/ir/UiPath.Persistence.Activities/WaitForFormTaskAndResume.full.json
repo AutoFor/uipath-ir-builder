@@ -1,0 +1,40 @@
+{
+  "workflow": "WaitForFormTaskAndResume_Full",
+  "variables": [
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "確認"
+        },
+        "TaskPriority": "Medium",
+        "TaskOutput": "task"
+      }
+    },
+    {
+      "act": "WaitForFormTaskAndResume",
+      "name": "人の判断を待つ",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task",
+        "WaitItemDataObject": "task",
+        "StatusMessage": {
+          "lit": "承認待ち"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

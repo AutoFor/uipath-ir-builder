@@ -1,0 +1,28 @@
+{
+  "workflow": "CompleteTask_Full",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "CompleteTask",
+      "name": "完了にする",
+      "props": {
+        "TaskId": "in_TaskId",
+        "Action": {
+          "lit": "Approve"
+        },
+        "Data": "New Newtonsoft.Json.Linq.JObject()",
+        "FolderPath": {
+          "lit": "Shared"
+        },
+        "TimeoutMs": 30000,
+        "ContinueOnError": "False"
+      }
+    }
+  ]
+}

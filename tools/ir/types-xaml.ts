@@ -62,6 +62,12 @@ const simple: Record<string, [string, Record<string, string>]> = {
   // UiPath.Persistence.Activities の型（Action Center のタスク、ジョブの参照）
   FormTaskData: ["upaf:FormTaskData", { upaf: "clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities" }],
   ExternalTaskData: ["upae:ExternalTaskData", { upae: "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities" }],
+  UserActionData: ["upau:UserActionData", { upau: "clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities" }],
+  JobData: ["upaj:JobData", { upaj: "clr-namespace:UiPath.Persistence.Activities.Job;assembly=UiPath.Persistence.Activities" }],
+  QueueItemData: ["upaq:QueueItemData", { upaq: "clr-namespace:UiPath.Persistence.Activities.Queue;assembly=UiPath.Persistence.Activities" }],
+  TaskData: ["upamt:TaskData", { upamt: "clr-namespace:UiPath.Persistence.Activities.Model.Task;assembly=UiPath.Persistence.Activities" }],
+  TaskUserAssignment: ["upat:TaskUserAssignment", { upat: "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities" }],
+  TaskAssignmentResponse: ["upat:TaskAssignmentResponse", { upat: "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities" }],
   // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
   UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
   TextInfo: ["uuia:TextInfo", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }], // GetOCRText.WordsInfo の要素

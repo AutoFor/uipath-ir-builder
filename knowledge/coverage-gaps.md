@@ -29,6 +29,8 @@
 | `FilterCollection.Filter` | `CollectionFilterSettings.Filters` の `Filter` がジェネリック（`Value` が `TProperty`）で、`Operator` が抽象クラス | System のコレクションのイシューで形を確かめて足す |
 | `NForEachUiElement.VariablesMetadata` | `Dictionary<String, List<VariableMetadata>>`。Studio の既定 XAML は空の辞書を置く | 中身を確かめてから |
 
+`CreateUserAction` の `AppActionPropertiesMetadata`、`CurrentAppTaskState`、`State`、`TaskFieldsForDesktop` も残っている（形を確かめられない。[persistence.md](persistence.md)）。
+
 ## objs で書けるようにしたが、中身に制限があるもの
 
 - `GetQueueItems.FilterBuilder`：`LogicalOperator` だけ書ける。`Filters` の要素の型（`QueueItemFilterElement`）が公開されていない。条件は `Filter`（OData の文字列）で書く

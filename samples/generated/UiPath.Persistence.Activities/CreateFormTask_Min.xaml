@@ -66,7 +66,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="upaf:FormTaskData" Name="task" />
     </Sequence.Variables>
-    <upaf:CreateFormTask TaskOutput="[task]" TaskPriority="Medium" TaskTitle="請求書の確認" sap2010:WorkflowViewState.IdRef="CreateFormTask_1" />
+    <upaf:CreateFormTask BulkFormLayoutGuid="a722aa8c-8183-5107-918b-204bdeb23b4b" EnableBulkEdit="False" EnableDynamicForms="False" EnableV2="False" EndCriteria="TaskAssigned" FormLayoutGuid="071ec799-7cd0-52bb-a77c-82ac115294c3" GenerateInputFields="True" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task]" TaskPriority="Medium" TaskTimerEnabled="False" TaskTitle="請求書の確認" sap2010:WorkflowViewState.IdRef="CreateFormTask_1" />
     <ui:LogMessage Level="Info" Message="[&quot;作成した&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

@@ -6,6 +6,7 @@ import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
 import { checkExcel } from "./excel.ts";
+import { checkPersistence } from "./persistence.ts";
 
 type Scope = Map<string, string>; // 名前 -> IR の型名
 
@@ -24,6 +25,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
   declare(wf.variables ?? [], "variables", scope, add);
   wf.body.forEach((n, i) => visit(n, `body[${i}]`, new Map(scope)));
   validateUiaTree(wf, cat, add);
+  checkPersistence(wf, add);
   return issues;
 
   function visit(n: Node, path: string, scope: Scope) {

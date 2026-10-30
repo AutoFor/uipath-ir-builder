@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"StartJobAndGetReference\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:upaj=\"clr-namespace:UiPath.Persistence.Activities.Job;assembly=UiPath.Persistence.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <upaj:StartJobAndGetReference JobOutput=\"{x:Null}\" ProcessName=\"{x:Null}\" TimeoutMs=\"{x:Null}\">\r\n    <upaj:StartJobAndGetReference.JobArguments>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, Argument\" />\r\n    </upaj:StartJobAndGetReference.JobArguments>\r\n  </upaj:StartJobAndGetReference>\r\n</Activity>"
+  }
+}
