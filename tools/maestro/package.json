@@ -1,0 +1,8 @@
+{
+  "name": "uipath-ir-builder-maestro-probe",
+  "private": true,
+  "description": "Maestro の調査用。公式 SDK をここにだけ入れる（tools/ir は依存なしのまま）",
+  "dependencies": {
+    "@uipath/maestro-builder-sdk": "6.66.5"
+  }
+}

@@ -18,6 +18,7 @@ const catalogFiles = [
   "catalog/UiPath.System.Activities/26.10.0.json",
   "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
   "catalog/UiPath.Excel.Activities/3.6.1.json",
+  "catalog/UiPath.Persistence.Activities/1.13.0.json",
 ];
 
 const args = process.argv.slice(2);

@@ -1,0 +1,14 @@
+{
+  "workflow": "CreateFormTask_Layout",
+  "variables": [ { "name": "task", "type": "FormTaskData" }, { "name": "comment", "type": "String" } ],
+  "body": [
+    { "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": { "lit": "レイアウト付きのフォーム" },
+        "TaskPriority": "Low",
+        "GenerateInputFields": false,
+        "FormLayout": { "lit": "{\"components\":[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"submit\",\"label\":\"Approve\",\"key\":\"approve\"}]}" },
+        "TaskOutput": "task" },
+      "dicts": { "FormData": [ { "name": "Comment", "dir": "Out", "type": "String", "value": "comment" } ] } }
+  ]
+}

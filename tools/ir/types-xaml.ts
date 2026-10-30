@@ -56,6 +56,9 @@ const simple: Record<string, [string, Record<string, string>]> = {
   IResource: ["upr:IResource", { upr: UPRH }],
   Process: ["sdiag:Process", { sdiag: SDIAG }],
   Match: ["srx:Match", { srx: SRX }],
+  // UiPath.Persistence.Activities の型（Action Center のタスク、ジョブの参照）
+  FormTaskData: ["upaf:FormTaskData", { upaf: "clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities" }],
+  ExternalTaskData: ["upae:ExternalTaskData", { upae: "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities" }],
   // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
   UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
   Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
