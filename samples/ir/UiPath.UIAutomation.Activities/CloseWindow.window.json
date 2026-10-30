@@ -1,0 +1,77 @@
+{
+  "workflow": "CloseWindow_Window",
+  "variables": [
+    {
+      "name": "notePath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-c3-note.txt\")"
+    },
+    {
+      "name": "win",
+      "type": "Window"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "メモ帳に開かせるファイルを書く",
+      "props": {
+        "FileName": "notePath",
+        "Text": {
+          "lit": "uia-c3"
+        }
+      }
+    },
+    {
+      "act": "Sequence",
+      "name": "メモ帳を起動して入る",
+      "body": [
+        {
+          "act": "StartProcess",
+          "name": "メモ帳を起動する",
+          "props": {
+            "FileName": {
+              "lit": "notepad.exe"
+            },
+            "Arguments": "notePath"
+          }
+        },
+        {
+          "act": "WindowScope",
+          "name": "メモ帳を開く（Classic）",
+          "item": "ContextTarget",
+          "props": {
+            "Selector": {
+              "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            },
+            "TimeoutMS": 15000,
+            "ApplicationWindow": "win"
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"opened\""
+              }
+            },
+            {
+              "act": "CloseWindow",
+              "name": "取得した Window を閉じる",
+              "props": {
+                "UseWindow": "win"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"closed\""
+      }
+    }
+  ]
+}

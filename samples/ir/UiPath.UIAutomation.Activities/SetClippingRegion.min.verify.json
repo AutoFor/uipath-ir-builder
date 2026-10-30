@@ -1,0 +1,1 @@
+{"noRun":"UiElement を得る Classic のアクティビティが無い（Modern の OutUiElement を使う必要がある）ため、Element が空のまま run すると失敗する。build まで"}

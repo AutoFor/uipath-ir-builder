@@ -1,0 +1,84 @@
+{
+  "workflow": "WindowScope_Full",
+  "variables": [
+    {
+      "name": "notePath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-c3-note.txt\")"
+    },
+    {
+      "name": "win",
+      "type": "Window"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "メモ帳に開かせるファイルを書く",
+      "props": {
+        "FileName": "notePath",
+        "Text": {
+          "lit": "uia-c3"
+        }
+      }
+    },
+    {
+      "act": "StartProcess",
+      "name": "メモ帳を起動する",
+      "props": {
+        "FileName": {
+          "lit": "notepad.exe"
+        },
+        "Arguments": "notePath"
+      }
+    },
+    {
+      "act": "WindowScope",
+      "name": "メモ帳のウィンドウに入る",
+      "item": "ContextTarget",
+      "props": {
+        "Selector": {
+          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+        },
+        "TimeoutMS": 15000,
+        "ApplicationWindow": "win",
+        "ContinueOnError": false
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"in scope:\" & Convert.ToString(win IsNot Nothing)"
+          }
+        },
+        {
+          "act": "WindowScope",
+          "name": "取得した Window で入り直す",
+          "item": "ContextTarget",
+          "props": {
+            "Window": "win"
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"in window scope\""
+              }
+            },
+            {
+              "act": "CloseWindow",
+              "name": "メモ帳を閉じる",
+              "props": {
+                "Selector": {
+                  "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

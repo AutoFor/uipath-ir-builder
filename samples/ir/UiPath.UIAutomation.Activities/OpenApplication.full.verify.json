@@ -1,0 +1,1 @@
+{"noRun":"Win11 のメモ帳は notepad.exe が起動用の薄い exe（本体は別プロセス）で、OpenApplication は起動したプロセスのウィンドウを待ち続けて TimeoutMS で失敗する（run で確認）。フルパスでは FileNotFoundException。build まで"}
