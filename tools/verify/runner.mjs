@@ -7,7 +7,7 @@
 // 依頼する側は tools/verify/queue-run.mjs を使う。
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -30,7 +30,7 @@ function runJob(file) {
   if (!isAllowed(cwd)) result = { status: 2, stdout: "", stderr: `cwd が許可された場所にない: ${cwd}` };
   else {
     console.log(`[${new Date().toLocaleTimeString()}] ${id}: ${job.args.join(" ")}`);
-    const r = spawnSync(process.execPath, [join(cwd, "tools", "verify", "verify.mjs"), ...job.args], { cwd, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+    const r = spawnSync(process.execPath, [join(cwd, "tools", "verify", "verify.mjs"), ...job.args], { cwd, encoding: "utf8", maxBuffer: 256 * 1024 * 1024, env: { ...process.env, UIP_RUN_LOCK: join(queueDir, "run.lock") } });
     result = { status: r.status ?? 1, stdout: r.stdout ?? "", stderr: (r.stderr ?? "") + (r.error ? String(r.error) : "") };
     console.log(`[${new Date().toLocaleTimeString()}] ${id}: 終了コード ${result.status}`);
   }
@@ -47,6 +47,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     writeFileSync(join(queueDir, `${id}.done`), JSON.stringify({ status: 3, stdout: "", stderr: "runner が途中で止まった" }));
     renameSync(join(queueDir, f), join(queueDir, `${id}.taken`));
   }
+  // 走っている worktree の verify.mjs は古いことがあるので、ロックは確実に書けるキューのフォルダに置く（上の env）
+  try { writeFileSync("C:/Users/Public/uipath-ir-probe.run.lock", "x", { flag: "wx" }); unlinkSync("C:/Users/Public/uipath-ir-probe.run.lock"); } catch (e) { console.log(`参考: 既定のロックの場所には書けない: ${e.message}`); }
   console.log(`run の窓口を開始しました（${queueDir}）。閉じるまで依頼を順番に流します。`);
   for (;;) {
     writeFileSync(join(queueDir, "runner.alive"), String(Date.now()));

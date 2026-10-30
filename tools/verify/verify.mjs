@@ -274,7 +274,8 @@ function withRunLock(fn) {
   let waited = 0;
   for (;;) {
     try { writeFileSync(runLock, String(process.pid), { flag: "wx" }); break; }
-    catch {
+    catch (e) {
+      if (e.code !== "EEXIST") die(`run のロックを作れない（${runLock}）: ${e.message}`);
       let pid = 0;
       try { pid = Number(readFileSync(runLock, "utf8")); } catch {}
       let alive = false;
