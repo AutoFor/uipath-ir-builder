@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GetOCRText\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:sd=\"clr-namespace:System.Drawing;assembly=System.Drawing.Common\" xmlns:sd1=\"clr-namespace:System.Drawing;assembly=System.Drawing.Primitives\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:GetOCRText Text=\"{x:Null}\" WordsInfo=\"{x:Null}\">\r\n    <ui:GetOCRText.OCREngine>\r\n      <ActivityFunc x:TypeArguments=\"sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))\" />\r\n    </ui:GetOCRText.OCREngine>\r\n    <ui:GetOCRText.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"c2570f3e-8bec-40c2-9900-602fd36107a6\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:GetOCRText.Target>\r\n  </ui:GetOCRText>\r\n</Activity>"
+  }
+}

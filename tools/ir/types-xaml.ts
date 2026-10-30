@@ -63,6 +63,7 @@ const simple: Record<string, [string, Record<string, string>]> = {
   ExternalTaskData: ["upae:ExternalTaskData", { upae: "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities" }],
   // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
   UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
+  TextInfo: ["uuia:TextInfo", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }], // GetOCRText.WordsInfo の要素
   Window: ["ui:Window", { ui: UI }],
   Browser: ["ui:Browser", { ui: UI }],
   Region: ["ui:Region", { ui: UI }],

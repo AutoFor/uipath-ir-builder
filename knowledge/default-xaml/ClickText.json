@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"ClickText\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:ClickText ContinueOnError=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayMS=\"{x:Null}\" FormattedText=\"{x:Null}\" SendWindowMessages=\"{x:Null}\" Text=\"{x:Null}\" ClickType=\"CLICK_SINGLE\" KeyModifiers=\"None\" MouseButton=\"BTN_LEFT\" Occurrence=\"1\">\r\n    <ui:ClickText.CursorPosition>\r\n      <ui:CursorPosition Position=\"Center\">\r\n        <ui:CursorPosition.OffsetX>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetX>\r\n        <ui:CursorPosition.OffsetY>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetY>\r\n      </ui:CursorPosition>\r\n    </ui:ClickText.CursorPosition>\r\n    <ui:ClickText.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"be653e01-7551-4222-9869-3a0799b51950\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:ClickText.Target>\r\n  </ui:ClickText>\r\n</Activity>"
+  }
+}

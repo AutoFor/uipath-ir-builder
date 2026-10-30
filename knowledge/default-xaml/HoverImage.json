@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"HoverImage\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:HoverImage ContinueOnError=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayMS=\"{x:Null}\" KeyModifiers=\"{x:Null}\" SendWindowMessages=\"{x:Null}\">\r\n    <ui:HoverImage.CursorPosition>\r\n      <ui:CursorPosition Position=\"Center\">\r\n        <ui:CursorPosition.OffsetX>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetX>\r\n        <ui:CursorPosition.OffsetY>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetY>\r\n      </ui:CursorPosition>\r\n    </ui:HoverImage.CursorPosition>\r\n    <ui:HoverImage.Image>\r\n      <ui:ImageTarget Image=\"{x:Null}\" TargetImageBase64=\"{x:Null}\" Accuracy=\"0.8\" Profile=\"Basic\" />\r\n    </ui:HoverImage.Image>\r\n    <ui:HoverImage.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"48e1bee0-ee7a-4639-aa5d-fd634c6e2509\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:HoverImage.Target>\r\n  </ui:HoverImage>\r\n</Activity>"
+  }
+}

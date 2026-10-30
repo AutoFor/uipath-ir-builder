@@ -1,0 +1,6 @@
+{
+  "activity": "WaitImageVanish",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic の画像の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ）"
+}
