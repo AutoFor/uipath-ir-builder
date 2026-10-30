@@ -100,7 +100,7 @@ const md = render();
 const out = join(root, "knowledge", "coverage.md");
 if (args.includes("--check")) {
   const cur = existsSync(out) ? readFileSync(out, "utf8") : "";
-  if (cur !== md) { console.error("knowledge/coverage.md が古い。node tools/ir/coverage.ts で作り直す"); process.exit(1); }
+  if (cur.replace(/\r\n/g, "\n") !== md) { console.error("knowledge/coverage.md が古い。node tools/ir/coverage.ts で作り直す"); process.exit(1); }
   console.log("knowledge/coverage.md は最新");
   process.exit(0);
 }
