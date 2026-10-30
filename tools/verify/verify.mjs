@@ -48,11 +48,15 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--timeout") opt.timeout = Number(argv[++i]);
   else if (a === "--report") opt.report = argv[++i];
   else if (a === "--no-coded") opt.noCoded = true;
+  else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
+  else if (a === "--out") opt.out = argv[++i];
   else if (a.startsWith("--")) die(`知らないオプション ${a}`);
   else inputs.push(a);
 }
 if (!/^[A-Za-z0-9_-]+$/.test(opt.name ?? "")) die("--name <作業名> が要る（英数字・-・_ だけ）");
-if (!inputs.length) die("検証するファイル（*.json / *.cs）かフォルダを渡す");
+// SSH のセッションは管理者権限・セッション 0。ここで Helm を起動すると、空いた Helm が窓口の run にも割り当てられ、run が「アクセスが拒否されました」で落ちる
+if (process.env.SSH_CONNECTION) die("SSH のセッションから直接流さない。node tools/verify/queue-run.mjs で窓口に頼む（build も同じ。引数はそのまま渡せる）");
+if (!inputs.length && !opt.defaultXaml) die("検証するファイル（*.json / *.cs）かフォルダを渡す");
 if (!existsSync(uipJs)) die(`uip が見つからない: ${uipJs}（環境変数 UIP_CLI_JS で指定できる）`);
 
 const projDir = `${opt.template}-${opt.name}`;
@@ -67,7 +71,7 @@ const files = [];
 for (const p of inputs) collect(resolve(p));
 const irFiles = files.filter((f) => extname(f) === ".json");
 const csFiles = files.filter((f) => extname(f) === ".cs");
-if (!irFiles.length && !csFiles.length) die("*.json / *.cs が1つもない");
+if (!irFiles.length && !csFiles.length && !opt.defaultXaml) die("*.json / *.cs が1つもない");
 
 // ---- 作業用プロジェクトを用意する ----
 const lock = join(projDir, ".verify.lock");
@@ -76,6 +80,17 @@ writeFileSync(lock, String(process.pid));
 process.on("exit", () => { try { unlinkSync(lock); } catch {} });
 rmSync(reportDir, { recursive: true, force: true });
 mkdirSync(logDir, { recursive: true });
+
+// --default-xaml <クラス名> --out <ファイル>：Studio の既定 XAML を取って保存する（uip も Helm を使うので窓口を通す）
+if (opt.defaultXaml) {
+  const r = spawnSync(process.execPath, [uipJs, "rpa", "activities", "get-default-xaml", "--activity-class-name", opt.defaultXaml, "--project-dir", projDir, "--output", "json"], { cwd: projDir, encoding: "utf8", maxBuffer: 64 << 20, timeout: opt.timeout * 1000 });
+  const ok = JSON.parse((r.stdout ?? "").slice(Math.max(0, (r.stdout ?? "").search(/^\{/m))) || "{}").Result === "Success";
+  if (!ok) die(`get-default-xaml に失敗: ${(r.stdout ?? "").slice(0, 400)}${r.stderr ?? ""}`);
+  if (!opt.out) die("--out が要る");
+  writeFileSync(resolve(opt.out), r.stdout);
+  console.log(`OK ${opt.defaultXaml} -> ${opt.out}`);
+  process.exit(0);
+}
 
 const results = [];
 const t0 = Date.now();
