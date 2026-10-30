@@ -1,0 +1,2437 @@
+{
+  "package": "UiPath.UIAutomation.Activities",
+  "version": "26.10.6",
+  "objects": [
+    {
+      "className": "CursorPosition",
+      "clrType": "UiPath.Core.Activities.CursorPosition",
+      "assembly": "UiPath.UiAutomation.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "category": "Options",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "OffsetX",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "OffsetX",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CursorPosition"
+        },
+        {
+          "name": "OffsetY",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "OffsetY",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CursorPosition"
+        },
+        {
+          "name": "Position",
+          "kind": "prop",
+          "type": "UiPath.Core.Position",
+          "required": false,
+          "enum": [
+            "Center",
+            "TopLeft",
+            "TopRight",
+            "BottomLeft",
+            "BottomRight"
+          ],
+          "displayName": "Position",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CursorPosition"
+        }
+      ]
+    },
+    {
+      "className": "ImageTarget",
+      "clrType": "UiPath.Core.Activities.ImageTarget",
+      "assembly": "UiPath.UiAutomation.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Accuracy",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "AccuracyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "Image",
+          "kind": "in",
+          "type": "UiPath.Core.Image",
+          "required": false,
+          "displayName": "Image",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "InitialScalingFactor",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "1",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "Profile",
+          "kind": "in",
+          "type": "UiPath.Core.Activities.ImageFindProfile",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Basic",
+            "Enhanced"
+          ],
+          "displayName": "Profile",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        },
+        {
+          "name": "TargetImageBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ImageTarget"
+        }
+      ]
+    },
+    {
+      "className": "Target",
+      "clrType": "UiPath.Core.Activities.Target",
+      "assembly": "UiPath.UiAutomation.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ClippingRegion",
+          "kind": "prop",
+          "type": "UiPath.Core.Region",
+          "required": false,
+          "displayName": "ClippingRegion",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Element",
+          "kind": "in",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "displayName": "Element",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Id",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "InformativeScreenshot",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "IsUsedAsImplementation",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Selector",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "Selector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TimeoutMS",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "WaitForReady",
+          "kind": "in",
+          "type": "UiPath.Core.WaitForReady",
+          "required": false,
+          "enum": [
+            "NONE",
+            "INTERACTIVE",
+            "COMPLETE"
+          ],
+          "displayName": "WaitForReady",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        }
+      ]
+    },
+    {
+      "className": "Region",
+      "clrType": "UiPath.Core.Region",
+      "assembly": "UiPath.UiAutomation.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Rectangle",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Region"
+        }
+      ]
+    },
+    {
+      "className": "SearchedElement",
+      "clrType": "UiPath.UIAutomationNext.Activities.SearchedElement",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "SearchedElement"
+        },
+        {
+          "name": "InUiElement",
+          "kind": "in",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SearchedElement"
+        },
+        {
+          "name": "OutUiElement",
+          "kind": "out",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "displayName": "PropertyOutUIElement",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SearchedElement"
+        },
+        {
+          "name": "Target",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.TargetAnchorable",
+          "required": false,
+          "displayName": "PropertyTarget",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SearchedElement"
+        },
+        {
+          "name": "Timeout",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyTimeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SearchedElement"
+        }
+      ]
+    },
+    {
+      "className": "VerifyExecutionOptions",
+      "clrType": "UiPath.UIAutomationNext.Activities.VerifyExecutionOptions",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DelayBefore",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyDelayBefore",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "IsLoose",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Mode",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NVerifyMode",
+          "required": false,
+          "enum": [
+            "Appears",
+            "Disappears",
+            "TextChanges",
+            "AspectChanges"
+          ],
+          "displayName": "PropertyVerifyMode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Retry",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PropertyRetry",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Target",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.TargetAnchorable",
+          "required": false,
+          "displayName": "PropertyTarget",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Timeout",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyTimeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        }
+      ]
+    },
+    {
+      "className": "VerifyExecutionTypeIntoOptions",
+      "clrType": "UiPath.UIAutomationNext.Activities.VerifyExecutionTypeIntoOptions",
+      "assembly": "UiPath.UIAutomationNext.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "UiPath.UIAutomationNext.Activities.VerifyExecutionOptions",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DelayBefore",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyDelayBefore",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "ExpectedText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyExpectedText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionTypeIntoOptions"
+        },
+        {
+          "name": "IsLoose",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Mode",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NVerifyMode",
+          "required": false,
+          "enum": [
+            "Appears",
+            "Disappears",
+            "TextChanges",
+            "AspectChanges"
+          ],
+          "displayName": "PropertyVerifyMode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Retry",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PropertyRetry",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Target",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.TargetAnchorable",
+          "required": false,
+          "displayName": "PropertyTarget",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        },
+        {
+          "name": "Timeout",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyTimeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExecutionOptions"
+        }
+      ]
+    },
+    {
+      "className": "ClickOffset",
+      "clrType": "UiPath.UIAutomationNext.ClickOffset",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": true,
+      "browsable": true,
+      "props": [
+        {
+          "name": "OffsetPosition",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NPosition",
+          "required": false,
+          "default": "4",
+          "enum": [
+            "TopLeft",
+            "TopRight",
+            "BottomLeft",
+            "BottomRight",
+            "Center"
+          ],
+          "displayName": "PropertyOffsetPosition",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClickOffset"
+        },
+        {
+          "name": "OffsetX",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetX",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClickOffset"
+        },
+        {
+          "name": "OffsetY",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetY",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClickOffset"
+        }
+      ]
+    },
+    {
+      "className": "DialogHandling",
+      "clrType": "UiPath.UIAutomationNext.DialogHandling",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ConfirmDialogResponse",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NBrowserDialogResponse",
+          "required": false,
+          "enum": [
+            "Cancel",
+            "OK"
+          ],
+          "displayName": "PropertyConfirmDialogResponse",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        },
+        {
+          "name": "DismissAlerts",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PropertyDismissAlerts",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        },
+        {
+          "name": "DismissConfirms",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PropertyDismissConfirms",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        },
+        {
+          "name": "DismissPrompts",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PropertyDismissPrompts",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        },
+        {
+          "name": "PromptDialogResponse",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NBrowserDialogResponse",
+          "required": false,
+          "enum": [
+            "Cancel",
+            "OK"
+          ],
+          "displayName": "PropertyPromptDialogResponse",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        },
+        {
+          "name": "PromptDialogResponseText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyPromptDialogResponseText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DialogHandling"
+        }
+      ]
+    },
+    {
+      "className": "PointOffset",
+      "clrType": "UiPath.UIAutomationNext.PointOffset",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Position",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NPosition",
+          "required": false,
+          "default": "4",
+          "enum": [
+            "TopLeft",
+            "TopRight",
+            "BottomLeft",
+            "BottomRight",
+            "Center"
+          ],
+          "displayName": "PropertyOffsetPosition",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PointOffset"
+        },
+        {
+          "name": "X",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetX",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PointOffset"
+        },
+        {
+          "name": "Y",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetY",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PointOffset"
+        }
+      ]
+    },
+    {
+      "className": "RegionOffset",
+      "clrType": "UiPath.UIAutomationNext.RegionOffset",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Area",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "Height",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetHeight",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "IsAreaResolved",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "Position",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NPosition",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "TopLeft",
+            "TopRight",
+            "BottomLeft",
+            "BottomRight",
+            "Center"
+          ],
+          "displayName": "PropertyOffsetPosition",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "Width",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetWidth",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "X",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetX",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        },
+        {
+          "name": "Y",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyOffsetY",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RegionOffset"
+        }
+      ]
+    },
+    {
+      "className": "Target",
+      "clrType": "UiPath.UIAutomationNext.Target",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "UiPath.UIAutomationNext.Models.BaseModel",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Accuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.8",
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvColumns",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvDescription",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvElementArea",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CVScreenId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.7",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextAccuracyArgument",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyCvTextAccuracy",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextArea",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyCvText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyCvTextOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Models.CV.UIVisionCategoryType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Button",
+            "InputBox",
+            "CheckBox",
+            "RadioButton",
+            "CloseButton",
+            "MaximizeButton",
+            "MinimizeButton",
+            "Icon",
+            "ArrowButton",
+            "Cell",
+            "Text",
+            "Image",
+            "Area",
+            "AnyText",
+            "AnyWordGroup",
+            "AnyIcon",
+            "Table",
+            "TableCell"
+          ],
+          "displayName": "PropertyCvType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "DesignTimeRectangle",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.UIElementType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Icon",
+            "ArrowButton",
+            "Button",
+            "CheckBox",
+            "DropDown",
+            "InputBox",
+            "InputBoxPassword",
+            "RadioButton",
+            "Text",
+            "Cell",
+            "TabPage",
+            "TabPageContainer",
+            "Container",
+            "List",
+            "ListItem",
+            "Toolbar",
+            "Table",
+            "TableRow",
+            "TableHeader",
+            "Element"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FriendlyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FullSelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyPartialSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.5",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyMatches",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "default": "100",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyPartialSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzySelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyFuzzyPartialSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Guid",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageAccuracyArgument",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyImageAccuracy",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyImage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageFindMode",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NImageFindMode",
+          "required": false,
+          "enum": [
+            "Default",
+            "LegacyEnhanced",
+            "LegacyBasic"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageFindModeArgument",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NImageFindMode",
+          "required": false,
+          "enum": [
+            "Default",
+            "LegacyEnhanced",
+            "LegacyBasic"
+          ],
+          "displayName": "PropertyImageFindMode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyImageOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "IsLinkedToReadOnlyObjectRepository",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "IsNativeTextCaseSensitive",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "displayName": "PropertyNativeTextCaseSensitive",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyNativeText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyNativeTextOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OCRAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.7",
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OCRText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OwnerTarget",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Contracts.ITargetAnchorable",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "PartialSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SearchSteps",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.TargetSearchSteps",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Selector",
+            "FuzzySelector",
+            "Image",
+            "TextFindAll",
+            "TextOcr",
+            "TextNative",
+            "CV",
+            "Semantic",
+            "SemanticSelector"
+          ],
+          "displayName": "PropertySearchSteps",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SemanticElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NSemanticElementType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Icon",
+            "Button",
+            "CheckBox",
+            "DropDown",
+            "InputBox",
+            "InputBoxPassword",
+            "RadioButton",
+            "Text",
+            "DatePicker",
+            "RadioGroup",
+            "DateGroup"
+          ],
+          "displayName": "PropertySemanticElementType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SemanticTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertySemanticText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SemanticTexts",
+          "kind": "prop",
+          "type": "System.String[]",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TargetType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.TargetType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "SelectorBased",
+            "ImageBased",
+            "NativeTextBased",
+            "ComputerVisionBased",
+            "SemanticBased"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Text",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TextMethod",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.GetTextMethod",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "AttributeText",
+            "AttributeAAName",
+            "AttributeHtmlInnerText",
+            "FullTextScrapping",
+            "NativeScrapping",
+            "OCR"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TextSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        }
+      ]
+    },
+    {
+      "className": "TargetAnchorable",
+      "clrType": "UiPath.UIAutomationNext.TargetAnchorable",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "UiPath.UIAutomationNext.Target",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Accuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.8",
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Anchors",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.UIAutomationNext.Contracts.ITarget>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "BrowserURL",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "CheckVisibility",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvColumns",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvDescription",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvElementArea",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CVScreenId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.7",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextAccuracyArgument",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyCvTextAccuracy",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextArea",
+          "kind": "prop",
+          "type": "System.Nullable<System.Drawing.Rectangle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyCvText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvTextOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyCvTextOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "CvType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Models.CV.UIVisionCategoryType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Button",
+            "InputBox",
+            "CheckBox",
+            "RadioButton",
+            "CloseButton",
+            "MaximizeButton",
+            "MinimizeButton",
+            "Icon",
+            "ArrowButton",
+            "Cell",
+            "Text",
+            "Image",
+            "Area",
+            "AnyText",
+            "AnyWordGroup",
+            "AnyIcon",
+            "Table",
+            "TableCell"
+          ],
+          "displayName": "PropertyCvType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "DataCollectionScreenshotId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "DesignTimeRectangle",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "DesignTimeScaleFactor",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "ElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.UIElementType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Icon",
+            "ArrowButton",
+            "Button",
+            "CheckBox",
+            "DropDown",
+            "InputBox",
+            "InputBoxPassword",
+            "RadioButton",
+            "Text",
+            "Cell",
+            "TabPage",
+            "TabPageContainer",
+            "Container",
+            "List",
+            "ListItem",
+            "Toolbar",
+            "Table",
+            "TableRow",
+            "TableHeader",
+            "Element"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ElementVisibility",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NElementVisibility",
+          "required": false,
+          "enum": [
+            "None",
+            "Interactive",
+            "Visible",
+            "Legacy"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "ElementVisibilityArgument",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NElementVisibility",
+          "required": false,
+          "enum": [
+            "None",
+            "Interactive",
+            "Visible",
+            "Legacy"
+          ],
+          "displayName": "PropertyCheckVisibility",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "FriendlyName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FullSelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyPartialSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.5",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyMatches",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "default": "100",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzyPartialSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "FuzzySelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyFuzzyPartialSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Guid",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageAccuracyArgument",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "PropertyImageAccuracy",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyImage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageFindMode",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NImageFindMode",
+          "required": false,
+          "enum": [
+            "Default",
+            "LegacyEnhanced",
+            "LegacyBasic"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageFindModeArgument",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NImageFindMode",
+          "required": false,
+          "enum": [
+            "Default",
+            "LegacyEnhanced",
+            "LegacyBasic"
+          ],
+          "displayName": "PropertyImageFindMode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "ImageOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyImageOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "InformativeScreenshot",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "IsLinkedToReadOnlyObjectRepository",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "IsNativeTextCaseSensitive",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "displayName": "PropertyNativeTextCaseSensitive",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "IsResponsive",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "displayName": "PropertyIsResponsive",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "LibraryObjectName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "NativeText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyNativeText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextOccurrence",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "NativeTextOccurrenceArgument",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "PropertyNativeTextOccurrence",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OCRAccuracy",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "default": "0.7",
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OCRText",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "OwnerTarget",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Contracts.ITargetAnchorable",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "PartialSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "PointOffset",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.PointOffset",
+          "required": false,
+          "category": "CategoryTargetPointOffset",
+          "displayName": "PropertyClickOffset",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "PositioningType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NPositioningMatchType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Default",
+            "Closest"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "RegionOffset",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.RegionOffset",
+          "required": false,
+          "category": "CategoryTargetRegionOffset",
+          "displayName": "PropertyAreaOffset",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "ScopeSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "ScopeSelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyScopeSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SearchSteps",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.TargetSearchSteps",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Selector",
+            "FuzzySelector",
+            "Image",
+            "TextFindAll",
+            "TextOcr",
+            "TextNative",
+            "CV",
+            "Semantic",
+            "SemanticSelector"
+          ],
+          "displayName": "PropertySearchSteps",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SelectionStrategy",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.SelectorStrategy",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Default",
+            "AA",
+            "WND",
+            "UIA",
+            "Java",
+            "AX",
+            "HTML"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticElementType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NSemanticElementType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "Icon",
+            "Button",
+            "CheckBox",
+            "DropDown",
+            "InputBox",
+            "InputBoxPassword",
+            "RadioButton",
+            "Text",
+            "DatePicker",
+            "RadioGroup",
+            "DateGroup"
+          ],
+          "displayName": "PropertySemanticElementType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SemanticSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticSelectorArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertySemanticSelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticSelectorFindMethod",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NSemanticSelectorFindMethod",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Legacy",
+            "Dom",
+            "Image"
+          ],
+          "displayName": "PropertySemanticSelectorFindMethod",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticSelectorModel",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NSemanticSelectorModel",
+          "required": false,
+          "enum": [
+            "GeminiFlash25",
+            "PathMini"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticSelectorModelArgument",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NSemanticSelectorModel",
+          "required": false,
+          "enum": [
+            "GeminiFlash25",
+            "PathMini"
+          ],
+          "displayName": "PropertySemanticSelectorModel",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "SemanticTextArgument",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertySemanticText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "SemanticTexts",
+          "kind": "prop",
+          "type": "System.String[]",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TargetType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.TargetType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "SelectorBased",
+            "ImageBased",
+            "NativeTextBased",
+            "ComputerVisionBased",
+            "SemanticBased"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TelemetryData",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "Text",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TextMethod",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.GetTextMethod",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "AttributeText",
+            "AttributeAAName",
+            "AttributeHtmlInnerText",
+            "FullTextScrapping",
+            "NativeScrapping",
+            "OCR"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "TextSelector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "Target"
+        },
+        {
+          "name": "Version",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NTargetVersion",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "V1",
+            "V2",
+            "V3",
+            "V4",
+            "V5",
+            "V6",
+            "Latest"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "Visibility",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NElementVisibility",
+          "required": false,
+          "enum": [
+            "None",
+            "Interactive",
+            "Visible",
+            "Legacy"
+          ],
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "WaitForReady",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NWaitForReady",
+          "required": false,
+          "enum": [
+            "None",
+            "Interactive",
+            "Complete"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        },
+        {
+          "name": "WaitForReadyArgument",
+          "kind": "in",
+          "type": "UiPath.UIAutomationNext.Enums.NWaitForReady",
+          "required": false,
+          "enum": [
+            "None",
+            "Interactive",
+            "Complete"
+          ],
+          "displayName": "PropertyWaitForReady",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetAnchorable"
+        }
+      ]
+    },
+    {
+      "className": "TargetApp",
+      "clrType": "UiPath.UIAutomationNext.TargetApp",
+      "assembly": "UiPath.UIAutomationNext",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/uix",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Area",
+          "kind": "prop",
+          "type": "System.Drawing.Rectangle",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Arguments",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyArguments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "BrowserType",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NBrowserType",
+          "required": false,
+          "default": "-1",
+          "enum": [
+            "None",
+            "IE",
+            "Firefox",
+            "Chrome",
+            "Edge",
+            "Custom",
+            "WebWidgetNative",
+            "Safari"
+          ],
+          "displayName": "PropertyBrowserType",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "ContentHash",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyFilePath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "IconBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "InformativeScreenshot",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "IsExactTitleEnabled",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "LibraryObjectName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Reference",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "SapInfo",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Models.SAPElementInfo",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Selector",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertySelector",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Title",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Url",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PropertyUrl",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "Version",
+          "kind": "prop",
+          "type": "UiPath.UIAutomationNext.Enums.NTargetAppVersion",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "None",
+            "V1",
+            "V2",
+            "V3",
+            "Latest"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        },
+        {
+          "name": "WorkingDirectory",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "WorkingDirectory",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TargetApp"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

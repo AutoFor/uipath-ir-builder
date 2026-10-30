@@ -47,6 +47,7 @@ function visit(n: Node, file: string) {
     for (const k of Object.keys(n.props ?? {})) s.add(k);
     for (const k of Object.keys(n.slots ?? {})) s.add(k);
     for (const k of Object.keys(n.dicts ?? {})) s.add(k);
+    for (const k of Object.keys(n.objs ?? {})) s.add(k);
     if (n.body) { const d = defaultSlot(a); if (d) s.add(d.name); }
     if (n.then) s.add("Then");
     if (n.else) s.add("Else");

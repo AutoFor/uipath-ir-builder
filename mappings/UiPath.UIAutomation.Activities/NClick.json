@@ -1,0 +1,72 @@
+{
+  "activity": "NClick",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "when": [
+        "InUiElement"
+      ],
+      "call": "uiAutomation.Click",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "uiElement": "{InUiElement}",
+        "clickOptions": {
+          "new": "ClickOptions",
+          "set": {
+            "ClickType": "{ClickType|enum}",
+            "MouseButton": "{MouseButton|enum}",
+            "KeyModifiers": "{KeyModifiers|enum}",
+            "CursorMotionType": "{CursorMotionType|enum}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "ActivateBefore": "{ActivateBefore}",
+            "VerifyOptions": "{VerifyOptions}",
+            "UnblockInput": "{UnblockInput}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    },
+    {
+      "call": "{app}.Click",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "clickOptions": {
+          "new": "ClickOptions",
+          "set": {
+            "ClickType": "{ClickType|enum}",
+            "MouseButton": "{MouseButton|enum}",
+            "KeyModifiers": "{KeyModifiers|enum}",
+            "CursorMotionType": "{CursorMotionType|enum}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "ActivateBefore": "{ActivateBefore}",
+            "VerifyOptions": "{VerifyOptions}",
+            "UnblockInput": "{UnblockInput}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ],
+  "notes": "ターゲットは TargetAnchorableModel（FullSelectorArgument → PartialSelector、ScopeSelectorArgument → ScopeSelector）。オプションは ClickOptions。OutUiElement と ClickOffset（非推奨）はまだ扱わない"
+}

@@ -6,12 +6,14 @@ import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames } from "./validate.ts";
+import { prepareUia, emitObjs } from "./uia.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
   [ACTIVITIES_NS]: "",
   "http://schemas.uipath.com/workflow/activities": "ui",
   "http://schemas.uipath.com/workflow/activities/uix": "uix",
+  "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib": "scg",
 };
 
 // Studio の BlankTemplate の Main.xaml と同じ並び
@@ -63,7 +65,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
       : { act: "Sequence", name: wf.workflow, variables: wf.variables, body: wf.body };
 
   const scope = new Map((wf.arguments ?? []).map((a) => [a.name, a.type] as [string, string]));
-  emitNode(root, 1, scope);
+  emitNode(prepareUia(root, cat), 1, scope);
   const body = lines.splice(0);
 
   // ルート要素
@@ -134,7 +136,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
     for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
 
     const hasContent =
-      elems.length || slots.length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -168,6 +170,7 @@ export function generate(wf: Workflow, cat: Catalog): string {
       emit(depth + 2, `<${dir} x:TypeArguments="${t}">${esc(`[${v}]`)}</${dir}>`);
       emit(depth + 1, `</${tag}.${prop.name}>`);
     }
+    emitObjs(n, a, tag, depth + 1, { prefixFor, attrValue, esc, emit });
     for (const [p, nodes] of slots) {
       if (p.kind === "children" && p.name === "Activities") {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる

@@ -1,0 +1,104 @@
+{
+  "workflow": "NCheckState_Full",
+  "variables": [
+    {
+      "name": "htmlPath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-test-form.html\")"
+    },
+    {
+      "name": "result",
+      "type": "String"
+    },
+    {
+      "name": "found",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "テスト用の HTML を書く",
+      "props": {
+        "FileName": "htmlPath",
+        "Text": {
+          "lit": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div></body></html>"
+        }
+      }
+    },
+    {
+      "act": "NApplicationCard",
+      "name": "UIA Test Form を開く",
+      "item": "WSSessionData",
+      "objs": {
+        "TargetApp": {
+          "Url": "New Uri(htmlPath).AbsoluteUri",
+          "BrowserType": "Edge",
+          "Selector": {
+            "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+          }
+        }
+      },
+      "props": {
+        "OpenMode": "Always",
+        "CloseMode": "Always"
+      },
+      "body": [
+        {
+          "act": "NCheckState",
+          "name": "無い要素を確かめる（全部入り）",
+          "objs": {
+            "Target": {
+              "FullSelectorArgument": {
+                "lit": "<webctrl id='missing' tag='DIV' />"
+              },
+              "ScopeSelectorArgument": {
+                "lit": "<html app='msedge.exe' title='UIA Test Form' />"
+              },
+              "SearchSteps": "Selector"
+            }
+          },
+          "props": {
+            "Mode": "WaitAppear",
+            "CheckVisibility": false,
+            "Exists": "found",
+            "HealingAgentBehavior": "Disabled",
+            "Timeout": 2,
+            "DelayBefore": 0.1
+          },
+          "slots": {
+            "IfExists": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Warn",
+                  "Message": {
+                    "lit": "あるはずのない要素があった"
+                  }
+                }
+              }
+            ],
+            "IfNotExists": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": {
+                    "lit": "missing は無い"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"found=\" & found.ToString"
+      }
+    }
+  ]
+}

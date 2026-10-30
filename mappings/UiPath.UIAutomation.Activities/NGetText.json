@@ -1,0 +1,83 @@
+{
+  "activity": "NGetText",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "when": [
+        "InUiElement"
+      ],
+      "call": "uiAutomation.GetText",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "TextString",
+      "args": {
+        "uiElement": "{InUiElement}",
+        "options": {
+          "new": "GetTextOptions",
+          "set": {
+            "ScrapingOptions": "{ScrapingOptions|enum}",
+            "ScrapingMethod": "{ScrapingMethod|enum}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    },
+    {
+      "when": [
+        "Text"
+      ],
+      "call": "{app}.GetText",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "Text",
+      "args": {
+        "target": "{Target}",
+        "getTextOptions": {
+          "new": "GetTextOptions",
+          "set": {
+            "ScrapingOptions": "{ScrapingOptions|enum}",
+            "ScrapingMethod": "{ScrapingMethod|enum}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    },
+    {
+      "call": "{app}.GetText",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "TextString",
+      "args": {
+        "target": "{Target}",
+        "getTextOptions": {
+          "new": "GetTextOptions",
+          "set": {
+            "ScrapingOptions": "{ScrapingOptions|enum}",
+            "ScrapingMethod": "{ScrapingMethod|enum}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ],
+  "notes": "戻り値（string）を TextString か Text で受ける（両方は書けない）。WordsInfo と OutUiElement はまだ扱わない"
+}

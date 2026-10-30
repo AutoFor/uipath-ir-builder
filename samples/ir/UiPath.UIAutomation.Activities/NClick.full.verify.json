@@ -1,0 +1,1 @@
+{ "requires": "Microsoft Edge と UiPath の Web 拡張機能（この PC の Edge には入っている）。HTML はワークフローが %TEMP%\uia-test-form.html に書き出して開く" }

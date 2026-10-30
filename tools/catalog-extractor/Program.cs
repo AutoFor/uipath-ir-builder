@@ -15,6 +15,7 @@ var resolver = new PathAssemblyResolver(ReferencePaths.Collect(opts));
 using var mlc = new MetadataLoadContext(resolver, "System.Runtime");
 
 var warnings = new List<string>();
+if (opts.Types != null) { ObjectTypes.Dump(mlc, opts, warnings); return; }
 var activities = new List<ActivityInfo>();
 var services = new List<ServiceInfo>();
 
@@ -289,6 +290,39 @@ static class Attrs
     };
 }
 
+// --types <正規表現>：アクティビティではない型（UI のターゲットなど、XAML で要素として書くオブジェクト）の
+// 設定できるプロパティを {package, version, objects} の JSON に書き出す（tools/ir/uia.ts が使う）
+static class ObjectTypes
+{
+    public static void Dump(MetadataLoadContext mlc, Options opts, List<string> warnings)
+    {
+        var re = new System.Text.RegularExpressions.Regex(opts.Types!);
+        var objects = new List<ActivityInfo>();
+        foreach (var dll in opts.Dlls)
+        {
+            var asm = mlc.LoadFromAssemblyPath(dll);
+            var xmlnsMap = Xmlns.ReadDefinitions(asm);
+            Type[] types;
+            try { types = asm.GetTypes(); }
+            catch (ReflectionTypeLoadException ex) { types = ex.Types.Where(t => t != null).ToArray()!; }
+            foreach (var t in types.Where(t => t.IsPublic && !t.IsAbstract && !t.IsInterface && t.FullName != null && re.IsMatch(t.FullName)))
+            {
+                try
+                {
+                    var info = Activities.Describe(t, xmlnsMap, warnings);
+                    var settable = t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(p => p.SetMethod is { IsPublic: true }).Select(p => p.Name).ToHashSet();
+                    objects.Add(info with { Props = info.Props.Where(p => settable.Contains(p.Name)).ToList() });
+                }
+                catch (Exception ex) { warnings.Add($"{t.FullName}: {ex.GetType().Name}: {ex.Message}"); }
+            }
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.Out))!);
+        File.WriteAllText(opts.Out, JsonSerializer.Serialize(new { opts.Package, opts.Version, Objects = objects.OrderBy(o => o.ClrType).ToList(), Warnings = warnings }, Json.Options));
+        Console.WriteLine($"{opts.Package} {opts.Version}: {objects.Count} object types, {warnings.Count} warnings -> {opts.Out}");
+    }
+}
+
 static class Xmlns
 {
     // [assembly: XmlnsDefinition("http://...", "Clr.Namespace")] を読む
@@ -378,11 +412,11 @@ static class ReferencePaths
     }
 }
 
-record Options(string Package, string Version, List<string> Dlls, string NugetRoot, string DotnetRoot, string Out)
+record Options(string Package, string Version, List<string> Dlls, string NugetRoot, string DotnetRoot, string Out, string? Types = null)
 {
     public static Options Parse(string[] args)
     {
-        string? package = null, version = null, nuget = null, outp = null;
+        string? package = null, version = null, nuget = null, outp = null, types = null;
         var dotnet = @"C:\Program Files\dotnet";
         var dlls = new List<string>();
         for (var i = 0; i < args.Length; i++)
@@ -396,6 +430,7 @@ record Options(string Package, string Version, List<string> Dlls, string NugetRo
                 case "--nuget-root": nuget = v; break;
                 case "--dotnet-root": dotnet = v; break;
                 case "--out": outp = v; break;
+                case "--types": types = v; break;
                 default: throw new ArgumentException($"unknown option {args[i]}");
             }
             i++;
@@ -403,7 +438,7 @@ record Options(string Package, string Version, List<string> Dlls, string NugetRo
         nuget ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
         if (package == null || version == null || outp == null || dlls.Count == 0)
             throw new ArgumentException("required: --package --version --dll --out");
-        return new Options(package, version, dlls, nuget, dotnet, outp);
+        return new Options(package, version, dlls, nuget, dotnet, outp, types);
     }
 }
 
