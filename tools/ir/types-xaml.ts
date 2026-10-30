@@ -58,6 +58,7 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Match: ["srx:Match", { srx: SRX }],
   // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
   UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
+  Window: ["uuia:Window", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
   Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
   Rectangle: ["sdp:Rectangle", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
 };

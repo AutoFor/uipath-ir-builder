@@ -1,0 +1,76 @@
+{
+  "workflow": "GetActiveWindow_Full",
+  "variables": [
+    {
+      "name": "notePath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-c3-note.txt\")"
+    },
+    {
+      "name": "active",
+      "type": "Window"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "メモ帳に開かせるファイルを書く",
+      "props": {
+        "FileName": "notePath",
+        "Text": {
+          "lit": "uia-c3"
+        }
+      }
+    },
+    {
+      "act": "OpenApplication",
+      "name": "メモ帳を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": {
+          "lit": "notepad.exe"
+        },
+        "Arguments": "notePath",
+        "Selector": {
+          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+        }
+      },
+      "body": [
+        {
+          "act": "GetActiveWindow",
+          "name": "手前のウィンドウに入る",
+          "item": "ContextTarget",
+          "props": {
+            "ApplicationWindow": "active",
+            "ContinueOnError": false
+          },
+          "body": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "\"active\""
+              }
+            }
+          ]
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"got:\" & Convert.ToString(active IsNot Nothing)"
+          }
+        },
+        {
+          "act": "CloseWindow",
+          "name": "メモ帳を閉じる",
+          "props": {
+            "Selector": {
+              "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

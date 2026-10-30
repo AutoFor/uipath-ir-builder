@@ -1,0 +1,93 @@
+{
+  "workflow": "ExportUiTree_Full",
+  "variables": [
+    {
+      "name": "notePath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-c3-note.txt\")"
+    },
+    {
+      "name": "treePath",
+      "type": "String",
+      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-c3-tree.xml\")"
+    },
+    {
+      "name": "treeText",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "name": "メモ帳に開かせるファイルを書く",
+      "props": {
+        "FileName": "notePath",
+        "Text": {
+          "lit": "uia-c3"
+        }
+      }
+    },
+    {
+      "act": "OpenApplication",
+      "name": "メモ帳を開く（Classic）",
+      "item": "ContextTarget",
+      "props": {
+        "FileName": {
+          "lit": "notepad.exe"
+        },
+        "Arguments": "notePath",
+        "Selector": {
+          "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+        }
+      },
+      "body": [
+        {
+          "act": "ExportUiTree",
+          "name": "UI ツリーを書き出す",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<uia cls='RichEditD2DPT' />"
+              },
+              "TimeoutMS": 10000
+            }
+          },
+          "props": {
+            "DestinationFile": "treePath",
+            "ExportedString": "treeText",
+            "Format": "XML",
+            "Overwrite": true,
+            "IncludeScreenshots": false,
+            "Priority": "Coverage",
+            "UiFramework": "Default",
+            "OperationTimeoutMS": 30000,
+            "ContinueOnError": false
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"exported:\" & Convert.ToString(System.IO.File.Exists(treePath))"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"text:\" & Convert.ToString(treeText.Length > 0)"
+          }
+        },
+        {
+          "act": "CloseWindow",
+          "name": "メモ帳を閉じる",
+          "props": {
+            "Selector": {
+              "lit": "<wnd app='notepad.exe' title='uia-c3-note.txt*' />"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
