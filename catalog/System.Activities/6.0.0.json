@@ -44,6 +44,15 @@
           "declaredOn": "Add"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -170,6 +179,15 @@
           "declaredOn": "And"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -207,6 +225,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "AndAlso"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -254,7 +281,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "ArgumentReference"
+          "declaredOn": "ArgumentReference",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -293,7 +330,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "ArgumentValue"
+          "declaredOn": "ArgumentValue",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -333,6 +380,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ArrayItemReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TItem>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -372,6 +428,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ArrayItemValue"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TItem",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -402,6 +467,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "As"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -625,6 +699,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Cast"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -708,6 +791,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Activities.Statements.CompensationToken",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -832,6 +924,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Activities.BookmarkScope",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -900,7 +1001,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "DelegateArgumentReference"
+          "declaredOn": "DelegateArgumentReference",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -939,7 +1050,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "DelegateArgumentValue"
+          "declaredOn": "DelegateArgumentValue",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1000,6 +1121,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Divide"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -1099,6 +1229,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1128,7 +1267,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "EnvironmentLocationReference"
+          "declaredOn": "EnvironmentLocationReference",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1158,7 +1307,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "EnvironmentLocationValue"
+          "declaredOn": "EnvironmentLocationValue",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1189,6 +1348,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Equal"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -1237,6 +1405,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ExistsInCollection"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1276,6 +1453,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "FieldReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1315,6 +1501,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "FieldValue"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1433,6 +1628,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1454,6 +1658,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -1471,6 +1684,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Activities.Activity>",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -1507,6 +1729,15 @@
           "declaredOn": "Activity"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Activities.Activity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "ValidationContext",
           "kind": "in",
           "type": "System.Activities.Validation.ValidationContext",
@@ -1531,6 +1762,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Activities.Activity>",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -1576,6 +1816,15 @@
           "declaredOn": "GreaterThan"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -1613,6 +1862,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "GreaterThanOrEqual"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -1748,6 +2006,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "IndexerReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TItem>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3560,6 +3827,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3599,6 +3875,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3647,6 +3932,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3704,6 +3998,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3770,6 +4073,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3845,6 +4157,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -3929,6 +4250,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4022,6 +4352,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4124,6 +4463,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4235,6 +4583,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4355,6 +4712,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4484,6 +4850,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4622,6 +4997,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4769,6 +5153,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -4925,6 +5318,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5090,6 +5492,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5264,6 +5675,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "InvokeFunc"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5399,6 +5819,15 @@
           "declaredOn": "InvokeMethod"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "RunAsynchronously",
           "kind": "prop",
           "type": "System.Boolean",
@@ -5446,6 +5875,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5463,6 +5901,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -5497,6 +5944,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "LessThan"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -5538,6 +5994,15 @@
           "declaredOn": "LessThanOrEqual"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -5562,6 +6027,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -5614,6 +6088,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "MultidimensionalArrayItemReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TItem>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5656,6 +6139,15 @@
           "declaredOn": "Multiply"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -5693,6 +6185,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5719,6 +6220,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -5783,6 +6293,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Not"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -5813,6 +6332,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "NotEqual"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -5854,6 +6382,15 @@
           "declaredOn": "Or"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Right",
           "kind": "in",
           "type": "TRight",
@@ -5891,6 +6428,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "OrElse"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -6086,6 +6632,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "PropertyReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6125,6 +6680,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "PropertyValue"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6142,6 +6706,15 @@
           "name": "DisplayName",
           "kind": "prop",
           "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TLocation>",
           "required": false,
           "browsable": true,
           "obsolete": false,
@@ -6185,6 +6758,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "RemoveFromCollection"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6333,6 +6915,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Subtract"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Right",
@@ -6604,6 +7195,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "Activity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "TResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6643,6 +7243,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ValueTypeFieldReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6682,6 +7291,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ValueTypeIndexerReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TItem>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6721,6 +7339,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ValueTypePropertyReference"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<TResult>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -6750,7 +7377,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "VariableReference"
+          "declaredOn": "VariableReference",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "Location<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Variable",
@@ -6789,7 +7426,17 @@
           "required": false,
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "VariableValue"
+          "declaredOn": "VariableValue",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Variable",

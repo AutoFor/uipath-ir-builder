@@ -9,7 +9,7 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadCatalog, resolve, defaultSlot, writable } from "./catalog.ts";
+import { loadCatalog, resolve, defaultSlot, writable, READ_ONLY } from "./catalog.ts";
 import type { Activity } from "./catalog.ts";
 import { loadMappings } from "./mapping.ts";
 import { isBuiltin } from "./generate-coded.ts";
@@ -123,6 +123,8 @@ function render(): string {
     const c = (k: string) => rs.filter((r) => r.coded.startsWith(k)).length;
     L.push(`| ${pkg} | ${rs.length} | ${total} | ${ok} | ${total - ok} | ${u} | ${c("あり")} / ${c("C#")} / ${c("なし")} / ${c("未作成")} |`);
   }
+  const ro = rows.reduce((n, r) => n + r.a.props.filter((p) => !p.obsolete && p.readOnly).length, 0);
+  L.push("", `読み取り専用（public の setter が無い）のプロパティ ${ro} 件は、そもそも XAML に書けないので上の数に入れていない（${READ_ONLY}。\`--activity\` では「書けない」と出る）。`);
   L.push("", "## 書けないプロパティ（理由別）", "");
   const groups = new Map<string, number>();
   for (const r of rows) for (const n of r.ng) groups.set(n.group, (groups.get(n.group) ?? 0) + 1);

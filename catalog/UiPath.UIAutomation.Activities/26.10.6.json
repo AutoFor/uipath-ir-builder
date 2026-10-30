@@ -8656,6 +8656,15 @@
           "declaredOn": "FindOCRText"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "SendTelemetryOnlyOnFailure",
           "kind": "prop",
           "type": "System.Boolean",
@@ -8846,6 +8855,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "FindText"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "SendTelemetryOnlyOnFailure",
@@ -9252,6 +9270,15 @@
           "browsable": false,
           "obsolete": false,
           "declaredOn": "GetEventInfo"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -9539,6 +9566,15 @@
           "browsable": false,
           "obsolete": false,
           "declaredOn": "GetPassword"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         }
       ]
     },
@@ -10210,6 +10246,15 @@
           "declaredOn": "GoogleCloudOCR"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Scale",
           "kind": "in",
           "type": "System.Double",
@@ -10390,6 +10435,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "GoogleOCR"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Scale",
@@ -11285,6 +11339,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "ImageFound"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "SendTelemetryOnlyOnFailure",
@@ -12623,6 +12686,15 @@
           "declaredOn": "OCREngineActivity"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Scale",
           "kind": "in",
           "type": "System.Double",
@@ -12783,6 +12855,15 @@
           "declaredOn": "OCREngineActivity"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Scale",
           "kind": "in",
           "type": "System.Double",
@@ -12930,6 +13011,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "MicrosoftOCR"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "Scale",
@@ -13650,7 +13740,8 @@
           "default": "z-uipath-browser",
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "NApplicationCard"
+          "declaredOn": "NApplicationCard",
+          "readOnly": true
         },
         {
           "name": "ContinueOnError",
@@ -15635,6 +15726,15 @@
           "browsable": false,
           "obsolete": false,
           "declaredOn": "TargetNativeBaseWithResult"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "ScopeIdentifier",
@@ -24167,7 +24267,8 @@
           "default": "z-uipath-browser",
           "browsable": false,
           "obsolete": false,
-          "declaredOn": "NApplicationCard"
+          "declaredOn": "NApplicationCard",
+          "readOnly": true
         },
         {
           "name": "ContinueOnError",
@@ -29841,6 +29942,15 @@
           "declaredOn": "OCRTextExists"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Target",
           "kind": "prop",
           "type": "UiPath.Core.Activities.Target",
@@ -32553,6 +32663,15 @@
           "declaredOn": "TextExists"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "Target",
           "kind": "prop",
           "type": "UiPath.Core.Activities.Target",
@@ -32978,6 +33097,15 @@
           "declaredOn": "UiElementExists"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "SendTelemetryOnlyOnFailure",
           "kind": "prop",
           "type": "System.Boolean",
@@ -33235,6 +33363,15 @@
           "declaredOn": "WaitImageAppear"
         },
         {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
           "name": "SendTelemetryOnlyOnFailure",
           "kind": "prop",
           "type": "System.Boolean",
@@ -33387,6 +33524,15 @@
           "browsable": true,
           "obsolete": false,
           "declaredOn": "WaitUiElementAppear"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Core.UiElement",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
         },
         {
           "name": "SendTelemetryOnlyOnFailure",
