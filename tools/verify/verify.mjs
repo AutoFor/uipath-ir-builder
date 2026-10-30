@@ -315,7 +315,15 @@ function uip(args, logName) {
   const raw = (r.stdout ?? "") + (r.stderr ? "\n--- stderr ---\n" + r.stderr : "");
   writeFileSync(join(logDir, `${logName}.txt`), `> uip ${args.join(" ")}\n\n${raw}`);
   const timedOut = r.error?.code === "ETIMEDOUT";
+  if (timedOut) cleanupAfterTimeout();
   return { raw, seconds, timedOut, envelope: parseEnvelope(r.stdout ?? ""), logs: logLines(raw) };
+}
+
+// タイムアウトすると、ダイアログで止まった Excel と Helm が残り、後の run が全部「Studio が応答しない」で落ちる。
+// 自動化で起動した Excel（/automation）と、この権限で止められる Helm だけを止める。ユーザーが開いた Excel には触らない
+function cleanupAfterTimeout() {
+  const ps = "Get-CimInstance Win32_Process | Where-Object { ($_.Name -eq 'EXCEL.EXE' -and $_.CommandLine -match '/automation') -or $_.Name -eq 'UiPath.Studio.Helm.exe' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }";
+  spawnSync("powershell.exe", ["-NoProfile", "-Command", ps], { encoding: "utf8", timeout: 30000 });
 }
 
 // 出力の最後にある JSON（{ "Result": ... }）を取り出す
