@@ -1,0 +1,92 @@
+{
+  "workflow": "ExtractFiles_Full",
+  "variables": [
+    {
+      "name": "zipRes",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "files",
+      "type": "ILocalResource[]"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\ExtractFiles_Full.a.txt"
+        },
+        "Text": {
+          "lit": "extract me"
+        }
+      }
+    },
+    {
+      "act": "CompressFiles",
+      "props": {
+        "CompressedFileName": {
+          "lit": "output\\ExtractFiles_Full.zip"
+        },
+        "Password": {
+          "lit": "secret"
+        },
+        "CompressedResource": "zipRes"
+      },
+      "lists": {
+        "ContentToArchive": [
+          {
+            "lit": "output\\ExtractFiles_Full.a.txt"
+          }
+        ]
+      }
+    },
+    {
+      "act": "ExtractFiles",
+      "name": "パスワード付き zip を展開",
+      "props": {
+        "File": "zipRes",
+        "DestinationFolder": {
+          "lit": "output\\ExtractFiles_Full"
+        },
+        "ExtractToADedicatedFolder": false,
+        "Password": {
+          "lit": "secret"
+        },
+        "CodePage": "UTF_8",
+        "Content": "files"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "files.Length.ToString()",
+          "cs": "files.Length.ToString()"
+        }
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "File": {
+          "vb": "files(0)",
+          "cs": "files[0]"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

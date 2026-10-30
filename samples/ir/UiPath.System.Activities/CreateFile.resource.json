@@ -1,0 +1,49 @@
+{
+  "workflow": "CreateFile_Resource",
+  "variables": [
+    {
+      "name": "dirRes",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\CreateFile_Resource"
+        },
+        "Output": "dirRes"
+      }
+    },
+    {
+      "act": "CreateFile",
+      "name": "フォルダのリソースを渡す",
+      "props": {
+        "PathResource": "dirRes",
+        "Name": {
+          "lit": "made.txt"
+        },
+        "Output": "res"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(res.LocalPath)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.File.Exists(System.IO.Path.Combine(dirRes.LocalPath, \"made.txt\")).ToString()"
+      }
+    }
+  ]
+}

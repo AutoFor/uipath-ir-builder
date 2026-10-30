@@ -1,0 +1,71 @@
+{
+  "workflow": "AppendLine_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "AppendLine_Full.txt"
+        },
+        "Output": "res"
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "File": "res",
+        "Text": {
+          "lit": "あ"
+        },
+        "Encoding": {
+          "lit": "utf-8"
+        }
+      }
+    },
+    {
+      "act": "AppendLine",
+      "name": "文字コードを指定して追記",
+      "props": {
+        "File": "res",
+        "Text": {
+          "lit": "い"
+        },
+        "UseDefaultEncoding": false,
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "File": "res",
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt.Replace(Environment.NewLine, \"|\")"
+      }
+    }
+  ]
+}

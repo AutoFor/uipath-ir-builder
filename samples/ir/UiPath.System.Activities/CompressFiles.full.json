@@ -1,0 +1,59 @@
+{
+  "workflow": "CompressFiles_Full",
+  "variables": [
+    {
+      "name": "zipRes",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CompressFiles_Full.a.txt"
+        },
+        "Text": {
+          "lit": "aaa"
+        }
+      }
+    },
+    {
+      "act": "CompressFiles",
+      "name": "パスワード付きで圧縮",
+      "props": {
+        "CompressedFileName": {
+          "lit": "output\\CompressFiles_Full.zip"
+        },
+        "Password": {
+          "lit": "secret"
+        },
+        "CompressionLevel": "Maximum",
+        "CodePage": "UTF_8",
+        "OverrideExistingFile": true,
+        "CompressedResource": "zipRes"
+      },
+      "lists": {
+        "ContentToArchive": [
+          {
+            "lit": "output\\CompressFiles_Full.a.txt"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(zipRes.LocalPath)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "(New System.IO.FileInfo(zipRes.LocalPath).Length > 0).ToString()"
+      }
+    }
+  ]
+}

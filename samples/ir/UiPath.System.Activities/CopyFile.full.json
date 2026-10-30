@@ -1,0 +1,63 @@
+{
+  "workflow": "CopyFile_Full",
+  "variables": [
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Full.src.txt"
+        },
+        "Text": {
+          "lit": "new"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Full.dst.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "CopyFile",
+      "name": "上書きでコピー",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFile_Full.src.txt"
+        },
+        "Destination": {
+          "lit": "output\\CopyFile_Full.dst.txt"
+        },
+        "Overwrite": true,
+        "ContinueOnError": false
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Full.dst.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "workflow": "CopyFile_Resource",
+  "variables": [
+    {
+      "name": "src",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "dst",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Resource.src.txt"
+        },
+        "Text": {
+          "lit": "copy by resource"
+        }
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Resource.dst.txt"
+        },
+        "Text": {
+          "lit": "old"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFile_Resource.src.txt"
+        },
+        "PathType": "File",
+        "Resource": "src"
+      }
+    },
+    {
+      "act": "PathExists",
+      "props": {
+        "Path": {
+          "lit": "output\\CopyFile_Resource.dst.txt"
+        },
+        "PathType": "File",
+        "Resource": "dst"
+      }
+    },
+    {
+      "act": "CopyFile",
+      "name": "リソースでコピー",
+      "props": {
+        "PathResource": "src",
+        "DestinationResource": "dst",
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "props": {
+        "FileName": {
+          "lit": "output\\CopyFile_Resource.dst.txt"
+        },
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

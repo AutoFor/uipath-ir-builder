@@ -1,0 +1,22 @@
+{
+  "activity": "CreateDirectory",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Output"
+      ],
+      "call": "system.CreateFolder",
+      "args": {
+        "path": "{Path}"
+      },
+      "returns": "Output"
+    },
+    {
+      "call": "system.CreateFolder",
+      "args": {
+        "path": "{Path}"
+      }
+    }
+  ]
+}

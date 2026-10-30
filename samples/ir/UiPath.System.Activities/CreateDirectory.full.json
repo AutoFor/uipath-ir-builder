@@ -1,0 +1,29 @@
+{
+  "workflow": "CreateDirectory_Full",
+  "variables": [
+    {
+      "name": "dirRes",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateDirectory",
+      "name": "入れ子のフォルダを作る",
+      "props": {
+        "Path": {
+          "lit": "output\\CreateDirectory_Full\\a\\b"
+        },
+        "ContinueOnError": false,
+        "Output": "dirRes"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(dirRes.LocalPath)"
+      }
+    }
+  ]
+}

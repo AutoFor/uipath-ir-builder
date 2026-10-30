@@ -1,0 +1,38 @@
+{
+  "activity": "PathExists",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Resource",
+        "Exists"
+      ],
+      "code": "{Exists} = system.PathExists({Path}, UiPath.Core.Activities.PathType.{PathType:-File}); {Resource} = {Exists} ? LocalResource.FromPath({Path}) : null;"
+    },
+    {
+      "when": [
+        "Resource"
+      ],
+      "code": "{Resource} = system.PathExists({Path}, UiPath.Core.Activities.PathType.{PathType:-File}) ? LocalResource.FromPath({Path}) : null;"
+    },
+    {
+      "when": [
+        "Exists"
+      ],
+      "call": "system.PathExists",
+      "args": {
+        "path": "{Path}",
+        "pathType": "UiPath.Core.Activities.PathType.{PathType:-File}"
+      },
+      "returns": "Exists"
+    },
+    {
+      "call": "system.PathExists",
+      "args": {
+        "path": "{Path}",
+        "pathType": "UiPath.Core.Activities.PathType.{PathType:-File}"
+      }
+    }
+  ],
+  "notes": "Resource（見つかったときのリソース）は API が返さないので、存在したら LocalResource.FromPath(Path)、無ければ null を入れる（Exists もあるときは先に Exists を取って使う）"
+}

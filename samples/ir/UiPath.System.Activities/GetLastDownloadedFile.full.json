@@ -1,0 +1,74 @@
+{
+  "workflow": "GetLastDownloadedFile_Full",
+  "variables": [
+    {
+      "name": "f",
+      "type": "FileInfo"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\GetLastDownloadedFile_Full"
+        }
+      }
+    },
+    {
+      "act": "Delete",
+      "props": {
+        "Path": {
+          "lit": "output\\GetLastDownloadedFile_Full\\dl.txt"
+        },
+        "ContinueOnError": true
+      }
+    },
+    {
+      "act": "GetLastDownloadedFile",
+      "name": "ダウンロードを待つ",
+      "props": {
+        "DownloadFolder": {
+          "lit": "output\\GetLastDownloadedFile_Full"
+        },
+        "IgnoreFiles": {
+          "lit": "*.tmp"
+        },
+        "Timeout": 30000,
+        "File": "f",
+        "FileResource": "res"
+      },
+      "body": [
+        {
+          "act": "WriteTextFile",
+          "props": {
+            "FileName": {
+              "lit": "output\\GetLastDownloadedFile_Full\\dl.txt"
+            },
+            "Text": {
+              "lit": "downloaded"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "f.Name"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(res.LocalPath)"
+      }
+    }
+  ]
+}

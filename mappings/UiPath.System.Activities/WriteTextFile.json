@@ -2,8 +2,70 @@
   "activity": "WriteTextFile",
   "package": "UiPath.System.Activities",
   "coded": [
-    { "when": ["FileName"], "call": "system.WriteTextFile", "args": { "text": "{Text}", "file": "LocalResource.FromPath({FileName})", "encoding": "{Encoding}" } },
-    { "when": ["File"], "call": "system.WriteTextFile", "args": { "text": "{Text}", "file": "{File}", "encoding": "{Encoding}" } }
+    {
+      "when": [
+        "FileName",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, LocalResource.FromPath({FileName}), {Encoding:-\"utf-8\"}); {Output} = LocalResource.FromPath({FileName});"
+    },
+    {
+      "when": [
+        "File",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, {File}, {Encoding:-\"utf-8\"}); {Output} = {File};"
+    },
+    {
+      "when": [
+        "FileName",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, LocalResource.FromPath({FileName}), {Encoding:-\"utf-8\"}); {Output} = LocalResource.FromPath({FileName});"
+    },
+    {
+      "when": [
+        "File",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, {File}, {Encoding:-\"utf-8\"}); {Output} = {File};"
+    },
+    {
+      "when": [
+        "FileName",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, LocalResource.FromPath({FileName}), {Encoding:-\"utf-8\"}); {Output} = LocalResource.FromPath({FileName});"
+    },
+    {
+      "when": [
+        "File",
+        "Output"
+      ],
+      "code": "system.WriteTextFile({Text}, {File}, {Encoding:-\"utf-8\"}); {Output} = {File};"
+    },
+    {
+      "when": [
+        "FileName"
+      ],
+      "call": "system.WriteTextFile",
+      "args": {
+        "text": "{Text}",
+        "file": "LocalResource.FromPath({FileName})",
+        "encoding": "{Encoding}"
+      }
+    },
+    {
+      "when": [
+        "File"
+      ],
+      "call": "system.WriteTextFile",
+      "args": {
+        "text": "{Text}",
+        "file": "{File}",
+        "encoding": "{Encoding}"
+      }
+    }
   ],
-  "notes": "file は ILocalResource。パスの文字列は LocalResource.FromPath で包む（GetResourceForLocalPath を渡すと run で落ちる）。Output（書いたファイル）は Coded の戻り値が void なので扱えない"
+  "notes": "file は ILocalResource。パスの文字列は LocalResource.FromPath で包む（GetResourceForLocalPath を渡すと run で落ちる）。Output（書いたファイル）は Coded の戻り値が void なので、書いたあとに file をそのまま Output に入れる（Encoding が無いときは 3 引数形に utf-8 を渡す）"
 }

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"DownloadFileFromUrl\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uasf=\"clr-namespace:UiPath.Activities.System.FileOperations;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uasf:DownloadFileFromUrl FileName=\"{x:Null}\" ResponseAttachment=\"{x:Null}\" Timeout=\"{x:Null}\" Url=\"{x:Null}\" UserAgentHeader=\"{x:Null}\" ConflictResolution=\"Rename\" />\r\n</Activity>"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "workflow": "CreateFile_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "len",
+      "type": "Int64"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "name": "空のファイルを作る",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "CreateFile_Full.txt"
+        },
+        "ContinueOnError": false,
+        "Output": "res"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(res.LocalPath)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "New System.IO.FileInfo(res.LocalPath).Length.ToString()"
+      }
+    }
+  ]
+}

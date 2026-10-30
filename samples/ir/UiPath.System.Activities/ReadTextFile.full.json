@@ -1,0 +1,58 @@
+{
+  "workflow": "ReadTextFile_Full",
+  "variables": [
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "txt",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "ReadTextFile_Full.txt"
+        },
+        "Output": "res"
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "File": "res",
+        "Text": {
+          "lit": "日本語の中身"
+        },
+        "Encoding": {
+          "lit": "utf-8"
+        }
+      }
+    },
+    {
+      "act": "ReadTextFile",
+      "name": "UTF-8 で読む",
+      "props": {
+        "File": "res",
+        "Encoding": {
+          "lit": "utf-8"
+        },
+        "ContinueOnError": false,
+        "Content": "txt"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "txt"
+      }
+    }
+  ]
+}

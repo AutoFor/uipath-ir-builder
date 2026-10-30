@@ -1,0 +1,69 @@
+{
+  "workflow": "CompressFiles_Extra",
+  "variables": [
+    {
+      "name": "src",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "srcs",
+      "type": "IEnumerable<IResource>"
+    },
+    {
+      "name": "zipInfo",
+      "type": "FileInfo"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFile",
+      "props": {
+        "Path": {
+          "lit": "output"
+        },
+        "Name": {
+          "lit": "CompressFiles_Extra.a.txt"
+        },
+        "Output": "src"
+      }
+    },
+    {
+      "act": "Assign",
+      "typeArg": "IEnumerable<IResource>",
+      "props": {
+        "To": "srcs",
+        "Value": "New UiPath.Platform.ResourceHandling.IResource() {src}"
+      }
+    },
+    {
+      "act": "CompressFiles",
+      "name": "AES256 で圧縮",
+      "props": {
+        "CompressedFileName": {
+          "lit": "output\\CompressFiles_Extra.zip"
+        },
+        "ResourcesToArchive": "srcs",
+        "Password": {
+          "lit": "secret"
+        },
+        "EncryptionAlgorithm": "AES256",
+        "AllowDuplicateContentNames": false,
+        "CompressedFileInfo": "zipInfo"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "zipInfo.Name"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "(zipInfo.Length > 0).ToString()"
+      }
+    }
+  ]
+}

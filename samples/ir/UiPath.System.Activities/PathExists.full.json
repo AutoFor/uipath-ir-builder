@@ -1,0 +1,71 @@
+{
+  "workflow": "PathExists_Full",
+  "variables": [
+    {
+      "name": "ex",
+      "type": "Boolean"
+    },
+    {
+      "name": "res",
+      "type": "ILocalResource"
+    },
+    {
+      "name": "ex2",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateDirectory",
+      "props": {
+        "Path": {
+          "lit": "output\\PathExists_Full"
+        }
+      }
+    },
+    {
+      "act": "PathExists",
+      "name": "フォルダを確かめる",
+      "props": {
+        "Path": {
+          "lit": "output\\PathExists_Full"
+        },
+        "PathType": "Folder",
+        "Exists": "ex",
+        "Resource": "res"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex.ToString()"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "System.IO.Path.GetFileName(res.LocalPath)"
+      }
+    },
+    {
+      "act": "PathExists",
+      "name": "無いファイルを確かめる",
+      "props": {
+        "Path": {
+          "lit": "output\\PathExists_Full\\none.txt"
+        },
+        "PathType": "File",
+        "Exists": "ex2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "ex2.ToString()"
+      }
+    }
+  ]
+}
