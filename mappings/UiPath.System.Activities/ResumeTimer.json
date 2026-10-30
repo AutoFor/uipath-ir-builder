@@ -1,0 +1,6 @@
+{
+  "activity": "ResumeTimer",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiPath.Core.Timer を再開する API が無い）"
+}

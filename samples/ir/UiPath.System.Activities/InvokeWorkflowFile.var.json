@@ -1,0 +1,29 @@
+{
+  "workflow": "InvokeWorkflowFile_Var",
+  "variables": [
+    {
+      "name": "argDict",
+      "type": "Dictionary<String, Object>",
+      "default": "New Dictionary(Of String, Object) From {{\"in_Name\", \"三郎\"}, {\"in_Count\", 3}}"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeWorkflowFile",
+      "name": "引数を辞書の変数で渡す",
+      "props": {
+        "WorkflowFileName": {
+          "lit": "InvokeWorkflowFile_Callee.xaml"
+        },
+        "ArgumentsVariable": "argDict"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"辞書の戻り値: \" & CStr(argDict(\"out_Message\"))"
+      }
+    }
+  ]
+}

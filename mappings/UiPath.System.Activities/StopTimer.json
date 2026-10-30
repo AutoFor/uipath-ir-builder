@@ -1,0 +1,6 @@
+{
+  "activity": "StopTimer",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiPath.Core.Timer を止める API が無い）"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "ResetTimer",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiPath.Core.Timer をリセットする API が無い）"
+}

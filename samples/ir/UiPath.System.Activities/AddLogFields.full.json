@@ -1,0 +1,72 @@
+{
+  "workflow": "AddLogFields_Full",
+  "variables": [
+    {
+      "name": "n",
+      "type": "Int32",
+      "default": "7"
+    }
+  ],
+  "body": [
+    {
+      "act": "AddLogFields",
+      "name": "固定の項目と式の項目を足す",
+      "dicts": {
+        "Fields": [
+          {
+            "name": "case_id",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "A-002"
+            }
+          },
+          {
+            "name": "count",
+            "dir": "In",
+            "type": "Int32",
+            "value": "n * 2"
+          },
+          {
+            "name": "flag",
+            "dir": "In",
+            "type": "Boolean",
+            "value": "n > 5"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"n=\" & n.ToString"
+      }
+    },
+    {
+      "act": "AddLogFields",
+      "name": "同じ名前を上書き",
+      "dicts": {
+        "Fields": [
+          {
+            "name": "case_id",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "A-003"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Warn",
+        "Message": {
+          "lit": "上書きした後"
+        }
+      }
+    }
+  ]
+}

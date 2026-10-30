@@ -1,0 +1,5 @@
+[Information] info の行
+[Warning] warn n=42
+[Error] error の行
+fatal の行
+[Information] 42

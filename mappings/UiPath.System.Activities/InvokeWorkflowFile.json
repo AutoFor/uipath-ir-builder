@@ -1,6 +1,16 @@
 {
   "activity": "InvokeWorkflowFile",
   "package": "UiPath.System.Activities",
-  "coded": [ { "special": "invokeWorkflow" } ],
-  "notes": "基底クラスの RunWorkflow(path, 引数の辞書, timeout)。戻り値の辞書から Out 引数を取り出す。呼び先が Coded で Out が1つのときは、引数名が \"Output\" になる。生成器の invoke() が書く"
+  "coded": [
+    { "when": ["ArgumentsVariable"], "reason": "RunWorkflow の引数の辞書を実行時の変数で渡し、Out も同じ辞書へ書き戻す動きは、機械的に C# へ直していない" },
+    { "when": ["ContinueOnError"], "reason": "InvokeWorkflowFile の ContinueOnError は、呼び先の例外を握りつぶす try / catch を、RunWorkflow に被せる形をまだ作っていない" },
+    { "when": ["Level"], "reason": "呼び出しのログレベル（Level）を指定する API が RunWorkflow に無い" },
+    { "when": ["LogEntry"], "reason": "呼び出し前のログ（LogEntry）を出す API が RunWorkflow に無い" },
+    { "when": ["LogExit"], "reason": "呼び出し後のログ（LogExit）を出す API が RunWorkflow に無い" },
+    { "when": ["Elevated"], "reason": "管理者権限での実行（Elevated）を指定する API が RunWorkflow に無い" },
+    { "when": ["TargetSession"], "reason": "実行するセッション（TargetSession）を指定する API が RunWorkflow に無い" },
+    { "when": ["UnSafe"], "reason": "UnSafe を指定する API が RunWorkflow に無い" },
+    { "special": "invokeWorkflow" }
+  ],
+  "notes": "基底クラスの RunWorkflow(path, 引数の辞書, timeout)。戻り値の辞書から Out 引数を取り出す。呼び先が Coded で Out が1つのときは、引数名が \"Output\" になる。生成器の invoke() が書く。RunWorkflow に無い props（Level / LogEntry / LogExit / Elevated / TargetSession / UnSafe / ContinueOnError / ArgumentsVariable）が IR にあるときは、その形だけ「Coded API なし」にする。Arguments と Timeout は Coded でも書ける"
 }

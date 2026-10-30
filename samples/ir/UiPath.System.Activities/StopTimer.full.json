@@ -1,0 +1,47 @@
+{
+  "workflow": "StopTimer_Full",
+  "variables": [
+    {
+      "name": "t",
+      "type": "Timer"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartTimer",
+      "name": "開始",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "Delay",
+      "props": {
+        "Duration": "TimeSpan.FromMilliseconds(200)"
+      }
+    },
+    {
+      "act": "StopTimer",
+      "name": "停止",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "StopTimer",
+      "name": "止まっているものをもう一度止める",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "2回止めた後"
+        }
+      }
+    }
+  ]
+}

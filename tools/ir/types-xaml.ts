@@ -35,6 +35,8 @@ const simple: Record<string, [string, Record<string, string>]> = {
   FileInfo: ["sio:FileInfo", { sio: SIO }],
   DirectoryInfo: ["sio:DirectoryInfo", { sio: SIO }],
   DataTable: ["sd:DataTable", { sd: SD }],
+  Activity: ["Activity", {}],
+  Timer: ["ucore:Timer", { ucore: UCORE }],
   QueueItem: ["ucore:QueueItem", { ucore: UCORE }],
   PasswordCredentials: ["uca:PasswordCredentials", { uca: UCA }],
   SecureString: ["ssec:SecureString", { ssec: SSEC }],
@@ -65,7 +67,7 @@ const alias: Record<string, string> = {
 
 export function toXamlType(t: string): XamlType | { error: string } {
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
-  const s = t.trim().replace(/^System\.(?:(?:IO|Data|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
+  const s = t.trim().replace(/^System\.(?:(?:IO|Data|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {
     const inner = toXamlType(s.slice(0, -2));
     if ("error" in inner) return inner;

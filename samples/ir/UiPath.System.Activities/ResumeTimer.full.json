@@ -1,0 +1,63 @@
+{
+  "workflow": "ResumeTimer_Full",
+  "variables": [
+    {
+      "name": "t",
+      "type": "Timer"
+    }
+  ],
+  "body": [
+    {
+      "act": "StartTimer",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "StopTimer",
+      "name": "止める",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "ResumeTimer",
+      "name": "再開",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "再開した"
+        }
+      }
+    },
+    {
+      "act": "StopTimer",
+      "name": "もう一度止める",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "ResumeTimer",
+      "name": "もう一度再開",
+      "props": {
+        "Timer": "t"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "2回再開した"
+        }
+      }
+    }
+  ]
+}

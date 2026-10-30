@@ -1,0 +1,22 @@
+{
+  "workflow": "Beep_Full",
+  "body": [
+    {
+      "act": "Beep",
+      "name": "1回目"
+    },
+    {
+      "act": "Beep",
+      "name": "2回目"
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "lit": "2回鳴らした後"
+        }
+      }
+    }
+  ]
+}

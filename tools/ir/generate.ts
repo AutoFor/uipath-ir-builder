@@ -241,6 +241,8 @@ export function generate(wf: Workflow, cat: Catalog): string {
     emit(depth, `<ActivityAction${ta}>`);
     const inner = new Map(scope);
     types.forEach((t, i) => {
+      // ActivityAction<Activity>（TimeoutScope.Body）は、Studio の既定 XAML でも引数の DelegateInArgument を書かない
+      if (t === "System.Activities.Activity") return;
       const prop = types.length === 1 ? "Argument" : `Argument${i + 1}`;
       emit(depth + 1, `<ActivityAction.${prop}>`);
       emit(depth + 2, `<DelegateInArgument x:TypeArguments="${typeText(t)}" Name="${esc(names[i])}" />`);
