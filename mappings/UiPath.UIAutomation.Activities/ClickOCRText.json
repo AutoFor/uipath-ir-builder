@@ -1,0 +1,6 @@
+{
+  "activity": "ClickOCRText",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（Classic のOCRの UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ）"
+}

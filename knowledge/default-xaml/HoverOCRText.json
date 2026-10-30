@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"HoverOCRText\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:HoverOCRText ContinueOnError=\"{x:Null}\" DelayBefore=\"{x:Null}\" DelayMS=\"{x:Null}\" OCREngine=\"{x:Null}\" Text=\"{x:Null}\" Occurrence=\"1\">\r\n    <ui:HoverOCRText.CursorPosition>\r\n      <ui:CursorPosition Position=\"Center\">\r\n        <ui:CursorPosition.OffsetX>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetX>\r\n        <ui:CursorPosition.OffsetY>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:CursorPosition.OffsetY>\r\n      </ui:CursorPosition>\r\n    </ui:HoverOCRText.CursorPosition>\r\n    <ui:HoverOCRText.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"5a9a6c8a-638a-4d34-a2eb-7c1e39774028\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:HoverOCRText.Target>\r\n  </ui:HoverOCRText>\r\n</Activity>"
+  }
+}

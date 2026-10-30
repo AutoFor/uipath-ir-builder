@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"WaitImageAppear\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:WaitImageAppear FoundElement=\"{x:Null}\">\r\n    <ui:WaitImageAppear.Image>\r\n      <ui:ImageTarget Image=\"{x:Null}\" TargetImageBase64=\"{x:Null}\" Accuracy=\"0.8\" Profile=\"Basic\" />\r\n    </ui:WaitImageAppear.Image>\r\n    <ui:WaitImageAppear.Target>\r\n      <ui:Target ClippingRegion=\"{x:Null}\" Element=\"{x:Null}\" Selector=\"{x:Null}\" Id=\"06c376e6-605d-4ae8-af2e-96388f492769\">\r\n        <ui:Target.TimeoutMS>\r\n          <InArgument x:TypeArguments=\"x:Int32\" />\r\n        </ui:Target.TimeoutMS>\r\n        <ui:Target.WaitForReady>\r\n          <InArgument x:TypeArguments=\"ui:WaitForReady\" />\r\n        </ui:Target.WaitForReady>\r\n      </ui:Target>\r\n    </ui:WaitImageAppear.Target>\r\n  </ui:WaitImageAppear>\r\n</Activity>"
+  }
+}

@@ -1,0 +1,1 @@
+{"noRun":"build まで。ローカル OCR（Google OCR＝Tesseract。Microsoft OCR は Windows プロジェクトでは使えない）がこの環境で信頼できない：OCRTextExists は無い文字でも True、FindOCRText は Element/Result が Nothing のまま。クラウド OCR には接続しない"}
