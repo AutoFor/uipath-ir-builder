@@ -1,0 +1,52 @@
+{
+  "activity": "AppendRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "StartingColumnName"
+      ],
+      "call": "{DestinationRange}.AppendRange",
+      "args": {
+        "source": "{SourceRange}",
+        "columnName": "{StartingColumnName}",
+        "transpose": "{Transpose}",
+        "pasteOptions": "UiPath.Excel.CopyPasteRangeOptions.{PasteOptions}",
+        "destinationHasHeaders": "{DestinationHasHeaders}",
+        "excludeSourceHeaders": "{HasHeaders}"
+      },
+      "defaults": {
+        "Transpose": false,
+        "PasteOptions": "All",
+        "DestinationHasHeaders": false,
+        "HasHeaders": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    },
+    {
+      "call": "{DestinationRange}.AppendRange",
+      "args": {
+        "source": "{SourceRange}",
+        "transpose": "{Transpose}",
+        "pasteOptions": "UiPath.Excel.CopyPasteRangeOptions.{PasteOptions}",
+        "excludeSourceHeaders": "{HasHeaders}"
+      },
+      "defaults": {
+        "Transpose": false,
+        "PasteOptions": "All",
+        "HasHeaders": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    }
+  ],
+  "ignore": [
+    "DestinationHasHeaders"
+  ],
+  "notes": "ExcelOperations.AppendRange の 3 つのオーバーロードのうち、StartingColumnName があれば columnName 付き（destinationHasHeaders もここで渡す）、無ければ transpose / pasteOptions / excludeSourceHeaders だけの形。HasHeaders（元の範囲に見出しがある）は excludeSourceHeaders に対応させた（見出し行を貼り付けから外す）。DestinationHasHeaders は StartingColumnName が無い形では Coded に渡す先が無いので捨てる"
+}

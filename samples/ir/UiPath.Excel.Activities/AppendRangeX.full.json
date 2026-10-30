@@ -1,0 +1,92 @@
+{
+  "workflow": "AppendRangeX_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    },
+    {
+      "name": "v1",
+      "type": "Object"
+    },
+    {
+      "name": "v2",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "ReadRangeX",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")",
+            "SaveTo": "dt"
+          }
+        }
+      ]
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\AppendRangeX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "WriteRangeX",
+          "props": {
+            "Destination": "Excel.Sheet(\"Sheet1\").Range(\"A1\")",
+            "Source": "dt"
+          }
+        },
+        {
+          "act": "AppendRangeX",
+          "name": "ヘッダーを除いて追記",
+          "props": {
+            "DestinationRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")",
+            "SourceRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:B2\")",
+            "StartingColumnName": {
+              "lit": "Name"
+            },
+            "HasHeaders": true,
+            "DestinationHasHeaders": true,
+            "PasteOptions": "Values",
+            "Transpose": false
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A5\")",
+            "SaveTo": "v1"
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B5\")",
+            "SaveTo": "v2"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"A5=\" & CStr(v1) & \" B5=\" & CStr(v2)"
+      }
+    }
+  ]
+}

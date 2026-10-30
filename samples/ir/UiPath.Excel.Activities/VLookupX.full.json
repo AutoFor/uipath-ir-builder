@@ -1,0 +1,43 @@
+{
+  "workflow": "VLookupX_Full",
+  "variables": [
+    {
+      "name": "v",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "ReadOnly": true
+      },
+      "body": [
+        {
+          "act": "VLookupX",
+          "name": "完全一致で探す",
+          "props": {
+            "SourceRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "Label": {
+              "lit": "花子"
+            },
+            "ColumnIndex": "3",
+            "ExactMatch": true,
+            "Value": "v"
+          }
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"値: \" & CStr(v)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "activity": "AutoFitX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.Autofit",
+      "args": {
+        "columns": "{Columns}",
+        "rows": "{Rows}"
+      },
+      "defaults": {
+        "Columns": true,
+        "Rows": true
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.Autofit(this IReadRangeRef range, bool columns, bool rows)。既定は XAML と同じ true / true"
+}

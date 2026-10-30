@@ -1,0 +1,22 @@
+{
+  "activity": "FindFirstLastDataRowX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "code": "({FirstRowIndex}, {LastRowIndex}) = {Range}.FindFirstLastDataRow(columnName: {ColumnName}, hasHeaders: {HasHeaders}, visibleRowsOnly: {VisibleRowsOnly}, firstRowOffset: {FirstRowOffset}, lastRowOffset: {LastRowOffset}, blankRowsToSkip: {BlankRowsToSkip}, configureLastRowAs: UiPath.Excel.LastRowConfiguration.{ConfigureLastRowAs});",
+      "defaults": {
+        "HasHeaders": true,
+        "VisibleRowsOnly": false,
+        "FirstRowOffset": 0,
+        "LastRowOffset": 0,
+        "BlankRowsToSkip": 1,
+        "ConfigureLastRowAs": "LastPopulatedRow"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.FindFirstLastDataRow(this IReadRangeRef range, string columnName, bool hasHeaders, bool visibleRowsOnly, int firstRowOffset, int lastRowOffset, int blankRowsToSkip, LastRowConfiguration configureLastRowAs) が (int, int) を返す。既定は XAML の既定と同じ。FirstRowIndex / LastRowIndex の両方を IR に書く"
+}

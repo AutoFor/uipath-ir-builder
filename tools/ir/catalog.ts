@@ -31,6 +31,8 @@ export const objectTypes = new Map<string, ObjType>(); // clrType -> 型
 
 // インターフェース型のプロパティ（IFormatProvider など）に入れる、要素で書く実装。objs の中で "$type": "クラス名" で選ぶ（省略時は先頭）
 export const objectImpls: Record<string, string[]> = {
+  "UiPath.Excel.Activities.Business.ICellFormat": ["General","Text","Number","Currency","Percentage","Custom","Time","Date"].map((n) => `UiPath.Excel.Activities.Business.${n}Format`),
+  "UiPath.Excel.Activities.Business.ICellFormat": ["UiPath.Excel.Activities.Business.GeneralFormat","UiPath.Excel.Activities.Business.TextFormat","UiPath.Excel.Activities.Business.NumberFormat","UiPath.Excel.Activities.Business.CurrencyFormat","UiPath.Excel.Activities.Business.PercentageFormat","UiPath.Excel.Activities.Business.CustomFormat","UiPath.Excel.Activities.Business.TimeFormat","UiPath.Excel.Activities.Business.DateFormat"],
   "System.IFormatProvider": ["UiPath.Core.GeneralNumberFormatProvider", "UiPath.Core.CurrencyNumberFormatProvider", "UiPath.Core.PercentageNumberFormatProvider", "UiPath.Core.DateTimeFormatProvider"],
 };
 export function objTypeFor(type: string, v?: unknown): ObjType | undefined {

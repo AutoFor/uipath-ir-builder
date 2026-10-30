@@ -1,0 +1,41 @@
+{
+  "activity": "TextToColumnsX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{SourceRange}.TextToColumns",
+      "args": {
+        "destRange": "{DestinationRange}"
+      },
+      "init": {
+        "param": "options",
+        "type": "TextToColumnsOptions",
+        "props": {
+          "ColumnsDelimiters": "({SplitByTabs} ? UiPath.Excel.TextToColumnsDelimiters.Tab : UiPath.Excel.TextToColumnsDelimiters.None) | ({SplitBySemicolon} ? UiPath.Excel.TextToColumnsDelimiters.Semicolon : UiPath.Excel.TextToColumnsDelimiters.None) | ({SplitByComma} ? UiPath.Excel.TextToColumnsDelimiters.Comma : UiPath.Excel.TextToColumnsDelimiters.None) | ({SplitBySpace} ? UiPath.Excel.TextToColumnsDelimiters.Space : UiPath.Excel.TextToColumnsDelimiters.None) | ({SplitByOther} ? UiPath.Excel.TextToColumnsDelimiters.Other : UiPath.Excel.TextToColumnsDelimiters.None)",
+          "ConsecutiveOperatorsAsOne": "{ConsecutiveOperatorsAsOne}",
+          "NumberOfCharactersPerColumn": "{NumberOfCharactersPerColumn}",
+          "OtherSeparator": "'{OtherSeparator}'",
+          "ParsingType": "UiPath.Excel.TextToColumnsParsingType.{ParsingType}",
+          "SplitByLineBreak": "{SplitByLineBreak}",
+          "TextQualifier": "UiPath.Excel.TextToColumnsTextQualifier.{TextQualifier}"
+        }
+      },
+      "defaults": {
+        "SplitByTabs": true,
+        "SplitBySemicolon": true,
+        "SplitByComma": true,
+        "SplitBySpace": true,
+        "SplitByOther": false,
+        "SplitByLineBreak": false,
+        "ConsecutiveOperatorsAsOne": true,
+        "TextQualifier": "None"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.TextToColumns(this IWellDefinedReadRangeRef sourceRange, IReadWriteRangeRef destRange, TextToColumnsOptions options)。XAML の SplitByTabs / Semicolon / Comma / Space / Other（bool）は、Coded では 1 つの Flags enum（TextToColumnsDelimiters）を | で組み合わせる。既定は XAML の既定と同じ"
+}

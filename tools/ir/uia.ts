@@ -252,6 +252,27 @@ const codedModels: Record<string, ModelMap> = {
       WorkingDirectory: "!Coded では TargetAppOptions.WorkingDirectory。NApplicationCard の対応表ではまだ扱っていない",
     },
   },
+  "UiPath.Excel.FontOptions": { type: "UiPath.Excel.FontOptions", props: { Color: "Color", FillColor: "FillColor", FontFamilyName: "FontFamilyName", Size: "Size", Style: "Style", UnderlineStyle: "UnderlineStyle" } },
+  "UiPath.Excel.AlignmentOptions": { type: "UiPath.Excel.AlignmentOptions", props: { HorizontalAlignment: "HorizontalAlignment", VerticalAlignment: "VerticalAlignment", WrapText: "WrapText" } },
+  "UiPath.Excel.Activities.Business.GeneralFormat": { type: "UiPath.Excel.Activities.Business.GeneralFormat", props: { $type: null } },
+  "UiPath.Excel.Activities.Business.TextFormat": { type: "UiPath.Excel.Activities.Business.TextFormat", props: { $type: null } },
+  "UiPath.Excel.Activities.Business.NumberFormat": { type: "UiPath.Excel.Activities.Business.NumberFormat", props: { $type: null, DecimalPlaces: "DecimalPlaces", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.CurrencyFormat": { type: "UiPath.Excel.Activities.Business.CurrencyFormat", props: { $type: null, Currency: "Currency", DecimalPlaces: "DecimalPlaces", SetAtTheEnd: "SetAtTheEnd", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.PercentageFormat": { type: "UiPath.Excel.Activities.Business.PercentageFormat", props: { $type: null, DecimalPlaces: "DecimalPlaces", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.CustomFormat": { type: "UiPath.Excel.Activities.Business.CustomFormat", props: { $type: null, FormatAsString: "FormatAsString" } },
+  "UiPath.Excel.Activities.Business.TimeFormat": { type: "UiPath.Excel.Activities.Business.TimeFormat", props: { $type: null, IsAMPM: "IsAMPM", Type: "Type" } },
+  "UiPath.Excel.Activities.Business.DateFormat": { type: "UiPath.Excel.Activities.Business.DateFormat", props: { $type: null, Type: "Type" } },
+  // Excel の FormatRangeX（Font / Alignment / Format）。クラス名は Coded でも同じ
+  "UiPath.Excel.FontOptions": { type: "UiPath.Excel.FontOptions", props: { Color: "Color", FillColor: "FillColor", FontFamilyName: "FontFamilyName", Size: "Size", Style: "Style", UnderlineStyle: "UnderlineStyle" } },
+  "UiPath.Excel.AlignmentOptions": { type: "UiPath.Excel.AlignmentOptions", props: { HorizontalAlignment: "HorizontalAlignment", VerticalAlignment: "VerticalAlignment", WrapText: "WrapText" } },
+  "UiPath.Excel.Activities.Business.GeneralFormat": { type: "UiPath.Excel.Activities.Business.GeneralFormat", props: { $type: null } },
+  "UiPath.Excel.Activities.Business.TextFormat": { type: "UiPath.Excel.Activities.Business.TextFormat", props: { $type: null } },
+  "UiPath.Excel.Activities.Business.NumberFormat": { type: "UiPath.Excel.Activities.Business.NumberFormat", props: { $type: null, DecimalPlaces: "DecimalPlaces", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.CurrencyFormat": { type: "UiPath.Excel.Activities.Business.CurrencyFormat", props: { $type: null, Currency: "Currency", DecimalPlaces: "DecimalPlaces", SetAtTheEnd: "SetAtTheEnd", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.PercentageFormat": { type: "UiPath.Excel.Activities.Business.PercentageFormat", props: { $type: null, DecimalPlaces: "DecimalPlaces", UseThousandSeparator: "UseThousandSeparator" } },
+  "UiPath.Excel.Activities.Business.CustomFormat": { type: "UiPath.Excel.Activities.Business.CustomFormat", props: { $type: null, FormatAsString: "FormatAsString" } },
+  "UiPath.Excel.Activities.Business.TimeFormat": { type: "UiPath.Excel.Activities.Business.TimeFormat", props: { $type: null, IsAMPM: "IsAMPM", Type: "Type" } },
+  "UiPath.Excel.Activities.Business.DateFormat": { type: "UiPath.Excel.Activities.Business.DateFormat", props: { $type: null, Type: "Type" } },
   "UiPath.UIAutomationNext.ClickOffset": { type: "PointOffsetModel", props: { OffsetPosition: "Position", OffsetX: "X", OffsetY: "Y" } },
   "UiPath.UIAutomationNext.PointOffset": { type: "PointOffsetModel", props: { Position: "Position", X: "X", Y: "Y" } },
   "UiPath.UIAutomationNext.RegionOffset": { type: "RegionOffsetModel", props: { Position: "Position", X: "X", Y: "Y", Width: "Width", Height: "Height", Area: null, IsAreaResolved: null } },
@@ -274,7 +295,7 @@ export const UIA_USINGS = ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutom
 // objs.<prop> を C# の式（new TargetAnchorableModel { ... }）にする。直せないときは undefined（エラーは ctx.add 済み）
 export function objToCs(a: Activity, prop: string, v: ObjValue, at: string, ctx: CodedCtx): string {
   const p = a.props.find((x) => x.name === prop)!;
-  return model(objectTypes.get(p.type)!, v, at, ctx);
+  return model(objTypeFor(p.type, v)!, v, at, ctx);
 }
 
 function model(t: ObjType, v: ObjValue, at: string, ctx: CodedCtx): string {

@@ -1,0 +1,25 @@
+{
+  "activity": "VLookupX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "ColumnIndex"
+      ],
+      "code": "{Value} = ({Value|type})Convert.ChangeType({SourceRange}.VLookup(label: {Label}, columnIndex: {ColumnIndex}, exactMatch: {ExactMatch}), typeof({Value|type}));",
+      "defaults": {
+        "ExactMatch": true
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    },
+    {
+      "code": "{Value} = ({Value|type})Convert.ChangeType({SourceRange}.VLookup(label: {Label}), typeof({Value|type}));",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.VLookup(this IReadRangeRef sourceRange, object label[, int? columnIndex, bool exactMatch]) は object を返すので、代入先の型に Convert.ChangeType で変換する。ColumnIndex が無い形は 2 引数のオーバーロード（ExactMatch は渡せない）"
+}

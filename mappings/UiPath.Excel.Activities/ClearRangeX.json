@@ -1,0 +1,19 @@
+{
+  "activity": "ClearRangeX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{TargetRange}.ClearRange",
+      "args": {
+        "hasHeaders": "{HasHeaders}"
+      },
+      "defaults": {
+        "HasHeaders": false
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.ClearRange(this IReadWriteRangeRef targetRange, bool hasHeaders)。HasHeaders の既定は XAML と同じ false"
+}

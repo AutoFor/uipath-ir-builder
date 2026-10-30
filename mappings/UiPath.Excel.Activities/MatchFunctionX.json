@@ -1,0 +1,32 @@
+{
+  "activity": "MatchFunctionX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "MatchFunctionType"
+      ],
+      "call": "{InRange}.MatchFunction",
+      "args": {
+        "valueToMatch": "{ValueToMatch}",
+        "matchFunctionType": "UiPath.Excel.MatchType.{MatchFunctionType}"
+      },
+      "returns": "SaveTo",
+      "usings": [
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel"
+      ]
+    },
+    {
+      "call": "{InRange}.MatchFunction",
+      "args": {
+        "valueToMatch": "{ValueToMatch}"
+      },
+      "returns": "SaveTo",
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ],
+  "notes": "ExcelOperations.MatchFunction(this IWellDefinedReadRangeRef range, object valueToMatch[, MatchType matchFunctionType])。MatchFunctionType が IR にあるときだけ 3 引数の形（無いときの既定は XAML も API も LargestValueLessOrEqual）"
+}
