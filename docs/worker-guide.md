@@ -192,6 +192,10 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 - **run**：ロボット（Assistant）は1ユーザーに1つなので、`verify.mjs` は `C:\Users\Public\uipath-ir-probe.run.lock` でマシン全体の run を1つずつに並べる（待つ間「run の順番待ち」と出る）。同時に run したときの動きはまだ確かめていない。ロックを外さないこと
 - 同じ作業用プロジェクトを2つの `verify.mjs` で同時に使うと、`.verify.lock` で止まる。作業名を分ける
 
+### Helm を SSH 側で起動しない
+
+SSH 側で起動した Helm は管理者権限（セッション 0）で、空いていると窓口の run に割り当てられ、run が「アクセスが拒否されました」で落ちる。build と既定 XAML も窓口を通す（`queue-run.mjs --build-only`、`queue-run.mjs --default-xaml <クラス> --out <ファイル>`）。`verify.mjs` を SSH から直接流すとガードで止まる。
+
 ### run は窓口（queue-run.mjs）を通す
 
 Claude のセッションは SSH 経由（管理者権限・セッション 0）なので、直接 `uip rpa run` すると落ちる。ユーザーが RDP 側の管理者なしターミナルで `node tools/verify/runner.mjs` を動かしているので、run は `node tools/verify/queue-run.mjs --name <作業名> <ファイル>` で頼む（引数は verify.mjs と同じ。順番待ちになる）。build は今までどおり `verify.mjs --build-only` でよい。
