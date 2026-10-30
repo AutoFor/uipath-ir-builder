@@ -1,0 +1,33 @@
+{
+  "activity": "NGetAttributeGeneric",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.GetAttribute",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "Result",
+      "args": {
+        "target": "{Target}",
+        "getAttributeOptions": {
+          "new": "GetAttributeOptions",
+          "always": true,
+          "set": {
+            "Attribute": "{Attribute}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "型引数 T は string の戻り値で受ける。OutUiElement と InUiElement はまだ扱わない",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

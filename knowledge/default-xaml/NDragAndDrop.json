@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30c9\u30e9\u30c3\u30b0 \u30a2\u30f3\u30c9 \u30c9\u30ed\u30c3\u30d7\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NDragAndDrop CursorMotionType=\"Smooth\" DelayBetweenActions=\"0.3\" DisplayName=\"\u30c9\u30e9\u30c3\u30b0 \u30a2\u30f3\u30c9 \u30c9\u30ed\u30c3\u30d7\" HealingAgentBehavior=\"SameAsCard\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

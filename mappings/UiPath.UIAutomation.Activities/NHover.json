@@ -1,0 +1,36 @@
+{
+  "activity": "NHover",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.Hover",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "hoverOptions": {
+          "new": "HoverOptions",
+          "always": true,
+          "set": {
+            "HoverTime": "{HoverTime}",
+            "CursorMotionType": "{CursorMotionType|enum}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "VerifyOptions": "{VerifyOptions}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "OutUiElement と InUiElement はまだ扱わない",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

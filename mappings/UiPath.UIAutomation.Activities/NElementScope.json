@@ -1,0 +1,6 @@
+{
+  "activity": "NElementScope",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（要素スコープに当たる using 形式の API が無い。UiTargetApp.GetUiElement は要素を返すだけ）"
+}

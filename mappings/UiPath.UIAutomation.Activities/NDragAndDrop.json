@@ -1,0 +1,40 @@
+{
+  "activity": "NDragAndDrop",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.DragAndDrop",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "dragAndDropOptions": {
+          "new": "DragAndDropOptions",
+          "always": true,
+          "set": {
+            "DestinationTarget": "{DestinationTarget}",
+            "KeyModifiers": "{KeyModifiers|enum}",
+            "MouseButton": "{MouseButton|enum}",
+            "CursorMotionType": "{CursorMotionType|enum}",
+            "UseSourceHover": "{UseSourceHover}",
+            "DelayBetweenActions": "{DelayBetweenActions}",
+            "PointOffset": "{PointOffset}",
+            "SecondaryPointOffset": "{SecondaryPointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "DestinationScopeIdentifier"
+  ],
+  "notes": "DestinationInScope と InUiElement と OutUiElement はまだ扱わない"
+}

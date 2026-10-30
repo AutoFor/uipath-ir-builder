@@ -1,0 +1,6 @@
+{
+  "activity": "NSetFocus",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UiTargetApp に SetFocus / Focus のメソッドが無い）"
+}

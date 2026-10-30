@@ -1,0 +1,37 @@
+{
+  "activity": "NExtractData",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.ExtractData",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "DataTable",
+      "args": {
+        "target": "{Target}",
+        "extractDataOptions": {
+          "new": "ExtractDataOptions",
+          "always": true,
+          "set": {
+            "ExtractMetadata": "{ExtractMetadata}",
+            "TableSettings": "{ExtractDataSettings}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "LimitExtractionTo": "{LimitExtractionTo|enum}",
+            "NumberOfItems": "{MaximumResults}",
+            "Timeout": "{Timeout}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "AppendResults",
+    "DelayBetweenPages",
+    "NextLink"
+  ],
+  "notes": "AppendResults は Coded 未対応。NextLink / DelayBetweenPages は NextPageOptions に直す表がまだ無い"
+}

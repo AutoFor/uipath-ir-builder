@@ -1,0 +1,40 @@
+{
+  "activity": "NKeyboardShortcuts",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.KeyboardShortcut",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "keyboardShortcutOptions": {
+          "new": "KeyboardShortcutOptions",
+          "always": true,
+          "set": {
+            "Shortcuts": "{ShortcutsArgument}",
+            "ActivateBefore": "{ActivateBefore}",
+            "DelayBetweenShortcuts": "{DelayBetweenShortcuts}",
+            "DelayBetweenKeys": "{DelayBetweenKeys}",
+            "ClickBeforeMode": "{ClickBeforeMode|enum}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "VerifyOptions": "{VerifyOptions}",
+            "PointOffset": "{PointOffset}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Shortcuts"
+  ],
+  "notes": "ShortcutsArgument（式）を KeyboardShortcutOptions.Shortcuts に渡す。古い属性 Shortcuts は使わない"
+}

@@ -56,6 +56,8 @@ const simple: Record<string, [string, Record<string, string>]> = {
   IResource: ["upr:IResource", { upr: UPRH }],
   Process: ["sdiag:Process", { sdiag: SDIAG }],
   Match: ["srx:Match", { srx: SRX }],
+  // UiPath.UIAutomation.Activities の型（UI 要素）。"UiPath.Core.UiElement" もこの名前で引ける
+  UiElement: ["uuia:UiElement", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {

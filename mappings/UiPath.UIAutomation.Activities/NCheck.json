@@ -1,0 +1,33 @@
+{
+  "activity": "NCheck",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.Check",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "checkOptions": {
+          "new": "CheckOptions",
+          "always": true,
+          "set": {
+            "CheckType": "{Action|enum}",
+            "AlterIfDisabled": "{AlterIfDisabled}",
+            "Timeout": "{Timeout}",
+            "DelayAfter": "{DelayAfter}",
+            "DelayBefore": "{DelayBefore}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "NCheck.Action は CheckOptions.CheckType。OutUiElement と InUiElement はまだ扱わない",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version"
+  ]
+}

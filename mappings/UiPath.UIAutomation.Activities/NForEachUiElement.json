@@ -1,0 +1,6 @@
+{
+  "activity": "NForEachUiElement",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UI 要素を繰り返す API が UiTargetApp に無い。ExtractData か GetChildren と foreach で書き直す）"
+}

@@ -1,0 +1,6 @@
+{
+  "activity": "NCheckElement",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（結果が「要素がある」を表す NCheckElement に当たるメソッドが UiTargetApp に無い。IsEnabled / WaitState は意味が違う）"
+}
