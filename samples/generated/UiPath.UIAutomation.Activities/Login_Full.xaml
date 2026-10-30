@@ -73,7 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:Login Client="100" ContinueOnError="False" IsSecure="False" Language="JA" MultiLogonOptionToChoose="Terminate" Password="[sapPassword]" SendTelemetryOnlyOnFailure="False" Timeout="10000" Username="sapuser" sap2010:WorkflowViewState.IdRef="Login_1">
             <ns0:Login.Target>
-              <ui:Target Id="c0b5fc62-9ec8-4e21-aaf0-66508e0b2cdd" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="84e672eb-db75-459a-938c-3c0c9076a9f9" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:Login.Target>
           </ns0:Login>
         </ActivityAction>

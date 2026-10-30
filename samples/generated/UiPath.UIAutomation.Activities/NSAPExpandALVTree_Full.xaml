@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPExpandALVTree_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="0656637e-3c21-4761-a703-d030c357ff0d" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="0c55b09b-b056-43bd-90e2-353a6ef2d51e" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPExpandALVTree ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="ALV ツリーを展開（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" Path="Root\Child" ScopeIdentifier="0656637e-3c21-4761-a703-d030c357ff0d" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVTree_1">
+            <uix:NSAPExpandALVTree ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="ALV ツリーを展開（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" Path="Root\Child" ScopeIdentifier="0c55b09b-b056-43bd-90e2-353a6ef2d51e" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVTree_1">
               <uix:NSAPExpandALVTree.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlTREE/shellcont/shell' /&gt;" Guid="f631745e-4526-459d-8c82-d324a884172f" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlTREE/shellcont/shell' /&gt;" Guid="7a0935ec-aff8-46eb-af98-48b2c2d864f4" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPExpandALVTree.Target>
             </uix:NSAPExpandALVTree>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPExpandALVTree 完了（全部入り）&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

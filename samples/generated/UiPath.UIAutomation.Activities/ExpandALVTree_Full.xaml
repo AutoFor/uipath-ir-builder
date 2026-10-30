@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ExpandALVTree ContinueOnError="False" Path="RootNode1Node2" SendTelemetryOnlyOnFailure="False" sap2010:WorkflowViewState.IdRef="ExpandALVTree_1">
             <ns0:ExpandALVTree.Target>
-              <ui:Target Id="fde5a00b-fc57-4230-943c-229c24390907" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="2b63e3af-78e2-4293-ab9a-8a53b5875d75" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:ExpandALVTree.Target>
           </ns0:ExpandALVTree>
         </ActivityAction>

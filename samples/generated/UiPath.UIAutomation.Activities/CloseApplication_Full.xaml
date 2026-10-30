@@ -74,7 +74,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ui:LogMessage Level="Info" Message="[&quot;opened&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
             <ui:CloseApplication ContinueOnError="False" DisplayName="メモ帳を閉じる" sap2010:WorkflowViewState.IdRef="CloseApplication_1">
               <ui:CloseApplication.Target>
-                <ui:Target Id="a34c2845-ddac-4378-87cb-62cd0d14e404" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+                <ui:Target Id="507bf301-638a-4afa-9b4f-48cff630ae69" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
               </ui:CloseApplication.Target>
             </ui:CloseApplication>
           </Sequence>

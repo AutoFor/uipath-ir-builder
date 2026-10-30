@@ -71,7 +71,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="sbNumber" />
       <Variable x:TypeArguments="s:String[]" Name="sbData" />
     </Sequence.Variables>
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="dd94f061-f59d-4a87-87ad-7bcb082a5d35" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="db1a3c6f-8b73-48b5-895f-7100f7f4c0c7" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -81,9 +81,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPReadStatusbar DisplayName="ステータス バーを読み取り" MessageData="[sbData]" MessageId="[sbId]" MessageNumber="[sbNumber]" MessageText="[sbText]" MessageType="[sbType]" ScopeIdentifier="dd94f061-f59d-4a87-87ad-7bcb082a5d35" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPReadStatusbar_1">
+            <uix:NSAPReadStatusbar DisplayName="ステータス バーを読み取り" MessageData="[sbData]" MessageId="[sbId]" MessageNumber="[sbNumber]" MessageText="[sbText]" MessageType="[sbType]" ScopeIdentifier="db1a3c6f-8b73-48b5-895f-7100f7f4c0c7" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPReadStatusbar_1">
               <uix:NSAPReadStatusbar.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/sbar' /&gt;" Guid="a5cce88f-d293-4311-9daa-50274b15f849" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/sbar' /&gt;" Guid="a6d4ae2c-80c2-4abe-ac36-709057c7fb56" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPReadStatusbar.Target>
             </uix:NSAPReadStatusbar>
             <ui:LogMessage Level="Info" Message="[&quot;ステータス: &quot; &amp; sbType &amp; &quot; &quot; &amp; sbText &amp; &quot; &quot; &amp; sbId &amp; &quot; &quot; &amp; sbNumber &amp; &quot; &quot; &amp; sbData.Length.ToString()]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

@@ -65,7 +65,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="CVRefresh_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ns0:CVScope CvMethod="ElementDetection, OCR" SendOnPremData="False" sap2010:WorkflowViewState.IdRef="CVScope_1">
       <ns0:CVScope.Target>
-        <ui:Target Id="a86b34e4-9f32-461c-a12e-336f579fa54a" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" />
+        <ui:Target Id="ebc1a0a5-547b-45b3-82d5-0fdd897abb37" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" />
       </ns0:CVScope.Target>
       <ns0:CVScope.Body>
         <ActivityAction x:TypeArguments="x:Object">

@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPCallTransaction_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="56855ca3-1f0a-4429-abd0-dce9498c4757" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="d0db214c-5857-453a-a5cc-219264db8ea3" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPCallTransaction DisplayName="トランザクションを呼ぶ" Prefix="/n" ScopeIdentifier="56855ca3-1f0a-4429-abd0-dce9498c4757" Transaction="VA01" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPCallTransaction_1">
+            <uix:NSAPCallTransaction DisplayName="トランザクションを呼ぶ" Prefix="/n" ScopeIdentifier="d0db214c-5857-453a-a5cc-219264db8ea3" Transaction="VA01" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPCallTransaction_1">
               <uix:NSAPCallTransaction.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/tbar[0]/okcd' /&gt;" Guid="2f113a45-5047-4462-92e6-99e79c4764e8" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/tbar[0]/okcd' /&gt;" Guid="27687d44-4737-4908-93ec-bf5b4b8110d5" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPCallTransaction.Target>
             </uix:NSAPCallTransaction>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPCallTransaction 完了&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

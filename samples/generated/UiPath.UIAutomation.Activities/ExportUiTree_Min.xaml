@@ -75,7 +75,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:ExportUiTree DestinationFile="[treePath]" DisplayName="UI ツリーを書き出す" sap2010:WorkflowViewState.IdRef="ExportUiTree_1">
               <ui:ExportUiTree.Target>
-                <ui:Target Id="5e87e22c-482d-4e25-8e56-cf1f4e2085c6" Selector="&lt;uia cls='RichEditD2DPT' /&gt;" />
+                <ui:Target Id="28e3449b-d220-4f25-a2ab-bf239f0d1d67" Selector="&lt;uia cls='RichEditD2DPT' /&gt;" />
               </ui:ExportUiTree.Target>
             </ui:ExportUiTree>
             <ui:LogMessage Level="Info" Message="[&quot;exported:&quot; &amp; Convert.ToString(System.IO.File.Exists(treePath))]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

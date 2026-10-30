@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ExpandALVHierarchicalTable ColumnNameLevel0="CARRID" ColumnNameLevel1="CONNID" ColumnValueLevel0="LH" ColumnValueLevel1="0400" FocusedColumn="PRICE" SelectLevel1="True" sap2010:WorkflowViewState.IdRef="ExpandALVHierarchicalTable_1">
             <ns0:ExpandALVHierarchicalTable.Target>
-              <ui:Target Id="4abd2fe1-4d97-4292-80c8-bb2c74b56c12" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
+              <ui:Target Id="c47883ee-910f-45a8-afa3-8aa1048da9b3" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
             </ns0:ExpandALVHierarchicalTable.Target>
           </ns0:ExpandALVHierarchicalTable>
         </ActivityAction>

@@ -73,7 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:Activate ContinueOnError="False" DelayBefore="200" DelayMS="200" DisplayName="メモ帳をアクティブにする" sap2010:WorkflowViewState.IdRef="Activate_1">
               <ui:Activate.Target>
-                <ui:Target Id="bd4ad974-ddba-4080-bc4d-76168e745686" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+                <ui:Target Id="2c50121b-a193-4bc4-9119-86a184cb46b7" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
               </ui:Activate.Target>
             </ui:Activate>
             <ui:LogMessage Level="Info" Message="[&quot;activated&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

@@ -6,7 +6,6 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
-xmlns:uuia="clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -63,10 +62,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="CloseWindow_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-c3-note.txt&quot;)]" Name="notePath" />
-      <Variable x:TypeArguments="uuia:Window" Name="win" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="メモ帳に開かせるファイルを書く" FileName="[notePath]" Text="uia-c3" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <ui:OpenApplication ApplicationWindow="[win]" Arguments="[notePath]" DisplayName="メモ帳を開く（Classic）" FileName="notepad.exe" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" sap2010:WorkflowViewState.IdRef="OpenApplication_1">
+    <ui:OpenApplication Arguments="[notePath]" DisplayName="メモ帳を開く（Classic）" FileName="notepad.exe" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" sap2010:WorkflowViewState.IdRef="OpenApplication_1">
       <ui:OpenApplication.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
@@ -74,7 +72,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:LogMessage Level="Info" Message="[&quot;opened&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-            <ui:CloseWindow ContinueOnError="False" DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" UseWindow="[win]" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
+            <ui:CloseWindow ContinueOnError="False" DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
           </Sequence>
         </ActivityAction>
       </ui:OpenApplication.Body>
