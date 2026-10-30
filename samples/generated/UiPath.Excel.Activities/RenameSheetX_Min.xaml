@@ -5,7 +5,6 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
-xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib"
 xmlns:ue="clr-namespace:UiPath.Excel;assembly=UiPath.Excel.Activities"
 xmlns:ueab="clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
@@ -83,28 +82,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
               </ueab:ReadCellValueX.SaveTo>
             </ueab:ReadCellValueX>
             <ui:LogMessage Level="Info" Message="[&quot;シート二の A1: [&quot; &amp; Convert.ToString(a1) &amp; &quot;]&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-            <TryCatch DisplayName="旧名を読む" sap2010:WorkflowViewState.IdRef="TryCatch_1">
-              <TryCatch.Try>
-                <Sequence DisplayName="Try" sap2010:WorkflowViewState.IdRef="Sequence_3">
-                  <ueab:ReadCellValueX Cell="[Excel.Sheet(&quot;Sheet2&quot;).Cell(&quot;A1&quot;)]" GetFormattedText="True" sap2010:WorkflowViewState.IdRef="ReadCellValueX_2">
-                    <ueab:ReadCellValueX.SaveTo>
-                      <OutArgument x:TypeArguments="x:Object">[a1]</OutArgument>
-                    </ueab:ReadCellValueX.SaveTo>
-                  </ueab:ReadCellValueX>
-                  <ui:LogMessage Level="Info" Message="[&quot;Sheet2 が残っている&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
-                </Sequence>
-              </TryCatch.Try>
-              <TryCatch.Catches>
-                <Catch x:TypeArguments="s:Exception">
-                  <ActivityAction x:TypeArguments="s:Exception">
-                    <ActivityAction.Argument>
-                      <DelegateInArgument x:TypeArguments="s:Exception" Name="ex" />
-                    </ActivityAction.Argument>
-                    <ui:LogMessage Level="Info" Message="[&quot;Sheet2 は無い&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
-                  </ActivityAction>
-                </Catch>
-              </TryCatch.Catches>
-            </TryCatch>
+            <ueab:ReadCellValueX Cell="[Excel.Sheet(&quot;Sheet2&quot;).Cell(&quot;A1&quot;)]" DisplayName="元の名前のシートを読む（無いと空のシートが作られる）" GetFormattedText="True" sap2010:WorkflowViewState.IdRef="ReadCellValueX_2">
+              <ueab:ReadCellValueX.SaveTo>
+                <OutArgument x:TypeArguments="x:Object">[a1]</OutArgument>
+              </ueab:ReadCellValueX.SaveTo>
+            </ueab:ReadCellValueX>
+            <ui:LogMessage Level="Info" Message="[&quot;Sheet2 の A1: [&quot; &amp; Convert.ToString(a1) &amp; &quot;]&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
           </Sequence>
         </ActivityAction>
       </ueab:ExcelApplicationCard.Body>

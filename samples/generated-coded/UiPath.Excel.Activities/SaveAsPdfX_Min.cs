@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\SaveAsPdfX_Min.xlsx", overwrite: true);
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveAsPdfX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
             {
-                Excel.SaveAsPdf(filePath: "output\\SaveAsPdfX_Min.pdf", replaceExisting: false, startPage: null, endPage: null, saveQuality: UiPath.Excel.PdfSaveQuality.StandardQuality);
+                Excel.SaveAsPdf(filePath: "output\\SaveAsPdfX_Min.pdf", replaceExisting: true, startPage: null, endPage: null, saveQuality: UiPath.Excel.PdfSaveQuality.StandardQuality);
             }
             Log(message: Convert.ToString("PDF: " + System.IO.File.Exists(@"output\SaveAsPdfX_Min.pdf").ToString() + " " + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf"), 0, 4) + " " + (System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf").Length > 0).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

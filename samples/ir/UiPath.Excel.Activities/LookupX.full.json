@@ -12,20 +12,73 @@
       "item": "Excel",
       "props": {
         "WorkbookPath": {
-          "lit": "data\\excel\\Sample.xlsx"
-        },
-        "ReadOnly": true
+          "lit": "output\\LookupX_Full.xlsx"
+        }
       },
       "body": [
         {
-          "act": "LookupX",
-          "name": "次郎の年齢",
+          "act": "WriteCellX",
           "props": {
-            "SourceRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:A4\")",
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A1\")",
+            "Value": {
+              "lit": "apple"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B1\")",
+            "Value": {
+              "lit": "りんご"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A2\")",
+            "Value": {
+              "lit": "banana"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B2\")",
+            "Value": {
+              "lit": "バナナ"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"A3\")",
+            "Value": {
+              "lit": "cherry"
+            }
+          }
+        },
+        {
+          "act": "WriteCellX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet1\").Cell(\"B3\")",
+            "Value": {
+              "lit": "さくらんぼ"
+            }
+          }
+        },
+        {
+          "act": "LookupX",
+          "name": "cherry の和名",
+          "props": {
+            "SourceRange": "Excel.Sheet(\"Sheet1\").Range(\"A1:A3\")",
             "Label": {
-              "lit": "次郎"
+              "lit": "cherry"
             },
-            "ResultRange": "Excel.Sheet(\"Sheet1\").Range(\"B1:B4\")",
+            "ResultRange": "Excel.Sheet(\"Sheet1\").Range(\"B1:B3\")",
             "Value": "v"
           }
         }

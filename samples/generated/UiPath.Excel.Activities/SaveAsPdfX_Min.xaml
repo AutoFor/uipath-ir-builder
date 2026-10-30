@@ -71,7 +71,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="ue:IWorkbookQuickHandle" Name="Excel" />
           </ActivityAction.Argument>
-          <ueab:SaveAsPdfX DestinationPdfPath="output\SaveAsPdfX_Min.pdf" SaveQuality="StandardQuality" Workbook="[Excel]" sap2010:WorkflowViewState.IdRef="SaveAsPdfX_1" />
+          <ueab:SaveAsPdfX DestinationPdfPath="output\SaveAsPdfX_Min.pdf" ReplaceExisting="True" SaveQuality="StandardQuality" Workbook="[Excel]" sap2010:WorkflowViewState.IdRef="SaveAsPdfX_1" />
         </ActivityAction>
       </ueab:ExcelApplicationCard.Body>
     </ueab:ExcelApplicationCard>

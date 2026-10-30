@@ -51,39 +51,19 @@
           }
         },
         {
-          "act": "TryCatch",
-          "name": "Sheet2 を読む",
-          "body": [
-            {
-              "act": "ReadCellValueX",
-              "props": {
-                "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"A1\")",
-                "SaveTo": "a1"
-              }
-            },
-            {
-              "act": "LogMessage",
-              "props": {
-                "Level": "Info",
-                "Message": "\"Sheet2 が残っている\""
-              }
-            }
-          ],
-          "catches": [
-            {
-              "type": "Exception",
-              "var": "ex",
-              "body": [
-                {
-                  "act": "LogMessage",
-                  "props": {
-                    "Level": "Info",
-                    "Message": "\"Sheet2 は無い\""
-                  }
-                }
-              ]
-            }
-          ]
+          "act": "ReadCellValueX",
+          "name": "元の名前のシートを読む（無いと空のシートが作られる）",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"A1\")",
+            "SaveTo": "a1"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"Sheet2 の A1: [\" & Convert.ToString(a1) & \"]\""
+          }
         }
       ]
     }

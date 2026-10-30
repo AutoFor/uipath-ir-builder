@@ -67,17 +67,25 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:Object" Name="v" />
     </Sequence.Variables>
-    <ueab:ExcelApplicationCard ReadOnly="True" ResizeWindow="None" WorkbookPath="data\excel\Sample.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationCard_1">
+    <ueab:ExcelApplicationCard ResizeWindow="None" WorkbookPath="output\LookupX_Full.xlsx" sap2010:WorkflowViewState.IdRef="ExcelApplicationCard_1">
       <ueab:ExcelApplicationCard.Body>
         <ActivityAction x:TypeArguments="ue:IWorkbookQuickHandle">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="ue:IWorkbookQuickHandle" Name="Excel" />
           </ActivityAction.Argument>
-          <ueab:LookupX DisplayName="次郎の年齢" Label="[&quot;次郎&quot;]" ResultRange="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;B1:B4&quot;)]" SourceRange="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;A1:A4&quot;)]" sap2010:WorkflowViewState.IdRef="LookupX_1">
-            <ueab:LookupX.Value>
-              <OutArgument x:TypeArguments="x:Object">[v]</OutArgument>
-            </ueab:LookupX.Value>
-          </ueab:LookupX>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;A1&quot;)]" Value="[&quot;apple&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_1" />
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;B1&quot;)]" Value="[&quot;りんご&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_2" />
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;A2&quot;)]" Value="[&quot;banana&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_3" />
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;B2&quot;)]" Value="[&quot;バナナ&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_4" />
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;A3&quot;)]" Value="[&quot;cherry&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_5" />
+            <ueab:WriteCellX Cell="[Excel.Sheet(&quot;Sheet1&quot;).Cell(&quot;B3&quot;)]" Value="[&quot;さくらんぼ&quot;]" sap2010:WorkflowViewState.IdRef="WriteCellX_6" />
+            <ueab:LookupX DisplayName="cherry の和名" Label="[&quot;cherry&quot;]" ResultRange="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;B1:B3&quot;)]" SourceRange="[Excel.Sheet(&quot;Sheet1&quot;).Range(&quot;A1:A3&quot;)]" sap2010:WorkflowViewState.IdRef="LookupX_1">
+              <ueab:LookupX.Value>
+                <OutArgument x:TypeArguments="x:Object">[v]</OutArgument>
+              </ueab:LookupX.Value>
+            </ueab:LookupX>
+          </Sequence>
         </ActivityAction>
       </ueab:ExcelApplicationCard.Body>
     </ueab:ExcelApplicationCard>
