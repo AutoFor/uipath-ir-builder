@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ClickToolbarButton AlterIfDisabled="False" ContinueOnError="False" DelayAfter="100" DelayBefore="100" Item="Execute" sap2010:WorkflowViewState.IdRef="ClickToolbarButton_1">
             <ns0:ClickToolbarButton.Target>
-              <ui:Target Id="ac6996a8-7a78-4894-9647-243d2c802e79" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="90aed9e1-e4dd-42dc-85b5-43257a1e83f6" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[1]' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:ClickToolbarButton.Target>
           </ns0:ClickToolbarButton>
         </ActivityAction>

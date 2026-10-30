@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ExpandTree AlterIfDisabled="True" Item="Node1" sap2010:WorkflowViewState.IdRef="ExpandTree_1">
             <ns0:ExpandTree.Target>
-              <ui:Target Id="b17549c9-07b9-4305-a4f3-e1147165f5f4" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
+              <ui:Target Id="be4e095f-303d-41e8-85f4-6883ac1ee2e7" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" />
             </ns0:ExpandTree.Target>
           </ns0:ExpandTree>
         </ActivityAction>

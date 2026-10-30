@@ -74,7 +74,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:Click AlterIfDisabled="True" ClickType="CLICK_SINGLE" DisplayName="Greet を押す（Classic）" KeyModifiers="None" MouseButton="BTN_LEFT" sap2010:WorkflowViewState.IdRef="Click_1">
               <ui:Click.Target>
-                <ui:Target Id="2425cebd-2e50-4db7-b6fd-d5a6e647b70f" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
+                <ui:Target Id="c47b4410-a400-46b1-b25f-21bed014b8bd" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
               </ui:Click.Target>
             </ui:Click>
             <ui:GetValue DisplayName="結果を読む（Classic）" sap2010:WorkflowViewState.IdRef="GetValue_1">
@@ -82,7 +82,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="aac2050f-4a05-43fb-a4a5-cc4fdc9e6ba8" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="991a338c-d6bf-40f4-9387-c841683b506a" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

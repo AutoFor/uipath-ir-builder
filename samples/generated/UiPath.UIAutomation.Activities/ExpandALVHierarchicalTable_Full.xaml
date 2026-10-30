@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:ExpandALVHierarchicalTable ColumnNameLevel0="CARRID" ColumnNameLevel1="CONNID" ColumnValueLevel0="LH" ColumnValueLevel1="0400" ContinueOnError="False" FocusedColumn="PRICE" SelectLevel1="False" SendTelemetryOnlyOnFailure="False" sap2010:WorkflowViewState.IdRef="ExpandALVHierarchicalTable_1">
             <ns0:ExpandALVHierarchicalTable.Target>
-              <ui:Target Id="a03ecebb-d2bc-4e2f-92b8-b61e469268c0" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="eb9f3a74-ec90-443e-ab0e-4a84b2edeac1" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:ExpandALVHierarchicalTable.Target>
           </ns0:ExpandALVHierarchicalTable>
         </ActivityAction>

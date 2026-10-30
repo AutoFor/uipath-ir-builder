@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPLogon_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NSAPLogon AttachMode="ByInstance" CloseMode="Never" ConnectionId="sap-connection-id" ConnectionName="SAP" ContinueOnError="False" DelayBetweenRetries="1" Description="SAP Logon を使う" DisplayName="SAP Logon（全部入り）" HealingAgentBehavior="Disabled" InteractionMode="Simulate" IsAuthenticationRequired="False" IsIndicateOnDesktopEnabled="False" OpenMode="IfNotOpen" Retries="1" ScopeGuid="9ca67650-7bf1-4216-ad75-47581a58acd4" Timeout="30" Version="V2" WindowResize="None" sap2010:WorkflowViewState.IdRef="NSAPLogon_1">
+    <uix:NSAPLogon AttachMode="ByInstance" CloseMode="Never" ConnectionId="sap-connection-id" ConnectionName="SAP" ContinueOnError="False" DelayBetweenRetries="1" Description="SAP Logon を使う" DisplayName="SAP Logon（全部入り）" HealingAgentBehavior="Disabled" InteractionMode="Simulate" IsAuthenticationRequired="False" IsIndicateOnDesktopEnabled="False" OpenMode="IfNotOpen" Retries="1" ScopeGuid="b8029bc7-9570-4a04-bd71-95428c4d6757" Timeout="30" Version="V2" WindowResize="None" sap2010:WorkflowViewState.IdRef="NSAPLogon_1">
       <uix:NSAPLogon.TargetApp>
         <uix:TargetApp Arguments="SAP" FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NSAPLogon.TargetApp>

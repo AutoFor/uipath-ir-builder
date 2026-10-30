@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:CallTransaction ContinueOnError="False" DisplayName="トランザクションを呼ぶ" SendTelemetryOnlyOnFailure="False" Transaction="/nSE16" sap2010:WorkflowViewState.IdRef="CallTransaction_1">
             <ns0:CallTransaction.Target>
-              <ui:Target Id="3f2b6a27-408a-43eb-b6ad-b39e4a8eef8c" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[0]/okcd' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="713a3dbd-d442-41c9-a463-d48a9aa33f27" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[0]/okcd' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:CallTransaction.Target>
           </ns0:CallTransaction>
         </ActivityAction>

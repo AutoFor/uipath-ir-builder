@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:SelectDatesInCalendar ContinueOnError="False" Date="[New DateTime(2026, 10, 30)]" EndDate="[New DateTime(2026, 10, 31)]" SelectType="Range" SendTelemetryOnlyOnFailure="False" StartDate="[New DateTime(2026, 10, 1)]" Week="44" Year="2026" sap2010:WorkflowViewState.IdRef="SelectDatesInCalendar_1">
             <ns0:SelectDatesInCalendar.Target>
-              <ui:Target Id="5c2c2f92-1a3c-44a1-967b-70a81d2914ac" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+              <ui:Target Id="bc6467bf-411c-4d58-bbec-0b3316b0c6dd" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/shellcont/shell' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
             </ns0:SelectDatesInCalendar.Target>
           </ns0:SelectDatesInCalendar>
         </ActivityAction>

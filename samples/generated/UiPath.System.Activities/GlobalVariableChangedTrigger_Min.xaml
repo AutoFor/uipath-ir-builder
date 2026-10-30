@@ -66,7 +66,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         <Variable x:TypeArguments="x:Boolean" Name="stp" />
       </ui:TriggerScope.Variables>
       <ui:TriggerScope.Triggers>
-        <ui:GlobalVariableChangedTrigger Enabled="True" SchedulingMode="Sequential" TriggerId="58d3c595-501e-416b-ba6a-e3f4f3867052" VariableName="[&quot;IrVar&quot;]" sap2010:WorkflowViewState.IdRef="GlobalVariableChangedTrigger_1" />
+        <ui:GlobalVariableChangedTrigger Enabled="True" SchedulingMode="Sequential" TriggerId="1b32c4dc-fa71-452e-a59f-ca9249ef553a" VariableName="[&quot;IrVar&quot;]" sap2010:WorkflowViewState.IdRef="GlobalVariableChangedTrigger_1" />
       </ui:TriggerScope.Triggers>
       <ui:TriggerScope.Action>
         <ActivityAction x:TypeArguments="upt:TriggerArgs">

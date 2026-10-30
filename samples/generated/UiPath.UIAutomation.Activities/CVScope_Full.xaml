@@ -69,7 +69,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="CVScope_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <ns0:CVScope ApiKey="dummy-key" ContinueOnError="False" CvMethod="ElementDetection" DelayBefore="100" DisplayName="CV スコープ（全部入り）" SendOnPremData="False" Server="https://cv.example.invalid" UseLocalServer="False" sap2010:WorkflowViewState.IdRef="CVScope_1">
       <ns0:CVScope.Target>
-        <ui:Target Id="cd0faedf-b09b-4d36-9126-b91bd608873b" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" TimeoutMS="20000" WaitForReady="INTERACTIVE" />
+        <ui:Target Id="c862b37a-1f49-4825-bbca-0dd59d10badc" Selector="&lt;wnd app='notepad.exe' cls='Notepad' /&gt;" TimeoutMS="20000" WaitForReady="INTERACTIVE" />
       </ns0:CVScope.Target>
       <ns0:CVScope.Body>
         <ActivityAction x:TypeArguments="x:Object">

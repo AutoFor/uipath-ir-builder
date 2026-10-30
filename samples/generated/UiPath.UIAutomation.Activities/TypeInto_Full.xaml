@@ -74,12 +74,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:TypeInto Activate="True" AlterIfDisabled="True" ClickBeforeTyping="True" ContinueOnError="False" DelayBefore="100" DelayBetweenKeys="10" DelayMS="300" DeselectAfter="False" DisplayName="名前を入力（Classic・全部入り）" EmptyField="True" SendWindowMessages="False" SimulateType="True" Text="[&quot;Sabu&quot; &amp; &quot;ro&quot;]" sap2010:WorkflowViewState.IdRef="TypeInto_1">
               <ui:TypeInto.Target>
-                <ui:Target Id="581ff65f-fb18-4d98-931f-6a1a508d7a29" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" TimeoutMS="10000" WaitForReady="COMPLETE" />
+                <ui:Target Id="ff2b09d9-3ec4-400b-82d8-5385b6e52188" Selector="&lt;webctrl id='name' tag='INPUT' /&gt;" TimeoutMS="10000" WaitForReady="COMPLETE" />
               </ui:TypeInto.Target>
             </ui:TypeInto>
             <ui:Click AlterIfDisabled="True" ClickType="CLICK_SINGLE" DisplayName="Greet を押す（Classic）" KeyModifiers="None" MouseButton="BTN_LEFT" sap2010:WorkflowViewState.IdRef="Click_1">
               <ui:Click.Target>
-                <ui:Target Id="49b0f910-8130-4e2b-a9d4-d9e07776aa7f" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
+                <ui:Target Id="ee35b2eb-4f73-498a-99f5-e5aeb2869c2a" Selector="&lt;webctrl id='greet' tag='BUTTON' /&gt;" />
               </ui:Click.Target>
             </ui:Click>
             <ui:GetValue DisplayName="結果を読む（Classic）" sap2010:WorkflowViewState.IdRef="GetValue_1">
@@ -87,7 +87,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="a1f66fba-417d-4563-a7fa-7a6400740209" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="5f924374-73df-4894-a711-e5898765a925" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

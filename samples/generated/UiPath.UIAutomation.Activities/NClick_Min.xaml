@@ -68,7 +68,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="result" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox'&gt;agree&lt;/label&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="0aa7c702-2a91-4c75-8e4a-497a1b7e3e66" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="895239e3-cb04-4be2-bfa9-56b2a5372878" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -78,14 +78,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Greet を押す" HealingAgentBehavior="SameAsCard" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="0aa7c702-2a91-4c75-8e4a-497a1b7e3e66" Version="V5" sap2010:WorkflowViewState.IdRef="NClick_1">
+            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Greet を押す" HealingAgentBehavior="SameAsCard" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="895239e3-cb04-4be2-bfa9-56b2a5372878" Version="V5" sap2010:WorkflowViewState.IdRef="NClick_1">
               <uix:NClick.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='greet' tag='BUTTON' /&gt;" Guid="d2d11c96-a323-493e-8a91-fa27c221203a" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='greet' tag='BUTTON' /&gt;" Guid="7a5dc58f-19bb-424a-8df6-0f8ebe58bf55" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NClick.Target>
             </uix:NClick>
-            <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="0aa7c702-2a91-4c75-8e4a-497a1b7e3e66" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
+            <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="895239e3-cb04-4be2-bfa9-56b2a5372878" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
               <uix:NGetText.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="3f50fcf6-7e81-4ca5-891b-b6778be2ecac" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="79e54467-1602-4ccd-913a-cc9ada0a3d93" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NGetText.Target>
             </uix:NGetText>
           </Sequence>

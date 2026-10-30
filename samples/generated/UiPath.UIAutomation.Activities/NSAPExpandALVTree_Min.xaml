@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPExpandALVTree_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="46add015-0d9c-4dc6-8292-a4db2763c0dc" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="ef10d8d4-07d5-4176-89e4-332ae2d9f0ea" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPExpandALVTree DisplayName="ALV ツリーを展開" HealingAgentBehavior="SameAsCard" Path="Root\Child" ScopeIdentifier="46add015-0d9c-4dc6-8292-a4db2763c0dc" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVTree_1">
+            <uix:NSAPExpandALVTree DisplayName="ALV ツリーを展開" HealingAgentBehavior="SameAsCard" Path="Root\Child" ScopeIdentifier="ef10d8d4-07d5-4176-89e4-332ae2d9f0ea" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPExpandALVTree_1">
               <uix:NSAPExpandALVTree.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlTREE/shellcont/shell' /&gt;" Guid="f1acd4c7-2f0c-4e9f-b51a-f6beb4da74e5" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlTREE/shellcont/shell' /&gt;" Guid="245a4bcc-0304-463b-94f0-083e84f78385" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPExpandALVTree.Target>
             </uix:NSAPExpandALVTree>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPExpandALVTree 完了&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

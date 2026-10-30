@@ -69,7 +69,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:Boolean" Name="found" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox'&gt;agree&lt;/label&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="30350078-2a72-4faf-a477-51960f745193" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="ba94f432-fd2a-44d3-83a3-e12c1c15d259" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -78,9 +78,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <uix:NCheckState CheckVisibility="False" DelayBefore="0.1" DisplayName="無い要素を確かめる（全部入り）" Exists="[found]" HealingAgentBehavior="Disabled" Mode="WaitAppear" ScopeIdentifier="30350078-2a72-4faf-a477-51960f745193" Timeout="2" Version="V5" sap2010:WorkflowViewState.IdRef="NCheckState_1">
+          <uix:NCheckState CheckVisibility="False" DelayBefore="0.1" DisplayName="無い要素を確かめる（全部入り）" Exists="[found]" HealingAgentBehavior="Disabled" Mode="WaitAppear" ScopeIdentifier="ba94f432-fd2a-44d3-83a3-e12c1c15d259" Timeout="2" Version="V5" sap2010:WorkflowViewState.IdRef="NCheckState_1">
             <uix:NCheckState.Target>
-              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='missing' tag='DIV' /&gt;" Guid="c7a49f5b-4664-4ca8-b968-a8fc41576a20" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='missing' tag='DIV' /&gt;" Guid="85f13902-13f2-4883-b727-b83501fe6a15" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
             </uix:NCheckState.Target>
             <uix:NCheckState.IfExists>
               <ui:LogMessage Level="Warn" Message="[&quot;あるはずのない要素があった&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

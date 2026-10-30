@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPTableCellScope_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="378ec3bc-21fc-4289-8c98-11b0f4b9d19b" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="3ded5783-cf2c-4788-8431-e2efcfe2e8dd" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPTableCellScope ColumnName="VBELN" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="表のセル スコープ（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" RowIndex="1" RowType="Index" ScopeIdentifier="378ec3bc-21fc-4289-8c98-11b0f4b9d19b" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPTableCellScope_1">
+            <uix:NSAPTableCellScope ColumnName="VBELN" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="表のセル スコープ（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" RowIndex="1" RowType="Index" ScopeIdentifier="3ded5783-cf2c-4788-8431-e2efcfe2e8dd" Timeout="30" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPTableCellScope_1">
               <uix:NSAPTableCellScope.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="13bdb60e-09cf-48df-a068-24cbb803dff8" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr/cntlGRID1/shellcont/shell' /&gt;" Guid="7a353157-0fa5-439e-8e5d-5836bca182a2" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPTableCellScope.Target>
               <uix:NSAPTableCellScope.Body>
                 <ActivityAction x:TypeArguments="x:Object">

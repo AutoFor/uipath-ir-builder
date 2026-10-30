@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPSelectMenuItem_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="9fde507b-7b0a-4f5b-9340-eaae19fc4edb" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="7176c962-2d63-4363-ba7c-338b9ba15a1e" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPSelectMenuItem DisplayName="メニュー項目を選択" Item="System\Status" ScopeIdentifier="9fde507b-7b0a-4f5b-9340-eaae19fc4edb" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectMenuItem_1">
+            <uix:NSAPSelectMenuItem DisplayName="メニュー項目を選択" Item="System\Status" ScopeIdentifier="7176c962-2d63-4363-ba7c-338b9ba15a1e" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPSelectMenuItem_1">
               <uix:NSAPSelectMenuItem.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/mbar' /&gt;" Guid="544d66ad-6c9e-4aaf-8792-cbc125883d28" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/mbar' /&gt;" Guid="f656de43-7fb9-4cd4-a6b4-87ccc4846c87" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPSelectMenuItem.Target>
             </uix:NSAPSelectMenuItem>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPSelectMenuItem 完了&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />

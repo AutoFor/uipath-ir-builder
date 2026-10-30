@@ -68,7 +68,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="x:String" Name="result" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox' onchange=&quot;document.getElementById('result').textContent='agree='+this.checked&quot;&gt;agree&lt;/label&gt;&lt;select id='fruit' onchange=&quot;document.getElementById('result').textContent='fruit='+this.value&quot;&gt;&lt;option&gt;apple&lt;/option&gt;&lt;option&gt;banana&lt;/option&gt;&lt;option&gt;cherry&lt;/option&gt;&lt;/select&gt;&lt;div id='hoverbox' style='border:1px solid;padding:6px;width:120px' onmouseover=&quot;document.getElementById('result').textContent='hovered'&quot;&gt;hover me&lt;/div&gt;&lt;input id='focusme' type='text' onfocus=&quot;document.getElementById('result').textContent='focused'&quot;&gt;&lt;input id='kbd' type='text' onkeydown=&quot;document.getElementById('result').textContent='key:'+event.key&quot;&gt;&lt;div id='scrollbox' style='height:60px;width:200px;overflow:auto' onscroll=&quot;document.getElementById('result').textContent=(this.scrollTop&gt;0?'scrolled':'top')&quot;&gt;&lt;div style='height:400px'&gt;scroll me&lt;/div&gt;&lt;p id='scrollend'&gt;end&lt;/p&gt;&lt;/div&gt;&lt;div id='src' style='border:1px solid;padding:6px;width:80px;background:#cde' onmousedown=&quot;window.dragging=true&quot;&gt;drag me&lt;/div&gt;&lt;div id='dst' style='border:1px solid;padding:6px;width:80px;background:#edc' onmouseup=&quot;if(window.dragging){document.getElementById('result').textContent='dropped'}&quot;&gt;drop here&lt;/div&gt;&lt;ul id='fruits'&gt;&lt;li&gt;apple&lt;/li&gt;&lt;li&gt;banana&lt;/li&gt;&lt;li&gt;cherry&lt;/li&gt;&lt;/ul&gt;&lt;table id='tbl'&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Qty&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;apple&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;banana&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;cherry&lt;/td&gt;&lt;td&gt;7&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;script&gt;document.onmouseup=function(){setTimeout(function(){window.dragging=false},0)}&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="71e3d29b-b479-4df9-8420-13f2b83febe9" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="403e2dc1-fe94-4b5e-be36-4c539512ce91" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -77,18 +77,18 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <uix:NElementScope DisplayName="fruits の中（全部入り）" HealingAgentBehavior="SameAsCard" InteractionMode="HardwareEvents" IsLoose="False" ScopeGuid="cb873c20-2aa6-4a0b-a7bb-dfac7894e74d" ScopeIdentifier="71e3d29b-b479-4df9-8420-13f2b83febe9" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NElementScope_1">
+          <uix:NElementScope DisplayName="fruits の中（全部入り）" HealingAgentBehavior="SameAsCard" InteractionMode="HardwareEvents" IsLoose="False" ScopeGuid="5a8a7a50-0bf1-411a-8b38-c09ef6655b06" ScopeIdentifier="403e2dc1-fe94-4b5e-be36-4c539512ce91" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NElementScope_1">
             <uix:NElementScope.Target>
-              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='fruits' tag='UL' /&gt;" Guid="445072b3-c255-4801-9f11-7e2b7f96fe50" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='fruits' tag='UL' /&gt;" Guid="ce712953-3b59-475a-9930-92d024b3d1e5" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
             </uix:NElementScope.Target>
             <uix:NElementScope.Body>
               <ActivityAction x:TypeArguments="x:Object">
                 <ActivityAction.Argument>
                   <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
                 </ActivityAction.Argument>
-                <uix:NGetText DisplayName="banana を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="cb873c20-2aa6-4a0b-a7bb-dfac7894e74d" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
+                <uix:NGetText DisplayName="banana を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="5a8a7a50-0bf1-411a-8b38-c09ef6655b06" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
                   <uix:NGetText.Target>
-                    <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='LI' aaname='banana' /&gt;" Guid="d6605c04-4b1e-429a-8f0d-6daa14af909b" SearchSteps="Selector" Version="V6" />
+                    <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='LI' aaname='banana' /&gt;" Guid="bdfb8b53-ac21-4bf0-8755-d8cac3de778c" SearchSteps="Selector" Version="V6" />
                   </uix:NGetText.Target>
                 </uix:NGetText>
               </ActivityAction>

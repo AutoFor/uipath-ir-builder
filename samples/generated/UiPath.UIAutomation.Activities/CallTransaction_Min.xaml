@@ -70,7 +70,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <ns0:CallTransaction Transaction="/nSE16" sap2010:WorkflowViewState.IdRef="CallTransaction_1">
             <ns0:CallTransaction.Target>
-              <ui:Target Id="d365f577-08da-4afc-920b-02a3f5ac3dcb" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[0]/okcd' /&gt;" />
+              <ui:Target Id="b8055249-0028-4cb7-9878-4eb7b88f6251" Selector="&lt;sap id='/app/con[0]/ses[0]/wnd[0]/tbar[0]/okcd' /&gt;" />
             </ns0:CallTransaction.Target>
           </ns0:CallTransaction>
         </ActivityAction>

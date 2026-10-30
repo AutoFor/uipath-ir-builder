@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPLogon_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NSAPLogon CloseMode="Never" ConnectionId="sap-connection-id" ConnectionName="SAP" DisplayName="SAP Logon" HealingAgentBehavior="Disabled" OpenMode="IfNotOpen" ScopeGuid="9e767bc3-d56e-4f0b-bec9-08967dc824a4" Version="V2" sap2010:WorkflowViewState.IdRef="NSAPLogon_1">
+    <uix:NSAPLogon CloseMode="Never" ConnectionId="sap-connection-id" ConnectionName="SAP" DisplayName="SAP Logon" HealingAgentBehavior="Disabled" OpenMode="IfNotOpen" ScopeGuid="fe124dca-d57f-4fce-a750-78823e7bfd2b" Version="V2" sap2010:WorkflowViewState.IdRef="NSAPLogon_1">
       <uix:NSAPLogon.TargetApp>
         <uix:TargetApp Arguments="SAP" FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NSAPLogon.TargetApp>

@@ -63,7 +63,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NSAPLogin_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="a9252bc9-2d2b-4302-9755-6a1aa700452c" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="SAP セッションを使う" HealingAgentBehavior="Job" OpenMode="IfNotOpen" ScopeGuid="656fae65-d6c6-478c-aee2-35a4f668a17e" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp FilePath="C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe" Selector="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
@@ -73,9 +73,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NSAPLogin Client="100" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="SAP にログイン（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" IsSecure="False" Language="JA" Option="Single" Password="&lt;パスワードを入れる&gt;" ScopeIdentifier="a9252bc9-2d2b-4302-9755-6a1aa700452c" Timeout="30" Username="sap-user" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPLogin_1">
+            <uix:NSAPLogin Client="100" ContinueOnError="False" DelayAfter="0.2" DelayBefore="0.2" Description="SAP 画面の操作" DisplayName="SAP にログイン（全部入り）" ForceRefreshView="True" HealingAgentBehavior="SameAsCard" IsSecure="False" Language="JA" Option="Single" Password="&lt;パスワードを入れる&gt;" ScopeIdentifier="656fae65-d6c6-478c-aee2-35a4f668a17e" Timeout="30" Username="sap-user" Version="V5" sap2010:WorkflowViewState.IdRef="NSAPLogin_1">
               <uix:NSAPLogin.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr' /&gt;" Guid="ce2a19bd-98d7-4c17-aa4d-84891aa4fec9" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;sap id='wnd[0]/usr' /&gt;" Guid="cac41fa4-fe9f-4553-9df2-63987104195c" ScopeSelectorArgument="&lt;wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NSAPLogin.Target>
             </uix:NSAPLogin>
             <ui:LogMessage Level="Info" Message="[&quot;NSAPLogin 完了（全部入り）&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
