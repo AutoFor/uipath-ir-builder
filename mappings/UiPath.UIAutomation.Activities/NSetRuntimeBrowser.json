@@ -1,0 +1,25 @@
+{
+  "activity": "NSetRuntimeBrowser",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.SetRuntimeBrowser",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "browserType": "{BrowserType|enum}"
+      }
+    }
+  ],
+  "notes": "SetRuntimeBrowser(NBrowserType) を使う。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Timeout",
+    "DelayBefore",
+    "DelayAfter",
+    "HealingAgentBehavior"
+  ]
+}

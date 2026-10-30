@@ -1,0 +1,36 @@
+{
+  "activity": "NWindowOperation",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.WindowOperation",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "args": {
+        "target": "{Target}",
+        "windowOperationOptions": {
+          "new": "WindowOperationOptions",
+          "always": true,
+          "set": {
+            "Operation": "{Operation|enum}",
+            "X": "{X}",
+            "Y": "{Y}",
+            "Width": "{Width}",
+            "Height": "{Height}"
+          }
+        }
+      }
+    }
+  ],
+  "notes": "WindowOperationOptions に無い Timeout / DelayBefore / DelayAfter / ContinueOnError / HealingAgentBehavior は Coded 未対応（ContinueOnError は生成器の try / catch）。OutUiElement と InUiElement はまだ扱わない",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Timeout",
+    "DelayBefore",
+    "DelayAfter",
+    "HealingAgentBehavior"
+  ]
+}

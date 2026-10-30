@@ -140,7 +140,9 @@ const hint = (t: ObjType) => {
 };
 
 // Modern の Target（TargetAnchorable）を持つアクティビティ。NApplicationCard の中か、InUiElement が要る
-const modernTargetProp = (a: Activity) => a.clrType !== CARD && a.props.find((p) => p.name === "Target" && p.type === TA);
+// UI 要素を対象にしない設定系（Target も NApplicationCard も要らない。ドキュメントの Notes）
+const noTargetClasses = new Set(["NSetRuntimeBrowser", "NSetProjectSetting", "NSetCVServer", "NBlockUserInput", "NUnblockUserInput"]);
+const modernTargetProp = (a: Activity) => a.clrType !== CARD && !noTargetClasses.has(a.className) && a.props.find((p) => p.name === "Target" && p.type === TA);
 
 // validate.ts の最後に呼ぶ。スコープ（NApplicationCard の中か）を見る
 export function validateUiaTree(wf: Workflow, cat: Catalog, add: Add) {

@@ -1,0 +1,6 @@
+{
+  "activity": "NExtractUIData",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（セマンティックな「UI データを抽出」に当たる API が無い）"
+}

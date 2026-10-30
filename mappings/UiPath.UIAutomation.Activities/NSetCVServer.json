@@ -1,0 +1,12 @@
+{
+  "activity": "NSetCVServer",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.SetCVServer",
+      "args": { "server": "{Server}", "apiKey": "{ApiKey:-\"\"}", "useLocalServer": "{UseLocalServer:-false}" }
+    }
+  ],
+  "notes": "SetCVServer(string server, string apiKey, bool useLocalServer)。3つは「まとめて」適用されるので、IR にも3つ書く（ApiKey / UseLocalServer を省くと引数ごと省かれ、build が落ちる）。CV サーバーが無いので run していない",
+  "ignore": ["ScopeIdentifier","Version","Timeout","DelayBefore","DelayAfter","HealingAgentBehavior"]
+}

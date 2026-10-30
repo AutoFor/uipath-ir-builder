@@ -1,0 +1,22 @@
+{
+  "activity": "NSetProjectSetting",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "uiAutomation.SetProjectSetting",
+      "args": {
+        "key": "{Key}",
+        "value": "{Value}"
+      }
+    }
+  ],
+  "notes": "SetProjectSetting(string, object)。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "Timeout",
+    "DelayBefore",
+    "DelayAfter",
+    "HealingAgentBehavior"
+  ]
+}

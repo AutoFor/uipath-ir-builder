@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30d5\u30a9\u30fc\u30e0 \u30c7\u30fc\u30bf\u3092\u62bd\u51fa\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NExtractFormDataGeneric x:TypeArguments=\"x:Object\" FieldMappings=\"{x:Null}\" DisplayName=\"\u30d5\u30a9\u30fc\u30e0 \u30c7\u30fc\u30bf\u3092\u62bd\u51fa\" HealingAgentBehavior=\"SameAsCard\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

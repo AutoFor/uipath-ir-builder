@@ -1,0 +1,19 @@
+{
+  "activity": "NFillForm",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.FillForm",
+      "usings": ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutomationNext.Enums"],
+      "args": {
+        "fillFormOptions": {
+          "new": "FillFormOptions",
+          "always": true,
+          "set": { "DataSource": "{DataSource}", "EnableValidation": "{EnableValidation}" }
+        }
+      }
+    }
+  ],
+  "notes": "uiAutomation.FillForm(FillFormOptions)（Target は取らない。画面全体が対象）。セマンティック（クラウドの AI）が要るので run していない（Coded が動くかは未確認）。AgentType / InteractionMode / Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応",
+  "ignore": ["ScopeIdentifier","Version","Timeout","DelayBefore","DelayAfter","HealingAgentBehavior","AgentType","InteractionMode","Target"]
+}

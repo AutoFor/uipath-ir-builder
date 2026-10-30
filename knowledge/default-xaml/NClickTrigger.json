@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30af\u30ea\u30c3\u30af \u30a4\u30d9\u30f3\u30c8 \u30c8\u30ea\u30ac\u30fc\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NClickTrigger BlockEvent=\"False\" Button=\"Left\" DisplayName=\"\u30af\u30ea\u30c3\u30af \u30a4\u30d9\u30f3\u30c8 \u30c8\u30ea\u30ac\u30fc\" Enabled=\"True\" IncludeChildren=\"True\" KeyModifiers=\"None\" Mode=\"Down\" SchedulingMode=\"Sequential\" TriggerId=\"b2aa2271-95f9-419f-9ccb-bce5f06ed664\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

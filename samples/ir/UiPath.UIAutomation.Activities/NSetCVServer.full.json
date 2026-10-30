@@ -1,0 +1,24 @@
+{
+  "workflow": "NSetCVServer_Full",
+  "variables": [],
+  "body": [
+    {
+      "act": "NSetCVServer",
+      "name": "CV サーバーを設定する（全部入り）",
+      "props": {
+        "Server": {
+          "lit": "https://cv.example.invalid"
+        },
+        "ApiKey": {
+          "lit": "dummy-key"
+        },
+        "UseLocalServer": false,
+        "Timeout": 30,
+        "DelayBefore": 0.1,
+        "DelayAfter": 0.1,
+        "ContinueOnError": false,
+        "HealingAgentBehavior": "Disabled"
+      }
+    }
+  ]
+}

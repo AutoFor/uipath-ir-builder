@@ -1,0 +1,6 @@
+{
+  "activity": "NExtractFormDataGeneric",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": null,
+  "reason": "Coded API なし（セマンティックな「フォームデータを抽出」に当たる API が IUiAutomationAppService / UiTargetApp に無い。UiTargetApp.ExtractData は「データの抽出」（NExtractData）の方）"
+}

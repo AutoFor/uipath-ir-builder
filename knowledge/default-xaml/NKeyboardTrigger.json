@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30ad\u30fc\u62bc\u4e0b\u30a4\u30d9\u30f3\u30c8 \u30c8\u30ea\u30ac\u30fc\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NKeyboardTrigger BlockEvent=\"False\" DisplayName=\"\u30ad\u30fc\u62bc\u4e0b\u30a4\u30d9\u30f3\u30c8 \u30c8\u30ea\u30ac\u30fc\" Enabled=\"True\" IncludeChildren=\"True\" KeyModifiers=\"None\" Mode=\"Down\" SchedulingMode=\"Sequential\" TriggerId=\"0f42981f-dec4-49e1-9675-628f54d3fe06\" Version=\"V5\" />\r\n</Activity>"
+  }
+}
