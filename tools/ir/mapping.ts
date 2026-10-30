@@ -26,7 +26,18 @@
 //   "special": "scope" は UI の NApplicationCard 用の短い書き方で、次と同じ（usingScope を見る）:
 //     "scope": "using", "scopeType": "UiPath.UIAutomationNext.API.Models.UiTargetApp", "scopeVar": "app"
 //     子からは {app}（= {@UiTargetApp}）で参照する
+// ラムダを取る繰り返し（Excel の ForEachRow / ForEachSheet）:
+//   { "call": "{Range}.ForEachRow", "scope": "lambda", "scopeType": "UiPath.Excel.ICurrentRowQuickHandle", "lambdaArg": "act", "lambdaFuncArg": "func", ... }
+//   → {Range}.ForEachRow(..., act: CurrentRow => { <body> });  変数名は IR の item（2つ目があれば 1 始まりの番号の変数）
+//     body に Break / Continue が直接あれば Func の方（lambdaFuncArg）にして、Continue は return true、Break は return false にする
+//     body の Return はラムダの中では書けないのでエラー（CODED_UNSUPPORTED）
+// 子の設定から記述子を作るもの（SortX の SortColumnX など）:
+//   { "call": "{Range}.Sort", "scope": "collect", "scopeType": "UiPath.Excel.SortXDescriptor", "collectInit": "new SortXDescriptor()",
+//     "args": { "descriptor": "{@SortXDescriptor}" } }
+//   → var __collect1 = new SortXDescriptor(); <body>; {Range}.Sort(descriptor: __collect1);
+//     body の子は自分の対応表で {@SortXDescriptor} に足す（"code": "{@SortXDescriptor}.SortColumns.Add(...);"）。scopeType は {@...} で引く名前
 // そのほかの書き方:
+//   "when": ["Type=Value"]                 … props の値が等しいときだけ（"Prop=値"。真偽値は true / false）。ただの "Prop" は「IR にある」
 //   "defaults": { "HasHeaders": true }     … IR に無いときに使う値（IR の値の形）。API の引数に既定値が無く、アクティビティにはあるとき
 //   "init": { "param": "options", "type": "UseOptions", "props": { "Path": "{WorkbookPath}", ... } }
 //                                          … 引数 options に new UseOptions { Path = ..., ... } を渡す。IR に無いプロパティの行は省く。
@@ -45,6 +56,7 @@
 //   {Prop|is_Member} → enum の値が Member なら true、でなければ false（ExecutionMode が None か、など）
 //   {Prop|type} → out のプロパティの代入先の変数の型（C# の型名）。object を返す API の結果を変換するとき
 //   {@型名} → 外側のスコープ（"scope": "using"）の変数名。型名は scopeType の末尾（{@IWorkHandle} など）。無いときはその引数・行ごと省く
+//   {FilterArgument|excelFilter} / {FilterArgument|excelFilterValues} → Excel のフィルター（tools/ir/excel.ts）
 // args の値が、IR に無いプロパティを参照していたら、その引数ごと省く（省略可能な引数かどうかはチェッカーが確かめる）。
 //
 // UI 操作（tools/ir/uia.ts）のための書き方:
@@ -71,8 +83,11 @@ export type Variant = {
   branches?: { true?: string; false?: string };
   usings?: string[];
   ignore?: string[]; // この形のときだけ捨てる props（mapping の ignore はどの形でも捨てる）
-  scope?: "using"; // using (var <変数> = call) { body }。下の usingScope
+  scope?: "using" | "lambda" | "collect"; // using は using (var <変数> = call) { body }（下の usingScope）。lambda / collect は先頭のコメント
   scopeType?: string; // スコープの変数の C# の型（子は {@型名の末尾} で参照する）
+  lambdaArg?: string; // scope: lambda の Action の引数名
+  lambdaFuncArg?: string; // scope: lambda の Func<T, bool> の引数名（true で続行、false で打ち切り）
+  collectInit?: string; // scope: collect の変数の初期値（テンプレート）
   scopeVar?: string; // スコープの変数名の頭。あれば <scopeVar><連番>（app1）、無ければ IR の item
   defaults?: Record<string, string | number | boolean | { lit: string }>;
   init?: { param: string; type: string; props: Record<string, string | string[]> };

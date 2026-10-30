@@ -1,0 +1,72 @@
+{
+  "workflow": "ExecuteMacroX_Full",
+  "variables": [
+    {
+      "name": "r",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Macro.xlsm"
+        },
+        "Destination": {
+          "lit": "output\\ExecuteMacroX_Full.xlsm"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\ExecuteMacroX_Full.xlsm"
+        }
+      },
+      "body": [
+        {
+          "act": "ExecuteMacroX",
+          "name": "足し算",
+          "props": {
+            "Workbook": "Excel",
+            "MacroName": {
+              "lit": "AddNumbers"
+            },
+            "Result": "r"
+          },
+          "body": [
+            {
+              "act": "Sequence",
+              "body": [
+                {
+                  "act": "ExecuteMacroArgumentX",
+                  "props": {
+                    "ArgumentValue": "2"
+                  }
+                },
+                {
+                  "act": "ExecuteMacroArgumentX",
+                  "props": {
+                    "ArgumentValue": "3"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"結果: [\" & Convert.ToString(r) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

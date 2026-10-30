@@ -1,0 +1,6 @@
+{
+  "activity": "UpdateChartX",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（UpdateChart はクラシックの IWorkHandle にしか無く、モダンの IChartRef を渡す形が無い。1回に1種類の変更しか渡せず、複数の子も表せない）"
+}

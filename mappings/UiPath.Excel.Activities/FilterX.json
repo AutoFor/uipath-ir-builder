@@ -1,0 +1,33 @@
+{
+  "activity": "FilterX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "HasHeaders=false"
+      ],
+      "reason": "FilterOptions に見出しの有無が無い（HasHeaders: false は API で書けない）"
+    },
+    {
+      "call": "{Range}.Filter",
+      "init": {
+        "param": "options",
+        "type": "FilterOptions",
+        "props": {
+          "ColumnName": "{ColumnName}",
+          "ClearFilter": "{ClearFilter}",
+          "Filter": "{FilterArgument|excelFilter}"
+        }
+      },
+      "ignore": [
+        "HasHeaders"
+      ],
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "FilterArgument は BasicFilter / AdvancedFilter に直す（tools/ir/excel.ts）"
+}

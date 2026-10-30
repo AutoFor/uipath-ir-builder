@@ -1,0 +1,149 @@
+{
+  "workflow": "FilterPivotTableX_Full",
+  "variables": [
+    {
+      "name": "t",
+      "type": "Object"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\FilterPivotTableX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\FilterPivotTableX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "CreatePivotTableXv2",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "DestinationRange": "Excel.Sheet(\"Sheet2\").Range(\"C3\")",
+            "TableName": {
+              "lit": "Pivot1"
+            },
+            "LayoutRowType": "Compact"
+          },
+          "body": [
+            {
+              "act": "Sequence",
+              "body": [
+                {
+                  "act": "PivotTableFieldX",
+                  "props": {
+                    "FieldName": {
+                      "lit": "Name"
+                    },
+                    "Type": "Row"
+                  }
+                },
+                {
+                  "act": "PivotTableFieldX",
+                  "props": {
+                    "FieldName": {
+                      "lit": "Age"
+                    },
+                    "Type": "Value",
+                    "Function": "Sum"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "act": "FilterPivotTableX",
+          "name": "絞り込む",
+          "props": {
+            "Table": "Excel.Sheet(\"Sheet2\").PivotTable(\"Pivot1\")",
+            "ColumnName": {
+              "lit": "Name"
+            },
+            "ClearFilter": false
+          },
+          "objs": {
+            "FilterArgument": {
+              "Mode": "Basic",
+              "BasicFiltersArgument": {
+                "BasicFilters": [
+                  {
+                    "lit": "花子"
+                  },
+                  {
+                    "lit": "太郎"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"D6\")",
+            "SaveTo": "t"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"2人の総計: [\" & Convert.ToString(t) & \"]\""
+          }
+        },
+        {
+          "act": "FilterPivotTableX",
+          "name": "解除する",
+          "props": {
+            "Table": "Excel.Sheet(\"Sheet2\").PivotTable(\"Pivot1\")",
+            "ColumnName": {
+              "lit": "Name"
+            },
+            "ClearFilter": true
+          },
+          "objs": {
+            "FilterArgument": {
+              "Mode": "Basic",
+              "BasicFiltersArgument": {
+                "BasicFilters": [
+                  {
+                    "lit": "花子"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "act": "ReadCellValueX",
+          "props": {
+            "Cell": "Excel.Sheet(\"Sheet2\").Cell(\"D7\")",
+            "SaveTo": "t"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"解除後の総計: [\" & Convert.ToString(t) & \"]\""
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "activity": "InvokeVBAX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.InvokeVBA",
+      "returns": "Result",
+      "scope": "collect",
+      "scopeType": "ExcelMacroArguments",
+      "collectInit": "new List<object>()",
+      "args": {
+        "codeFilePath": "{CodeFilePath}",
+        "entryMethodname": "{EntryMethodName}",
+        "arguments": "{@ExcelMacroArguments}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

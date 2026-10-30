@@ -1,0 +1,43 @@
+{
+  "activity": "PivotTableFieldX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "Type=Column"
+      ],
+      "code": "{@PivotTableDescriptor}.Columns.Add(new ColumnPivotTableFieldDescription { Name = {FieldName} });",
+      "ignore": [
+        "Type",
+        "Function"
+      ]
+    },
+    {
+      "when": [
+        "Type=Filter"
+      ],
+      "code": "{@PivotTableDescriptor}.Filters.Add(new FilterPivotTableFieldDescription { Name = {FieldName} });",
+      "ignore": [
+        "Type",
+        "Function"
+      ]
+    },
+    {
+      "when": [
+        "Type=Value"
+      ],
+      "code": "{@PivotTableDescriptor}.Values.Add(new ValuePivotTableFieldDescription { Name = {FieldName}, Function = UiPath.Excel.PivotTableFunction.{Function:-Sum} });",
+      "ignore": [
+        "Type"
+      ]
+    },
+    {
+      "code": "{@PivotTableDescriptor}.Rows.Add(new RowPivotTableFieldDescription { Name = {FieldName} });",
+      "ignore": [
+        "Type",
+        "Function"
+      ]
+    }
+  ],
+  "notes": "CreatePivotTableXv2 の子。Type の既定は Row"
+}

@@ -1,0 +1,56 @@
+{
+  "workflow": "InsertExcelChartX_Line",
+  "variables": [
+    {
+      "name": "ch",
+      "type": "IChartRef"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\InsertExcelChartX_Line.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\InsertExcelChartX_Line.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "InsertExcelChartX",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:B4\")",
+            "InsertIntoSheet": "Excel.Sheet(\"Sheet1\")",
+            "ChartCategory": "Line",
+            "ChartType": "xlLineMarkers",
+            "Left": 300,
+            "Top": 10,
+            "ChartWidth": 400,
+            "ChartHeight": 300,
+            "InsertedChart": "ch"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"種類: \" & ch.ChartInfo.ChartType.ToString"
+          }
+        }
+      ]
+    }
+  ]
+}

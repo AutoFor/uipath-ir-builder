@@ -1,0 +1,114 @@
+{
+  "workflow": "FilterX_Full",
+  "variables": [
+    {
+      "name": "dt",
+      "type": "DataTable"
+    }
+  ],
+  "body": [
+    {
+      "act": "CopyFile",
+      "name": "元のブックを output に写す",
+      "props": {
+        "Path": {
+          "lit": "data\\excel\\Sample.xlsx"
+        },
+        "Destination": {
+          "lit": "output\\FilterX_Full.xlsx"
+        },
+        "Overwrite": true
+      }
+    },
+    {
+      "act": "ExcelApplicationCard",
+      "item": "Excel",
+      "props": {
+        "WorkbookPath": {
+          "lit": "output\\FilterX_Full.xlsx"
+        }
+      },
+      "body": [
+        {
+          "act": "FilterX",
+          "name": "30 より大きい",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "ColumnName": {
+              "lit": "Age"
+            },
+            "HasHeaders": true
+          },
+          "objs": {
+            "FilterArgument": {
+              "Mode": "Advanced",
+              "AdvancedFiltersArgument": {
+                "LogicalOperator": "And",
+                "Condition1": {
+                  "Operator": "GT",
+                  "Value": {
+                    "lit": "26"
+                  }
+                },
+                "Condition2": {
+                  "Operator": "LT",
+                  "Value": {
+                    "lit": "40"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "act": "ReadRangeX",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "SaveTo": "dt",
+            "VisibleOnly": true
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"行数: \" & dt.Rows.Count.ToString"
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"先頭: \" & dt.Rows(0).Item(0).ToString"
+          }
+        },
+        {
+          "act": "FilterX",
+          "name": "解除",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "ColumnName": {
+              "lit": "Age"
+            },
+            "ClearFilter": true
+          }
+        },
+        {
+          "act": "ReadRangeX",
+          "props": {
+            "Range": "Excel.Sheet(\"Sheet1\").Range(\"A1:C4\")",
+            "SaveTo": "dt",
+            "VisibleOnly": true
+          }
+        },
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"解除後: \" & dt.Rows.Count.ToString"
+          }
+        }
+      ]
+    }
+  ]
+}

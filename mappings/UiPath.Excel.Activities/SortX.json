@@ -1,0 +1,25 @@
+{
+  "activity": "SortX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.Sort",
+      "scope": "collect",
+      "scopeType": "UiPath.Excel.SortXDescriptor",
+      "collectInit": "new SortXDescriptor()",
+      "args": {
+        "descriptor": "{@SortXDescriptor}",
+        "hasHeaders": "{HasHeaders}"
+      },
+      "defaults": {
+        "HasHeaders": true
+      },
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "body の SortColumnX が記述子に列を足す"
+}

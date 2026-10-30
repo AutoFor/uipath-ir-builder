@@ -1,0 +1,32 @@
+{
+  "activity": "CopyChartToClipboardX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "when": [
+        "FilePath"
+      ],
+      "call": "{Chart}.GetChart",
+      "args": {
+        "action": "UiPath.Excel.ExcelChartAction.{Action:-CopyToClipboard}",
+        "fileName": "{FilePath}",
+        "replaceFile": "{ReplaceFile:-false}"
+      },
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    },
+    {
+      "call": "{Chart}.GetChart",
+      "ignore": [
+        "Action",
+        "ReplaceFile"
+      ],
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

@@ -17,7 +17,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Activity, Prop } from "./catalog.ts";
-import type { Node } from "./types.ts";
+import type { Node, ObjValue, Value } from "./types.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const EXCEL_CATALOG = "catalog/UiPath.Excel.Activities/3.6.1.json";
@@ -148,6 +148,14 @@ export function excelVbForCs(vb: string, scope: Map<string, string>): string {
     if (!declared || !handles().has(full(declared))) continue;
     // メンバーの連なりをたどる
     let t: string | undefined = full(declared);
+    // 変数そのものがインデクサーを持つ（CurrentRow("Name") → CurrentRow.Item("Name")）
+    const headIx = indexerResult(t);
+    if (headIx && vb[i] === "(") {
+      const j = skipParens(vb, i);
+      out += ".Item" + vb.slice(i, j);
+      i = j;
+      t = headIx;
+    }
     for (;;) {
       const mm = /^\.([A-Za-z_]\w*)/.exec(vb.slice(i));
       if (!mm || !t) break;
@@ -180,6 +188,40 @@ function skipParens(s: string, i: number): number {
     if (s[j] === ")" && --depth === 0) return j + 1;
   }
   return s.length;
+}
+
+// ---- FilterX / FilterPivotTableX の FilterArgument → Coded の API ----
+// objToCs の表（プロパティ名の読み替え）では直せない形（Condition1.Operator → Condition1 など）なので、ここで作る
+
+type FilterCtx = { expr: (v: Value, at: string) => string; add: (p: string, c: string, m: string) => void };
+
+function filterValues(fa: ObjValue): Value[] {
+  return ((fa.BasicFiltersArgument as ObjValue | undefined)?.BasicFilters ?? []) as unknown as Value[];
+}
+
+// {FilterArgument|excelFilter} → new BasicFilter { ... } か new AdvancedFilter { ... }（FilterOptions.Filter）
+export function excelFilterToCs(fa: ObjValue, at: string, ctx: FilterCtx): string {
+  if (fa.Mode !== "Advanced") {
+    const vals = filterValues(fa).map((x, i) => ctx.expr(x, `${at}.BasicFiltersArgument.BasicFilters[${i}]`));
+    return `new BasicFilter { Values = new List<string> { ${vals.join(", ")} } }`;
+  }
+  const adv = (fa.AdvancedFiltersArgument ?? {}) as ObjValue;
+  const sets: string[] = [];
+  if (adv.LogicalOperator !== undefined) sets.push(`Operator = UiPath.Excel.LogicalOperator.${adv.LogicalOperator}`);
+  for (const k of ["1", "2"]) {
+    const c = adv[`Condition${k}`] as ObjValue | undefined;
+    if (!c) continue;
+    if (c.Operator !== undefined) sets.push(`Condition${k} = UiPath.Excel.ExcelFilterOperator.${c.Operator}`);
+    if (c.Value !== undefined) sets.push(`Value${k} = ${ctx.expr(c.Value as Value, `${at}.AdvancedFiltersArgument.Condition${k}.Value`)}`);
+  }
+  return `new AdvancedFilter { ${sets.join(", ")} }`;
+}
+
+// {FilterArgument|excelFilterValues} → new List<string> { ... }（FilterPivotTable の values。値の一覧しか渡せない）
+export function excelFilterValuesToCs(fa: ObjValue, at: string, ctx: FilterCtx): string {
+  if (fa.Mode === "Advanced") ctx.add(at, "NO_CODED_API", "FilterPivotTable の API は値の一覧だけを取るので、Advanced のフィルターは Coded で書けない");
+  const vals = filterValues(fa).map((x, i) => ctx.expr(x, `${at}.BasicFiltersArgument.BasicFilters[${i}]`));
+  return `new List<string> { ${vals.join(", ")} }`;
 }
 
 // ---- 検証（validate.ts から呼ぶ）----

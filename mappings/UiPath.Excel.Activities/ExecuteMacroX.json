@@ -1,0 +1,20 @@
+{
+  "activity": "ExecuteMacroX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Workbook}.ExecuteMacro",
+      "returns": "Result",
+      "scope": "collect",
+      "scopeType": "ExcelMacroArguments",
+      "collectInit": "new List<object>()",
+      "args": {
+        "macroName": "{MacroName}",
+        "macroArguments": "{@ExcelMacroArguments}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

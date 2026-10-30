@@ -410,7 +410,7 @@ Use Excel File（`ExcelApplicationCard`）は、ブックの参照（`IWorkbookQ
 | `ExcelForEachRowX` | `["CurrentRow", "CurrentIndex"]` |
 | `ForEachSheetX` | `["CurrentSheet", "CurrentIndex"]` |
 
-`FilterX` / `FilterPivotTableX` の `FilterArgument` は `objs` に書く（XAML の build を確かめた。対応表はまだ）：
+`FilterX` / `FilterPivotTableX` の `FilterArgument` は `objs` に書く（XAML と C# の run を確かめた。`FilterPivotTableX` の Advanced は Coded API が無い）：
 
 ```json
 "objs": { "FilterArgument": { "Mode": "Basic", "BasicFiltersArgument": { "BasicFilters": [ { "lit": "a" } ] } } }
@@ -470,8 +470,15 @@ node -e "const c=require('./catalog/UiPath.Excel.Activities/3.6.1.json');for(con
 - `usings` に、拡張メソッドを使うなら `UiPath.Excel.Activities.API`、オプションのクラスなら `UiPath.Excel.Activities.API.Models`、`UiPath.Excel` の型を使うなら `UiPath.Excel` を書く（スコープの対応表には全部入れてある）
 - モダンのスコープ（`UseExcelFile`）は Excel を起動する。クラシックの `UseWorkBook` は Excel を起動せずにブックを読み書きする（Visible / MacroSetting など Excel の起動に関するプロパティは Coded では捨てている）
 - IR の変数の型で、C# の既定の using に無いもの（`SecureString` など）は完全名で書く（`"type": "System.Security.SecureString"`）。`types-xaml.ts` に無い Excel の型は `tools/ir/excel.ts` の `excelXamlTypes` に足す
-- 繰り返し（`ExcelForEachRowX` / `ForEachSheetX`）は、API が `ForEachRow(range, Action<CurrentRowQuickHandle>)` のようにラムダを取る。生成器はまだラムダのスコープ（`"scope": "lambda"` のような形）を持たない。そのバッチで生成器を足すか、足すまでは対応表を `"coded": null` と理由にする
-- 子の設定用アクティビティを持つもの（`SortX` など）は、API が記述子（`SortXDescriptor`、`PivotTableDescriptor` など）を取る。body の子から記述子を作る仕組みは生成器にまだ無い。同じく、そのバッチで生成器を足すか、`"coded": null` と理由にする
+- 繰り返し（`ExcelForEachRowX` / `ForEachSheetX`）は `"scope": "lambda"`（`tools/ir/mapping.ts` の先頭）。body に Break / Continue が直接あれば `Func` の方にして `return false` / `return true` にする。`CurrentIndex` は XAML も C# も **1 始まり**（run で確かめた）。ForEachSheet のラムダの引数は `ISheetRef` なので、`CurrentSheet.Range(...)` は C# で build が落ちる
+- 子の設定用アクティビティを持つもの（`SortX` など）は `"scope": "collect"`。親は変数（記述子）を作って body を実行し、それを引数に渡す。子の対応表は `{@型名}` に足す。`UpdateChartX` は API がクラシックの `IWorkHandle` にしか無いので `"coded": null`
+- 親（`SortX` / `CreatePivotTableXv2` / `UpdateChartX` / `InvokeVBAX` / `ExecuteMacroX`）の body は、子が1つでも、引数が無くても **`Sequence` で包む**（包まないと検証で `Constraint<BaseParentActivityWithDescriptor...>` のエラー）
+- `"when"` に `"Prop=値"` と書くと props の値で形を選べる（`PivotTableFieldX` の `Type`）
+- `FilterX` の `ClearFilter: true` は、一緒に書いたフィルターを適用しない。`FilterPivotTableX` は `ClearFilter: true` でも `FilterArgument` が要る（検証で落ちる）
+- `CreatePivotTableXv2.DestinationRange` は `Range("C3")` で書く（`Cell` は `ExcelValue` になり型が合わない）
+- `ExcelProcessScopeX` の `ExistingProcessAction: ForceKill` は開いている Excel を落とすので、サンプルでは使わない
+- 1つの C# / XAML のエラーでプロジェクト全体が落ちるので、まとめて流して全部 NG のときは、原因の1件を先に探す
+- マクロ：`samples/data/excel/Macro.xlsm`（`make-macro.mjs` が作る。Excel 4.0 のマクロシートなので VBA のバイナリが要らない）を `ExecuteMacroX` が run で動かせる。`InvokeVBAX` は Excel の「VBA プロジェクト オブジェクト モデルへのアクセスを信頼する」が要るので、この PC では noRun
 
 #### 8-E-6. build / run と Linear
 

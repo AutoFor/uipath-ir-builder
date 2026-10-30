@@ -1,0 +1,15 @@
+{
+  "activity": "ChangePivotTableDataSourceX",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{NewSourceRange}.ChangePivotTableDataSource",
+      "args": {
+        "pivotTable": "{PivotTable}"
+      },
+      "usings": [
+        "UiPath.Excel.Activities.API"
+      ]
+    }
+  ]
+}

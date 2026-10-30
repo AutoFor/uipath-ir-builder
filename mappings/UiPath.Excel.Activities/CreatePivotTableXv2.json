@@ -1,0 +1,23 @@
+{
+  "activity": "CreatePivotTableXv2",
+  "package": "UiPath.Excel.Activities",
+  "coded": [
+    {
+      "call": "{Range}.CreatePivotTable",
+      "scope": "collect",
+      "scopeType": "UiPath.Excel.PivotTableDescriptor",
+      "collectInit": "new PivotTableDescriptor { LayoutRowType = UiPath.Excel.PivotTableLayoutRowType.{LayoutRowType}, ValuesMode = UiPath.Excel.PivotTableValuesMode.{ValuesMode:-Columns} }",
+      "args": {
+        "destinationTableName": "{TableName}",
+        "destination": "{DestinationRange}",
+        "descriptor": "{@PivotTableDescriptor}"
+      },
+      "usings": [
+        "UiPath.Excel",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ],
+  "notes": "body の PivotTableFieldX が記述子に項目を足す"
+}

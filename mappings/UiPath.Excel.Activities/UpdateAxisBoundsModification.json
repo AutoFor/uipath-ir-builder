@@ -1,0 +1,6 @@
+{
+  "activity": "UpdateAxisBoundsModification",
+  "package": "UiPath.Excel.Activities",
+  "coded": null,
+  "reason": "Coded API なし（親の UpdateChartX に同じ。UpdateChartX.json）"
+}
