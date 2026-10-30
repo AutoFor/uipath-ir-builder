@@ -1,0 +1,16 @@
+{
+  "activity": "AppendItemToCollection",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Result"
+      ],
+      "code": "{Result} = new List<{typeArg}>({Collection}); {Result}.AddRange(new {typeArg}[] { {Items|list} });"
+    },
+    {
+      "code": "foreach (var __append in new {typeArg}[] { {Items|list} }) {Collection}.Add(__append);"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（Result が無いときは Collection に足す。あるときは Collection を変えず、新しい List を Result に入れる）"
+}

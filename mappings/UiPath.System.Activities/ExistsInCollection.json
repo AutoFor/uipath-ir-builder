@@ -1,0 +1,29 @@
+{
+  "activity": "ExistsInCollection",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Exists",
+        "Index"
+      ],
+      "code": "{Index} = {Collection}.ToList().IndexOf({Item}); {Exists} = {Index} >= 0;"
+    },
+    {
+      "when": [
+        "Index"
+      ],
+      "code": "{Index} = {Collection}.ToList().IndexOf({Item});"
+    },
+    {
+      "when": [
+        "Exists"
+      ],
+      "code": "{Exists} = {Collection}.Contains({Item});"
+    },
+    {
+      "code": "_ = {Collection}.Contains({Item});"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（Index は見つからないと -1）"
+}

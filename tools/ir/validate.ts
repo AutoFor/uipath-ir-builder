@@ -1,7 +1,7 @@
 // IR をカタログで検証する。Studio は使わない。ここで弾けるものは build まで持ち込まない。
 
 import type { Catalog, Activity } from "./catalog.ts";
-import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable } from "./catalog.ts";
+import { resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement } from "./catalog.ts";
 import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -49,6 +49,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
         add(at, "SLOT_AS_PROP", `"${k}" は子アクティビティの置き場所。slots に書く`);
         continue;
       }
+      if (isArgumentList(p.type)) { add(at, "LIST_AS_PROP", `"${k}" は式の一覧。lists に書く`); continue; }
       given.add(k);
       const w = writable(a, p);
       if (!w.ok) { add(at, "UNSUPPORTED_PROP", `"${k}": ${w.reason}`); continue; }
@@ -117,6 +118,15 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
         if (inOnly && x.dir !== "In") add(`${at}[${i}]`, "BAD_DICT", `"${k}" には In の引数しか入らない`);
         if (x.dir !== "In") checkLValue(x.value, `${at}[${i}]`, scope);
       });
+    }
+
+    for (const [k, list] of Object.entries(n.lists ?? {})) {
+      const p = a.props.find((p) => p.name === k);
+      const at = `${path}.lists.${k}`;
+      if (!p || !isArgumentList(p.type)) { add(at, "BAD_LIST", `${a.className} に InArgument の一覧のプロパティ "${k}" は無い`); continue; }
+      given.add(k);
+      if (!argumentListElement(p.type, n.typeArg)) add(at, "TYPE_UNKNOWN", `"${k}" の要素の型が決まらない。typeArg を書く`);
+      if (!Array.isArray(list)) add(at, "BAD_LIST", `"${k}" は式の配列で書く`);
     }
 
     if (n.cases) {

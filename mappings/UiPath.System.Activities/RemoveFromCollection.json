@@ -1,0 +1,41 @@
+{
+  "activity": "RemoveFromCollection",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "RemoveAllElements",
+        "Result"
+      ],
+      "ignore": [
+        "Collection"
+      ],
+      "code": "if ({RemoveAllElements|is_True}) {Result} = new List<{typeArg}>();"
+    },
+    {
+      "when": [
+        "Item"
+      ],
+      "ignore": [
+        "RemoveAllElements"
+      ],
+      "code": "{Collection}.Remove({Item});"
+    },
+    {
+      "when": [
+        "Index"
+      ],
+      "ignore": [
+        "RemoveAllElements"
+      ],
+      "code": "((IList<{typeArg}>){Collection}).RemoveAt({Index});"
+    },
+    {
+      "when": [
+        "RemoveAllElements"
+      ],
+      "code": "_ = {Collection}; // RemoveAllElements は Result が無いと何も消えない"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（Item は最初の一致だけ消す。全部消すのは Result に新しい空の List を入れる。Result が Collection と同じ変数なら空になる）"
+}

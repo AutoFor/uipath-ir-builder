@@ -1,0 +1,42 @@
+{
+  "workflow": "BuildCollection_Items",
+  "variables": [
+    {
+      "name": "rest",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"b\", \"c\"}"
+    },
+    {
+      "name": "built",
+      "type": "List<String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "BuildCollection",
+      "name": "既存のコレクションをつなぐ",
+      "typeArg": "String",
+      "props": {
+        "FirstItem": {
+          "lit": "a"
+        },
+        "Items": "rest",
+        "Result": "built"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", built)"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", rest)"
+      }
+    }
+  ]
+}

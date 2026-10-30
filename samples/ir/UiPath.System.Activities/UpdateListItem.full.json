@@ -1,0 +1,39 @@
+{
+  "workflow": "UpdateListItem_Full",
+  "variables": [
+    {
+      "name": "names",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\", \"b\", \"c\"}"
+    },
+    {
+      "name": "at",
+      "type": "Int32",
+      "default": "0"
+    },
+    {
+      "name": "newValue",
+      "type": "String",
+      "default": "\"A\" & \"!\""
+    }
+  ],
+  "body": [
+    {
+      "act": "UpdateListItem",
+      "name": "位置で更新",
+      "typeArg": "String",
+      "props": {
+        "List": "names",
+        "ItemIndex": "at",
+        "Value": "newValue"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", names)"
+      }
+    }
+  ]
+}

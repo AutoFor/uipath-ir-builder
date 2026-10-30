@@ -1,0 +1,42 @@
+{
+  "workflow": "BuildCollection_Full",
+  "variables": [
+    {
+      "name": "built",
+      "type": "List<String>"
+    },
+    {
+      "name": "two",
+      "type": "String",
+      "default": "\"two\""
+    }
+  ],
+  "body": [
+    {
+      "act": "BuildCollection",
+      "name": "3つで作る",
+      "typeArg": "String",
+      "props": {
+        "FirstItem": {
+          "lit": "one"
+        },
+        "Result": "built"
+      },
+      "lists": {
+        "NextItems": [
+          "two",
+          {
+            "lit": "three"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", built)"
+      }
+    }
+  ]
+}

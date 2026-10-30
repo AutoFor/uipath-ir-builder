@@ -1,0 +1,74 @@
+{
+  "workflow": "RemoveFromCollection_Full",
+  "variables": [
+    {
+      "name": "items",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\", \"b\", \"c\"}"
+    },
+    {
+      "name": "dups",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"x\", \"y\", \"x\"}"
+    },
+    {
+      "name": "all",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"p\", \"q\"}"
+    }
+  ],
+  "body": [
+    {
+      "act": "RemoveFromCollection",
+      "name": "位置で消す",
+      "typeArg": "String",
+      "props": {
+        "Collection": "items",
+        "Index": "0"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", items)"
+      }
+    },
+    {
+      "act": "RemoveFromCollection",
+      "name": "最初の一致を消す",
+      "typeArg": "String",
+      "props": {
+        "Collection": "dups",
+        "Item": {
+          "lit": "x"
+        },
+        "RemoveAllElements": false
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "String.Join(\",\", dups)"
+      }
+    },
+    {
+      "act": "RemoveFromCollection",
+      "name": "全部消す",
+      "typeArg": "String",
+      "props": {
+        "Collection": "all",
+        "RemoveAllElements": true,
+        "Result": "all"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"count=\" & all.Count.ToString"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "workflow": "RepeatNumberOfTimesX_Full",
+  "variables": [
+    {
+      "name": "times",
+      "type": "Int32",
+      "default": "2"
+    }
+  ],
+  "body": [
+    {
+      "act": "RepeatNumberOfTimesX",
+      "item": "n",
+      "name": "5から2回",
+      "props": {
+        "NumberOfTimes": "times",
+        "StartAt": "5"
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"n=\" & n.ToString"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "workflow": "CreateList_Full",
+  "variables": [
+    {
+      "name": "nums",
+      "type": "IList<Int32>"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateList",
+      "name": "数のリストを作る",
+      "typeArg": "Int32",
+      "props": {
+        "NewList": "nums"
+      }
+    },
+    {
+      "act": "AddToCollection",
+      "typeArg": "Int32",
+      "props": {
+        "Collection": "nums",
+        "Item": "5"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"count=\" & nums.Count.ToString & \", first=\" & nums(0).ToString"
+      }
+    }
+  ]
+}

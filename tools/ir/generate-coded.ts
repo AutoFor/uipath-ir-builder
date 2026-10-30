@@ -32,6 +32,7 @@ const builtin = new Set([
   "System.Activities.Statements.Sequence", "System.Activities.Statements.If", "System.Activities.Statements.ForEach",
   "UiPath.Core.Activities.ForEach", "System.Activities.Statements.While", "System.Activities.Statements.DoWhile",
   "System.Activities.Statements.Switch", "System.Activities.Statements.TryCatch", "System.Activities.Statements.Assign",
+  "System.Activities.Statements.Parallel", "System.Activities.Statements.ParallelForEach", "UiPath.Core.Activities.RepeatNumberOfTimesX",
   "UiPath.Core.Activities.MultipleAssign", "UiPath.Core.Activities.Break", "UiPath.Core.Activities.Continue",
   "System.Activities.Statements.Throw", "System.Activities.Statements.Rethrow", "UiPath.Core.Activities.RetryScope",
   "UiPath.Core.Activities.Return", "UiPath.Core.Activities.Comment", "UiPath.Core.Activities.CommentOut", "UiPath.Core.Activities.Placeholder",
@@ -155,10 +156,55 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         const t = n.typeArg ? csType(n.typeArg) : "var";
         const inner = new Map(sc).set(item, n.typeArg ?? "Object");
         const idx = p.CurrentIndex !== undefined ? lvalue(p.CurrentIndex, `${at}.props.CurrentIndex`, sc) : undefined;
-        if (p.MaxIterations !== undefined) add(`${at}.props.MaxIterations`, "CODED_UNSUPPORTED", "ForEach.MaxIterations はまだ Coded に直せない");
+        if (p.Condition !== undefined) add(`${at}.props.Condition`, "CODED_UNSUPPORTED", "ForEach.Condition はまだ Coded に直せない（XAML の意味が未確認）");
+        // MaxIterations: 本体を実行する回数の上限
+        const cnt = p.MaxIterations !== undefined ? `__foreach${++tmp}` : undefined;
+        if (cnt) emit(depth, `var ${cnt} = 0;`);
         if (idx) emit(depth, `${idx} = -1;`);
         emit(depth, `foreach (${t} ${item} in ${expr(p.Values, `${at}.props.Values`, sc)})`);
-        braces(depth, () => { if (idx) emit(depth + 1, `${idx}++;`); block(n.body, depth + 1, `${at}.body`, inner); });
+        braces(depth, () => {
+          if (cnt) { emit(depth + 1, `if (${cnt} >= ${expr(p.MaxIterations, `${at}.props.MaxIterations`, sc)}) break;`); emit(depth + 1, `${cnt}++;`); }
+          if (idx) emit(depth + 1, `${idx}++;`);
+          block(n.body, depth + 1, `${at}.body`, inner);
+        });
+        return;
+      }
+      case "Parallel": {
+        // 枝は宣言順に1つずつ実行する（XAML の Parallel も、待ちのない枝は宣言順に1つずつ動く）。
+        // CompletionCondition は、枝が終わるたびに評価し、真なら残りの枝を実行しない
+        const own = n.variables?.length;
+        const d0 = depth + (own ? 1 : 0);
+        if (own) emit(depth, "{");
+        const inner = new Map(sc);
+        (n.variables ?? []).forEach((v, i) => declare(v.name, v.type, v.default, d0, `${at}.variables[${i}]`, inner));
+        const cond = p.CompletionCondition !== undefined ? expr(p.CompletionCondition, `${at}.props.CompletionCondition`, inner) : undefined;
+        const branches = n.body ?? [];
+        let dd = d0;
+        branches.forEach((c, i) => {
+          emit(dd, "{");
+          node(c, dd + 1, `${at}.body[${i}]`, new Map(inner));
+          emit(dd, "}");
+          if (cond && i < branches.length - 1) { emit(dd, `if (!(${cond}))`); emit(dd, "{"); dd++; }
+        });
+        if (cond) for (let i = 0; i < Math.max(0, branches.length - 1); i++) { dd--; emit(dd, "}"); }
+        if (own) emit(depth, "}");
+        return;
+      }
+      case "ParallelForEach": {
+        const [item] = itemNames(n, 1);
+        const t = n.typeArg ? csType(n.typeArg) : "var";
+        const inner = new Map(sc).set(item, n.typeArg ?? "Object");
+        const cond = p.CompletionCondition !== undefined ? expr(p.CompletionCondition, `${at}.props.CompletionCondition`, sc) : undefined;
+        emit(depth, `foreach (${t} ${item} in ${expr(p.Values, `${at}.props.Values`, sc)})`);
+        braces(depth, () => { block(n.body, depth + 1, `${at}.body`, inner); if (cond) emit(depth + 1, `if (${cond}) break;`); });
+        return;
+      }
+      case "RepeatNumberOfTimesX": {
+        const [item] = itemNames(n, 1);
+        const i = `__repeat${++tmp}`;
+        const start = p.StartAt !== undefined ? expr(p.StartAt, `${at}.props.StartAt`, sc) : "1";
+        emit(depth, `for (var ${i} = 0; ${i} < ${expr(p.NumberOfTimes, `${at}.props.NumberOfTimes`, sc)}; ${i}++)`);
+        braces(depth, () => { emit(depth + 1, `int ${item} = ${start} + ${i};`); block(n.body, depth + 1, `${at}.body`, new Map(sc).set(item, "Int32")); });
         return;
       }
       case "While":
@@ -267,13 +313,15 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const m = maps.get(`${pkg}/${className}`);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
-    const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {})];
+    const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {})];
     const v = m.coded.find((x) => (x.when ?? []).every((w) => given.includes(w)));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     // 引数の辞書（dicts）は、対応表が {Arguments|dict} で受けるか、ignore に書いたものだけ許す
     const tplRefs = new Set([...(v.code ? refs(v.code) : []), ...(v.call ? refs(v.call) : []), ...Object.values(v.init?.props ?? {}).flat().flatMap(refs), ...Object.values(v.args ?? {}).flatMap((t) => (typeof t === "string" ? refs(t) : Object.values(t.set).flatMap(refs)))]);
     for (const k of Object.keys(n.dicts ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tplRefs.has(k))
       add(`${at}.dicts.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（引数の辞書）はまだ Coded に直せない`);
+    for (const k of Object.keys(n.lists ?? {})) if (!(m.ignore ?? []).concat(v.ignore ?? []).includes(k) && !tplRefs.has(k))
+      add(`${at}.lists.${k}`, "CODED_UNSUPPORTED", `${className}.${k}（式の一覧）を対応表（${m.file}）が扱っていない`);
     for (const u of v.usings ?? []) usings.add(u);
     // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
     if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
@@ -286,7 +334,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const used = new Set<string>((m.ignore ?? []).concat(v.ignore ?? []));
     // IR の props に、対応表の defaults（IR に無いときの値）を足したもの
     const props: Record<string, Value> = { ...(v.defaults ?? {}), ...(n.props ?? {}) };
-    const has = (r: string) => props[r] !== undefined || n.objs?.[r] !== undefined || n.dicts?.[r] !== undefined;
+    const has = (r: string) => props[r] !== undefined || n.objs?.[r] !== undefined || n.dicts?.[r] !== undefined || n.lists?.[r] !== undefined;
     // 外側のスコープ（"scope": "using"）の変数。内側のものほど後ろにある
     const scopeVar = (t: string) => [...sc].reverse().find(([, ty]) => ty === t || ty.endsWith("." + t))?.[0];
     // テンプレートを使えるか（既定の無い参照が IR にそろい、{@型名} のスコープが外側にある）。使えなければその引数・行ごと省く
@@ -301,6 +349,12 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
           const app = scopeVar(UIA_APP_TYPE);
           if (!app) { add(at, "CODED_NO_SCOPE", `${className} の対応表は {app} を使うが、NApplicationCard の中に無い`); return "/* ? */ null"; }
           return app;
+        }
+        if (filter === "list") {
+          // 式の一覧（IR の lists）→ C# の式をカンマで並べる（new T[] { {Items|list} } のように使う）
+          const l = n.lists?.[name];
+          if (!l) return dflt ?? "";
+          return l.map((x, i) => expr(x, `${at}.lists.${name}[${i}]`, sc)).join(", ");
         }
         if (filter === "dict") {
           // 引数の辞書 → new Dictionary<string, object> { ["名前"] = 値, ... }（In だけ。Out / InOut は Coded に直せない）
@@ -320,7 +374,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
           return t ? csType(t) : "object";
         }
         // {Prop|is_Member} … enum の値が Member かどうか（"true" / "false"）
-        if (filter?.startsWith("is_")) return String(val === filter.slice(3));
+        if (filter?.startsWith("is_")) return String(val === filter.slice(3) || (typeof val === "boolean" && String(val) === filter.slice(3).toLowerCase()));
         const pdef = adef?.props.find((x) => x.name === name);
         if (pdef?.enum && typeof val === "string")
           return filter === "enum" ? val.split(",").map((x) => `${pdef.type}.${x.trim()}`).join(" | ") : val;

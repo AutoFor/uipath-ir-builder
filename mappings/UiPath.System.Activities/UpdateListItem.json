@@ -1,0 +1,10 @@
+{
+  "activity": "UpdateListItem",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "code": "{List}[{ItemIndex}] = {Value};"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く"
+}

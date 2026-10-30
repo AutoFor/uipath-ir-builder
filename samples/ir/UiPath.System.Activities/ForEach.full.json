@@ -1,0 +1,36 @@
+{
+  "workflow": "ForEach_Full",
+  "variables": [
+    {
+      "name": "names",
+      "type": "List<String>",
+      "default": "New List(Of String) From {\"a\", \"b\", \"c\"}"
+    },
+    {
+      "name": "pos",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "ForEach",
+      "typeArg": "String",
+      "item": "it",
+      "name": "最大2回",
+      "props": {
+        "Values": "names",
+        "CurrentIndex": "pos",
+        "MaxIterations": "2"
+      },
+      "body": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "pos.ToString & \":\" & it"
+          }
+        }
+      ]
+    }
+  ]
+}

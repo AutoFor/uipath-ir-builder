@@ -1,0 +1,23 @@
+{
+  "activity": "BuildCollection",
+  "package": "UiPath.System.Activities",
+  "coded": [
+    {
+      "when": [
+        "Result",
+        "Items"
+      ],
+      "code": "{Result} = new List<{typeArg}> { {FirstItem} }; {Result}.AddRange({Items});"
+    },
+    {
+      "when": [
+        "Result"
+      ],
+      "code": "{Result} = new List<{typeArg}> { {FirstItem} }; {Result}.AddRange(new {typeArg}[] { {NextItems|list} });"
+    },
+    {
+      "code": "_ = {FirstItem};"
+    }
+  ],
+  "notes": "サービスの API は無い。C# のコレクション操作で書く（FirstItem のあとに Items か NextItems が続く新しい List を Result に入れる）"
+}
