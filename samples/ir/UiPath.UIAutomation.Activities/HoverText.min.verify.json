@@ -1,1 +1,1 @@
-{"noRun":"build まで。この環境の run では「対象のアプリケーションを前面に移動できません」で落ちる（4回再実行しても同じ）。ハードウェア入力でテキスト／OCR 位置を押す・ホバーする操作が通らない"}
+{"requires":"Microsoft Edge と UiPath の Web 拡張機能（この PC の Edge には入っている）。HTML はワークフローが %TEMP%\\uia-test-form.html に書き出して開く。画像は HTML の赤い四角を TakeScreenshot で撮ったもので、同じ画面から探す"}
