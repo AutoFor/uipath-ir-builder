@@ -244,7 +244,8 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   if (p.kind === "prop") {
     if (BOOL.test(p.type) && /^(True|False)$/.test(lit)) return lit === "True";
     if (NUMERIC.test(p.type) && canonNum(lit)) return Number(lit);
-    if (p.type === "System.String" || NUMERIC.test(p.type) || BOOL.test(p.type)) return { lit };
+    // CultureInfo（LocalizationCode="ja-JP"）は属性では文字列。裸の文字列にすると C# で ja-JP という式になる
+    if (p.type === "System.String" || p.type === "System.Globalization.CultureInfo" || NUMERIC.test(p.type) || BOOL.test(p.type)) return { lit };
     return lit; // enum、Nullable<enum>、Color、Rectangle など。属性にそのまま書く
   }
   // in / child（式か、属性のリテラル）
@@ -768,6 +769,7 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
       if (isBracket(def)) out.default = def.slice(1, -1);
       else if (type === "String") out.default = `"${(def.startsWith("{}") ? def.slice(2) : def).replace(/"/g, '""')}"`;
       else if (/^(True|False|-?\d+(\.\d+)?)$/.test(def)) out.default = def;
+      else if (type === "TimeSpan" && /^(\d+\.)?\d+:\d+:\d+(\.\d+)?$/.test(def)) out.default = `TimeSpan.Parse("${def}")`;
       else c.err(`${at}.${name}`, "LITERAL_NOT_REPRESENTABLE", `変数の既定値 ${JSON.stringify(def)} は IR に書けない`);
     }
     return [out];

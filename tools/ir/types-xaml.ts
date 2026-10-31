@@ -87,6 +87,11 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Image: ["sdc:Image", { sdc: "clr-namespace:System.Drawing;assembly=System.Drawing.Common" }],
   OcrActivityResult: ["uoc:OcrActivityResult", { uoc: "clr-namespace:UiPath.OCR.Contracts;assembly=UiPath.OCR.Contracts" }], // OCR エンジン（GoogleOCR など）の Output
   Rectangle: ["sdp:Rectangle", { sdp: "clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" }],
+  // 実案件の XAML によく出る型（取り込みで使う）
+  "Newtonsoft.Json.Linq.JObject": ["njl:JObject", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
+  "Newtonsoft.Json.Linq.JArray": ["njl:JArray", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
+  "Newtonsoft.Json.Linq.JToken": ["njl:JToken", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
+  "UiPath.UIAutomationNext.Enums.NBrowserType": ["uix:NBrowserType", { uix: "http://schemas.uipath.com/workflow/activities/uix" }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {

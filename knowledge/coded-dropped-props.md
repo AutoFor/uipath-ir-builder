@@ -4,7 +4,7 @@
 
 XAML にこのプロパティの値があると、C# には反映されない。実際の XAML でどれに当たるかは `node tools/ir/migrate-report.ts <file.xaml>` で見る。
 
-対応表 423 件のうち 72 件に 187 個（形ごとの指定を含む）。
+対応表 465 件のうち 80 件に 241 個（形ごとの指定を含む）。
 
 ## UiPath.Excel.Activities
 
@@ -64,11 +64,13 @@ XAML にこのプロパティの値があると、C# には反映されない。
 | アクティビティ | 捨てられるプロパティ | 形ごとの指定 | 対応表のメモ |
 | --- | --- | --- | --- |
 | NApplicationCard | ScopeGuid, Version |  | using (var app = uiAutomation.Open(TargetAppModel, TargetAppOptions)) { body } にする。中のアクティビティは {app}.Click(...) のように呼ぶ。CloseMode は Dispose で効く。HealingAgentBehavior は型が違う（NHealingAgentBehavior → NChildHealingAgentBehavior）のでメンバー名で写す。InUiElement / OutUiElement（UiElement で開く・返す）、TargetApp.WorkingDirectory はまだ扱わない |
+| NBlockUserInput | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior, DisableUnblock |  | using (uiAutomation.BlockUserInput(options)) { body }（BlockUserInputScope を Dispose すると解除される）。DisableUnblock（スコープを抜けても解除しない）は Coded API に無いので扱わない。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior も Coded 未対応。RDP の入力が止まるので run していない |
 | NCheck | ScopeIdentifier, Version |  | NCheck.Action は CheckOptions.CheckType。OutUiElement と InUiElement はまだ扱わない |
 | NCheckState | ScopeIdentifier, Version |  | WaitState の戻り値（bool）で IfExists / IfNotExists を if / else にする。CheckWindowActive は CheckStateOptions に無いのでまだ扱わない。InUiElement / OutUiElement も扱わない |
 | NClick | ScopeIdentifier, Version |  | ターゲットは TargetAnchorableModel（FullSelectorArgument → PartialSelector、ScopeSelectorArgument → ScopeSelector）。オプションは ClickOptions。OutUiElement と ClickOffset（非推奨）はまだ扱わない |
 | NDragAndDrop | ScopeIdentifier, Version, DestinationScopeIdentifier |  | DestinationInScope と InUiElement と OutUiElement はまだ扱わない |
 | NExtractData | ScopeIdentifier, Version, AppendResults, DelayBetweenPages, NextLink |  | AppendResults は Coded 未対応。NextLink / DelayBetweenPages は NextPageOptions に直す表がまだ無い |
+| NFillForm | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior, AgentType, InteractionMode, Target |  | uiAutomation.FillForm(FillFormOptions)（Target は取らない。画面全体が対象）。セマンティック（クラウドの AI）が要るので run していない（Coded が動くかは未確認）。AgentType / InteractionMode / Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応 |
 | NGetAttributeGeneric | ScopeIdentifier, Version |  | 型引数 T は string の戻り値で受ける。OutUiElement と InUiElement はまだ扱わない |
 | NGetClipboard | ScopeIdentifier, Version, Target |  | クリップボードはターゲットを使わないので Target は捨てる（uiAutomation のサービスを直接呼ぶ） |
 | NGetText | ScopeIdentifier, Version |  | 戻り値（string）を TextString か Text で受ける（両方は書けない）。WordsInfo と OutUiElement はまだ扱わない |
@@ -88,10 +90,16 @@ XAML にこのプロパティの値があると、C# には反映されない。
 | NSAPSelectMenuItem | ScopeIdentifier, Version, ForceRefreshView, RequiresInitialization, Target, Items |  | SAPSelectMenuItem(SelectItemOptions) を使う。ターゲットは取らないので Target は捨てる。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる |
 | NSelectItem | ScopeIdentifier, Version, Items |  | OutUiElement と InUiElement はまだ扱わない。Items は Browsable(false) の一覧で、入力は Item。Coded のオプションには Item（単数）しか無いので捨てる |
 | NSetClipboard | ScopeIdentifier, Version, Target |  | クリップボードはターゲットを使わないので Target は捨てる（uiAutomation のサービスを直接呼ぶ） |
+| NSetCVServer | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior |  | SetCVServer(string server, string apiKey, bool useLocalServer)。3つは「まとめて」適用されるので、IR にも3つ書く（ApiKey / UseLocalServer を省くと引数ごと省かれ、build が落ちる）。CV サーバーが無いので run していない |
+| NSetProjectSetting | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior |  | SetProjectSetting(string, object)。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応 |
+| NSetRuntimeBrowser | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior |  | SetRuntimeBrowser(NBrowserType) を使う。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応 |
+| NSetValue | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior, AgentType, InteractionMode |  | UiTargetApp.SetValue(target, SetValueOptions)。セマンティック（クラウドの AI）が要るので run していない（Coded が動くかは未確認）。AgentType / InteractionMode / Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応 |
 | NShowStatusMessage | ScopeIdentifier, Version, Target |  | ステータス ウィンドウはターゲットを使わないので Target は捨てる |
 | NShowStatusWindow | ScopeIdentifier, Version, Target |  | ステータス ウィンドウはターゲットを使わないので Target は捨てる。HistoryCount は StatusWindowOptions.MaxHistoryCount |
 | NTakeScreenshot | ScopeIdentifier, Version, SaveScreenshotTo, IsDesktop, FileNameMode, DelayBeforeScreenshot, OutFile, SavedTo |  | Coded は FileName にファイルとして保存するだけ。SaveScreenshotTo（File 以外）、IsDesktop、FileNameMode、DelayBeforeScreenshot、OutFile、SavedTo は Coded 未対応 |
 | NTypeInto | ScopeIdentifier, Version |  | Text / SecureText は TypeIntoOptions に入れる（TypeInto(target, options)）。OutUiElement と ClickOffset（非推奨）はまだ扱わない |
+| NUnblockUserInput | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior |  | uiAutomation.UnblockUserInput()。引数なし。Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応 |
+| NWindowOperation | ScopeIdentifier, Version, Timeout, DelayBefore, DelayAfter, HealingAgentBehavior |  | WindowOperationOptions に無い Timeout / DelayBefore / DelayAfter / ContinueOnError / HealingAgentBehavior は Coded 未対応（ContinueOnError は生成器の try / catch）。OutUiElement と InUiElement はまだ扱わない |
 
 ## UI のオブジェクト（tools/ir/uia.ts の codedModels で null のもの）
 
