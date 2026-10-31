@@ -1,0 +1,21 @@
+import { bpmn } from "@uipath/maestro-builder-sdk/bpmn";
+
+export default bpmn("ExpenseApproval")
+  .name("ExpenseApproval")
+  .input("amount", "number")
+  .var("reviewDecision", "string")
+  .var("comment", "string")
+  .startEvent("start")
+  .humanTask("review", { title: "経費の確認", form: { fields: [{ id: "amount", label: "金額", type: "number", direction: "input", value: "=vars.amount" }, { id: "comment", label: "コメント", type: "string", direction: "output" }], outcomes: ["Approve","Reject"] }, outputs: { reviewDecision: "=Action" } })
+  .exclusiveGateway("isApproved", { default: "isApproved_else" })
+  .scriptTask("pay", { script: "return { paid: true };" })
+  .scriptTask("notify", { script: "return { paid: false };" })
+  .endEvent("end1")
+  .endEvent("end2")
+  .sequenceFlow("start", "review")
+  .sequenceFlow("review", "isApproved")
+  .sequenceFlow("isApproved", "pay", { condition: "=vars.reviewDecision == \"Approve\"" })
+  .sequenceFlow("isApproved", "notify", { id: "isApproved_else" })
+  .sequenceFlow("pay", "end1")
+  .sequenceFlow("notify", "end2")
+  .build();
