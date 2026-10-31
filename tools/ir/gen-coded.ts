@@ -7,44 +7,43 @@
 //     --namespace <名前>   既定 CatalogProbeNet8（UiPath プロジェクトの名前。CodedWorkflow の部分クラスと同じ名前空間）
 //     --invoke-dir <dir>   InvokeWorkflowFile の "X.xaml" を "<dir>/X.cs" に書き換える（Coded 同士で呼ぶ）
 //     --print              生成した C# を標準出力に出す
+//     --project <dir>      その UiPath プロジェクトの project.json の dependencies の版のカタログを使う。名前空間の既定もそのプロジェクトから取る。
+//                          カタログに無い版、services の無い古いカタログはエラー
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadCatalog } from "./catalog.ts";
 import { validate } from "./validate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
+import { loadSelected, runSelection } from "./versions.ts";
 import type { Workflow } from "./types.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const catalogFiles = [
-  "catalog/System.Activities/6.0.0.json",
-  "catalog/UiPath.System.Activities/26.10.0.json",
-  "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
-  "catalog/UiPath.Excel.Activities/3.6.1.json",
-  "catalog/UiPath.Persistence.Activities/1.13.0.json",
-];
 
 const args = process.argv.slice(2);
 const val = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
 const outDir = val("--out");
-const ns = val("--namespace") ?? "CatalogProbeNet8";
+const project = val("--project");
 const invokeDir = val("--invoke-dir");
 const checkOnly = args.includes("--check");
 const print = args.includes("--print");
-const valued = new Set(["--out", "--namespace", "--invoke-dir"]);
+const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project"]);
 const files = args.filter((a, i) => !a.startsWith("--") && !valued.has(args[i - 1]) && !/\.(verify|expected|args)\.json$/i.test(a));
 if (!files.length || (!outDir && !checkOnly)) {
-  console.error("使い方: node tools/ir/gen-coded.ts <ir.json>... (--out <dir> | --check) [--namespace <名前>] [--invoke-dir <dir>] [--print]");
+  console.error("使い方: node tools/ir/gen-coded.ts <ir.json>... (--out <dir> | --check) [--namespace <名前>] [--invoke-dir <dir>] [--print] [--project <dir>]");
   process.exit(2);
 }
 
-const cat = loadCatalog(root, catalogFiles);
+const { cat, ctx } = runSelection(() => {
+  const { cat, warnings } = loadSelected(root, project, { coded: true });
+  for (const w of warnings) console.error(`注意: ${w}`);
+  return { cat, ctx: loadContext(project) };
+});
 const { maps, errors: mapErrors } = loadMappings(root);
 if (mapErrors.length) { for (const e of mapErrors) console.log(`対応表のエラー: ${e}`); process.exit(1); }
-const ctx = loadContext();
+const ns = val("--namespace") ?? ctx.namespace;
 ctx.namespace = ns;
 
 let failed = false;

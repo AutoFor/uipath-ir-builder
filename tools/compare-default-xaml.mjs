@@ -6,6 +6,7 @@
 //     生成した XAML（フォルダか .xaml）の中のアクティビティを、Studio の既定 XAML と比べる。
 //     見るもの: xmlns、x:TypeArguments の有無、プロパティを属性で書くか要素で書くか、既定 XAML が付ける値（Version="V5" など）の欠け。
 //     食い違いがあれば終了コード 1
+//     --defaults-dir <dir> で既定 XAML の置き場を変えられる（版ごとの置き場 knowledge/default-xaml/<PackageId>/<version> と比べるとき）
 //
 // 既定 XAML の取り方（作業用プロジェクトの中で、uip login 済みで）:
 //   uip rpa activities get-default-xaml --activity-class-name UiPath.Core.Activities.WriteTextFile \
@@ -91,15 +92,17 @@ console.log(out.join("\n"));
 function compareGenerated(args) {
   const ai = args.indexOf("--activity");
   const only = ai >= 0 ? args[ai + 1] : undefined;
-  const inputs = args.filter((a, i) => !a.startsWith("--") && !(ai >= 0 && i === ai + 1));
+  const di = args.indexOf("--defaults-dir");
+  const defaultsDir = di >= 0 ? args[di + 1] : "knowledge/default-xaml";
+  const inputs = args.filter((a, i) => !a.startsWith("--") && !(ai >= 0 && i === ai + 1) && !(di >= 0 && i === di + 1));
   const files = [];
   const walk = (p) => statSync(p).isDirectory() ? readdirSync(p).forEach((e) => walk(join(p, e))) : p.endsWith(".xaml") && files.push(p);
   inputs.forEach(walk);
 
   // 既定 XAML: ClassName -> { uri, typeArgs, attrs: Map, elems: Set }
   const defaults = new Map();
-  for (const f of readdirSync("knowledge/default-xaml").filter((f) => f.endsWith(".json"))) {
-    const res = JSON.parse(readFileSync(join("knowledge/default-xaml", f), "utf8").replace(/^\uFEFF/, ""));
+  for (const f of readdirSync(defaultsDir).filter((f) => f.endsWith(".json"))) {
+    const res = JSON.parse(readFileSync(join(defaultsDir, f), "utf8").replace(/^\uFEFF/, ""));
     if (res.Result !== "Success") continue;
     const x = res.Data.message;
     const ns = nsMap(x);
@@ -146,7 +149,7 @@ function compareGenerated(args) {
   }
   console.log(`比べたアクティビティ: ${compared} 個（既定 XAML ${defaults.size} 種類）`);
   for (const i of issues) console.log(`  ${i}`);
-  if (only && !defaults.has(only)) console.log(`  knowledge/default-xaml/${only}.json が無い（get-default-xaml で取る）`);
+  if (only && !defaults.has(only)) console.log(`  ${defaultsDir}/${only}.json が無い（get-default-xaml で取る）`);
   if (issues.length || (only && !compared)) process.exitCode = 1;
 }
 

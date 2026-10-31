@@ -15,17 +15,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mask, splitArgs } from "./scan.ts";
+import { DEFAULT_SERVICE_FILES, VersionError, selectCatalogs } from "../ir/versions.ts";
 import type { Arg } from "./scan.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-
-// プローブ プロジェクトと同じバージョンのカタログ
-export const serviceCatalogFiles = [
-  "catalog/UiPath.System.Activities/26.10.0.json",
-  "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
-  "catalog/UiPath.Excel.Activities/3.6.1.json",
-  "catalog/UiPath.CodedWorkflows/24.10.3.json",
-];
 
 export const BASE = "UiPath.CodedWorkflows.CodedWorkflowBase";
 
@@ -48,7 +41,7 @@ export type Issue = { line: number; col: number; severity: "error" | "warning"; 
 export type FileResult = { file: string; calls: number; issues: Issue[] };
 export type Context = { services: Map<string, Service>; vars: Record<string, string>; namespace: string; projectDir?: string };
 
-export function loadServices(files = serviceCatalogFiles): Map<string, Service> {
+export function loadServices(files = DEFAULT_SERVICE_FILES): Map<string, Service> {
   const m = new Map<string, Service>();
   for (const f of files) {
     const c = JSON.parse(readFileSync(join(root, f), "utf8"));
@@ -57,9 +50,11 @@ export function loadServices(files = serviceCatalogFiles): Map<string, Service> 
   return m;
 }
 
-// プロジェクトから変数名 → 型と名前空間を読む。まだ一度もビルドしていないプロジェクトには生成コードが無いので、既定値を使う
+// プロジェクトから変数名 → 型と名前空間を読む。まだ一度もビルドしていないプロジェクトには生成コードが無いので、既定値を使う。
+// サービスの API は project.json の dependencies の版のカタログから読む（カタログに無い版、services の無い古い版は VersionError）
 export function loadContext(projectDir?: string): Context {
-  const ctx: Context = { services: loadServices(), vars: { ...defaultServiceVars }, namespace: defaultNamespace, projectDir };
+  const files = projectDir && existsSync(join(projectDir, "project.json")) ? selectCatalogs(root, projectDir, { coded: true }).serviceFiles : DEFAULT_SERVICE_FILES;
+  const ctx: Context = { services: loadServices(files), vars: { ...defaultServiceVars }, namespace: defaultNamespace, projectDir };
   if (!projectDir) return ctx;
   const gen = join(projectDir, ".local", ".codedworkflows", "CodedWorkflow.cs");
   if (existsSync(gen)) {
@@ -324,7 +319,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.error("使い方: node tools/coded/check.ts <file.cs>... [--project <dir>] [--json]");
     process.exit(2);
   }
-  const ctx = loadContext(projectDir);
+  let ctx: Context;
+  try { ctx = loadContext(projectDir); }
+  catch (e) {
+    if (!(e instanceof VersionError)) throw e;
+    console.error(e.message);
+    process.exit(2);
+  }
   const results = files.map((f) => checkSource(readFileSync(f, "utf8").replace(/^\uFEFF/, ""), f, ctx));
   const failed = results.some((r) => r.issues.some((i) => i.severity === "error"));
   if (json) console.log(JSON.stringify({ ok: !failed, files: results }, null, 2));

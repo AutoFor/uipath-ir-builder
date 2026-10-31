@@ -23,17 +23,12 @@ import { generate } from "./generate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
+import { DEFAULT_CATALOG_FILES } from "./versions.ts";
 import type { Workflow } from "./types.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const update = !!process.env.UPDATE_SNAPSHOTS;
-const cat = loadCatalog(root, [
-  "catalog/System.Activities/6.0.0.json",
-  "catalog/UiPath.System.Activities/26.10.0.json",
-  "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
-  "catalog/UiPath.Excel.Activities/3.6.1.json",
-  "catalog/UiPath.Persistence.Activities/1.13.0.json",
-]);
+const cat = loadCatalog(root, DEFAULT_CATALOG_FILES); // スナップショットは既定の版のもの
 const { maps, errors: mapErrors } = loadMappings(root);
 const ctx = loadContext();
 // 横に置く JSON も読めること（不正な JSON で verify.mjs が落ちるのを防ぐ）

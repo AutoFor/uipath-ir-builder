@@ -116,7 +116,7 @@ git commit
 | XAML のスナップショット | `samples/generated/<pkg>/<workflow>.xaml` | テストが作る。手で書かない |
 | C# のスナップショット | `samples/generated-coded/<pkg>/<workflow>.cs` | テストが作る。手で書かない |
 | 対応表 | `mappings/<pkg>/<ClassName>.json` | 1アクティビティ1ファイル |
-| 既定 XAML | `knowledge/default-xaml/<ClassName>.json` | get-default-xaml の出力そのまま |
+| 既定 XAML | `knowledge/default-xaml/<ClassName>.json` | get-default-xaml の出力そのまま。既定と違う版のものは `knowledge/default-xaml/<PackageId>/<version>/`（`docs/version-upgrade.md`） |
 | 手書きの Coded（必要なときだけ） | `samples/coded/<pkg>/<ClassName>.cs` | namespace は `CatalogProbeNet8`、クラス名＝ファイル名 |
 | 不正な IR のテスト | `samples/ir-invalid/<名前>.json` と `.expected.json`（`{ "codes": [...] }`） | 検証で弾くべきものを足したとき |
 | run で読む入力ファイル（.xlsx など） | `samples/data/<分類>/`（例 `samples/data/excel/Sample.xlsx`）と、それを作るスクリプト | `verify.mjs` が作業用プロジェクトの `data/` に写す。書き出しは `output/`（8-E-4） |

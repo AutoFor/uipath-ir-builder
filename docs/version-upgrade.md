@@ -9,12 +9,48 @@ UiPath のアクティビティパッケージ（System、UIAutomation、Excel �
 | もの | 場所 | 見直し方 |
 | --- | --- | --- |
 | カタログ（プロパティ・必須・enum・Coded API） | `catalog/<PackageId>/<version>.json`（と `.objects.json`） | 手順 1〜2 で作り直す。**手で書き換えない** |
-| カタログを読む場所 | `tools/ir/samples.test.ts` の `loadCatalog([...])`、`tools/ir/gen.ts` などの読み込み一覧 | 新しい版のファイル名に差し替える（古い版を残してよい） |
-| 既定 XAML（`Version=V5`、`HealingAgentBehavior=SameAsCard` など） | `knowledge/default-xaml/` | 取り直して `compare-default-xaml` で比べる（手順 5）。取った版は記録されないので、コミットメッセージかこの手順の記録に書く |
-| ルートの imports / AssemblyReference | `tools/ir/generate.ts` の BlankTemplate の並び | Studio の版が変わったら、新しいテンプレートの XAML と見比べる |
+| 既定の版の一覧 | `tools/ir/versions.ts` の `DEFAULT_VERSIONS`（ここだけ。`tools/ir/import-xaml.ts` の `CATALOG_FILES` はまだ別で、同じであることをテストが見る） | 既定を上げるときに差し替える（古い版のカタログは残す）。プロジェクトごとの版は `--project` で選ぶ（下の「対象プロジェクトの版に合わせる」） |
+| 既定 XAML（`Version=V5`、`HealingAgentBehavior=SameAsCard` など） | `knowledge/default-xaml/`（版なし。版の記録は `knowledge/default-xaml-versions.json`）、`knowledge/default-xaml/<PackageId>/<version>/`（版ごと） | 取り直して `compare-default-xaml` で比べる（手順 5） |
+| ルートの imports / AssemblyReference | `tools/ir/generate.ts` の BlankTemplate の並び（既定）。`--project` / `--imports-from` で既存の XAML から取れる | Studio の版が変わったら、新しいテンプレートの XAML と見比べる |
 | 対応表（XAML → C#） | `mappings/<pkg>/*.json` | Coded API が変わったとき（手順 4） |
 | 作業用プロジェクト | `C:\Users\Public\uipath-ir-probe`（`project.json` の `dependencies`、`dotNetVersion`） | 新しい版を入れ直す。直接いじらず、版を上げた複製で試す |
 | `uip` / Helm | CLI の版、.NET ランタイム | `uip` の版が上がると必要な .NET が変わることがある（1.204.2 は .NET 10.0.0 が必要だった） |
+
+## 対象プロジェクトの版に合わせる
+
+```bash
+node tools/ir/gen.ts <ir.json> --out <dir> --project <UiPathプロジェクト>
+node tools/ir/gen-coded.ts <ir.json> --out <dir> --project <UiPathプロジェクト>
+node tools/coded/check.ts <file.cs> --project <UiPathプロジェクト>
+node tools/ir/coverage.ts --project <UiPathプロジェクト> --activity NClick
+node tools/ir/gen.ts <ir.json> --out <dir> --imports-from <既存の.xaml>   # ルートの imports だけ別の XAML から
+```
+
+指定がなければ、既定の版（`DEFAULT_VERSIONS`）と BlankTemplate の imports のまま。検証用に、`verify.mjs` と `queue-run.mjs` は `--use-project`（`--template` で版を変えたプロジェクトと一緒に）と `--imports-from` を渡せる。
+
+| 場合 | 動き |
+| --- | --- |
+| `dependencies` の版のカタログがある（`[1.2.3]` か `1.2.3`） | その版を使う |
+| その版のカタログが無い | **エラー**（終了コード 2）。手元の版を示す。近い版を使わない。手順 1〜2 でカタログを作る |
+| 版が範囲（`[1.0,2.0)` など） | エラー。1つに決められない |
+| パッケージのカタログが1つも無い（Mail、Testing など） | 注意。そのアクティビティは「未知のアクティビティ」になる |
+| 依存に無いパッケージ | カタログを読まない（そのアクティビティは build でも落ちるので、検証で弾く） |
+| 式の言語が VB でない、`targetFramework` が Windows でない | 注意 |
+
+**古い形式のカタログ**（`UiPath.System.Activities` 26.2.6、`UiPath.UIAutomation.Activities` 25.10.33。`services` が無く `readOnly` のプロパティも無いもの）を選んだとき：
+
+- `gen-coded.ts` と `check.ts`：**エラー**。Coded API を確かめられない。その版の DLL から作り直す
+- `gen.ts`：注意付きで XAML を作る。setter の無いプロパティは検証で弾けないので、build の「Cannot set unknown member」で分かる。out の `Result` が欠けていることがある
+- `.objects.json` が無ければ、UI のターゲットなどの `objs` は書けない（検証で弾く）
+
+**既定 XAML の選び方**：
+
+- `knowledge/default-xaml/<ClassName>.json`（版なし）は、`knowledge/default-xaml-versions.json` の `flat` の版のもの。これまでのファイルはそのまま動く
+- `knowledge/default-xaml/<PackageId>/<version>/<ClassName>.json` は、その版のもの。あれば版なしより優先
+- 選んだ版が `flat` と違うパッケージには、版なしのファイルを使わない。版ごとの置き場に無いアクティビティには既定値を足さない（注意が出る）
+- **既定の版を上げるとき**：差分（手順 3）で既定値が変わっていないことを確かめたパッケージは、`flat` の版も上げてよい。変わったアクティビティだけ、版ごとの置き場に取り直す。`flat` を上げないと版なしのファイルが使われなくなり、スナップショットが変わる
+
+**ルートの imports**：`--imports-from` は、その XAML に imports が無ければエラー。`--project` は `main` の XAML、次に直下の XAML（名前順）で imports のある最初のものを使い、無ければ BlankTemplate（注意が出る）。読んだ並びを置き換えて使い、テンプレートとは混ぜない。使うアクティビティの名前空間とアセンブリは生成器が足す。既存の XAML に無い名前空間を VB の式で使うと、build で分かる。
 
 ## 1. DLL を探す
 
@@ -90,6 +126,9 @@ error / warn のサンプルと対応表を直したら、手順 6 へ。
 ```bash
 node tools/verify/queue-run.mjs --name <作業名> --default-xaml <完全クラス名> --out knowledge/default-xaml/<ClassName>.json samples/ir/Greet.json
 node tools/compare-default-xaml.mjs --generated samples/generated/<pkg> --activity <ClassName>
+# 版ごとの置き場に取るとき（--template はその版を依存にしたプロジェクト）
+node tools/verify/queue-run.mjs --name <作業名> --template <プロジェクト> --default-xaml <完全クラス名> --out knowledge/default-xaml/<PackageId>/<version>/<ClassName>.json samples/ir/Greet.json
+node tools/compare-default-xaml.mjs --generated <生成した XAML> --activity <ClassName> --defaults-dir knowledge/default-xaml/<PackageId>/<version>
 ```
 
 - すべては取り直さない。差分で「default が変わった」「種類が変わった」「プロパティが増えた」アクティビティと、サンプルで使っているアクティビティのうち既定値を持つもの（UI の `N*` など）に絞る

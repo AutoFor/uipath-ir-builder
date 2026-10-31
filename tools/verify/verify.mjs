@@ -11,6 +11,8 @@
 //   --report <dir>    結果の置き場所（既定 out/verify/<n>）
 //
 //   --no-coded        IR から C# を作らない（XAML だけ）
+//   --use-project     作業用プロジェクトの project.json の版のカタログを使う（gen.ts / gen-coded.ts の --project。--template で版を変えたプロジェクトを試すとき）
+//   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
 //
 // IR（*.json）1つにつき、XAML（<プロジェクト>/<workflow>.xaml）と C#（<プロジェクト>/coded/<workflow>.cs）の両方を作って試す。
 // 手書きの *.cs は <プロジェクト>/ にそのまま写して試す。
@@ -49,6 +51,8 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--timeout") opt.timeout = Number(argv[++i]);
   else if (a === "--report") opt.report = argv[++i];
   else if (a === "--no-coded") opt.noCoded = true;
+  else if (a === "--use-project") opt.useProject = true;
+  else if (a === "--imports-from") opt.importsFrom = resolve(argv[++i]);
   else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
   else if (a === "--out") opt.out = argv[++i];
   else if (a.startsWith("--")) die(`知らないオプション ${a}`);
@@ -88,6 +92,7 @@ if (opt.defaultXaml) {
   const ok = JSON.parse((r.stdout ?? "").slice(Math.max(0, (r.stdout ?? "").search(/^\{/m))) || "{}").Result === "Success";
   if (!ok) die(`get-default-xaml に失敗: ${(r.stdout ?? "").slice(0, 400)}${r.stderr ?? ""}`);
   if (!opt.out) die("--out が要る");
+  mkdirSync(dirname(resolve(opt.out)), { recursive: true });
   writeFileSync(resolve(opt.out), r.stdout);
   console.log(`OK ${opt.defaultXaml} -> ${opt.out}`);
   process.exit(0);
@@ -107,6 +112,8 @@ for (const { file, wf } of irs) {
 const genArgs = [join(root, "tools", "ir", "gen.ts")];
 if (!names.has("main")) genArgs.push(join(root, "tools", "verify", "Main.json")); // project.json の main を満たすための置き物
 genArgs.push(...irFiles, "--out", projDir);
+if (opt.useProject) genArgs.push("--project", projDir);
+if (opt.importsFrom) genArgs.push("--imports-from", opt.importsFrom);
 const gen = node(genArgs);
 const genLines = gen.stdout.split(/\r?\n/);
 for (const { file, wf } of irs) {
@@ -139,7 +146,7 @@ if (gen.status && gen.status !== 1) writeFileSync(join(logDir, "_gen.txt"), gen.
 
 // ---- IR → C#（coded/ に置く。InvokeWorkflowFile の先も coded/ の .cs にする）----
 if (irFiles.length && !opt.noCoded) {
-  const cg = node([join(root, "tools", "ir", "gen-coded.ts"), ...irFiles, "--out", join(projDir, "coded"), "--invoke-dir", "coded"]);
+  const cg = node([join(root, "tools", "ir", "gen-coded.ts"), ...irFiles, "--out", join(projDir, "coded"), "--invoke-dir", "coded", ...(opt.useProject ? ["--project", projDir] : [])]);
   const lines = cg.stdout.split(/\r?\n/);
   for (const { file, wf } of irs) {
     const r = newResult(file, "coded-gen");

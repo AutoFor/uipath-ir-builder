@@ -13,14 +13,10 @@
 //   VB の Excel.Sheet("Sheet1").Range("A1") は、C# では Excel.Sheet["Sheet1"].Range["A1"]（インデクサー）になる。
 //   どのプロパティがインデクサーかは、カタログの handles（抽出器の --follow-returns）で決める。
 
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { handleTypes } from "./catalog.ts";
 import type { Activity, Prop } from "./catalog.ts";
 import type { Node, ObjValue, Value } from "./types.ts";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const EXCEL_CATALOG = "catalog/UiPath.Excel.Activities/3.6.1.json";
 export const EXCEL_PACKAGE = "UiPath.Excel.Activities";
 
 // ---- XAML の型と xmlns ----
@@ -56,15 +52,7 @@ export const excelXamlTypes: Record<string, [string, Record<string, string>]> = 
 
 type HandleProp = { name: string; type: string; canWrite: boolean };
 type Handle = { clrType: string; bases: string[]; properties?: HandleProp[]; methods: { name: string }[] };
-let handleCache: Map<string, Handle> | undefined;
-
-function handles(): Map<string, Handle> {
-  if (handleCache) return handleCache;
-  handleCache = new Map();
-  const f = join(root, EXCEL_CATALOG);
-  if (existsSync(f)) for (const h of JSON.parse(readFileSync(f, "utf8")).handles ?? []) handleCache.set(h.clrType, h);
-  return handleCache;
-}
+const handles = () => handleTypes as Map<string, Handle>; // 選んだ版のカタログの handles（loadCatalog が読む）
 
 const full = (t: string) => (t.includes(".") ? t : `UiPath.Excel.${t}`);
 

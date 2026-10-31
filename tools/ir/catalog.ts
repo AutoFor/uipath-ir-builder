@@ -45,9 +45,14 @@ export function objTypeFor(type: string, v?: unknown): ObjType | undefined {
   return clr ? objectTypes.get(clr) : undefined;
 }
 
+// 参照の型（Excel の IWorkbookQuickHandle など）。選んだ版のカタログの handles から読む
+export const handleTypes = new Map<string, unknown>(); // clrType -> 型
+
 export type Catalog = {
   activities: Activity[];
   defaults: Map<string, Record<string, string>>; // ClassName -> get-default-xaml に出た属性
+  versions: Record<string, string>; // 読んだカタログ：パッケージ -> 版
+  defaultSources: Record<string, { flat: boolean; versioned: number }>; // パッケージ -> 既定 XAML の出どころ（flat：版なしの置き場を使った、versioned：版ごとの置き場の件数）
 };
 
 // 同じ ClassName が複数パッケージにあるとき（ForEach など）は UiPath 側を優先する。Studio で普通に使う方だから。
@@ -55,8 +60,13 @@ const packageRank = (pkg: string) => (pkg.startsWith("UiPath.") ? 0 : 1);
 
 export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
   const activities: Activity[] = [];
+  const versions: Record<string, string> = {};
+  objectTypes.clear(); // 別の版を読んだときに、前の版の型が残らないようにする
+  handleTypes.clear();
   for (const f of catalogFiles) {
     const c = JSON.parse(readFileSync(join(root, f), "utf8"));
+    versions[c.package] = c.version;
+    for (const h of c.handles ?? []) handleTypes.set(h.clrType, h);
     for (const a of c.activities) {
       // 型が ActivityDelegate のプロパティ（RetryScope.ActivityBody など）は、抽出器では prop になるが中身は引数なしの ActivityAction
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
@@ -66,23 +76,42 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
     if (existsSync(objFile)) for (const o of JSON.parse(readFileSync(objFile, "utf8")).objects) objectTypes.set(o.clrType, o);
   }
 
+  // 既定 XAML の置き場：
+  //   knowledge/default-xaml/<ClassName>.json                        版なし。取った版は knowledge/default-xaml-versions.json に記録
+  //   knowledge/default-xaml/<PackageId>/<version>/<ClassName>.json  その版のもの。あれば版なしより優先
+  // 選んだ版が記録と違うパッケージには、版なしのファイルを使わない（推測で近い版を使わない）
   const defaults = new Map<string, Record<string, string>>();
   const dir = join(root, "knowledge", "default-xaml");
-  if (existsSync(dir)) {
-    for (const f of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
-      const res = JSON.parse(readFileSync(join(dir, f), "utf8").replace(/^﻿/, ""));
+  const recordFile = join(root, "knowledge", "default-xaml-versions.json");
+  const flatVersions: Record<string, string> = existsSync(recordFile) ? JSON.parse(readFileSync(recordFile, "utf8")).flat : {};
+  const flatOk = (pkg: string) => flatVersions[pkg] === undefined || flatVersions[pkg] === versions[pkg];
+  const ownerOf = new Map<string, string>(); // ClassName -> resolve が選ぶ方のパッケージ
+  for (const a of activities) {
+    const cur = ownerOf.get(a.className);
+    if (cur === undefined || packageRank(a.package) < packageRank(cur)) ownerOf.set(a.className, a.package);
+  }
+  const readDefaults = (d: string, use: (cls: string) => boolean) => {
+    let n = 0;
+    if (!existsSync(d)) return n;
+    for (const f of readdirSync(d).filter((f) => f.endsWith(".json"))) {
+      const res = JSON.parse(readFileSync(join(d, f), "utf8").replace(/^﻿/, ""));
       if (res.Result !== "Success") continue;
       const m = (res.Data.message as string).match(/<Activity\b[^>]*>\s*<(?:\w+:)?(\w+)\b([^>]*?)\/?>/);
-      if (!m) continue;
+      if (!m || !use(m[1])) continue;
       const attrs: Record<string, string> = {};
       for (const [, k, v] of m[2].matchAll(/([\w.]+)="([^"]*)"/g)) {
         // {x:Null} は「値なし」、DisplayName はロケール依存なので既定値として使わない
         if (v !== "{x:Null}" && !v.startsWith("{x:Reference") && k !== "DisplayName" && k !== "IsDisplayNameAuto") attrs[k] = v.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#xD;/g, "\r").replace(/&#xA;/g, "\n").replace(/&amp;/g, "&"); // XML の実体参照を戻す（出力時にもう一度エスケープするため）
       }
       defaults.set(m[1], attrs);
+      n++;
     }
-  }
-  return { activities, defaults };
+    return n;
+  };
+  readDefaults(dir, (cls) => { const pkg = ownerOf.get(cls); return pkg === undefined || flatOk(pkg); });
+  const defaultSources: Catalog["defaultSources"] = {};
+  for (const [pkg, ver] of Object.entries(versions)) defaultSources[pkg] = { flat: flatOk(pkg), versioned: readDefaults(join(dir, pkg, ver), () => true) };
+  return { activities, defaults, versions, defaultSources };
 }
 
 export type Resolved = { activity: Activity } | { error: string; candidates: Activity[] };

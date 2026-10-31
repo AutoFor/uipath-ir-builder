@@ -1,0 +1,10 @@
+{
+  "note": "knowledge/default-xaml/<ClassName>.json（版なしの置き場）を取ったときの版。ファイルごとの記録は残っていないので、取得に使っていた作業用プロジェクト C:\\Users\\Public\\uipath-ir-probe の版を書いた（AUT-612）。ここと違う版を選ぶと、そのパッケージには版なしのファイルを使わず、knowledge/default-xaml/<PackageId>/<version>/ だけを見る。",
+  "flat": {
+    "System.Activities": "6.0.0",
+    "UiPath.System.Activities": "26.10.0",
+    "UiPath.UIAutomation.Activities": "26.10.6",
+    "UiPath.Excel.Activities": "3.6.1",
+    "UiPath.Persistence.Activities": "1.13.0"
+  }
+}

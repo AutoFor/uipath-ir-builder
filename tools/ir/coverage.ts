@@ -5,25 +5,28 @@
 //   node tools/ir/coverage.ts                     knowledge/coverage.md を書き直す
 //   node tools/ir/coverage.ts --activity NClick   1アクティビティの内訳を表示する（ワーカー向け）
 //   node tools/ir/coverage.ts --check             knowledge/coverage.md が最新か確かめる（違えば終了コード 1）
+//   node tools/ir/coverage.ts --project <dir> [--activity NClick]
+//                                                 そのプロジェクトの dependencies の版のカタログで見る。
+//                                                 knowledge/coverage.md は既定の版のものなので書かず、標準出力に出す
 
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadCatalog, resolve, defaultSlot, writable, READ_ONLY } from "./catalog.ts";
+import { resolve, defaultSlot, writable, READ_ONLY } from "./catalog.ts";
 import type { Activity } from "./catalog.ts";
 import { loadMappings } from "./mapping.ts";
 import { isBuiltin } from "./generate-coded.ts";
+import { loadSelected, runSelection } from "./versions.ts";
 import type { Node, Workflow } from "./types.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const catalogFiles = [
-  "catalog/System.Activities/6.0.0.json",
-  "catalog/UiPath.System.Activities/26.10.0.json",
-  "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
-  "catalog/UiPath.Excel.Activities/3.6.1.json",
-  "catalog/UiPath.Persistence.Activities/1.13.0.json",
-];
-const cat = loadCatalog(root, catalogFiles);
+const projectIdx = process.argv.indexOf("--project");
+const project = projectIdx >= 0 ? process.argv[projectIdx + 1] : undefined;
+const cat = runSelection(() => {
+  const { cat, warnings } = loadSelected(root, project);
+  for (const w of warnings) console.error(`注意: ${w}`);
+  return cat;
+});
 const { maps } = loadMappings(root);
 
 // ---- サンプルで使ったプロパティ ----
@@ -101,6 +104,11 @@ if (ai >= 0) {
 }
 
 const md = render();
+if (project) {
+  if (args.includes("--check")) { console.error("--check は既定の版の knowledge/coverage.md を見るので、--project と一緒に使えない"); process.exit(2); }
+  process.stdout.write(md);
+  process.exit(0);
+}
 const out = join(root, "knowledge", "coverage.md");
 if (args.includes("--check")) {
   const cur = existsSync(out) ? readFileSync(out, "utf8") : "";

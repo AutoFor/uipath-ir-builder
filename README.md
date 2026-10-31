@@ -47,6 +47,8 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.CodedWorkflows | 24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ） |
 | UiPath.Excel.Activities | 3.6.1 | 128（Coded の `IExcelService` と、`--follow-returns` で取った handles / extensions / enums も） |
 
+既定の版の一覧は `tools/ir/versions.ts` にある。`gen.ts` / `gen-coded.ts` / `coverage.ts` / `tools/coded/check.ts` に `--project <dir>` を渡すと、そのプロジェクトの `project.json` の `dependencies` の版を使う（無い版はエラー。[docs/version-upgrade.md](docs/version-upgrade.md)）。
+
 ### get-default-xaml との突き合わせ（`tools/compare-default-xaml.mjs`）
 
 `uip rpa activities get-default-xaml` の出力を `knowledge/default-xaml/` に保存し、カタログと比べる。結果は [knowledge/default-xaml-compare.md](knowledge/default-xaml-compare.md)。

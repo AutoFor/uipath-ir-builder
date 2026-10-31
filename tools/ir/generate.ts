@@ -32,11 +32,14 @@ const baseRefs = [
   "UiPath.UiAutomation.Activities", "System.Data.DataSetExtensions", "System.Net.Mail",
 ];
 
-export function generate(wf: Workflow, cat: Catalog): string {
+// rootImports：ルートの imports / AssemblyReference の元（対象プロジェクトの既存 XAML から読んだもの。versions.ts）。無ければ BlankTemplate の並び
+export type GenerateOptions = { rootImports?: { imports: string[]; refs: string[] } };
+
+export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {}): string {
   resetGuids(wf.workflow);
   const xmlns = new Map<string, string>(); // prefix -> uri
-  const imports = new Set(baseImports);
-  const refs = new Set(baseRefs);
+  const imports = new Set(opts.rootImports?.imports ?? baseImports);
+  const refs = new Set(opts.rootImports?.refs ?? baseRefs);
   const ids = new Map<string, number>();
   const lines: string[] = [];
   let extra = 0;
