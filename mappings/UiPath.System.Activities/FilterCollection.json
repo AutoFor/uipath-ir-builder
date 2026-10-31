@@ -1,0 +1,6 @@
+{
+  "activity": "FilterCollection",
+  "package": "UiPath.System.Activities",
+  "coded": null,
+  "reason": "Coded API なし（ISystemService に FilterCollection が無い。公開の CollectionFilterSettingsExtensions.ApplyFilters は ActivityContext を取るので Coded から呼べない。C# では LINQ で書く）"
+}

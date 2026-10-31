@@ -251,7 +251,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       emit(depth + 2, `<${dir} x:TypeArguments="${t}">${esc(`[${v}]`)}</${dir}>`);
       emit(depth + 1, `</${tag}.${prop.name}>`);
     }
-    emitObjs(n, a, tag, depth + 1, { prefixFor, attrValue, esc, emit });
+    emitObjs(n, a, tag, depth + 1, { prefixFor, attrValue, esc, emit, typeText });
     for (const [p, nodes] of slots) {
       if (p.kind === "children" && p.name === "Activities") {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる

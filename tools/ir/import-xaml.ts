@@ -792,6 +792,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
     for (const a of el.attrs) {
       if (a.uri === XMLNS) continue;
       if (ignorableAttr(a, el)) { c.drop(at, dropKind(a.name), a.name, a.value); continue; }
+      if (a.uri === X && a.local === "TypeArguments") { const ta = typeOf(a.value, el, at); if (ta) out["$typeArg"] = ta; continue; } // Filter<T> など
       const p = t.props.find((q) => q.name === a.local);
       if (!p) { c.err(at, "UNKNOWN_PROP", `${t.className} に "${a.local}" は無い（カタログ）`); continue; }
       const d = defs[a.local];
@@ -807,8 +808,12 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
       if (!p || !k.local.includes(".")) { c.err(at, "UNKNOWN_PROP", `${t.className} の要素 <${k.name}> は読めない`); continue; }
       const kids = k.kids.filter((x) => !ignorableEl(x));
       if (!kids.length || (kids[0].local === "Null" && kids[0].uri === X)) { c.drop(kat, "値なし", pn); continue; }
-      const sub = objectTypes.get(p.type);
-      if (sub && kids[0].local === sub.className) { out[pn] = obj(sub, kids[0], kat); continue; }
+      const sub = objTypeForEl(p, kids[0]);
+      if (sub) {
+        out[pn] = obj(sub, kids[0], kat);
+        if (objectImpls[p.type]) (out[pn] as ObjValue)["$type"] = sub.className; // 抽象クラス（Operator）は生成器と同じ形（実装を必ず書く）
+        continue;
+      }
       const m = p.type.match(/^System\.Collections\.Generic\.(?:IEnumerable|List|IList|ICollection)<(.+)>$/);
       if (kids[0].local === "List" && m) {
         const itemType = objectTypes.get(m[1] === "UiPath.UIAutomationNext.Contracts.ITarget" ? "UiPath.UIAutomationNext.Target" : m[1]);

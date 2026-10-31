@@ -1,0 +1,52 @@
+{
+  "workflow": "FilterCollection_Property",
+  "variables": [
+    {
+      "name": "files",
+      "type": "List<FileInfo>",
+      "default": "New List(Of FileInfo) From {New FileInfo(\"a.txt\"), New FileInfo(\"b.log\"), New FileInfo(\"c.txt\")}"
+    },
+    {
+      "name": "txtFiles",
+      "type": "List<FileInfo>"
+    }
+  ],
+  "body": [
+    {
+      "act": "FilterCollection",
+      "name": "要素のプロパティで絞る（CurrentItem.プロパティ名）",
+      "typeArg": "FileInfo",
+      "props": {
+        "Collection": "files",
+        "FilterAction": "KeepMatchingElementsOnly",
+        "Result": "txtFiles"
+      },
+      "objs": {
+        "Filter": {
+          "LogicalOperator": "And",
+          "Filters": [
+            {
+              "$typeArg": "String",
+              "Criteria": {
+                "lit": "CurrentItem.Extension"
+              },
+              "Operator": {
+                "$type": "EqualsOperator"
+              },
+              "Value": {
+                "lit": ".txt"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"txt=\" & String.Join(\",\", txtFiles.Select(Function(f) f.Name))"
+      }
+    }
+  ]
+}

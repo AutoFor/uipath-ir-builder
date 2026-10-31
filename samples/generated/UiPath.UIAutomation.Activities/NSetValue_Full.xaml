@@ -79,7 +79,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <uix:NSetValue AgentType="GPT41Mini" ContinueOnError="False" DelayAfter="0.1" DelayBefore="0.1" DisplayName="NSetValue（full）" EnableValidation="True" HealingAgentBehavior="Disabled" InteractionMode="Simulate" ScopeIdentifier="ce75e098-211f-51c3-86cf-ea39be11443c" Timeout="60" Value="Hanako" Version="V5" sap2010:WorkflowViewState.IdRef="NSetValue_1">
             <uix:NSetValue.Target>
-              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='name' tag='INPUT' /&gt;" Guid="f825e7e5-9954-5430-a2bd-34fe3c342bb7" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="SemanticSelector" SemanticSelectorArgument="名前の入力欄" Version="V6" />
+              <uix:TargetAnchorable Guid="f825e7e5-9954-5430-a2bd-34fe3c342bb7" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="SemanticSelector" SemanticElementType="InputBox" SemanticSelectorArgument="名前の入力欄" SemanticSelectorFindMethod="Dom" TargetType="SemanticBased" Version="V6" />
             </uix:NSetValue.Target>
           </uix:NSetValue>
         </ActivityAction>

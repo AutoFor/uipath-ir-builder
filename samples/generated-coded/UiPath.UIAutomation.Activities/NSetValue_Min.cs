@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { Url = new Uri(htmlPath).AbsoluteUri, BrowserType = UiPath.UIAutomationNext.Enums.NBrowserType.Edge, Selector = "<html app='msedge.exe' title='UIA Test Form' />" }, targetAppOptions: new TargetAppOptions { AttachMode = UiPath.UIAutomationNext.Enums.NAppAttachMode.ByInstance, OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
             {
                 // NSetValue（min）
-                app1.SetValue(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='name' tag='INPUT' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.SemanticSelector, SemanticSelector = "名前の入力欄" }, setValueOptions: new SetValueOptions { Value = "Hanako" });
+                app1.SetValue(target: new TargetAnchorableModel { ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.SemanticSelector, TargetType = UiPath.UIAutomationNext.Enums.TargetType.SemanticBased, SemanticSelector = "名前の入力欄" }, setValueOptions: new SetValueOptions { Value = "Hanako", HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.SameAsCard });
             }
         }
     }

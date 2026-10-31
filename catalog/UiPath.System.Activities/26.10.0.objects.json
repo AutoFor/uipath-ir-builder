@@ -554,6 +554,167 @@
           "declaredOn": "QueueItemFilterSettings"
         }
       ]
+    },
+    {
+      "className": "CollectionFilterSettings",
+      "clrType": "UiPath.Activities.System.Collections.Filters.CollectionFilterSettings",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Filters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<UiPath.Activities.System.Collections.Filters.Filter>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CollectionFilterSettings"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Collections.Filters.FilterLogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CollectionFilterSettings"
+        }
+      ]
+    },
+    {
+      "className": "ContainsIgnoreCaseOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.ContainsIgnoreCaseOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "ContainsOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.ContainsOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "EqualsOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.EqualsOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "Filter",
+      "clrType": "UiPath.Activities.System.Collections.Filters.Filter",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Filter",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Criteria",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Filter"
+        },
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.Activities.System.Collections.Filters.Operator",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Filter"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "TProperty",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Filter"
+        }
+      ]
+    },
+    {
+      "className": "GreaterThanOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.GreaterThanOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "GreaterThanOrEqualOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.GreaterThanOrEqualOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "LessThanOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.LessThanOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "LessThanOrEqualOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.LessThanOrEqualOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "NotEqualsOperator",
+      "clrType": "UiPath.Activities.System.Collections.Filters.NotEqualsOperator",
+      "assembly": "UiPath.System.Activities",
+      "xmlns": "clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Activities.System.Collections.Filters.Operator",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
     }
   ],
   "warnings": []

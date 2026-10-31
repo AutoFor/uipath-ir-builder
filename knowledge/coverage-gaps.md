@@ -17,7 +17,7 @@
 
 `coverage.ts --activity` では「書けない」と理由が出る。
 
-## 残っているもの（36 件）
+## 残っているもの（35 件）
 
 | プロパティ | 理由 | 方針 |
 | --- | --- | --- |
@@ -26,7 +26,6 @@
 | `Pick.Branches` | `PickBranch` を子に持つ。IR に形が無い | Flowchart と同じ |
 | `InvokeMethod.Parameters` / `GenericTypeArguments`（各2）、`New.Arguments`、`NewArray.Bounds`、`IndexerReference.Indices`、`ValueTypeIndexerReference.Indices`、`MultidimensionalArrayItemReference.Indices` | `Collection<Argument>` / `Collection<Type>`。向きと型を要素ごとに持つ。式（`New Foo(...)`、`a(0)`）で書けるので、System.Activities の低レベルの部品としては使わなくて済む | `InvokeMethod` のイシューで対応する |
 | `VariableValue.Variable`、`VariableReference.Variable`、`DelegateArgumentValue.DelegateArgument`、`DelegateArgumentReference.DelegateArgument`、`Literal.Value` | XAML の式の内部表現。IR は VB の式の文字列で書く | 対応しない |
-| `FilterCollection.Filter` | `CollectionFilterSettings.Filters` の `Filter` がジェネリック（`Value` が `TProperty`）で、`Operator` が抽象クラス | System のコレクションのイシューで形を確かめて足す |
 | `NForEachUiElement.VariablesMetadata` | `Dictionary<String, List<VariableMetadata>>`。Studio の既定 XAML は空の辞書を置く | 中身を確かめてから |
 
 `CreateUserAction` の `AppActionPropertiesMetadata`、`CurrentAppTaskState`、`State`、`TaskFieldsForDesktop` も残っている（形を確かめられない。[persistence.md](persistence.md)）。

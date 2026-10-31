@@ -4,17 +4,33 @@
   "coded": [
     {
       "call": "{app}.SetValue",
-      "usings": ["UiPath.UIAutomationNext.API.Models", "UiPath.UIAutomationNext.Enums"],
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
       "args": {
         "target": "{Target}",
         "setValueOptions": {
           "new": "SetValueOptions",
           "always": true,
-          "set": { "Value": "{Value}", "EnableValidation": "{EnableValidation}" }
+          "set": {
+            "Value": "{Value}",
+            "EnableValidation": "{EnableValidation}",
+            "Timeout": "{Timeout}",
+            "DelayBefore": "{DelayBefore}",
+            "DelayAfter": "{DelayAfter}",
+            "ContinueOnError": "{ContinueOnError}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
         }
       }
     }
   ],
-  "notes": "UiTargetApp.SetValue(target, SetValueOptions)。セマンティック（クラウドの AI）が要るので run していない（Coded が動くかは未確認）。AgentType / InteractionMode / Timeout / DelayBefore / DelayAfter / HealingAgentBehavior は Coded 未対応",
-  "ignore": ["ScopeIdentifier","Version","Timeout","DelayBefore","DelayAfter","HealingAgentBehavior","AgentType","InteractionMode"]
+  "notes": "UiTargetApp.SetValue(target, SetValueOptions)。Target は TargetType=SemanticBased が要る（XAML で無いと build が「No data is available for the selected targeting methods」で落ちる）。クラウドの AI が要るので run していない（Coded が動くかは未確認）。AgentType / InteractionMode は SetValueOptions に無い",
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "AgentType",
+    "InteractionMode"
+  ]
 }
