@@ -5,6 +5,7 @@
 //
 // - samples/ir/**/*.json        … 検証が通ること。XAML を samples/generated/、C# を samples/generated-coded/ のスナップショットと比べる。
 //                                  生成した C# がチェッカーを通ること（対応表が「Coded API なし」のものは C# を作らない）
+// - samples/ir-unbuildable/**/*.json … 検証が通り XAML を生成できること（build を通らないので build しない。スナップショットもなし。理由は横の verify.json）
 // - samples/ir-invalid/*.json   … 横の *.expected.json の codes と、検証のエラーコードが一致すること
 // - samples/ir-invalid-coded/*.json … 検証は通り、C# の生成で expected.json の codes が出ること
 // - samples/coded/**/*.cs       … チェッカーでエラーが無いこと
@@ -85,7 +86,7 @@ test("対応表が読めて、カタログにあるアクティビティを指�
     assert.ok(cat.activities.some((a) => a.className === m.activity && a.package === m.package), `${m.file}: ${m.package} に ${m.activity} が無い`);
 });
 
-for (const dir of ["samples/ir", "samples/ir-invalid", "samples/ir-invalid-coded", "samples/coded-invalid"])
+for (const dir of ["samples/ir", "samples/ir-unbuildable", "samples/ir-invalid", "samples/ir-invalid-coded", "samples/coded-invalid"])
   for (const f of sidecarJson(dir))
     test(`JSON ${rel(f)}`, () => { JSON.parse(read(f)); });
 
@@ -106,6 +107,16 @@ for (const f of files("samples/ir", ".json")) {
     snapshot(join(root, "samples", "generated-coded", sub, `${wf.workflow}.cs`), r.code);
     const chk = checkSource(r.code, `${wf.workflow}.cs`, ctx);
     assert.deepEqual(chk.issues.filter((i) => i.severity === "error"), [], "生成した C# がチェッカーを通らない");
+  });
+}
+
+for (const f of files("samples/ir-unbuildable", ".json")) {
+  test(`IR（build できない）${rel(f)}`, () => {
+    const wf: Workflow = JSON.parse(read(f));
+    assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
+    assert.ok(generate(wf, cat).includes(`x:Class="${wf.workflow}"`));
+    const side = f.replace(/\.json$/, ".verify.json");
+    assert.ok(existsSync(side) && JSON.parse(read(side)).unbuildable, "verify.json の unbuildable に理由を書く");
   });
 }
 

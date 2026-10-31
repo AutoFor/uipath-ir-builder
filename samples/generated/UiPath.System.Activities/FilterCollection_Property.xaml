@@ -1,13 +1,15 @@
-﻿<Activity mc:Ignorable="sap sap2010" x:Class="NExtractFormDataGeneric_Min" mva:VisualBasic.Settings="{x:Null}"
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="FilterCollection_Property" mva:VisualBasic.Settings="{x:Null}"
 xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ns0="clr-namespace:UiPath.Activities.System.Collections;assembly=UiPath.System.Activities"
+xmlns:ns1="clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities"
 xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:sio="clr-namespace:System.IO;assembly=System.Private.CoreLib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
-xmlns:uix="http://schemas.uipath.com/workflow/activities/uix"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -33,8 +35,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
       <x:String>System.Windows.Markup</x:String>
-      <x:String>UiPath.UIAutomationNext.Activities</x:String>
-      <x:String>UiPath.Semantic.Activities</x:String>
+      <x:String>UiPath.Activities.System.Collections</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -61,36 +62,28 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
       <AssemblyReference>System.Net.Mail</AssemblyReference>
-      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="NExtractFormDataGeneric_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="FilterCollection_Property" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-test-form.html&quot;)]" Name="htmlPath" />
-      <Variable x:TypeArguments="x:Object" Name="formData" />
+      <Variable x:TypeArguments="scg:List(sio:FileInfo)" Default="[New List(Of FileInfo) From {New FileInfo(&quot;a.txt&quot;), New FileInfo(&quot;b.log&quot;), New FileInfo(&quot;c.txt&quot;)}]" Name="files" />
+      <Variable x:TypeArguments="scg:List(sio:FileInfo)" Name="txtFiles" />
     </Sequence.Variables>
-    <ui:WriteTextFile DisplayName="テスト用の HTML を書く" FileName="[htmlPath]" Text="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;UIA Test Form&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;UIA Test Form&lt;/h1&gt;&lt;input id='name' type='text' value=''&gt;&lt;button id='greet' onclick=&quot;document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'&quot;&gt;Greet&lt;/button&gt;&lt;label&gt;&lt;input id='agree' type='checkbox'&gt;agree&lt;/label&gt;&lt;div id='result'&gt;ready&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="UIA Test Form を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="5870e3d5-3575-56f6-b3d4-4eb376ed3548" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
-      <uix:NApplicationCard.TargetApp>
-        <uix:TargetApp BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" Url="[New Uri(htmlPath).AbsoluteUri]" Version="V3" />
-      </uix:NApplicationCard.TargetApp>
-      <uix:NApplicationCard.Body>
-        <ActivityAction x:TypeArguments="x:Object">
-          <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
-          </ActivityAction.Argument>
-          <uix:NExtractFormDataGeneric x:TypeArguments="x:Object" DisplayName="NExtractFormDataGeneric（min）" FormData="[formData]" HealingAgentBehavior="SameAsCard" ScopeIdentifier="5870e3d5-3575-56f6-b3d4-4eb376ed3548" Version="V5" sap2010:WorkflowViewState.IdRef="NExtractFormDataGeneric_1">
-            <uix:NExtractFormDataGeneric.FieldMappings>
-              <scg:Dictionary x:TypeArguments="x:String, x:String">
-                <x:String x:Key="name">名前の入力欄</x:String>
-              </scg:Dictionary>
-            </uix:NExtractFormDataGeneric.FieldMappings>
-            <uix:NExtractFormDataGeneric.Target>
-              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='name' tag='INPUT' /&gt;" Guid="ca9174bf-7c1c-55d3-8634-0467c11c2ada" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
-            </uix:NExtractFormDataGeneric.Target>
-          </uix:NExtractFormDataGeneric>
-        </ActivityAction>
-      </uix:NApplicationCard.Body>
-    </uix:NApplicationCard>
+    <ns0:FilterCollection x:TypeArguments="sio:FileInfo" Collection="[files]" DisplayName="要素のプロパティで絞る（CurrentItem.プロパティ名）" FilterAction="KeepMatchingElementsOnly" Result="[txtFiles]" sap2010:WorkflowViewState.IdRef="FilterCollection_1">
+      <ns0:FilterCollection.Filter>
+        <ns1:CollectionFilterSettings LogicalOperator="And">
+          <ns1:CollectionFilterSettings.Filters>
+            <scg:List x:TypeArguments="ns1:Filter" Capacity="4">
+              <ns1:Filter x:TypeArguments="x:String" Criteria="CurrentItem.Extension" Value="[&quot;.txt&quot;]">
+                <ns1:Filter.Operator>
+                  <ns1:EqualsOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+            </scg:List>
+          </ns1:CollectionFilterSettings.Filters>
+        </ns1:CollectionFilterSettings>
+      </ns0:FilterCollection.Filter>
+    </ns0:FilterCollection>
+    <ui:LogMessage Level="Info" Message="[&quot;txt=&quot; &amp; String.Join(&quot;,&quot;, txtFiles.Select(Function(f) f.Name))]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>
 </Activity>

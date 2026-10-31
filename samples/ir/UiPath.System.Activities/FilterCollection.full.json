@@ -1,0 +1,79 @@
+{
+  "workflow": "FilterCollection_Full",
+  "variables": [
+    { "name": "numbers", "type": "List<Int32>", "default": "New List(Of Int32) From {1, 5, 8, 12}" },
+    { "name": "threshold", "type": "Int32", "default": "10" },
+    { "name": "words", "type": "List<String>", "default": "New List(Of String) From {\"apple\", \"Banana\", \"cherry\", \"date\"}" },
+    { "name": "inPlace", "type": "List<Int32>", "default": "New List(Of Int32) From {1, 2, 3}" },
+    { "name": "andResult", "type": "List<Int32>" },
+    { "name": "rangeResult", "type": "List<Int32>" },
+    { "name": "orResult", "type": "List<String>" }
+  ],
+  "body": [
+    {
+      "act": "FilterCollection",
+      "name": "数値を And で絞る（以上、式の値以下、等しくない）",
+      "typeArg": "Int32",
+      "props": { "Collection": "numbers", "FilterAction": "KeepMatchingElementsOnly", "Result": "andResult" },
+      "objs": {
+        "Filter": {
+          "LogicalOperator": "And",
+          "Filters": [
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "GreaterThanOrEqualOperator" }, "Value": 5 },
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "LessThanOrEqualOperator" }, "Value": "threshold" },
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "NotEqualsOperator" }, "Value": 8 }
+          ]
+        }
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"and=\" & String.Join(\",\", andResult)" } },
+    {
+      "act": "FilterCollection",
+      "name": "より大きい、より小さい",
+      "typeArg": "Int32",
+      "props": { "Collection": "numbers", "Result": "rangeResult" },
+      "objs": {
+        "Filter": {
+          "LogicalOperator": "And",
+          "Filters": [
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "GreaterThanOperator" }, "Value": 1 },
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "LessThanOperator" }, "Value": 12 }
+          ]
+        }
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"range=\" & String.Join(\",\", rangeResult)" } },
+    {
+      "act": "FilterCollection",
+      "name": "文字列を Or で探して取り除く",
+      "typeArg": "String",
+      "props": { "Collection": "words", "FilterAction": "RemoveMatchingElements", "Result": "orResult" },
+      "objs": {
+        "Filter": {
+          "LogicalOperator": "Or",
+          "Filters": [
+            { "$typeArg": "String", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "ContainsOperator" }, "Value": { "lit": "an" } },
+            { "$typeArg": "String", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "ContainsIgnoreCaseOperator" }, "Value": { "lit": "CHER" } },
+            { "$typeArg": "String", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "EqualsOperator" }, "Value": { "lit": "date" } }
+          ]
+        }
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"or=\" & String.Join(\",\", orResult)" } },
+    {
+      "act": "FilterCollection",
+      "name": "Result なし（元の一覧を書き換える）",
+      "typeArg": "Int32",
+      "props": { "Collection": "inPlace", "FilterAction": "RemoveMatchingElements" },
+      "objs": {
+        "Filter": {
+          "LogicalOperator": "And",
+          "Filters": [
+            { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "EqualsOperator" }, "Value": 2 }
+          ]
+        }
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"inPlace=\" & String.Join(\",\", inPlace)" } }
+  ]
+}

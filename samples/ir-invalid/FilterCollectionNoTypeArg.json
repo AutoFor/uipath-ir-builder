@@ -1,0 +1,30 @@
+{
+  "workflow": "FilterCollectionNoTypeArg",
+  "variables": [
+    {
+      "name": "n",
+      "type": "List<Int32>"
+    }
+  ],
+  "body": [
+    {
+      "act": "FilterCollection",
+      "typeArg": "Int32",
+      "props": {
+        "Collection": "n"
+      },
+      "objs": {
+        "Filter": {
+          "Filters": [
+            {
+              "Criteria": {
+                "lit": "CurrentItem"
+              },
+              "Value": 1
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -89,11 +89,11 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
   function obj(t: ObjType, v: unknown, at: string) {
     if (typeof v !== "object" || v === null || Array.isArray(v) || isValue(v)) { add(at, "BAD_OBJ", `${t.className} はオブジェクト（{ "プロパティ": 値 }）で書く`); return; }
     for (const [k, x] of Object.entries(v as ObjValue)) {
-      if (k === "$type") continue; // インターフェース型のプロパティで実装を選ぶ印
+      if (k === "$type" || k === "$typeArg") continue; // $type は実装を選ぶ印、$typeArg はジェネリックの型引数（Filter<T> など）
       const kat = `${at}.${k}`;
       const p = t.props.find((q) => q.name === k);
       if (!p) { add(kat, "UNKNOWN_PROP", `${t.className} に "${k}" は無い（${hint(t)}）`); continue; }
-      const sub = objectTypes.get(p.type);
+      const sub = objTypeFor(p.type, x);
       const item = itemTypeOf(p.type);
       if (sub) { obj(sub, x, kat); continue; }
       if (item && objectTypes.get(item)) {
@@ -128,6 +128,7 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
         add(kat, "BAD_OBJ", `"${k}"（${p.type}）はまだ書けない`);
     }
     const keys = Object.keys(v as ObjValue);
+    if (t.genericArity && typeof (v as ObjValue).$typeArg !== "string") add(at, "BAD_OBJ", `${t.className} はジェネリックなので "$typeArg"（"Int32" など）が要る`);
     const need = findKeys[t.clrType];
     if (need && !need.some((x) => keys.includes(x))) add(at, "UIA_TARGET_EMPTY", `${t.className} に ${need.join(" / ")} のどれかが要る`);
     if (t.clrType === TA && !keys.includes("SearchSteps")) add(at, "UIA_SEARCH_STEPS", `TargetAnchorable には SearchSteps（"Selector" など）が要る`);
@@ -215,6 +216,7 @@ export type XamlCtx = {
   attrValue: (v: Value, p: Prop) => string;
   esc: (s: string) => string;
   emit: (depth: number, s: string) => void;
+  typeText: (t: string) => string;
 };
 
 // <tag.Prop><uix:Type ... /></tag.Prop> を書く
@@ -232,7 +234,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
   const attrs: [string, string][] = [];
   const elems: [Prop, ObjValue | ObjValue[]][] = [];
   for (const [k, x] of Object.entries(v)) {
-    if (k === "$type") continue;
+    if (k === "$type" || k === "$typeArg") continue;
     const p = t.props.find((q) => q.name === k)!;
     if (isValue(x)) attrs.push([k, ctx.attrValue(x, p)]);
     else elems.push([p, x as ObjValue | ObjValue[]]);
@@ -240,6 +242,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
   for (const [k, d] of Object.entries(objDefaults[t.clrType] ?? {}))
     if (!(k in v)) attrs.push([k, d === "guid" ? nextGuid() : d]);
   attrs.sort(([x], [y]) => x.localeCompare(y));
+  if (t.genericArity) attrs.unshift(["x:TypeArguments", ctx.typeText(String(v.$typeArg))]);
   const attrText = attrs.map(([k, x]) => ` ${k}="${ctx.esc(x)}"`).join("");
   if (!elems.length) { ctx.emit(depth, `<${tag}${attrText} />`); return; }
   ctx.emit(depth, `<${tag}${attrText}>`);
@@ -261,7 +264,7 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
       ctx.emit(depth + 2, `<${ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib")}List x:TypeArguments="${ifaceTag}" Capacity="${Math.max(4, x.length)}">`);
       for (const e of x) emitObj(item, e, depth + 3, ctx);
       ctx.emit(depth + 2, `</${ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib")}List>`);
-    } else emitObj(objectTypes.get(p.type)!, x, depth + 2, ctx);
+    } else emitObj(objTypeFor(p.type, x)!, x as ObjValue, depth + 2, ctx);
     ctx.emit(depth + 1, `</${tag}.${p.name}>`);
   }
   ctx.emit(depth, `</${tag}>`);
@@ -282,7 +285,7 @@ export const codedModels: Record<string, ModelMap> = {
       NativeTextArgument: "NativeText", NativeTextOccurrenceArgument: "NativeTextOccurrence", IsNativeTextCaseSensitive: "IsNativeTextCaseSensitive",
       CvType: "CvType", CvTextArgument: "CvText", CvTextOccurrenceArgument: "CvTextOccurrence", CvTextAccuracyArgument: "CvTextAccuracy",
       SemanticSelectorArgument: "SemanticSelector", SemanticSelectorFindMethod: "SemanticSelectorFindMethod", SemanticElementType: "SemanticElementType",
-      ElementType: "ElementType", FriendlyName: "FriendlyName", Guid: "Guid", Reference: "Reference",
+      ElementType: "ElementType", FriendlyName: "FriendlyName", Guid: "Guid", Reference: "Reference", TargetType: "TargetType",
       PointOffset: "PointOffset", RegionOffset: "RegionOffset",
       Version: null, DesignTimeRectangle: null, DesignTimeScaleFactor: null, InformativeScreenshot: null, ContentHash: null, BrowserURL: null, IsResponsive: null,
       Anchors: "!アンカーは Coded のモデル（TargetAnchorableModel）に無い",

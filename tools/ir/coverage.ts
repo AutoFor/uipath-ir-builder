@@ -69,6 +69,7 @@ function visit(n: Node, file: string) {
   kids.forEach((k) => visit(k, file));
 }
 walkIr(join(root, "samples", "ir"));
+walkIr(join(root, "samples", "ir-unbuildable"));
 
 // ---- 集計 ----
 type Row = { a: Activity; ok: string[]; ng: { name: string; reason: string; group: string }[]; used: string[]; coded: string };

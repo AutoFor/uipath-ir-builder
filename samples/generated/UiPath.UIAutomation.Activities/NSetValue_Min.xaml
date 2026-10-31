@@ -79,7 +79,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <uix:NSetValue DisplayName="NSetValue（min）" HealingAgentBehavior="SameAsCard" ScopeIdentifier="75fc24b9-5bf1-542d-a0c8-afc79c5ab7c9" Value="Hanako" Version="V5" sap2010:WorkflowViewState.IdRef="NSetValue_1">
             <uix:NSetValue.Target>
-              <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='name' tag='INPUT' /&gt;" Guid="1925bb9d-5ea8-5bbc-a305-d79e41e43995" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="SemanticSelector" SemanticSelectorArgument="名前の入力欄" Version="V6" />
+              <uix:TargetAnchorable Guid="1925bb9d-5ea8-5bbc-a305-d79e41e43995" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="SemanticSelector" SemanticSelectorArgument="名前の入力欄" TargetType="SemanticBased" Version="V6" />
             </uix:NSetValue.Target>
           </uix:NSetValue>
         </ActivityAction>

@@ -1,0 +1,166 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="FilterCollection_Full" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ns0="clr-namespace:UiPath.Activities.System.Collections;assembly=UiPath.System.Activities"
+xmlns:ns1="clr-namespace:UiPath.Activities.System.Collections.Filters;assembly=UiPath.System.Activities"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Activities.System.Collections</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="FilterCollection_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(x:Int32)" Default="[New List(Of Int32) From {1, 5, 8, 12}]" Name="numbers" />
+      <Variable x:TypeArguments="x:Int32" Default="[10]" Name="threshold" />
+      <Variable x:TypeArguments="scg:List(x:String)" Default="[New List(Of String) From {&quot;apple&quot;, &quot;Banana&quot;, &quot;cherry&quot;, &quot;date&quot;}]" Name="words" />
+      <Variable x:TypeArguments="scg:List(x:Int32)" Default="[New List(Of Int32) From {1, 2, 3}]" Name="inPlace" />
+      <Variable x:TypeArguments="scg:List(x:Int32)" Name="andResult" />
+      <Variable x:TypeArguments="scg:List(x:Int32)" Name="rangeResult" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="orResult" />
+    </Sequence.Variables>
+    <ns0:FilterCollection x:TypeArguments="x:Int32" Collection="[numbers]" DisplayName="数値を And で絞る（以上、式の値以下、等しくない）" FilterAction="KeepMatchingElementsOnly" Result="[andResult]" sap2010:WorkflowViewState.IdRef="FilterCollection_1">
+      <ns0:FilterCollection.Filter>
+        <ns1:CollectionFilterSettings LogicalOperator="And">
+          <ns1:CollectionFilterSettings.Filters>
+            <scg:List x:TypeArguments="ns1:Filter" Capacity="4">
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="5">
+                <ns1:Filter.Operator>
+                  <ns1:GreaterThanOrEqualOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="[threshold]">
+                <ns1:Filter.Operator>
+                  <ns1:LessThanOrEqualOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="8">
+                <ns1:Filter.Operator>
+                  <ns1:NotEqualsOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+            </scg:List>
+          </ns1:CollectionFilterSettings.Filters>
+        </ns1:CollectionFilterSettings>
+      </ns0:FilterCollection.Filter>
+    </ns0:FilterCollection>
+    <ui:LogMessage Level="Info" Message="[&quot;and=&quot; &amp; String.Join(&quot;,&quot;, andResult)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ns0:FilterCollection x:TypeArguments="x:Int32" Collection="[numbers]" DisplayName="より大きい、より小さい" FilterAction="RemoveMatchingElements" Result="[rangeResult]" sap2010:WorkflowViewState.IdRef="FilterCollection_2">
+      <ns0:FilterCollection.Filter>
+        <ns1:CollectionFilterSettings LogicalOperator="And">
+          <ns1:CollectionFilterSettings.Filters>
+            <scg:List x:TypeArguments="ns1:Filter" Capacity="4">
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="1">
+                <ns1:Filter.Operator>
+                  <ns1:GreaterThanOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="12">
+                <ns1:Filter.Operator>
+                  <ns1:LessThanOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+            </scg:List>
+          </ns1:CollectionFilterSettings.Filters>
+        </ns1:CollectionFilterSettings>
+      </ns0:FilterCollection.Filter>
+    </ns0:FilterCollection>
+    <ui:LogMessage Level="Info" Message="[&quot;range=&quot; &amp; String.Join(&quot;,&quot;, rangeResult)]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ns0:FilterCollection x:TypeArguments="x:String" Collection="[words]" DisplayName="文字列を Or で探して取り除く" FilterAction="RemoveMatchingElements" Result="[orResult]" sap2010:WorkflowViewState.IdRef="FilterCollection_3">
+      <ns0:FilterCollection.Filter>
+        <ns1:CollectionFilterSettings LogicalOperator="Or">
+          <ns1:CollectionFilterSettings.Filters>
+            <scg:List x:TypeArguments="ns1:Filter" Capacity="4">
+              <ns1:Filter x:TypeArguments="x:String" Criteria="CurrentItem" Value="[&quot;an&quot;]">
+                <ns1:Filter.Operator>
+                  <ns1:ContainsOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+              <ns1:Filter x:TypeArguments="x:String" Criteria="CurrentItem" Value="[&quot;CHER&quot;]">
+                <ns1:Filter.Operator>
+                  <ns1:ContainsIgnoreCaseOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+              <ns1:Filter x:TypeArguments="x:String" Criteria="CurrentItem" Value="[&quot;date&quot;]">
+                <ns1:Filter.Operator>
+                  <ns1:EqualsOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+            </scg:List>
+          </ns1:CollectionFilterSettings.Filters>
+        </ns1:CollectionFilterSettings>
+      </ns0:FilterCollection.Filter>
+    </ns0:FilterCollection>
+    <ui:LogMessage Level="Info" Message="[&quot;or=&quot; &amp; String.Join(&quot;,&quot;, orResult)]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
+    <ns0:FilterCollection x:TypeArguments="x:Int32" Collection="[inPlace]" DisplayName="Result なし（元の一覧を書き換える）" FilterAction="RemoveMatchingElements" sap2010:WorkflowViewState.IdRef="FilterCollection_4">
+      <ns0:FilterCollection.Filter>
+        <ns1:CollectionFilterSettings LogicalOperator="And">
+          <ns1:CollectionFilterSettings.Filters>
+            <scg:List x:TypeArguments="ns1:Filter" Capacity="4">
+              <ns1:Filter x:TypeArguments="x:Int32" Criteria="CurrentItem" Value="2">
+                <ns1:Filter.Operator>
+                  <ns1:EqualsOperator />
+                </ns1:Filter.Operator>
+              </ns1:Filter>
+            </scg:List>
+          </ns1:CollectionFilterSettings.Filters>
+        </ns1:CollectionFilterSettings>
+      </ns0:FilterCollection.Filter>
+    </ns0:FilterCollection>
+    <ui:LogMessage Level="Info" Message="[&quot;inPlace=&quot; &amp; String.Join(&quot;,&quot;, inPlace)]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />
+  </Sequence>
+</Activity>

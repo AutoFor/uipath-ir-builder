@@ -353,6 +353,9 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
 
 - 検証のエラー：`UIA_NO_SCOPE`（Modern のターゲットが `NApplicationCard` の外）、`UIA_TARGET_MISSING`（`Target` / `TargetApp` が無い）、`UIA_SEARCH_STEPS`（`SearchSteps` が無い）、`UIA_TARGET_EMPTY`（セレクタなど探す手がかりが無い）、`BAD_OBJ`（オブジェクトの形が違う）。例は `samples/ir-invalid/Uia.json`
 
+- `NSetValue`（UI 要素を更新）の `Target` は `"TargetType": "SemanticBased"` が要る。無いと build が「No data is available for the selected targeting methods」で落ちる。`SearchSteps` は `SemanticSelector` か `Semantic`
+- `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）
+
 ### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
 
 `<pkg>` は `UiPath.Excel.Activities`。カタログは `catalog/UiPath.Excel.Activities/3.6.1.json`、Excel 固有の処理は `tools/ir/excel.ts`。見本は `samples/ir/UiPath.Excel.Activities/` の `ExcelApplicationCard`・`ReadRangeX`・`WriteRangeX`・`WriteCellX`・`ReadCellValueX`・`ExcelApplicationScope`・`ExcelReadCell`（どれも XAML と C# の build は通っている。run はまだ）。迷ったらまずこれを真似る。
@@ -498,6 +501,20 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 - XAML と C# は同じ `output/` に書くので、保存先が既にあると落ちるもの（`SaveAsPdfX`、`SaveExcelFileAsX`）は `ReplaceExisting: true` を書く
 - run には Excel（デスクトップ版）が要る。この PC には入っているが、管理者権限のシェルから起動した Excel はファイルを開けない（「ファイルにアクセスできません」）。run はマネージャーがまとめて流すので、期待ログ（`*.expected.log`）を必ず書き、build まで通ったら Linear を **In Progress** にして「run 待ち」とコメントする
 - run できないもの（パスワード付きのブック、秘密度ラベル、マクロ付きのブック、クリップボード、PDF の出力先の確認など）は `noRun` に理由を書く。その上で build と全テストが通れば Done
+
+## 8-S. System のコレクション
+
+`FilterCollection.Filter` は `objs` に書く。run で確かめた形：
+
+```json
+"objs": { "Filter": { "LogicalOperator": "And", "Filters": [
+  { "$typeArg": "Int32", "Criteria": { "lit": "CurrentItem" }, "Operator": { "$type": "GreaterThanOperator" }, "Value": 5 } ] } }
+```
+
+- `$typeArg` は `Filter<T>` の型引数（`Value` の型）で必須。`Operator` は抽象クラスで、`$type` で実装を選ぶ（`EqualsOperator` / `NotEqualsOperator` / `GreaterThanOperator` / `GreaterThanOrEqualOperator` / `LessThanOperator` / `LessThanOrEqualOperator` / `ContainsOperator` / `ContainsIgnoreCaseOperator`）
+- `Criteria` は、要素そのものなら `CurrentItem`、要素のプロパティなら `CurrentItem.Extension`（`Extension` だけだと実行時に `startIndex` の例外）
+- `FilterAction` を省くと既定 XAML の `RemoveMatchingElements`（一致したものを取り除く）。パッケージの説明書の「`KeepMatchingElementsOnly` が既定」とは違う
+- `Result` を書かないと、元の一覧が書き換わる
 
 ## 8-P. 永続化（UiPath.Persistence.Activities）
 

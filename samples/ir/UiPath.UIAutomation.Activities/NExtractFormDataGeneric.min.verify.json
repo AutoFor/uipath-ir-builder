@@ -1,1 +1,0 @@
-{"noRun":"クラウドの AI（セマンティックな UI 理解）が要る。画面の内容を外部に送るので run しない。さらに、この環境の Studio では build 時の検証で落ちる（NSetValue は「対象にデータが無い」、NExtractFormDataGeneric は「Studio 23.10 以上が必要」）。XAML 自体は生成できるが、このファイルを含めると同じ作業用プロジェクトの build が全部落ちるので、まとめて build するときは外す"}
