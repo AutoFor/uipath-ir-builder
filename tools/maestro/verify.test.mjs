@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { after, test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { checkRefs, extractRefs } from "./tenant-refs.mjs";
 import { parseTsc, classify, dropRepeated, findUip, judge, normalizeEnvelope, parseEnvelope, parseIssueLines, planSteps, verifyFile } from "./verify.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -24,9 +25,44 @@ test("planSteps は Flow の式の検査を厳しくする", () => {
   assert.ok(steps[1].args.includes("--no-check"));
 });
 
+test("extractRefs は Flow の binding とノードのキーを読む", () => {
+  const flow = JSON.stringify({ nodes: [{ id: "n", type: "uipath.core.rpa-workflow.802eeeb8-d037-4b4c-badf-e6cfc39591a7" }], bindings: [
+    { resource: "process", resourceKey: "F.P", default: "P", propertyAttribute: "name" },
+    { resource: "process", resourceKey: "F.P", default: "F", propertyAttribute: "folderPath" },
+    { resource: "connection", resourceKey: "c", default: "c", propertyAttribute: "ConnectionId" },
+    { resource: "connection", resourceKey: "c", default: "f", propertyAttribute: "FolderKey" },
+  ] });
+  assert.deepEqual(extractRefs("flow", flow), [
+    { kind: "process", name: "P", folder: "F" },
+    { kind: "connection", id: "c" },
+    { kind: "processKey", key: "802eeeb8-d037-4b4c-badf-e6cfc39591a7", where: "n" },
+  ]);
+});
+
+test("extractRefs は BPMN の context と binding を読む", () => {
+  const xml = `<uipath:binding id="o" default="c1" resource="Connection" resourceKey="c1" propertyAttribute="ConnectionId" />
+    <uipath:input name="folderPath" type="string" value="F" />
+    <uipath:input name="name" type="string" value="P" />`;
+  assert.deepEqual(extractRefs("bpmn", xml), [{ kind: "connection", id: "c1" }, { kind: "process", name: "P", folder: "F" }]);
+});
+
+test("checkRefs は無い資源、違うフォルダ、無い接続を NG にする", () => {
+  const tenant = { processes: [{ Key: "AA", Name: "P", FolderPath: "F" }], apps: [{ Key: "b", Name: "A", Folder: "F" }], connections: [{ Id: "C", Name: "c", State: "Enabled" }, { Id: "D", Name: "d", State: "Failed" }] };
+  const codes = (refs) => checkRefs(refs, tenant).map((d) => d.code);
+  assert.deepEqual(codes([{ kind: "process", name: "P", folder: "F" }, { kind: "processKey", key: "aa" }, { kind: "connection", id: "c" }, { kind: "app", name: "A", folder: "F", key: "B" }]), []);
+  assert.deepEqual(codes([{ kind: "process", name: "X", folder: "F" }]), ["REF_NOT_FOUND"]);
+  assert.deepEqual(codes([{ kind: "process", name: "P", folder: "G" }]), ["REF_WRONG_FOLDER"]);
+  assert.deepEqual(codes([{ kind: "processKey", key: "zz" }]), ["REF_NOT_FOUND"]);
+  assert.deepEqual(codes([{ kind: "connection", id: "x" }]), ["REF_NOT_FOUND"]);
+  assert.deepEqual(codes([{ kind: "connection", id: "d" }]), ["REF_CONNECTION_STATE"]);
+  assert.deepEqual(codes([{ kind: "app", name: "A", folder: "G", key: "b" }]), ["REF_WRONG_FOLDER"]);
+});
+
 test("planSteps は BPMN に format を入れ、Case は --strict にする", () => {
   assert.deepEqual(planSteps({ family: "bpmn", source: true }, "i", "a").map((s) => s.name), ["check", "compile", "format", "validate"]);
-  assert.ok(planSteps({ family: "case", source: true }, "i", "a")[2].args.includes("--strict"));
+  const c = planSteps({ family: "case", source: true }, "i", "a");
+  assert.deepEqual(c.map((s) => s.name), ["check", "compile", "bindings", "validate"]);
+  assert.ok(c[3].args.includes("--strict"));
   assert.deepEqual(planSteps({ family: "bpmn", source: false }, "i", "a").map((s) => s.name), ["format", "validate"]);
 });
 
@@ -145,5 +181,23 @@ test("正しい例は pack まで通る（Flow、BPMN、Case）", { skip }, () =
     const r = verifyFile(uip, resolve(here, "fixtures", f), out, { pack: true });
     assert.equal(r.ok, true, `${f}: ${JSON.stringify(r.steps)}`);
     assert.equal(r.steps.find((s) => s.name === "pack").status, "ok", f);
+  }
+});
+
+test("穴：テナントに無い資源は、--tenant なしだと通る（--tenant は読み取りなので既定で流さない）", { skip }, () => {
+  for (const f of ["GhostRpa.flow.ts", "GhostRpa.bpmn.ts", "GhostAgent.flow.ts", "GhostApp.flow.ts"]) {
+    assert.equal(verifyFile(uip, resolve(here, "fixtures", "tenant", f), out).ok, true, f);
+  }
+});
+
+// テナントを読むので、MAESTRO_TENANT=1 のときだけ流す
+const tenantSkip = skip || (process.env.MAESTRO_TENANT ? false : "MAESTRO_TENANT=1 のときだけ");
+test("--tenant は実在の RPA を通し、無いものを止める", { skip: tenantSkip }, () => {
+  const v = (f) => verifyFile(uip, resolve(here, "fixtures", "tenant", f), out, { tenant: true });
+  for (const f of ["Rpa.flow.ts", "Rpa.bpmn.ts", "Rpa.case.ts"]) assert.equal(v(f).ok, true, f);
+  for (const f of ["GhostRpa.flow.ts", "GhostRpa.bpmn.ts", "GhostAgent.flow.ts", "GhostApp.flow.ts", "GhostApp.case.ts"]) {
+    const r = v(f);
+    assert.equal(r.ok, false, f);
+    assert.ok(codes(r, "tenant").includes("REF_NOT_FOUND"), f);
   }
 });

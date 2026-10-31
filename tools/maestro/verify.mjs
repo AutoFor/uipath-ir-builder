@@ -12,17 +12,20 @@
 // 一方で validate でしか止まらない間違いもあるので、1回で全部見せるため。前の工程の成果物が無いときだけ skip にする。
 //
 // 使い方:
-//   node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--workspace <dir>] <ファイル>...
+//   node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--workspace <dir>] <ファイル>...
 //     --strict     warning も NG にする
 //     --json       結果を JSON で標準出力に書く（人向けの表は標準エラーに書く）
 //     --pack       成果物を init の雛形に入れて .nupkg まで作る（ローカルだけ）
+//     --tenant     成果物が指す資源がテナントにあるかを照合する（一覧を読むだけ。ログインが要る）
 //     --workspace  .flow-sdk/（bindings.json、connectors-local）がある場所。コネクタを使うソースで指定する
+// 既定ではテナントに一切触らない。テナントを読むのは --tenant のときだけで、書き込みは無い。
 // 終了コード: 0 = すべて OK、1 = NG がある、2 = 使い方の間違いか、環境の問題（uip や SDK が無い）
 
 import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { checkRefs, extractRefs } from "./tenant-refs.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -62,6 +65,8 @@ export function planSteps(info, input, artifact, opts = {}) {
   }
   const target = artifact;
   if (f === "bpmn") steps.push({ name: "format", args: ["maestro", "bpmn", "format", target], needs: target });
+  // Case の compile は bindings_v2.json を作らないので、validate --strict の前に作る（ローカルだけ）
+  if (f === "case") steps.push({ name: "bindings", args: ["maestro", "case", "bindings", "sync", target], needs: target });
   const strictFlag = f === "flow" ? ["--strict-expressions"] : f === "case" ? ["--strict"] : [];
   steps.push({ name: "validate", args: ["maestro", f, "validate", target, ...strictFlag], needs: target });
   return steps;
@@ -124,7 +129,7 @@ export function normalizeEnvelope(env) {
 export function dropRepeated(diagnostics, seen) {
   const out = [];
   for (const d of diagnostics) {
-    const key = `${d.level}|${d.code}|${d.where}|${d.message}`;
+    const key = `${d.level}|${d.code}|${d.message}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(d);
@@ -203,6 +208,10 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
   }
   const target = artifact;
+  if (opts.tenant) {
+    if (!existsSync(target)) results.push({ name: "tenant", status: "skip", ms: 0, diagnostics: [], reason: "前の工程の成果物が無い" });
+    else results.push({ name: "tenant", ...checkTenant(uipJs, info.family, target) });
+  }
   if (opts.pack) {
     // NG のものは pack しない。Flow の script の文法の間違いは pack を通ってしまうので、pack の OK を合格と読ませない
     if (!existsSync(target) || results.some((s) => s.status === "ng")) results.push({ name: "pack", status: "skip", ms: 0, diagnostics: [], reason: "前の工程が NG" });
@@ -211,6 +220,38 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   const j = judge(results, opts.strict);
   const steps = results.map(({ data, ...s }) => s);
   return { file: input, family: info.family, artifact: existsSync(artifact) ? artifact : null, ...j, steps };
+}
+
+// テナントの一覧は、1回の実行で1度だけ読む
+let tenantCache = null;
+function readTenant(uipJs) {
+  if (tenantCache) return tenantCache;
+  const list = (args) => {
+    const r = spawnSync(process.execPath, [uipJs, ...args, "--output", "json"], { cwd: here, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    const env = parseEnvelope(r.stdout ?? "");
+    if (r.status !== 0 || env?.Result !== "Success" || !Array.isArray(env.Data)) throw new Error(`${args.join(" ")}: ${env?.Message ?? "読めない"}`);
+    if (env.Pagination?.HasMore) throw new Error(`${args.join(" ")}: 一覧が途中で切れた`);
+    return env.Data;
+  };
+  tenantCache = {
+    processes: list(["or", "processes", "list", "--all-folders", "--limit", "1000"]),
+    apps: list(["solution", "resources", "list", "--kind", "App"]),
+    connections: list(["is", "connections", "list", "--all-folders"]),
+  };
+  return tenantCache;
+}
+
+function checkTenant(uipJs, family, artifact) {
+  const started = Date.now();
+  let diagnostics;
+  try {
+    diagnostics = checkRefs(extractRefs(family, readFileSync(artifact, "utf8")), readTenant(uipJs));
+  } catch (e) {
+    // 読めないときに OK にしない
+    return { status: "ng", ms: Date.now() - started, diagnostics: [{ level: "error", code: "TENANT_UNREADABLE", where: null, message: e.message }] };
+  }
+  const status = diagnostics.some((d) => d.level === "error") ? "ng" : diagnostics.length ? "warn" : "ok";
+  return { status, ms: Date.now() - started, diagnostics };
 }
 
 // 成果物を init の雛形に入れて .nupkg を作る（ローカルだけ。アップロードしない）
@@ -253,8 +294,8 @@ function runTsc(input, dir) {
       target: "ES2022", module: "NodeNext", moduleResolution: "NodeNext", strict: true, noEmit: true, skipLibCheck: true, allowImportingTsExtensions: true, types: [],
       paths: {
         "@uipath/maestro-builder-sdk": [join(dist, "index.d.ts")],
-        "@uipath/maestro-builder-sdk/bpmn": [join(dist, "bpmn", "index.d.ts")],
-        "@uipath/maestro-builder-sdk/case": [join(dist, "case", "index.d.ts")],
+        "@uipath/maestro-builder-sdk/bpmn": [join(dist, "bpmn", "bpmn-sdk.d.ts")],
+        "@uipath/maestro-builder-sdk/case": [join(dist, "case", "case-sdk.d.ts")],
       },
     },
     files: [input],
@@ -299,12 +340,13 @@ export function main(argv) {
     if (a === "--strict") opts.strict = true;
     else if (a === "--json") opts.json = true;
     else if (a === "--pack") opts.pack = true;
+    else if (a === "--tenant") opts.tenant = true;
     else if (a === "--out") opts.out = resolve(argv[++i] ?? "");
     else if (a === "--workspace") opts.workspace = resolve(argv[++i] ?? "");
     else if (a.startsWith("--")) { console.error(`知らないオプション: ${a}`); return 2; }
     else files.push(a);
   }
-  if (!files.length) { console.error("使い方: node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--workspace <dir>] <ファイル>..."); return 2; }
+  if (!files.length) { console.error("使い方: node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--workspace <dir>] <ファイル>..."); return 2; }
   const uipJs = findUip();
   if (!uipJs) { console.error("uip が見つからない（環境変数 UIP_JS か、npm の全体インストール）"); return 2; }
   if (!existsSync(join(here, "node_modules", "@uipath", "maestro-builder-sdk"))) { console.error("SDK が無い。cd tools/maestro && npm install --ignore-scripts"); return 2; }

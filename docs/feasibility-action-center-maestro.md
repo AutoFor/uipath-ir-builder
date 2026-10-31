@@ -17,6 +17,8 @@
 
 おすすめは、Action Center を先に進め、Maestro は SDK の上に検証の窓口だけを作ること（最後の節）。
 
+**その後**：検証の窓口は `tools/maestro/verify.mjs`（[docs/maestro-verify.md](maestro-verify.md)）。独自の IR は作らないと決めた（[docs/maestro-ir-vs-sdk.md](maestro-ir-vs-sdk.md)）。テナントの資源は [docs/maestro-tenant-resources.md](maestro-tenant-resources.md)。
+
 ## 1. Action Center
 
 ### パッケージ
