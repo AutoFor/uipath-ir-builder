@@ -3,7 +3,7 @@
   "variables": [ { "name": "t", "type": "String" }, { "name": "f", "type": "Boolean" }, { "name": "r", "type": "IResource" } ],
   "body": [
     { "act": "AskWhenRun", "props": { } },
-    { "act": "LogMessage", "props": { "Message": "If(f, \"a\", \"b\")" } },
+    { "act": "LogMessage", "props": { "Message": "t Like \"a*\"" } },
     { "act": "CopyFile", "props": { "Path": { "lit": "a.txt" }, "Destination": { "lit": "b.txt" }, "PathResource": "r" } }
   ]
 }

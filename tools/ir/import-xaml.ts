@@ -416,6 +416,7 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
     let innerGuid = scopeGuid;
     const defs = cat.defaults.get(a.className) ?? {};
     const isScope = a.clrType === CARD || a.clrType === ELEMENT_SCOPE;
+    const droppedDefaults = new Map<string, { raw: string; p: Prop }>();
     for (const x of el.attrs) {
       if (x.uri === XMLNS || (x.uri === X && x.local === "TypeArguments")) continue;
       if (x.uri === X && x.local === "Key") continue;
@@ -434,7 +435,11 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
       if (isScope && x.local === "ScopeGuid" && GUID.test(x.value)) { innerGuid = x.value; c.drop(at, "GUID", x.local, x.value); continue; }
       if (scopeGuid && (x.local === "ScopeIdentifier" || x.local === "DestinationScopeIdentifier") && x.value === scopeGuid) { c.drop(at, "GUID", x.local, x.value); continue; }
       const d = defs[x.local];
-      if (d !== undefined && (GUID.test(d) ? GUID.test(x.value) : d === x.value && !(p.required && !p.overloadGroups?.length) && !mappingUses(maps, a, x.local))) { c.drop(at, GUID.test(d) ? "GUID" : "既定値", x.local, x.value); continue; }
+      if (d !== undefined && (GUID.test(d) ? GUID.test(x.value) : d === x.value && !(p.required && !p.overloadGroups?.length) && !mappingUses(maps, a, x.local))) {
+        if (!GUID.test(d)) droppedDefaults.set(x.local, { raw: x.value, p });
+        c.drop(at, GUID.test(d) ? "GUID" : "既定値", x.local, x.value);
+        continue;
+      }
       if (p.type === "System.Type") {
         const m = x.value.match(/^\{x:Type\s+(.+)\}$/);
         if (!m) { if (x.value === "{x:Null}") c.drop(at, "値なし", x.local); else c.err(at, "UNSUPPORTED_MARKUP", `"${x.local}" は {x:Type ...} のはず（${x.value}）`); continue; }
@@ -509,6 +514,11 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
       const declared = typeof v === "string" ? scope.get(v) : undefined;
       if (!declared || !sameType(declared, untypedType)) n.typeArg = untypedType;
     }
+    for (const k of defaultsForWhen(maps, a, [...Object.keys(props), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})], droppedDefaults)) {
+      const d = droppedDefaults.get(k)!;
+      const v = toValue(d.raw, d.p, `${at}.${k}`, c);
+      if (v !== undefined) props[k] = v;
+    }
     if (Object.keys(props).length) n.props = props;
     return n;
 
@@ -528,7 +538,8 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
         case "delegate": return delegate(kids, p, kat);
         case "children": slot(p, (kids.length === 1 && /^(List|Collection)$/.test(kids[0].local) ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids).flatMap((x, i) => { const r = node(x, `${kat}/${x.local}[${i}]`, kidsScope(), innerGuid); return r ? [r] : []; })); return;
         case "child":
-          if (isExpressionChild(p)) { const t = argText(k, kat, c); if (t !== undefined) { const v = toValue(t, p, kat, c); if (v !== undefined) props[p.name] = v; } return; }
+          // Activity<T> の子は、式（VisualBasicValue など）のことも、値を返すアクティビティ（AnchorBase.AnchorProvider の WaitUiElementAppear）のこともある
+          if (isExpressionChild(p) && !(kids.length === 1 && !/^(VisualBasic(Value|Reference)|Literal|Null)$/.test(kids[0].local))) { const t = argText(k, kat, c); if (t !== undefined) { const v = toValue(t, p, kat, c); if (v !== undefined) props[p.name] = v; } return; }
           if (kids.length !== 1) { c.err(kat, "UNSUPPORTED_ELEMENT", `"${p.name}" に子が ${kids.length} 個ある`); return; }
           { const r = node(kids[0], `${kat}/${kids[0].local}`, kidsScope(), innerGuid); if (r) slot(p, unwrap(r, p.name)); }
           return;
@@ -827,6 +838,23 @@ function mappingUses(maps: Map<string, Mapping> | undefined, a: Activity, prop: 
   const usable = m.coded.filter((v) => v.call || v.code || v.special);
   if (m.coded.some((v) => !v.call && !v.code && !v.special && word.test(JSON.stringify(v.when ?? [])))) return false;
   return usable.length > 0 && usable.every((v) => word.test(JSON.stringify({ ...v, ignore: undefined })));
+}
+
+// 対応表の形は when がそろうと選ばれる。既定値を落とすと、全部の引数を持つ形の when がそろわず、ほかの値が MAPPING_UNUSED_PROP になる。
+// 上から順に見て、書かれた値を全部扱える最初の形について、when に足りない既定値を返す（IR に戻す）。XAML は既定値を足し直すので往復で変わらない
+function defaultsForWhen(maps: Map<string, Mapping> | undefined, a: Activity, given: string[], dropped: Map<string, unknown>): string[] {
+  const m = maps?.get(`${a.package}/${a.className}`);
+  if (!m?.coded || !dropped.size) return [];
+  for (const v of m.coded) {
+    if (!v.call && !v.code && !v.special && !v.scope) continue;
+    const when = (v.when ?? []).filter((w) => !w.includes("="));
+    const missing = when.filter((w) => !given.includes(w));
+    if (!missing.every((w) => dropped.has(w)) || (v.when ?? []).some((w) => w.includes("=") && !given.includes(w.slice(0, w.indexOf("="))))) continue;
+    const text = JSON.stringify({ ...v, ignore: undefined });
+    const handled = (k: string) => k === "ContinueOnError" || (m.ignore ?? []).includes(k) || (v.ignore ?? []).includes(k) || new RegExp(`\\b${k}\\b`).test(text);
+    if (given.every(handled)) return missing;
+  }
+  return [];
 }
 
 function attr(el: El, name: string): string | undefined { return el.attrs.find((a) => a.local === name && !a.prefix)?.value; }
