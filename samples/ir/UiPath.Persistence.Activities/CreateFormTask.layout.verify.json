@@ -1,1 +1,1 @@
-{ "noRun": "Orchestrator と Action Center が要る。FormLayout の形（form.io の JSON）は build では検査されず、画面に出るかは未確認" }
+{"noRun":"Orchestrator と Action Center が要る。同じ形の FormLayout は、タスクは作れて API で完了できたが、画面には何も出なかった（knowledge/persistence.md）"}

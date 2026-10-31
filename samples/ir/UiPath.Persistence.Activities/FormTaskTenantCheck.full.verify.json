@@ -1,0 +1,1 @@
+{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る。ロボットの run では中断と再開を確かめられない。テナントで確かめた結果は knowledge/persistence.md（AUT-1076）"}

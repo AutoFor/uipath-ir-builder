@@ -1,6 +1,43 @@
 # 永続化（UiPath.Persistence.Activities 1.13.0）で分かったこと
 
-環境：Studio 26.10、`uip rpa build`。**確かめたのは build まで。run（テナント）は AUT-1076 で了承待ちなので、実際の中断と再開は1つも確かめていない。**
+環境：Studio 26.10、`uip rpa build`。テナントで動かした結果は次の節（AUT-1076）。それ以外の節は build までの話。
+
+## テナントで動かして分かったこと（AUT-1076）
+
+2026-11-01、`autofor/DefaultTenant`、個人用ワークスペース、`--runtime-type Development`（この PC のロボット）。タスクはどれも API（`uip tasks assign` → `uip tasks complete`）で完了した。**人が画面で完了したものは無い。**
+
+| 確かめたこと | 結果 | 根拠のジョブ |
+| --- | --- | --- |
+| `GenerateInputFields: true` だけ（`FormLayout` なし） | **実行時に落ちる**。「引数 'フォーム レイアウト' の値が設定されていないか無効です」。build は通る。文書の「FormData からフォームが作られる」は実行時には成り立たない（Studio の画面が設計時に作るものと推定） | `f175cbf7-071b-4d9a-b18c-62ab597e7e81` |
+| `FormLayout` を入れたときのタスク作成 | 作れる。`FormLayoutId` が付き、`Data` に In と InOut の値が入る | `3c5201f0-04e2-4988-8485-9d3a8cfa2168` |
+| 中断と再開 | 動く。Suspended → タスク完了 → 再開 → Successful | 同上、`2eabc575-f600-4ea3-973a-ec476fdade82` |
+| `FormData` の Out、InOut の戻り | 変数に戻る（`comment=API 完了`、`note=note-changed`） | `3c5201f0` |
+| `TaskAction` の値 | **ボタンの `key`**（`label` ではない）。`key: "approve"` なら `approve`。`Approve` で完了しようとすると「Provided form action does not match any button」 | `3c5201f0`、`2eabc575`（reject） |
+| `action: "event"` のボタンでの完了 | `key` で完了できる（`event` の値は試していない） | `9cd06a40-427d-4062-8761-14d865168817` |
+| 再開後の変数 | wait の前に入れた変数、In 引数とも残る。`task` は `Status=Completed` と `Action` と `Data` が入って戻る | `3c5201f0` |
+| `FormTaskApproval.full`（直したもの）で分岐 | `承認: ok` が出た | `67cd1cbf-bd40-4cd1-b92c-0828bad4978e` |
+| 無いタスクカタログ（`TaskCatalog`） | **落ちる**。「No task catalog exists with name ... Error code: 2451」。build は通る | `8a88e19c-94b8-49b7-971d-9c842d52eaf0` |
+| **`FormLayout` の画面** | **出ない**。タスクの画面は本文が空。`{"components":[...]}` も配列も、`action: "submit"` も `action: "event"` のボタンも同じ。最後の形では `(this.hook(...) \|\| []).forEach is not a function` のエラーを画面で確認した | タスク 100227641、100227674、100227691 |
+
+- API で完了するには、`FormTask` は先に割り当てが要る（無いと「This action is no longer assigned to you」）。`QuickFormTask` は要らなかった
+- どの入れ方でも、`uip tasks get` の `FormLayout` は `{Components:{Components:[...]},Version:1}` と表示される。テナントの既存のタスクも同じ表示で、部品は `{type,key,label,input,disabled}`、ボタンは `{type,key,label,action:"event",event,theme,input,tableView}`
+- **既存のタスクの画面が正しく出るかは確かめられなかった**（ページが応答せず、画面が取れなかった）。なので、画面が空なのが自分のレイアウトのせいか、ほかの原因かは切り分けていない
+- **API で動かす分には今の形でよいが、人が画面で使えるとは言えない**
+- `Data` のキーは `FormData` の名前のまま（`InvoiceNo`）。Out の値は完了時の `--data` のキーで渡す
+
+足してよさそうな検証（未実装）：`CreateFormTask` に `FormLayout` が無いと実行時に落ちる。`FormLayoutGuid` で渡す場合は試していない。シリアライズできない変数と `ForEach` の中の中断は、今回も試していない。
+
+### 手順
+
+```bash
+# 作業用プロジェクトを先に作る。パッケージ名を決めるのは project.uiproj の Name（project.json の name も合わせる）。依存と supportsPersistence もここで
+# Helm が名前を覚えるので、名前を変えるときは --name も変える
+node tools/verify/queue-run.mjs --name <作業名> --build-only --no-coded --pack out/tenant/nupkg --pack-version 1.0.0 <ir.json>   # Wait は1ファイルずつ
+uip or packages upload <nupkg> --folder-key <個人用ワークスペース>
+# 個人用ワークスペースでは、アップロードで Main.xaml を指すプロセスが自動でできる。別のエントリポイントはプロセスを別に作る
+uip or processes create --name <名前> --package-key <id> --package-version 1.0.0 --entry-point <xaml> --folder-key <個人用ワークスペース>
+uip or jobs start <プロセスのキー> --folder-key <個人用ワークスペース> --runtime-type Development --input-arguments '{...}'
+```
 
 ## Wait が別々のファイルにあると build が落ちる（AUT-1074）
 
@@ -38,14 +75,14 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 ## 検証に入れていないルール
 
-どちらも build では分からず、run も無いので、弾くと正しいものまで止める恐れがある。AUT-1076 で確かめてから足す。
+どちらも build では分からない。AUT-1076 でも試していないので、弾くと正しいものまで止める恐れがある。
 
 - **シリアライズできない変数**：`UiElement`、`SecureString`、`Browser` を Wait のスコープに置いても build は通る。文書の [ST-DBP-025](https://docs.uipath.com/studio/standalone/2024.10/user-guide/st-dbp-025) は検査すると書くが、build のログには出ない。ページに型の一覧も無い
 - **`ForEach` の中の中断**：文書には本体に置かないとあるが（[Orchestration Process](https://docs.uipath.com/studio/standalone/2023.4/user-guide/orchestration-process)）、build は通る
 
 ## フォーム
 
-`FormLayout` は文字列で、build は中身を見ない。**形を確かめる手段が無いので、JSON を推測で足さない**。`CreateFormTask.layout` の JSON は調査のときの推測のまま（`verify.json` に明記）。
+`FormLayout` は文字列で、build は中身を見ない。`CreateFormTask.layout` の JSON は調査のときの推測のまま（`verify.json` に明記）。実機の結果は上の節。
 
 ## 書けないプロパティ（AUT-1073）
 

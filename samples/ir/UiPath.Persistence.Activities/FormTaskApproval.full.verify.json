@@ -1,1 +1,1 @@
-{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る（永続化はロボットの run だけでは確かめられない）"}
+{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る。テナントでは API でタスクを完了して動いた（ジョブ 67cd1cbf。knowledge/persistence.md）。人が使う画面は未確認"}

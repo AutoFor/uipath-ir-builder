@@ -55,6 +55,8 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--imports-from") opt.importsFrom = resolve(argv[++i]);
   else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
   else if (a === "--out") opt.out = argv[++i];
+  else if (a === "--pack") opt.pack = resolve(argv[++i]); // build-only の後に、作業用プロジェクトを <dir> に .nupkg にする（テナントで確かめるとき）
+  else if (a === "--pack-version") opt.packVersion = argv[++i];
   else if (a.startsWith("--")) die(`知らないオプション ${a}`);
   else inputs.push(a);
 }
@@ -191,7 +193,7 @@ if (csFiles.length) {
 // ---- build / run ----
 if (opt.buildOnly) {
   // "buildAlone": true のファイルは、プロジェクトに1つだけ置いて別に build する（Wait 系が別々のファイルにあると分析が落ちる。AUT-1074、knowledge/persistence.md）
-  const alone = results.filter((r) => targetReady(r) && sidecar(r.file).buildAlone);
+  const alone = opt.pack ? [] : results.filter((r) => targetReady(r) && sidecar(r.file).buildAlone); // --pack はファイルを残す（1つずつ渡す）
   const hold = (r, on) => { if (on) renameSync(r.target, `${r.target}.held`); else renameSync(`${r.target}.held`, r.target); };
   const setEntryPoints = (held) => {
     const pjPath = join(projDir, "project.json");
@@ -245,6 +247,14 @@ if (opt.buildOnly) {
     const missing = unmatched(expected(r.file), x.logs);
     r.run = { ok: ok && !missing.length, seconds: x.seconds, logs: x.logs, missing, error: ok ? undefined : summarize(x) };
   }
+}
+
+// --pack：Helm を使うので窓口の中で流す。パッケージ名は作業用プロジェクトの project.json の name
+if (opt.pack) {
+  mkdirSync(opt.pack, { recursive: true });
+  const p = uip(["rpa", "pack", projDir, opt.pack, ...(opt.packVersion ? ["--package-version", opt.packVersion] : []), "--output", "json"], "_pack");
+  if (p.envelope?.Result !== "Success") die(`pack に失敗: ${summarize(p)}`);
+  console.log(`PACK ${p.envelope?.Data?.PackagePath}`);
 }
 
 // ---- まとめ ----

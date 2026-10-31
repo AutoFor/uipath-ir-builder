@@ -1,1 +1,1 @@
-{ "noRun": "Orchestrator と Action Center が要る（永続化はロボットの run だけでは確かめられない）" }
+{"noRun":"Orchestrator と Action Center が要る。FormLayout が無いので build は通るが、テナントで実行すると落ちる（knowledge/persistence.md）。プロパティの最小の例"}

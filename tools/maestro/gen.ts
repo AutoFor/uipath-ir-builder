@@ -9,6 +9,7 @@
 // XAML 用の IR（tools/ir/types.ts）は流用していない。XAML の IR は木（Sequence の入れ子）で、式は VB、部品はカタログの DLL の型。
 // こちらは工程の並びと分岐で、式は JavaScript、部品はレジストリのノード。共通に使えるのは「AI は JSON だけを書き、機械が生成して検証する」という考え方。
 
+import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 
@@ -146,6 +147,8 @@ export function emitBpmn(ir: Ir): string {
 
 // ---- BPMN（SDK なしで XML を直接書く。script だけ）----
 // 図（bpmndi）は書かない。uip maestro bpmn format が作る
+// 開始イベントの entryPointId は必須（無いと bpmn refresh が「Expected one uipath:entryPointId」で止まる。AUT-1080）。名前から決めるので揺れない
+const entryPointId = (name: string) => { const h = createHash("sha1").update(`entry:${name}`).digest("hex"); return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`; };
 export function emitBpmnDirect(ir: Ir): string {
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   const ids = ["start", ...ir.steps.map((s) => s.id), "end"];
@@ -162,7 +165,7 @@ export function emitBpmnDirect(ir: Ir): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:uipath="http://uipath.org/schema/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="uipath-ir-builder" exporterVersion="0.1">
   <bpmn:process id="${esc(ir.process)}" name="${esc(ir.process)}" isExecutable="true">
-    <bpmn:startEvent id="start" name="Start"><bpmn:outgoing>${flowId(0)}</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:startEvent id="start" name="Start"><bpmn:extensionElements><uipath:entryPointId value="${entryPointId(ir.process)}" /></bpmn:extensionElements><bpmn:outgoing>${flowId(0)}</bpmn:outgoing></bpmn:startEvent>
 ${body.join("\n")}
     <bpmn:endEvent id="end" name="End"><bpmn:incoming>${flowId(ir.steps.length)}</bpmn:incoming></bpmn:endEvent>
 ${seq.join("\n")}

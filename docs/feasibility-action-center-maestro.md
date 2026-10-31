@@ -4,7 +4,7 @@
 
 ## 結論
 
-**どれも生成はできる。ただし、確かめたのはローカルの検証までで、実際に動かしたものは1つもない。**
+**どれも生成はできる。** 下の表はこの調査の時点のもの。その後テナントで動かした結果は [knowledge/persistence.md](../knowledge/persistence.md)（AUT-1076）と [docs/maestro-verify.md](maestro-verify.md) の末尾（AUT-1080）。
 
 | 対象 | 作れるか | 確かめた範囲 | 作り方 |
 | --- | --- | --- | --- |

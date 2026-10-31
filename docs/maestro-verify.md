@@ -2,7 +2,7 @@
 
 イシュー：AUT-1077。環境：`uip` 1.204.0、`@uipath/maestro-builder-sdk` 6.66.5。
 
-`tools/maestro/verify.mjs` は、公式 SDK のソースを1回で全部の検査に流し、結果を1つにまとめる。**ローカルの検証だけで、動くことは確かめない**（Studio Web と実行は AUT-1080）。
+`tools/maestro/verify.mjs` は、公式 SDK のソースを1回で全部の検査に流し、結果を1つにまとめる。**ローカルの検証だけで、動くことは確かめない**（Studio Web と実行の結果は末尾の節。AUT-1080）。
 
 ```bash
 cd tools/maestro && npm install --ignore-scripts && cd ../..
@@ -59,7 +59,33 @@ node --test "tools/maestro/*.test.mjs"                                  # テス
 
 ## 残る warning
 
-- `unknown attribute <type>`：SDK が compile した BPMN には、script だけの例でも必ず出る。自分では直せないので `note` にして数えない。**害が無いと確かめたわけではない**
-- `VARIABLE_NOT_SET`（`ExpenseApproval.bpmn` の `amount`）：SDK の `.input()` で宣言した変数でも出る。原因は未確認。warning のままなので、`--strict` だとこの例は NG になる
+- `unknown attribute <type>`：SDK が compile した BPMN には、script だけの例でも必ず出る。自分では直せないので `note` にして数えない。テナントで動いた（末尾の節）
+- `VARIABLE_NOT_SET`（`ExpenseApproval.bpmn` の `amount`）：SDK の `.input()` で宣言した変数でも出る。キャンバスでも同じ警告が出る。入力を渡せば値は届く（末尾の節）。warning のままなので、`--strict` だとこの例は NG になる
 - `STRICT_BINDINGS_ABSENT`（アプリを指定しない Case の `action`）：warning のまま。`--strict` で止まる
 - `Script references "iterator"`（BPMN のループの中の script）：`inputs: { "iterator[0]": "=iterator[0]" }` を付けても消えない。動くかは未確認
+
+## テナントで動かした結果（AUT-1080）
+
+2026-11-01、`uip` 1.204.0、`flow debug` / `bpmn debug` / `case debug`。debug は個人用ワークスペースで動く。人のタスクは `uip tasks complete` で完了した（`--type QuickFormTask`、割り当ては要らなかった）。キャンバスはブラウザで開いて目で見た。
+
+| 生成物 | キャンバス | debug | ジョブ |
+| --- | --- | --- | --- |
+| `Minimal.flow` | 見ていない | Completed | `632cfef2-ca2b-46b8-b6c4-f10ecdbb0607` |
+| `ExpenseApproval.flow` | 開く。ノードと Approve / Reject が見える | Completed。Approve → `pay`、`comment` が戻る | `801a4865-2c4c-4e1f-ac1c-8d155223777c` |
+| `Minimal.bpmn` | 見ていない | Completed | `a711dd23-5e54-4151-967b-2ae2f7aa70bb` |
+| `Minimal.direct.bpmn` | 見ていない | Completed（`entryPointId` を足した後） | `4b51ab4d-0cc4-4715-ab1c-bccb7dac87ea` |
+| `ExpenseApproval.bpmn` | 開く。図は出るがノードに名前が出ない。`amount` の警告が1件 | Completed。タスクの `Data` に `Amount: 1234`。Reject → `notify` | `ca52d0b5-95fa-4313-863b-4e088d431964` |
+| `ExpenseCase.json` | 開く（ステージとタスクが見える） | **Faulted**。`170004 Invalid input for the HITL task`。アプリの無い `action` は動かない | `b2f56bfa-7dfe-4808-90a9-0d67ec223f0d` |
+| `samples/maestro/TimerCase.case.ts` | 見ていない | Completed | `df4726b0-72cf-48df-a3f2-deba726477eb` |
+
+分かったこと：
+
+- **BPMN の warning の2つに、この例では実害が見つからなかった**。`unknown attribute <type>` が出た BPMN は全部動いた。`VARIABLE_NOT_SET` は入力を渡した実行で、値がタスクまで届いた
+- **QuickForm は Flow でも BPMN でも動く**
+- **`validate` が通った Case でも落ちる**。`STRICT_BINDINGS_ABSENT` の warning は実害がある。`--strict` で止めるのが正しい
+- **直接書く BPMN には `uipath:entryPointId` が要る**。無いと `bpmn refresh` が止まる（`gen.ts` を直した）
+- **`.bpmn` を差し替えたら `uip maestro bpmn refresh <プロジェクトのフォルダ>` を流す**。`entry-points.json` が古いと、debug は `Running` のまま終わらない（`ea53f87c-b1e0-4416-afcf-3d1d5f68503e`、`ee23f87f-3891-4442-9875-bc8c794798d4` は280秒で打ち切って cancel した）。`validate` はこれを止めない。古いファイルがあると refresh も落ちるので、`entry-points.json` を消してから流す
+- `.flow` の `id` が UUID でなくても（`Minimal`）動いた
+- `flow debug` には `--timeout` があるが、`bpmn debug` と `case debug` には無い。人のタスクの前で止まる debug は、裏で流して別のコマンドでタスクを完了する
+
+試していないもの：テナントの資源を指すノード（`Rpa.flow.ts` など）の実行、`solution publish`、入力なしの `VARIABLE_NOT_SET`、ループ、並列、Case の複数ステージ。

@@ -1,35 +1,95 @@
 {
   "workflow": "FormTaskApproval_Full",
   "arguments": [
-    { "name": "in_InvoiceNo", "dir": "In", "type": "String" }
+    {
+      "name": "in_InvoiceNo",
+      "dir": "In",
+      "type": "String"
+    }
   ],
   "variables": [
-    { "name": "task", "type": "FormTaskData" },
-    { "name": "action", "type": "String" },
-    { "name": "comment", "type": "String" }
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    },
+    {
+      "name": "comment",
+      "type": "String"
+    }
   ],
   "body": [
-    { "act": "CreateFormTask", "name": "承認タスクを作る",
+    {
+      "act": "CreateFormTask",
+      "name": "承認タスクを作る",
       "props": {
         "TaskTitle": "\"請求書の確認: \" & in_InvoiceNo",
         "TaskPriority": "High",
-        "TaskCatalog": { "lit": "InvoiceApproval" },
-        "Labels": { "lit": "invoice" },
+        "Labels": {
+          "lit": "invoice"
+        },
         "ExternalTag": "in_InvoiceNo",
         "GenerateInputFields": true,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"Approve\",\"key\":\"Approve\",\"theme\":\"primary\",\"input\":false,\"tableView\":false},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Reject\",\"label\":\"Reject\",\"key\":\"Reject\",\"theme\":\"danger\",\"input\":false,\"tableView\":false}]"
+        },
         "TaskOutput": "task"
       },
       "dicts": {
         "FormData": [
-          { "name": "InvoiceNo", "dir": "In", "type": "String", "value": "in_InvoiceNo" },
-          { "name": "Comment", "dir": "Out", "type": "String", "value": "comment" }
+          {
+            "name": "InvoiceNo",
+            "dir": "In",
+            "type": "String",
+            "value": "in_InvoiceNo"
+          },
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment"
+          }
         ]
       }
     },
-    { "act": "WaitForFormTaskAndResume", "name": "人の判断を待つ",
-      "props": { "TaskInput": "task", "TaskAction": "action", "TaskOutput": "task", "StatusMessage": { "lit": "承認待ち" } } },
-    { "act": "If", "props": { "Condition": "action = \"Approve\"" },
-      "then": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"承認: \" & comment" } } ],
-      "else": [ { "act": "LogMessage", "props": { "Level": "Warn", "Message": "\"却下: \" & comment" } } ] }
+    {
+      "act": "WaitForFormTaskAndResume",
+      "name": "人の判断を待つ",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task",
+        "StatusMessage": {
+          "lit": "承認待ち"
+        }
+      }
+    },
+    {
+      "act": "If",
+      "props": {
+        "Condition": "action = \"Approve\""
+      },
+      "then": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Info",
+            "Message": "\"承認: \" & comment"
+          }
+        }
+      ],
+      "else": [
+        {
+          "act": "LogMessage",
+          "props": {
+            "Level": "Warn",
+            "Message": "\"却下: \" & comment"
+          }
+        }
+      ]
+    }
   ]
 }
