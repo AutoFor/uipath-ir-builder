@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
         {
             Object v1 = default;
             Object v2 = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\TextToColumnsX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\TextToColumnsX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["A1"].WriteCell(value: "太郎,30");
                 Excel.Sheet["Sheet1"].Cell["A2"].WriteCell(value: "花子,25");

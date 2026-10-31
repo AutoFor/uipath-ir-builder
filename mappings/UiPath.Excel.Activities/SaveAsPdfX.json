@@ -6,7 +6,7 @@
       "call": "{Workbook}.SaveAsPdf",
       "args": {
         "filePath": "{DestinationPdfPath}",
-        "replaceExisting": "{ReplaceExisting:-false}",
+        "replaceExisting": "{ReplaceExisting:-true}",
         "startPage": "{StartPage:-null}",
         "endPage": "{EndPage:-null}",
         "saveQuality": "UiPath.Excel.PdfSaveQuality.{SaveQuality:-StandardQuality}"

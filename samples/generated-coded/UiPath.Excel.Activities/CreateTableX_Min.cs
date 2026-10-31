@@ -21,9 +21,9 @@ namespace CatalogProbeNet8
             DataTable dt = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\CreateTableX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\CreateTableX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\CreateTableX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
-                tableName = Excel.Sheet["Sheet1"].Range["A1:C4"].CreateTable(hasHeaders: true, replaceExisting: false, tableName: null);
+                tableName = Excel.Sheet["Sheet1"].Range["A1:C4"].CreateTable(hasHeaders: true, replaceExisting: true, tableName: null);
                 Log(message: "テーブル名: " + tableName, level: UiPath.CodedWorkflows.LogLevel.Info);
                 dt = Excel.Table[tableName].ReadRange(hasHeaders: true, visibleRowsOnly: true);
                 Log(message: "テーブルの行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

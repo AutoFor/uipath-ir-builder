@@ -6,7 +6,7 @@
       "call": "{Workbook}.SaveExcelFileAs",
       "args": {
         "filePath": "{FilePath}",
-        "replaceExisting": "{ReplaceExisting:-false}",
+        "replaceExisting": "{ReplaceExisting:-true}",
         "saveAsType": "UiPath.Excel.ExcelSaveAsType.{SaveAsFileType}"
       },
       "usings": [

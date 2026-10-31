@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             Object a4 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\SortX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SortX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SortX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // 年齢の降順、名前の昇順
                 var __collect1 = new SortXDescriptor();

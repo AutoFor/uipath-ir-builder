@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String at = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 at = Excel.Sheet["Sheet1"].Range["A1:B4"].FindReplaceValue(valueToFind: "花子", operation: UiPath.Excel.FindReplaceOptions.Find, replaceWith: null, lookIn: UiPath.Excel.LookInOptions.Values, matchCase: false, matchEntireCellContents: false);
             }

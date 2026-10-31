@@ -17,10 +17,10 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             // SAP セッションを使う
-            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { FilePath = "C:\\Program Files (x86)\\SAP\\FrontEnd\\SAPgui\\saplogon.exe", Selector = "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />" }, targetAppOptions: new TargetAppOptions { OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.IfNotOpen, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Never }))
+            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { FilePath = "C:\\Program Files (x86)\\SAP\\FrontEnd\\SAPgui\\saplogon.exe", Selector = "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />" }, targetAppOptions: new TargetAppOptions { AttachMode = UiPath.UIAutomationNext.Enums.NAppAttachMode.ByInstance, OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.IfNotOpen, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Never, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
             {
                 // カレンダから日付を選択
-                app1.SAPSelectDatesInCalendar(target: new TargetAnchorableModel { PartialSelector = "<sap id='wnd[0]/usr/cntlCAL/shellcont/shell' />", ScopeSelector = "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, sapSelectDatesInCalendarOptions: new SAPSelectDatesInCalendarOptions { SelectType = UiPath.UIAutomationNext.Enums.NDateSelectionType.Date, Date = new DateTime(2026, 10, 30) });
+                app1.SAPSelectDatesInCalendar(target: new TargetAnchorableModel { PartialSelector = "<sap id='wnd[0]/usr/cntlCAL/shellcont/shell' />", ScopeSelector = "<wnd app='saplogon.exe' cls='SAP_FRONTEND_SESSION' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, sapSelectDatesInCalendarOptions: new SAPSelectDatesInCalendarOptions { SelectType = UiPath.UIAutomationNext.Enums.NDateSelectionType.Date, Date = new DateTime(2026, 10, 30), HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.SameAsCard });
                 Log(message: "NSAPSelectDatesInCalendar 完了", level: UiPath.CodedWorkflows.LogLevel.Info);
             }
         }

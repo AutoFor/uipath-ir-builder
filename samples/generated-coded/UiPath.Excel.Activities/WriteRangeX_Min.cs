@@ -19,13 +19,13 @@ namespace CatalogProbeNet8
         {
             DataTable dt = default;
             DataTable back = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 dt = Excel.Sheet["Sheet1"].Range["A1:B4"].ReadRange(hasHeaders: true, visibleRowsOnly: false);
             }
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\WriteRangeX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\WriteRangeX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
-                Excel.Sheet["Sheet1"].Range["B2"].WriteRange(source: dt, append: false, excludeHeaders: false);
+                Excel.Sheet["Sheet1"].Range["B2"].WriteRange(source: dt, append: false, excludeHeaders: false, ignoreEmptySource: false);
                 back = Excel.Sheet["Sheet1"].Range["B2:C5"].ReadRange(hasHeaders: true, visibleRowsOnly: false);
             }
             Log(message: "書いた行数: " + back.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

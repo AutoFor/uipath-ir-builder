@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object t = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\ChangePivotTableDataSourceX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ChangePivotTableDataSourceX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ChangePivotTableDataSourceX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 var __collect1 = new PivotTableDescriptor { LayoutRowType = UiPath.Excel.PivotTableLayoutRowType.Compact, ValuesMode = UiPath.Excel.PivotTableValuesMode.Columns };
                 __collect1.Rows.Add(new RowPivotTableFieldDescription { Name = "Name" });

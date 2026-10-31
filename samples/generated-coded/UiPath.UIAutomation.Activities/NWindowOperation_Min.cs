@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // メモ帳に開かせるファイルを書く
             system.WriteTextFile(text: "uia-m3", file: LocalResource.FromPath(notePath));
             // メモ帳を開く
-            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { FilePath = "C:/Windows/System32/notepad.exe", Arguments = notePath, Selector = "<wnd app='notepad.exe' title='uia-m3-note.txt*' />" }, targetAppOptions: new TargetAppOptions { OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always }))
+            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { FilePath = "C:/Windows/System32/notepad.exe", Arguments = notePath, Selector = "<wnd app='notepad.exe' title='uia-m3-note.txt*' />" }, targetAppOptions: new TargetAppOptions { AttachMode = UiPath.UIAutomationNext.Enums.NAppAttachMode.ByInstance, OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
             {
                 // メモ帳を最大化する
                 app1.WindowOperation(target: new TargetAnchorableModel { PartialSelector = "<wnd app='notepad.exe' title='uia-m3-note.txt*' />", ScopeSelector = "<wnd app='notepad.exe' title='uia-m3-note.txt*' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, windowOperationOptions: new WindowOperationOptions { Operation = UiPath.UIAutomationNext.Enums.NWindowOperationType.Maximize });

@@ -118,7 +118,7 @@ function modelDropped(t: ObjType | undefined, v: ObjValue, prefix: string, push:
 }
 
 export function reportWorkflow(file: string, xml: string, cat: Catalog, maps: Map<string, Mapping>, notes: { subject: string; text: string }[]): Report {
-  const imp = importAndCheck(xml, cat, maps);
+  const imp = importAndCheck(xml, cat);
   const wf: Workflow | undefined = imp.wf;
   const importable = !!wf && !imp.errors.length && !imp.validation.length;
   const r: Report = { file, workflow: wf?.workflow || undefined, importable, activities: [], dropped: [], behavior: [], coded: [], codedOk: false, import: imp };

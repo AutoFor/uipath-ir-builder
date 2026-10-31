@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object r = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InvokeVBAX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InvokeVBAX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InvokeVBAX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // 足し算
                 var __collect1 = new List<object>();

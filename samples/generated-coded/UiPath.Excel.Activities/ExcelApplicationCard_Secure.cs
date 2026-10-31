@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String name = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Protected.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, Password = "open", EditPassword = "edit", SensitivityOperation = UiPath.Excel.ExcelLabelOperation.None, SensitivityLabel = (UiPath.Excel.IExcelLabelObject)null }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Protected.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, Password = "open", EditPassword = "edit", ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None, SensitivityOperation = UiPath.Excel.ExcelLabelOperation.None, SensitivityLabel = (UiPath.Excel.IExcelLabelObject)null }))
             {
                 name = (String)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(String));
             }

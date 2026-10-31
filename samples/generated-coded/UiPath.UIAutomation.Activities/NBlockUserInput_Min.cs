@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             // 入力をブロックして処理する
-            using (var block1 = uiAutomation.BlockUserInput(blockUserInputOptions: new BlockUserInputOptions()))
+            using (var block1 = uiAutomation.BlockUserInput(blockUserInputOptions: new BlockUserInputOptions { KeyModifiers = UiPath.UIAutomationNext.Enums.NKeyModifiers.Alt, Keys = "F10" }))
             {
                 Log(message: "blocked", level: UiPath.CodedWorkflows.LogLevel.Info);
             }

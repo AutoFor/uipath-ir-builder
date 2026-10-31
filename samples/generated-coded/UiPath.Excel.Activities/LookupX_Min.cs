@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Object v = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\LookupX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\LookupX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["A1"].WriteCell(value: "apple");
                 Excel.Sheet["Sheet1"].Cell["B1"].WriteCell(value: "りんご");

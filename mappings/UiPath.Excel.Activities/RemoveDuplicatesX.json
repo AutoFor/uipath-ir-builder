@@ -6,7 +6,7 @@
       "call": "{Range}.RemoveDuplicates",
       "args": {
         "hasHeaders": "{HasHeaders:-true}",
-        "columnsMode": "UiPath.Excel.ColumnsCompare.{ColumnsCompareMode:-AllColumns}",
+        "columnsMode": "UiPath.Excel.ColumnsCompare.{ColumnsCompareMode:-IndividualColumns}",
         "columns": "new string[] { {Columns|list} }"
       },
       "usings": [

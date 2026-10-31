@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
         {
             Int32 first = default;
             Int32 last = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // データ行の範囲
                 (first, last) = Excel.Sheet["Sheet1"].Range["A1:B4"].FindFirstLastDataRow(columnName: "Name", hasHeaders: true, visibleRowsOnly: false, firstRowOffset: 0, lastRowOffset: 0, blankRowsToSkip: 1, configureLastRowAs: UiPath.Excel.LastRowConfiguration.LastPopulatedRow);

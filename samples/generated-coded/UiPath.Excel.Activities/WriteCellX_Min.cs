@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String v = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\WriteCellX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\WriteCellX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["B2"].WriteCell(value: "こんにちは");
                 v = (String)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(String));

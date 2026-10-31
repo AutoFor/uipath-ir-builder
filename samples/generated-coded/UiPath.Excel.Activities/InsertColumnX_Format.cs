@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             Object d1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertColumnX_Format.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertColumnX_Format.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertColumnX_Format.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // Age の前に列を足す
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertColumn(columnName: "Age", position: UiPath.Excel.ColumnRelativePosition.Before, hasHeaders: true, newColumnHeader: "追加", columnFormat: new UiPath.Excel.Activities.Business.NumberFormat { DecimalPlaces = 2, UseThousandSeparator = true });

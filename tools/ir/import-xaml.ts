@@ -23,8 +23,6 @@ import { generate } from "./generate.ts";
 import type { ArgumentDecl, AssignOp, CatchDecl, InvokeArg, ListItem, Node, ObjValue, Value, VariableDecl, Workflow } from "./types.ts";
 import { toXamlType, xamlTypeEntries } from "./types-xaml.ts";
 import { objDefaults } from "./uia.ts";
-import type { Mapping } from "./mapping.ts";
-import { loadMappings } from "./mapping.ts";
 import { isArgumentDict, isUntypedArgument, itemNames, validate } from "./validate.ts";
 
 export type ImportIssue = { path: string; code: string; message: string };
@@ -268,6 +266,19 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   return undefined;
 }
 
+// 既定 XAML の属性を IR の値にする（IR に無いときの意味。generate.ts は同じ値を XAML に足す）。GUID と、IR の値にできないものは入れない
+export function xamlDefaultProps(cat: Catalog, a: Activity): Record<string, Value> {
+  const out: Record<string, Value> = {};
+  const c: Ctx = { cat, err: () => {}, warn: () => {}, drop: () => {} };
+  for (const [k, raw] of Object.entries(cat.defaults.get(a.className) ?? {})) {
+    const p = a.props.find((q) => q.name === k);
+    if (!p || GUID.test(raw) || p.kind === "out" || p.kind === "inout") continue;
+    const v = toValue(raw, p, k, c);
+    if (v !== undefined) out[k] = v;
+  }
+  return out;
+}
+
 // 要素の中身（<InArgument>[x]</InArgument> など）を、属性と同じ文字列の形にする。無ければ undefined
 function argText(el: El, at: string, c: Ctx): string | undefined {
   const kids = el.kids.filter((k) => !ignorableEl(k));
@@ -302,9 +313,8 @@ const BLOCKED: Record<string, string> = {
   StateMachine: "UNSUPPORTED_STATEMACHINE", State: "UNSUPPORTED_STATEMACHINE", FinalState: "UNSUPPORTED_STATEMACHINE", Transition: "UNSUPPORTED_STATEMACHINE",
 };
 
-// maps を渡すと、既定値と同じ値のうち対応表が参照するものは IR に残す（C# の API の既定値は、アクティビティの既定値と違うことがあるため。
-// 例 GetChart の ReplaceFile：アクティビティは True、API は false）。XAML は既定値を足し直すので、どちらでも往復で同じになる
-export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping>): ImportResult {
+// 既定値と同じ属性は IR に残さない。IR に無い props は、XAML でも C# でも既定 XAML の値として扱う（generate.ts と generate-coded.ts の xamlDefaultProps）
+export function importXaml(xml: string, cat: Catalog): ImportResult {
   const r: ImportResult = { errors: [], warnings: [], dropped: [] };
   const c: Ctx = {
     cat,
@@ -417,7 +427,6 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
     let innerGuid = scopeGuid;
     const defs = cat.defaults.get(a.className) ?? {};
     const isScope = a.clrType === CARD || a.clrType === ELEMENT_SCOPE;
-    const droppedDefaults = new Map<string, { raw: string; p: Prop }>();
     for (const x of el.attrs) {
       if (x.uri === XMLNS || (x.uri === X && x.local === "TypeArguments")) continue;
       if (x.uri === X && x.local === "Key") continue;
@@ -436,8 +445,7 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
       if (isScope && x.local === "ScopeGuid" && GUID.test(x.value)) { innerGuid = x.value; c.drop(at, "GUID", x.local, x.value); continue; }
       if (scopeGuid && (x.local === "ScopeIdentifier" || x.local === "DestinationScopeIdentifier") && x.value === scopeGuid) { c.drop(at, "GUID", x.local, x.value); continue; }
       const d = defs[x.local];
-      if (d !== undefined && (GUID.test(d) ? GUID.test(x.value) : d === x.value && !(p.required && !p.overloadGroups?.length) && !mappingUses(maps, a, x.local))) {
-        if (!GUID.test(d)) droppedDefaults.set(x.local, { raw: x.value, p });
+      if (d !== undefined && (GUID.test(d) ? GUID.test(x.value) : d === x.value && !(p.required && !p.overloadGroups?.length))) {
         c.drop(at, GUID.test(d) ? "GUID" : "既定値", x.local, x.value);
         continue;
       }
@@ -514,11 +522,6 @@ export function importXaml(xml: string, cat: Catalog, maps?: Map<string, Mapping
       const v = out && props[out.name];
       const declared = typeof v === "string" ? scope.get(v) : undefined;
       if (!declared || !sameType(declared, untypedType)) n.typeArg = untypedType;
-    }
-    for (const k of defaultsForWhen(maps, a, [...Object.keys(props), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})], droppedDefaults)) {
-      const d = droppedDefaults.get(k)!;
-      const v = toValue(d.raw, d.p, `${at}.${k}`, c);
-      if (v !== undefined) props[k] = v;
     }
     if (Object.keys(props).length) n.props = props;
     return n;
@@ -832,33 +835,6 @@ function unwrap(n: Node, slotName: string): Node[] {
   return plain ? n.body! : [n];
 }
 
-function mappingUses(maps: Map<string, Mapping> | undefined, a: Activity, prop: string): boolean {
-  const m = maps?.get(`${a.package}/${a.className}`);
-  if (!m?.coded) return false;
-  // 「この形は API が無い」の when に出るものや、一部の形でしか使わないものは残さない（残すと C# が作れなくなる）
-  const word = new RegExp(`\\b${prop}\\b`);
-  const usable = m.coded.filter((v) => v.call || v.code || v.special);
-  if (m.coded.some((v) => !v.call && !v.code && !v.special && word.test(JSON.stringify(v.when ?? [])))) return false;
-  return usable.length > 0 && usable.every((v) => word.test(JSON.stringify({ ...v, ignore: undefined })));
-}
-
-// 対応表の形は when がそろうと選ばれる。既定値を落とすと、全部の引数を持つ形の when がそろわず、ほかの値が MAPPING_UNUSED_PROP になる。
-// 上から順に見て、書かれた値を全部扱える最初の形について、when に足りない既定値を返す（IR に戻す）。XAML は既定値を足し直すので往復で変わらない
-function defaultsForWhen(maps: Map<string, Mapping> | undefined, a: Activity, given: string[], dropped: Map<string, unknown>): string[] {
-  const m = maps?.get(`${a.package}/${a.className}`);
-  if (!m?.coded || !dropped.size) return [];
-  for (const v of m.coded) {
-    if (!v.call && !v.code && !v.special && !v.scope) continue;
-    const when = (v.when ?? []).filter((w) => !w.includes("="));
-    const missing = when.filter((w) => !given.includes(w));
-    if (!missing.every((w) => dropped.has(w)) || (v.when ?? []).some((w) => w.includes("=") && !given.includes(w.slice(0, w.indexOf("="))))) continue;
-    const text = JSON.stringify({ ...v, ignore: undefined });
-    const handled = (k: string) => k === "ContinueOnError" || (m.ignore ?? []).includes(k) || (v.ignore ?? []).includes(k) || new RegExp(`\\b${k}\\b`).test(text);
-    if (given.every(handled)) return missing;
-  }
-  return [];
-}
-
 function attr(el: El, name: string): string | undefined { return el.attrs.find((a) => a.local === name && !a.prefix)?.value; }
 
 const sameType = (a: string, b: string) => {
@@ -979,8 +955,8 @@ export function checkRoundTrip(xml: string, wf: Workflow, cat: Catalog): { xaml?
 
 export type FullImport = ImportResult & { validation: ImportIssue[]; roundTrip?: { identical: boolean; sameMeaning: boolean } };
 
-export function importAndCheck(xml: string, cat: Catalog, maps?: Map<string, Mapping>): FullImport {
-  const r = importXaml(xml, cat, maps);
+export function importAndCheck(xml: string, cat: Catalog): FullImport {
+  const r = importXaml(xml, cat);
   const out: FullImport = { ...r, validation: [] };
   if (!r.wf || r.errors.length) return out;
   out.validation = validate(r.wf, cat);
@@ -1015,12 +991,11 @@ function main() {
   const files = args.filter((a, i) => !a.startsWith("--") && (outIdx < 0 || i !== outIdx + 1));
   if (!files.length) { console.error("使い方: node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]"); process.exit(2); }
   const cat = loadCatalog(repoRoot, CATALOG_FILES);
-  const { maps } = loadMappings(repoRoot);
   let failed = false;
   const line = (i: ImportIssue) => `  ${i.code.padEnd(26)} ${i.path}: ${i.message}`;
   for (const f of files) {
     if (!existsSync(f)) { console.log(`NG ${f}: ファイルが無い`); failed = true; continue; }
-    const r = importAndCheck(readFileSync(f, "utf8"), cat, maps);
+    const r = importAndCheck(readFileSync(f, "utf8"), cat);
     const ok = !r.errors.length && !r.validation.length;
     if (!ok) failed = true;
     console.log(`${ok ? "OK" : "NG"} ${f}${r.roundTrip ? (r.roundTrip.identical ? "（往復で文字まで一致）" : r.roundTrip.sameMeaning ? "（往復で意味は同じ）" : "（往復で違いあり）") : ""}`);

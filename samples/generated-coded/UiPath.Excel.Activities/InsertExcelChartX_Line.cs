@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             IChartRef ch = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertExcelChartX_Line.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertExcelChartX_Line.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertExcelChartX_Line.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 ch = Excel.Sheet["Sheet1"].Range["A1:B4"].InsertExcelChart(sheet: Excel.Sheet["Sheet1"], chartCategory: UiPath.Excel.ExcelChartCategory.Line, chartType: UiPath.Excel.ExcelChartType.xlLineMarkers, left: 300, top: 10, width: 400, height: 300);
                 Log(message: "種類: " + ch.ChartInfo.ChartType.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

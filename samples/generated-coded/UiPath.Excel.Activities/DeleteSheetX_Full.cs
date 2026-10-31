@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\DeleteSheetX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\DeleteSheetX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\DeleteSheetX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // Sheet2 を消す
                 Excel.Sheet["Sheet2"].DeleteSheet();

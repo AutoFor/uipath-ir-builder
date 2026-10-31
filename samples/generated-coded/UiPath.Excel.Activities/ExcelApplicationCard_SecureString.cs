@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             String name = default;
             System.Security.SecureString pw = new System.Net.NetworkCredential("", "open").SecurePassword;
             System.Security.SecureString editPw = new System.Net.NetworkCredential("", "edit").SecurePassword;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Protected.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, Password = new System.Net.NetworkCredential(string.Empty, pw).Password, EditPassword = new System.Net.NetworkCredential(string.Empty, editPw).Password }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Protected.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, Password = new System.Net.NetworkCredential(string.Empty, pw).Password, EditPassword = new System.Net.NetworkCredential(string.Empty, editPw).Password, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 name = (String)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(String));
             }

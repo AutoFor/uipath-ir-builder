@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             System.Drawing.Color c = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // A1 の背景色
                 c = Excel.Sheet["Sheet1"].Cell["A1"].GetCellColorInternal();

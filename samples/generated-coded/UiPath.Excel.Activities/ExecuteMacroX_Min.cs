@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
         {
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Macro.xlsm", destination: "output\\ExecuteMacroX_Min.xlsm", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ExecuteMacroX_Min.xlsm", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ExecuteMacroX_Min.xlsm", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 var __collect1 = new List<object>();
                 Excel.ExecuteMacro(macroName: "Hello", macroArguments: __collect1);
