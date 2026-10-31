@@ -34,7 +34,7 @@ Batch は、IR にまだ無かった `loop` と `onError` を含むものとし�
 | 綴りの間違い | `tsc` が `'cod' ... Did you mean to write 'code'?` と行番号つきで言う | `{ "idd": "a" }` は `.step(undefined, ...)` を生成し、`check` は `Cannot read properties of undefined (reading 'replace')`。`{ "kind": "scrpt" }` は `steps is not iterable` | 直書きが明らかによい。IR に検査を足せば縮むが、その分は自前の仕事になる |
 | 診断の読み先 | 自分の書いたファイルの行 | 生成物の行。JSON に戻って読み替える | 直書きがよい |
 | ノードが増えるとき | 何もしなくてよい。SDK の公開関数は 82 個（`api-index.md`） | `loop` と `onError` だけで `gen.ts` が 28 行増えた（Flow と BPMN の両方） | 直書きがよい |
-| テナントの資源 | `rpaWorkflow`、`connector`、`lookup` などがそのまま使える | すべて IR に写す必要がある（AUT-1079 の7つの形は未対応） | 直書きがよい |
+| テナントの資源 | `rpaWorkflow`、`connector`、`lookup` などがそのまま使える | すべて IR に写す必要がある（今の `gen.ts` は未対応） | 直書きがよい |
 | 既存のファイル | `flow decompile` で SDK のソースに戻る（戻して compile はできた。元とバイト単位では同じにならなかった） | 戻す道が無い | 直書きがよい |
 | Case | 書ける | 工程の並びでないので載らない | 直書きしかない |
 | SDK の版が変わるとき | ソースを直す | 生成器を直す。SDK が守る API に依存する点は同じ | 差は小さい。**IR は SDK の変更から守ってくれない** |
