@@ -63,3 +63,39 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 - `CommentOut`：C# では中のアクティビティを生成しない（XAML でも実行されない）
 
 `tools/ir/migrate-report.ts` はこの節の箇条書き（`` - `名前`：説明 ``）を読んで警告に出す。名前はクラス名、プロパティ名、`system.メソッド名`のどれか。
+
+## IR に無い props の意味（既定値）
+
+XAML → IR → C# の通しの確認で、`CopyChartToClipboardX_Full` の C# だけが「画像ファイルはすでに存在します」で落ちた。取り込みが既定値と同じ `ReplaceFile="True"` を IR から落とし、対応表の `{ReplaceFile:-false}` が効いたため。手書きの IR でも同じことが起きる（XAML は True、C# は false）。
+
+**決めたこと：IR に無い props は、XAML でも C# でも既定 XAML の値として扱う。**
+
+- `generate.ts` は既定 XAML の値を XAML に足す。`generate-coded.ts` は同じ値を C# に補う（`xamlDefaultProps`）。`when` の形選びも既定値を見る。ただし「Coded API なし」の形は IR に書かれたときだけ選び、IR に書かれた値を扱えない形は選ばない
+- 優先の順は、IR の値 → 既定 XAML → 対応表の `defaults` と `{Prop:-既定}`
+- 取り込みは既定値と同じ属性を IR から落とす。意味は変わらないので、対応表を見て残す処理はやめた
+
+取り込みで値を残す案を選ばなかった理由：手書きの IR は直らない。また `new ClickOptions { }` のように省いたときの C# 側の値は対応表からは見えないので、値を残すだけでは「IR に無いとき」の食い違いを見つけられない。
+
+既定 XAML に出ないものは補えない。`[DefaultValue]` やコンストラクタの値と同じ値は Studio が書き出さないため。そこは対応表の値が効くので、`tools/ir/coded-defaults.test.ts` がカタログの `DefaultValue` と比べる。違うものは直すか、`knowledge/coded-default-allow.json` に理由を書く（一覧は `node tools/ir/coded-defaults.ts`）。
+
+見つかって直した食い違い（XAML / 直す前の C#）：
+
+| どこ | XAML | 直す前の C# | 直し方 |
+| --- | --- | --- | --- |
+| `CopyChartToClipboardX.ReplaceFile` | True | false | 対応表と補完 |
+| `ExcelForEachRowX.EmptyRowBehavior` | Stop | StopAfterThreeConsecutiveEmptyRows | 対応表と補完 |
+| `SaveAsPdfX` / `SaveExcelFileAsX` / `CreateTableX` の `ReplaceExisting` | True（ctor） | false | 対応表 |
+| `CopyPasteRangeX.ExcludeHeaderFromSourceTable` | True（ctor） | false | 対応表 |
+| `RemoveDuplicatesX.ColumnsCompareMode`（Columns あり） | IndividualColumns（ctor） | AllColumns | 対応表 |
+| `Replace.RegexOption` | IgnoreCase, Compiled | 引数なし（API の値） | 補完 |
+| `MatchFunctionX.MatchFunctionType`、`SortDataTable.SortOrder`、`MergeDataTable.MissingSchemaAction` | 既定 XAML の値 | 引数なし（API の値） | 補完 |
+| `FormatDateAsText` / `ExtractDateTime` の `LocalizationCode` | ja-JP | CurrentCulture | 補完 |
+| UI の `AttachMode`、`HealingAgentBehavior`、`ActivateBefore`、`ClickBeforeMode`、`EmptyFieldMode` など、Excel の `ResizeWindow` など | 既定 XAML の値 | オプションのクラスの値 | 補完 |
+
+最後の行は値を明示するようになっただけで、動きが変わったかは確かめていない（UI のオプションのクラスの初期値は読めなかった。`BlockUserInputOptions`、`TextToColumnsOptions`、Excel の `UseOptions` は既定 XAML と同じだった）。
+
+気をつけること：
+
+- `LocalizationCode` の既定 XAML の `ja-JP` は、取った PC のロケール。XAML も C# も同じ値になるが、別のロケールで作り直すと変わる
+- `InvokeProcess.UsePackage` は ctor が True で、既定 XAML は false（Studio が置くときに入れる値）。生成器は既定 XAML に合わせる。実物の XAML に属性が無いときの値は ctor の方なので、取り込み直すと意味が変わる可能性がある（未確認）
+- 元の IR の C# と取り込んだ IR の C# の違いは、順番と書き方（`object` / `Object`、`@""` / `""`、`Convert.ToString`）だけ。`{ vb, cs }` の `cs` は XAML に無いので vb2cs の結果になる

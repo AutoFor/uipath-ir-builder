@@ -510,7 +510,7 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 
 - **式の言語**：IR の文字列の式は VB 前提。取り込む XAML が C# のプロジェクト（`expressionLanguage: CSharp`）だと式も C# になる。IR に式の言語（ワークフロー単位の `language` か、値ごとの `{ cs }`）を持たせる余地を残しておく。`{ vb, cs }` の形はその足がかり
 - **属性のリテラルと式の区別**：XAML では `Message="abc"`（リテラル）と `Message="[abc]"`（式）が別。IR では `{ lit }` と文字列で分けているので、取り込み時もこの区別を保つ
-- **既定値**：生成器は `get-default-xaml` の既定値（`Version="V5"` など）を自動で足す。取り込み時は、既定値と同じ属性を IR から落とさないと、往復で差分が出る（落とすかどうかを決めておく）
+- **既定値**：IR に無い props の意味は「既定 XAML の値」に決めた。`generate.ts` は XAML に足し、`generate-coded.ts` は C# に補う（`when` の形選びも同じ）。取り込みは既定値と同じ属性を IR から落とす。対応表の `{Prop:-既定}` と `defaults` は、既定 XAML に値が無いときだけ使われる。アクティビティの既定値と違うと `tools/ir/coded-defaults.test.ts` が落ちるので、直すか `knowledge/coded-default-allow.json` に理由を書く（一覧は `node tools/ir/coded-defaults.ts`）。詳しくは `knowledge/coded-workflow.md`
 - **表示用の情報**：`sap2010:WorkflowViewState.IdRef`、`sap:VirtualizedContainerService.HintSize`、注釈（`sap2010:Annotation.AnnotationText`）は IR に無い。往復で消えてよいか、IR に `annotation` などを足すかを決める
 - **IR が持たないもの**：Flowchart / StateMachine、`InvokeWorkflowFile` の `ArgumentsVariable`、`ActivityFunc`（`RetryScope.Condition` など）、要素構文のコレクションやオブジェクト（coverage の「書けない」）。取り込み時は「未対応のノード」として XAML の断片をそのまま持つ逃げ道（例 `{ "act": "RawXaml", "xaml": "..." }`）があると、全部を落とさずに済む
 - **名前空間と型**：IR の型名は短い名前（`String`、`DataTable`）で、`types-xaml.ts` の表にあるものだけ。取り込み時は XAML の `x:TypeArguments="scg:List(x:String)"` を IR の型名に戻す逆引きが要る。表を増やすときは両方向で使える形にしておく
