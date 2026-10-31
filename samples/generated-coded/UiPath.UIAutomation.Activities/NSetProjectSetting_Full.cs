@@ -25,12 +25,12 @@ namespace CatalogProbeNet8
             // 上書きを外す（Value を空にする）
             uiAutomation.SetProjectSetting(key: "UiPath.UIAutomationNext.Activities.Generic.DelayBefore", value: null);
             // UIA Test Form を開く
-            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { Url = new Uri(htmlPath).AbsoluteUri, BrowserType = UiPath.UIAutomationNext.Enums.NBrowserType.Edge, Selector = "<html app='msedge.exe' title='UIA Test Form' />" }, targetAppOptions: new TargetAppOptions { OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always }))
+            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { Url = new Uri(htmlPath).AbsoluteUri, BrowserType = UiPath.UIAutomationNext.Enums.NBrowserType.Edge, Selector = "<html app='msedge.exe' title='UIA Test Form' />" }, targetAppOptions: new TargetAppOptions { AttachMode = UiPath.UIAutomationNext.Enums.NAppAttachMode.ByInstance, OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
             {
                 // Greet を押す
-                app1.Click(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='greet' tag='BUTTON' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector });
+                app1.Click(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='greet' tag='BUTTON' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, clickOptions: new ClickOptions { ClickType = UiPath.UIAutomationNext.Enums.NClickType.Single, MouseButton = UiPath.UIAutomationNext.Enums.NMouseButton.Left, KeyModifiers = UiPath.UIAutomationNext.Enums.NKeyModifiers.None, ActivateBefore = true, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.SameAsCard });
                 // 結果を読む
-                result = app1.GetText(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='result' tag='DIV' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector });
+                result = app1.GetText(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='result' tag='DIV' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, getTextOptions: new GetTextOptions { HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.SameAsCard });
             }
             Log(message: "結果: " + result, level: UiPath.CodedWorkflows.LogLevel.Info);
         }

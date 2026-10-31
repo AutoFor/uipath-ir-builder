@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a2 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\SortX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SortX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SortX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 var __collect1 = new SortXDescriptor();
                 __collect1.SortColumns.Add(new SortXColumnModel("Age", UiPath.Excel.OrderType.Ascending));

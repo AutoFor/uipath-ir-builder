@@ -6,7 +6,7 @@
       "when": [
         "OutTableName"
       ],
-      "code": "{OutTableName} = {Range}.CreateTable(hasHeaders: {HasHeaders:-true}, replaceExisting: {ReplaceExisting:-false}, tableName: {TableName:-null});",
+      "code": "{OutTableName} = {Range}.CreateTable(hasHeaders: {HasHeaders:-true}, replaceExisting: {ReplaceExisting:-true}, tableName: {TableName:-null});",
       "usings": [
         "UiPath.Excel.Activities.API"
       ]
@@ -15,7 +15,7 @@
       "call": "{Range}.CreateTable",
       "args": {
         "hasHeaders": "{HasHeaders:-true}",
-        "replaceExisting": "{ReplaceExisting:-false}",
+        "replaceExisting": "{ReplaceExisting:-true}",
         "tableName": "{TableName:-null}"
       },
       "usings": [

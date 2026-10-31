@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
         {
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\SaveAsPdfX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveAsPdfX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveAsPdfX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.SaveAsPdf(filePath: "output\\SaveAsPdfX_Min.pdf", replaceExisting: true, startPage: null, endPage: null, saveQuality: UiPath.Excel.PdfSaveQuality.StandardQuality);
             }

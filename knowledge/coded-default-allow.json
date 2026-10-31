@@ -1,0 +1,27 @@
+{
+  "_comment": "対応表の既定値（{Prop:-既定}、defaults）がアクティビティの既定値と違う、または比べられないもののうち、意図したもの。キーは アクティビティ.プロパティ=対応表の値。理由を必ず書く。tools/ir/coded-defaults.test.ts が見る。「未確認」は、アクティビティの実行時の値を run で確かめていないもの",
+  "allow": {
+    "RemoveDuplicatesX.ColumnsCompareMode=AllColumns": "Columns が無い形だけで使う（columns: null）。アクティビティの初期値 IndividualColumns は列の一覧が前提で、一覧が無いと比べる列が無い。Columns を書く形は IndividualColumns にしてある。XAML で Columns を書かない動きは未確認",
+    "FilterPivotTableX.FilterArgument=new List<string>()": "既定値ではない。ClearFilter のときに API の必須の引数を埋める空の一覧（XAML は検証のため FilterArgument を必須にしている）",
+    "AddDataColumn.AllowDBNull=true": "System.Data.DataColumn の初期値。アクティビティは InArgument が null のとき列の設定を変えない",
+    "AddDataColumn.MaxLength=-1": "System.Data.DataColumn の初期値。アクティビティは InArgument が null のとき列の設定を変えない",
+    "AddDataColumn.DefaultValue=DBNull.Value": "System.Data.DataColumn の初期値。アクティビティは InArgument が null のとき列の設定を変えない",
+    "DownloadFileFromUrl.Timeout=600": "API の省略時の値と同じ（DownloadFileFromURLAsync の timeout = 600）。アクティビティ側は既定 XAML で値なし",
+    "DownloadStorageFile.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "GetJobs.Top=100": "API の必須の引数を埋める値。Orchestrator の活動の既定。Orchestrator が要るので未確認",
+    "GetJobs.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "ListStorageFiles.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "ReadStorageText.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "RunJob.TimeoutMS=600000": "API のオプションを埋める値。Orchestrator が要るので未確認",
+    "RunJob.Priority=Inherited": "API のオプションを埋める値。Orchestrator が要るので未確認",
+    "RunJob.RuntimeType=Default": "API のオプションを埋める値。Orchestrator が要るので未確認",
+    "StopJob.Strategy=Stop": "API の必須の引数を埋める値。Orchestrator が要るので未確認",
+    "UploadStorageFile.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "WriteStorageText.TimeoutMS=30000": "API の必須の引数を埋める値。Orchestrator の活動の既定の 30 秒。Orchestrator が要るので未確認",
+    "WriteTextFile.Encoding=\"utf-8\"": "API の必須の引数を埋める値。アクティビティは Encoding が null（既定 XAML で値なし）。XAML と C# のログは run で一致しているが、BOM の有無まで同じかは未確認",
+    "NSAPReadStatusbar.Timeout=30": "API の必須の引数を埋める値。SAP が無いので未確認",
+    "NSAPReadStatusbar.DelayAfter=0.3": "API の必須の引数を埋める値。SAP が無いので未確認",
+    "NSAPReadStatusbar.DelayBefore=0.2": "API の必須の引数を埋める値。SAP が無いので未確認",
+    "NSAPReadStatusbar.HealingAgentBehavior=SameAsCard": "API の必須の引数を埋める値。ほかの UI の活動の既定 XAML と同じ値。SAP が無いので未確認"
+  }
+}

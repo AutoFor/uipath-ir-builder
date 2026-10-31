@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             Object d1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertColumnX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertColumnX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertColumnX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertColumn(columnName: "Age", position: UiPath.Excel.ColumnRelativePosition.After, hasHeaders: true, newColumnHeader: null, columnFormat: null);
                 b1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B1"].ReadCellValue(getFormattedText: true), typeof(Object));

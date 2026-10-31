@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             Object b2 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\DuplicateSheetX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\DuplicateSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\DuplicateSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet2"].DuplicateSheet(name: "Sheet2コピー");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet2コピー"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));

@@ -20,10 +20,10 @@ namespace CatalogProbeNet8
             DataTable dt = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\FilterX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\FilterX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\FilterX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // 30 より大きい
-                Excel.Sheet["Sheet1"].Range["A1:C4"].Filter(options: new FilterOptions { ColumnName = "Age", Filter = new AdvancedFilter { Operator = UiPath.Excel.LogicalOperator.And, Condition1 = UiPath.Excel.ExcelFilterOperator.GT, Value1 = "26", Condition2 = UiPath.Excel.ExcelFilterOperator.LT, Value2 = "40" } });
+                Excel.Sheet["Sheet1"].Range["A1:C4"].Filter(options: new FilterOptions { ColumnName = "Age", ClearFilter = false, Filter = new AdvancedFilter { Operator = UiPath.Excel.LogicalOperator.And, Condition1 = UiPath.Excel.ExcelFilterOperator.GT, Value1 = "26", Condition2 = UiPath.Excel.ExcelFilterOperator.LT, Value2 = "40" } });
                 dt = Excel.Sheet["Sheet1"].Range["A1:C4"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
                 Log(message: "行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
                 Log(message: "先頭: " + dt.Rows[0][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

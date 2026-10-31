@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             Object b5 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\RemoveDuplicatesX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RemoveDuplicatesX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RemoveDuplicatesX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["A5"].WriteCell(value: "太郎");
                 Excel.Sheet["Sheet1"].Cell["B5"].WriteCell(value: 99);

@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             IEnumerable<DateTime> ds = default;
             {
-                var __dates = system.ExtractDateAndTimeFromText("yyyy-MM-dd", "開始は2024-05-17、終了は2024-06-01です", System.Globalization.CultureInfo.CurrentCulture);
+                var __dates = system.ExtractDateAndTimeFromText("yyyy-MM-dd", "開始は2024-05-17、終了は2024-06-01です", new System.Globalization.CultureInfo("ja-JP"));
                 ds = __dates;
                 _ = __dates.FirstOrDefault();
             }

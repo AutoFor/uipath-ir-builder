@@ -10,7 +10,7 @@
       "args": {
         "action": "UiPath.Excel.ExcelChartAction.{Action:-CopyToClipboard}",
         "fileName": "{FilePath}",
-        "replaceFile": "{ReplaceFile:-false}"
+        "replaceFile": "{ReplaceFile:-true}"
       },
       "usings": [
         "UiPath.Excel",

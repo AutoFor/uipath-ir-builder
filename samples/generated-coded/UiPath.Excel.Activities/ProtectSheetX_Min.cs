@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\ProtectSheetX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ProtectSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ProtectSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].ProtectSheet(password: "pw123", additionalPermissions: UiPath.Excel.ProtectSheetAdditionalPermissions.None);
                 // 保護中のシートに書く

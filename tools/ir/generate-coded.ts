@@ -19,6 +19,7 @@ import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames } from "./validate.ts";
 import { objToCs } from "./uia.ts";
+import { xamlDefaultProps } from "./import-xaml.ts";
 
 export type CodedOptions = {
   namespace: string;
@@ -335,12 +336,25 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];
+    // IR に無い props の意味は XAML と同じにする。generate.ts は既定 XAML の値を足すので、C# でもその値として扱う
+    const act0 = resolve(cat, n.act, n.typeArg !== undefined);
+    const xamlDefaults = "activity" in act0 ? xamlDefaultProps(cat, act0.activity) : {};
+    const effective: Record<string, Value> = { ...xamlDefaults, ...(n.props ?? {}) };
     // "Prop" は IR にあること、"Prop=値" は props の値が等しいこと
-    const whenOk = (w: string) => {
+    const whenIn = (names: string[], vals: Record<string, Value> | undefined) => (w: string) => {
       const eq = w.indexOf("=");
-      return eq < 0 ? given.includes(w) : n.props?.[w.slice(0, eq)] !== undefined && String(n.props[w.slice(0, eq)]) === w.slice(eq + 1);
+      return eq < 0 ? names.includes(w) : vals?.[w.slice(0, eq)] !== undefined && String(vals[w.slice(0, eq)]) === w.slice(eq + 1);
     };
-    const v = m.coded.find((x) => (x.when ?? []).every(whenOk));
+    const whenOk = whenIn(given, n.props);
+    const whenWithDefaults = whenIn([...given, ...Object.keys(xamlDefaults)], effective);
+    // 形も既定値を含めて選ぶ（既定値を書いても書かなくても同じ形になるように）。ただし
+    // 「API が無い」の形は IR に書かれたときだけ（既定値で選ぶと、そのアクティビティ全部が C# にできなくなる）、IR に書かれた値を扱えない形は選ばない
+    const isReason = (x: Variant) => !x.call && !x.code && !x.special && !x.scope;
+    const handlesGiven = (x: Variant) => {
+      const text = JSON.stringify({ ...x, ignore: undefined });
+      return given.every((k) => k === "ContinueOnError" || (m.ignore ?? []).includes(k) || (x.ignore ?? []).includes(k) || new RegExp(`\\b${k}\\b`).test(text));
+    };
+    const v = m.coded.find((x) => (isReason(x) ? (x.when ?? []).every(whenOk) : (x.when ?? []).every(whenWithDefaults) && handlesGiven(x))) ?? m.coded.find((x) => (x.when ?? []).every(whenOk));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
     if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
@@ -358,8 +372,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const adef = "activity" in act ? act.activity : undefined;
     // どの props を使ったか（使わなかった props は意味が落ちるのでエラー）
     const used = new Set<string>((m.ignore ?? []).concat(v.ignore ?? []));
-    // IR の props に、対応表の defaults（IR に無いときの値）を足したもの
-    const props: Record<string, Value> = { ...(v.defaults ?? {}), ...(n.props ?? {}) };
+    // IR の props に、既定 XAML の値と、対応表の defaults（どちらにも無いときの値）を足したもの
+    const props: Record<string, Value> = { ...(v.defaults ?? {}), ...effective };
     const has = (r: string) => props[r] !== undefined || n.objs?.[r] !== undefined || n.dicts?.[r] !== undefined || n.lists?.[r] !== undefined;
     // 外側のスコープ（"scope": "using"）の変数。内側のものほど後ろにある
     const scopeVar = (t: string) => [...sc].reverse().find(([, ty]) => ty === t || ty.endsWith("." + t))?.[0];

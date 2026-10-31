@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
         {
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InvokeVBAX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InvokeVBAX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InvokeVBAX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 var __collect1 = new List<object>();
                 Excel.InvokeVBA(codeFilePath: "data\\excel\\vba\\AddNumbers.bas", entryMethodname: "Hello", arguments: __collect1);

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a = default;
             using (var ExcelProcessScopeTag = excel.ExcelProcessScope(options: new ScopeOptions { DisplayAllerts = false, ExistingProcessAction = UiPath.Excel.ExistingExcelProcessAction.None, FileConflictResolution = UiPath.Excel.ExcelFileConflictResolution.None, LaunchMethod = UiPath.Excel.ExcelStartMethod.Automation, LaunchTimeout = 60, MacroSetting = UiPath.Excel.MacroSetting.EnableAll, ProcessMode = UiPath.Excel.ExcelProcessMode.AlwaysCreateNew, ShowExcelWindow = false }))
             {
-                using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ExcelProcess = ExcelProcessScopeTag }))
+                using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None, ExcelProcess = ExcelProcessScopeTag }))
                 {
                     a = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
                 }

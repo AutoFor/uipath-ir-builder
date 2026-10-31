@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             IExcelLabelObject lbl = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\AddSensitivityLabelX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = false }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\AddSensitivityLabelX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = false, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 lbl = Excel.GetSensitivityLabel();
                 // ラベルを付ける

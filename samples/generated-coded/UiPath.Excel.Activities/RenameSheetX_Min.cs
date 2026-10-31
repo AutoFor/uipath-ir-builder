@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\RenameSheetX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RenameSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RenameSheetX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet2"].RenameSheet(name: "シート二");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["シート二"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));

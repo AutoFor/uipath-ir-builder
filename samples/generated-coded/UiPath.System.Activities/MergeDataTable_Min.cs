@@ -52,7 +52,7 @@ namespace CatalogProbeNet8
             }
             src.Rows.Add(new object[] {"Carol", 35});
             src.Rows.Add(new object[] {"Dave", 40});
-            system.MergeDataTable(src, ref dest);
+            system.MergeDataTable(src, ref dest, System.Data.MissingSchemaAction.Add);
             Log(message: Convert.ToString("rows=" + dest.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("names=" + string.Join(",", dest.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

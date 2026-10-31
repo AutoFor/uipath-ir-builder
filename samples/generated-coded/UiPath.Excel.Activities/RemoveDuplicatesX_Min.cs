@@ -25,12 +25,12 @@ namespace CatalogProbeNet8
             Object b5 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\RemoveDuplicatesX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RemoveDuplicatesX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\RemoveDuplicatesX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["A5"].WriteCell(value: "太郎");
                 Excel.Sheet["Sheet1"].Cell["B5"].WriteCell(value: 30);
                 Excel.Sheet["Sheet1"].Cell["C5"].WriteCell(value: 60);
-                Excel.Sheet["Sheet1"].Range["A1:C5"].RemoveDuplicates(hasHeaders: true, columnsMode: UiPath.Excel.ColumnsCompare.AllColumns, columns: new string[] { "Name", "Age", "Double" });
+                Excel.Sheet["Sheet1"].Range["A1:C5"].RemoveDuplicates(hasHeaders: true, columnsMode: UiPath.Excel.ColumnsCompare.IndividualColumns, columns: new string[] { "Name", "Age", "Double" });
                 a4 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A4"].ReadCellValue(getFormattedText: true), typeof(Object));
                 Log(message: "A4: [" + Convert.ToString(a4) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
                 a5 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A5"].ReadCellValue(getFormattedText: true), typeof(Object));

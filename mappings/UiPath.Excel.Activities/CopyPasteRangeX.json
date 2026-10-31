@@ -12,7 +12,7 @@
         "options": "UiPath.Excel.CopyPasteRangeOptions.{PasteOptions}"
       },
       "defaults": {
-        "ExcludeHeaderFromSourceTable": false,
+        "ExcludeHeaderFromSourceTable": true,
         "ExcludeHeaders": false,
         "Transpose": false,
         "PasteOptions": "All"

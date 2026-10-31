@@ -61,7 +61,7 @@ function irIndex(pkg) {
 
 function classify(file, index) {
   const xml = readFileSync(file, "utf8");
-  const imp = importAndCheck(xml, cat, maps);
+  const imp = importAndCheck(xml, cat);
   const r = { file, workflow: imp.wf?.workflow, status: "ok", detail: [], wf: imp.wf };
   if (imp.errors.length || !imp.wf) return { ...r, status: "import", detail: imp.errors.map((e) => `${e.code} ${e.path}: ${e.message}`) };
   if (imp.validation.length) return { ...r, status: "validate", detail: imp.validation.map((e) => `${e.code} ${e.path}: ${e.message}`) };

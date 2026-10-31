@@ -9,7 +9,7 @@
       "lambdaArg": "act",
       "lambdaFuncArg": "func",
       "args": {
-        "emptyRowBehavior": "UiPath.Excel.EmptyRowBehavior.{EmptyRowBehavior:-StopAfterThreeConsecutiveEmptyRows}",
+        "emptyRowBehavior": "UiPath.Excel.EmptyRowBehavior.{EmptyRowBehavior:-Stop}",
         "forceFirstRowAsHeaders": "{HasHeaders}",
         "saveAfterEachRow": "{SaveAfterEachRow:-false}"
       },

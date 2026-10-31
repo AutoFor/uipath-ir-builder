@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Int32 pos = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // 25 を探す
                 pos = Excel.Sheet["Sheet1"].Range["B2:B4"].MatchFunction(valueToMatch: 25, matchFunctionType: UiPath.Excel.MatchType.ExactlyEqual);

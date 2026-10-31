@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             String txt = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\ExportExcelToCsvX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ExportExcelToCsvX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ExportExcelToCsvX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Range["B1:B4"].ExportExcelToSCV(fileName: "output\\ExportExcelToCsvX_Min.csv");
             }

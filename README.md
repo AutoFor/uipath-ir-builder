@@ -194,5 +194,5 @@ node tools/ir/migrate-report.ts --dropped-props                                 
 - 捨てるもの（一覧に出る）：ViewState、IdRef、HintSize、注釈、生成器が足し直す値（既定値、GUID）、`{x:Null}`。注釈は中身も警告に出す
 - 取り込めないもの（エラー）：C# の式（`CSHARP_EXPR`）、Flowchart（`UNSUPPORTED_FLOWCHART`）、StateMachine（`UNSUPPORTED_STATEMACHINE`）、カタログに無いアクティビティやプロパティ（`UNKNOWN_ACT` / `UNKNOWN_PROP`）、`types-xaml.ts` に無い型（`UNKNOWN_TYPE`）、IR に無い要素構文（`UNSUPPORTED_ELEMENT`）、IR で書けないリテラル（`LITERAL_NOT_REPRESENTABLE`）
 - 取り込んだあと XAML を作り直して意味を比べ、残った違いを警告にする（`ROUNDTRIP_LOST` / `ROUNDTRIP_ADDED`）。IR に持てない import と参照は `EXTRA_IMPORT` / `EXTRA_REFERENCE`
-- XAML の既定値と同じ値は IR から落とす（生成器が足し直す）。ただし必須のものと、対応表の全部の形が使うものは残す（C# の API の既定値がアクティビティと違うことがあるため）
+- XAML の既定値と同じ値は IR から落とす（必須のものは残す）。IR に無い props は、XAML の生成器も C# の生成器も既定 XAML の値として扱うので、落としても意味は変わらない
 - `{ vb, cs }` の `cs` は XAML に無いので戻らない。C# に直せない式は `generateCoded` の `CODED_EXPR` になる

@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             Object a7 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertRowsX_Min.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertRowsX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertRowsX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["A6"].WriteCell(value: "下の行");
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertRows(nbOfRows: 1, insertPosition: UiPath.Excel.InsertRowPosition.End, specificIndex: 0, hasHeaders: true);

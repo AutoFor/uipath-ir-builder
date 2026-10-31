@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             Boolean ex = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\SaveExcelFileAsX_Full.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Cell["E1"].WriteCell(value: "xlsb で保存");
                 // xlsb で保存
@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
             }
             ex = system.PathExists(path: "output\\SaveExcelFileAsX_Full.copy.xlsb", pathType: UiPath.Core.Activities.PathType.File);
             Log(message: "xlsb がある: " + ex.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Full.copy.xlsb", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Full.copy.xlsb", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["E1"].ReadCellValue(getFormattedText: true), typeof(Object));
                 Log(message: "xlsb の E1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);

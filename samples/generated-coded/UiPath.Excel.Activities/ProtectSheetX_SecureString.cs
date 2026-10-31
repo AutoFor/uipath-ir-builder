@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             Object a1 = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\ProtectSheetX_SecureString.xlsx", overwrite: true);
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ProtectSheetX_SecureString.xlsx", SaveChanges = true, CreateIfNotExist = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\ProtectSheetX_SecureString.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 {
                     System.Security.SecureString pw = new System.Net.NetworkCredential("", "pw123").SecurePassword;

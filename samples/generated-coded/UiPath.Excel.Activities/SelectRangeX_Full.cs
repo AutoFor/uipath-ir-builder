@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             IReadRangeRef rng = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // A1:B4 を選ぶ
                 Excel.Sheet["Sheet1"].Range["A1:B4"].SelectRange();

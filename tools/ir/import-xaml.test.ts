@@ -37,7 +37,7 @@ function xamls(dir: string): string[] {
 for (const f of xamls(join(root, "samples", "generated"))) {
   test(`往復 ${rel(f)}`, () => {
     const xml = readFileSync(f, "utf8");
-    const r = importXaml(xml, cat, maps);
+    const r = importXaml(xml, cat);
     assert.deepEqual(r.errors, [], "取り込めない");
     assert.deepEqual(r.warnings, [], "取り込みの警告");
     assert.deepEqual(validate(r.wf!, cat), [], "取り込んだ IR が検証を通らない");
@@ -51,7 +51,7 @@ test("既定 XAML がすべて例外なく読めて、値を黙って捨てな�
     const res = JSON.parse(readFileSync(join(dir, f), "utf8").replace(/^﻿/, ""));
     if (res.Result !== "Success") continue;
     const xml = res.Data.message as string;
-    const r = importXaml(xml, cat, maps);
+    const r = importXaml(xml, cat);
     assert.ok(r.wf || r.errors.length, f);
     // 取り込めたものは、作り直して消える属性があれば警告に出ている（空の属性や既定値は別）
     if (r.wf && !r.errors.length) assert.doesNotThrow(() => checkRoundTrip(xml, r.wf!, cat), f);
@@ -61,7 +61,7 @@ test("既定 XAML がすべて例外なく読めて、値を黙って捨てな�
 const fixture = (name: string) => readFileSync(join(root, "samples", "xaml-import", name), "utf8");
 
 test("Studio が書く形を読む", () => {
-  const r = importAndCheck(fixture("StudioStyle.xaml"), cat, maps);
+  const r = importAndCheck(fixture("StudioStyle.xaml"), cat);
   assert.deepEqual(r.errors, []);
   assert.deepEqual(r.validation, []);
   const wf = r.wf!;
@@ -87,7 +87,7 @@ test("Studio が書く形を読む", () => {
 });
 
 const expectErrors = (name: string, codes: string[]) => test(`取り込めない形 ${name}`, () => {
-  const r = importXaml(fixture(`unsupported/${name}`), cat, maps);
+  const r = importXaml(fixture(`unsupported/${name}`), cat);
   const got = new Set(r.errors.map((e) => e.code));
   assert.deepEqual([...got].sort(), [...codes].sort());
 });
@@ -135,11 +135,16 @@ const report = (file: string) => {
   return reportWorkflow(f, readFileSync(f, "utf8"), cat, maps, notes);
 };
 
-const importSample = (file: string) => importXaml(readFileSync(join(root, "samples", "generated", file), "utf8"), cat, maps).wf!;
+const importSample = (file: string) => importXaml(readFileSync(join(root, "samples", "generated", file), "utf8"), cat).wf!;
 
 test("CultureInfo の属性は文字列のリテラルになる（C# で ja-JP という式にしない）", () => {
-  const n = importSample("UiPath.System.Activities/FormatDateAsText_Min.xaml").body.find((x) => x.act === "FormatDateAsText")!;
-  assert.deepEqual(n.props!.LocalizationCode, { lit: "ja-JP" });
+  const xml = readFileSync(join(root, "samples", "generated", "UiPath.System.Activities", "FormatDateAsText_Min.xaml"), "utf8").replace('LocalizationCode="ja-JP"', 'LocalizationCode="en-US"');
+  const wf = importXaml(xml, cat).wf!;
+  assert.deepEqual(wf.body.find((x) => x.act === "FormatDateAsText")!.props!.LocalizationCode, { lit: "en-US" });
+  // 既定値（ja-JP）と同じなら IR には残らないが、C# では同じ値になる
+  const min = importSample("UiPath.System.Activities/FormatDateAsText_Min.xaml");
+  assert.equal(min.body.find((x) => x.act === "FormatDateAsText")!.props!.LocalizationCode, undefined);
+  assert.match(generateCoded(min, cat, maps, { namespace: "Migrated" }).code, /new System\.Globalization\.CultureInfo\("ja-JP"\)/);
 });
 
 for (const [file, act] of [["GetQueueItems_Full", "GetQueueItems"], ["SetTransactionStatus_Var", "SetTransactionStatus"]])
@@ -157,7 +162,7 @@ test("Activity<T> の子は、値を返すアクティビティでもよい（An
 
 test("変数の既定値の TimeSpan は TimeSpan.Parse の式になる", () => {
   const head = `xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"`;
-  const r = importXaml(`<Activity x:Class="A" ${head}><Sequence><Sequence.Variables><Variable x:TypeArguments="s:TimeSpan" Default="00:05:00" Name="d" /></Sequence.Variables></Sequence></Activity>`, cat, maps);
+  const r = importXaml(`<Activity x:Class="A" ${head}><Sequence><Sequence.Variables><Variable x:TypeArguments="s:TimeSpan" Default="00:05:00" Name="d" /></Sequence.Variables></Sequence></Activity>`, cat);
   assert.deepEqual(r.errors, []);
   assert.equal(r.wf!.body[0].variables![0].default, 'TimeSpan.Parse("00:05:00")');
 });

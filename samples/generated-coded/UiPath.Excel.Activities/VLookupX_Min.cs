@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Object v = default;
-            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true }))
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 v = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Range["A1:B4"].VLookup(label: "次郎", columnIndex: 2, exactMatch: true), typeof(Object));
             }
