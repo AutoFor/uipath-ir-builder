@@ -76,7 +76,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <ui:FindOCRText DisplayName="HELLO42 の文字を OCR で探す" Element="[found]" Occurrence="1" Text="HELLO42" sap2010:WorkflowViewState.IdRef="FindOCRText_1">
+            <ui:FindOCRText DisplayName="HELLO42 の文字を OCR で探す" Occurrence="1" Result="[found]" Text="HELLO42" sap2010:WorkflowViewState.IdRef="FindOCRText_1">
               <ui:FindOCRText.OCREngine>
                 <ActivityFunc x:TypeArguments="sdc:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
                   <ActivityFunc.Argument>
