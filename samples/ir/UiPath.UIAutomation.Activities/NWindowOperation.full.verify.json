@@ -1,1 +1,1 @@
-{"requires":"Windows 11 のメモ帳（notepad.exe）。ワークフローが一時フォルダに uia-m3-note.txt を書いてメモ帳で開き、操作したあと閉じる。内容は変更しない（ユーザーが開いているメモ帳には触らない）"}
+{"requires":"Windows PowerShell（WinForms のウィンドウを開く）。Windows 11 のストア版メモ帳は notepad.exe が別プロセスを起動するため、OpenMode Always の開く処理がタイムアウトする。ユーザーの窓には触らない"}

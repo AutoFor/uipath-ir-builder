@@ -1,35 +1,21 @@
 {
   "workflow": "NWindowOperation_Full",
-  "variables": [
-    {
-      "name": "notePath",
-      "type": "String",
-      "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uia-m3-note.txt\")"
-    }
-  ],
+  "variables": [],
   "body": [
     {
-      "act": "WriteTextFile",
-      "name": "メモ帳に開かせるファイルを書く",
-      "props": {
-        "FileName": "notePath",
-        "Text": {
-          "lit": "uia-m3"
-        }
-      }
-    },
-    {
       "act": "NApplicationCard",
-      "name": "メモ帳を開く",
+      "name": "テスト用のウィンドウを開く",
       "item": "WSSessionData",
       "objs": {
         "TargetApp": {
           "FilePath": {
-            "lit": "C:/Windows/System32/notepad.exe"
+            "lit": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
           },
-          "Arguments": "notePath",
+          "Arguments": {
+            "lit": "-NoProfile -WindowStyle Hidden -Command \"Add-Type -AssemblyName System.Windows.Forms; $f=New-Object System.Windows.Forms.Form; $f.Text='UIA Window Test'; [System.Windows.Forms.Application]::Run($f)\""
+          },
           "Selector": {
-            "lit": "<wnd app='notepad.exe' title='uia-m3-note.txt*' />"
+            "lit": "<wnd app='powershell.exe' title='UIA Window Test' />"
           }
         }
       },
@@ -40,18 +26,7 @@
       "body": [
         {
           "act": "NWindowOperation",
-          "name": "メモ帳を動かして大きさを変える（全部入り）",
-          "objs": {
-            "Target": {
-              "FullSelectorArgument": {
-                "lit": "<wnd app='notepad.exe' title='uia-m3-note.txt*' />"
-              },
-              "ScopeSelectorArgument": {
-                "lit": "<wnd app='notepad.exe' title='uia-m3-note.txt*' />"
-              },
-              "SearchSteps": "Selector"
-            }
-          },
+          "name": "ウィンドウを動かして大きさを変える（全部入り）",
           "props": {
             "Operation": "Move",
             "X": 100,

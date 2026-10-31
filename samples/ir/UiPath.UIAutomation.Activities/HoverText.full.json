@@ -32,6 +32,17 @@
       },
       "body": [
         {
+          "act": "Hover",
+          "name": "先に別の場所へカーソルを動かす",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl tag='H1' />"
+              }
+            }
+          }
+        },
+        {
           "act": "HoverText",
           "name": "HoverMe の文字にホバー",
           "objs": {

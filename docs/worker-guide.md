@@ -319,7 +319,11 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
   - 要素が足りないとき（ドロップダウン、表など）は HTML に足してよい。ほかのサンプルと同じ HTML でなくてもよいが、タイトルと既存の id は変えない
   - 結果は `NGetText`（Classic なら `GetValue`）で読んで `LogMessage` で出し、`*.expected.log` と突き合わせる
   - 横に `*.verify.json` を置き、`{ "requires": "Microsoft Edge と UiPath の Web 拡張機能..." }` と書く（verify.mjs は読まない。人とマネージャー向けのメモ）
-- デスクトップのアプリが要るもの（ウィンドウ操作など）は、メモ帳（`notepad.exe`）を使ってよい。Windows 11 のメモ帳はタブ付きの新しいアプリなので、セレクタは実際の UI を見て決める（決められなければ build までにして、理由を書く）
+- デスクトップのアプリが要るもの（ウィンドウ操作など）は、Windows 11 のメモ帳を `NApplicationCard` の `OpenMode: Always` で開かない（題名が合っていても「タイムアウトに達しました」で落ち、窓が残る。`notepad.exe` は別プロセスで本体を起動する）。PowerShell で WinForms の窓を開く（見本 `NWindowOperation.min.json`）
+- `NWindowOperation` の `Target` は書かない（対象はカードの窓。窓自身のセレクタを Target にすると見つからない）
+- `NBrowserFilePickerScope` は、カードに `InteractionMode: DebuggerApi` が要る（既定のままだと file:// でも https でも「初期化中にエラー」）
+- Hover 系は、前の run のカーソルが同じ場所に残っていると mouse イベントが出ないことがある。先に別の要素へ Hover する
+- OCR は `Target` なし・`BODY` だと文字を読み落とす（`BODY` の GetOCRText は `UIA Test Form` だけを返した）。文字の要素を Target にする
 - **run できないもの**（`*.verify.json` に `noRun` を書き、build までで完了）：SAP（SAP GUI が無い）、Computer Vision（CV サーバーが要る）、Semantic（AI の UI 理解のサービスが要る）、トリガー（人の操作を待つ）、OCR のクラウドサービス
 - 今はこのシェルから run できない（BATCH-BRIEF.md）。run するものは build まで通したら Linear を In Progress にして「run 待ち」とコメントする
 

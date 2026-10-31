@@ -75,9 +75,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <ui:Hover DisplayName="先に別の場所へカーソルを動かす" sap2010:WorkflowViewState.IdRef="Hover_1">
+              <ui:Hover.Target>
+                <ui:Target Id="6187f4ac-1830-540b-bfe9-8edcccc9702e" Selector="&lt;webctrl tag='H1' /&gt;" />
+              </ui:Hover.Target>
+            </ui:Hover>
             <ui:HoverOCRText ContinueOnError="False" DelayBefore="100" DelayMS="300" DisplayName="HELLO42 の文字を OCR で探してホバー" Occurrence="1" SendWindowMessages="False" Text="HELLO42" sap2010:WorkflowViewState.IdRef="HoverOCRText_1">
               <ui:HoverOCRText.Target>
-                <ui:Target Id="6187f4ac-1830-540b-bfe9-8edcccc9702e" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+                <ui:Target Id="324183e4-894e-5eb9-a836-e5f551c9a4b0" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
               </ui:HoverOCRText.Target>
               <ui:HoverOCRText.CursorPosition>
                 <ui:CursorPosition OffsetX="0" OffsetY="0" Position="Center" />
@@ -96,7 +101,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="324183e4-894e-5eb9-a836-e5f551c9a4b0" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="d3381bf9-2dc9-5949-9a22-7dfd0185edd4" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

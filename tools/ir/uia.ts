@@ -157,7 +157,8 @@ export function validateUiaTree(wf: Workflow, cat: Catalog, add: Add) {
         if (!n.objs?.TargetApp && n.props?.InUiElement === undefined) add(path, "UIA_TARGET_MISSING", `NApplicationCard には objs.TargetApp（Selector / FilePath / Url）か props.InUiElement が要る`);
       } else if (modernTargetProp(a)) {
         const byElement = n.props?.InUiElement !== undefined;
-        if (!n.objs?.Target && !byElement) add(path, "UIA_TARGET_MISSING", `${a.className} には objs.Target か props.InUiElement が要る`);
+        // NWindowOperation の対象はカードのウィンドウそのもの。部分セレクタの Target を書くと実行時に見つからない
+        if (!n.objs?.Target && !byElement && a.className !== "NWindowOperation") add(path, "UIA_TARGET_MISSING", `${a.className} には objs.Target か props.InUiElement が要る`);
         if (!inCard && !byElement) add(path, "UIA_NO_SCOPE", `${a.className} は NApplicationCard（Use Application/Browser）の body の中に置く（または props.InUiElement を使う）`);
       }
     }

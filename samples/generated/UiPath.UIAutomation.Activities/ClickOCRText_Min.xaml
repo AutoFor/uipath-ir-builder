@@ -76,6 +76,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:ClickOCRText ClickType="CLICK_SINGLE" DisplayName="HELLO42 の文字を OCR で探して押す" KeyModifiers="None" MouseButton="BTN_LEFT" Occurrence="1" Text="HELLO42" sap2010:WorkflowViewState.IdRef="ClickOCRText_1">
+              <ui:ClickOCRText.Target>
+                <ui:Target Id="136cb76b-59f9-5d17-89ae-0f6933018d42" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" />
+              </ui:ClickOCRText.Target>
               <ui:ClickOCRText.OCREngine>
                 <ActivityFunc x:TypeArguments="sdc:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
                   <ActivityFunc.Argument>
@@ -90,7 +93,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="136cb76b-59f9-5d17-89ae-0f6933018d42" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="96d3fb1c-7921-5abf-883f-6a54963f8227" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

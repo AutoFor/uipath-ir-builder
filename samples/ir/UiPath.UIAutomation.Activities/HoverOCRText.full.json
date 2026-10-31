@@ -32,6 +32,17 @@
       },
       "body": [
         {
+          "act": "Hover",
+          "name": "先に別の場所へカーソルを動かす",
+          "objs": {
+            "Target": {
+              "Selector": {
+                "lit": "<webctrl tag='H1' />"
+              }
+            }
+          }
+        },
+        {
           "act": "HoverOCRText",
           "name": "HELLO42 の文字を OCR で探してホバー",
           "objs": {

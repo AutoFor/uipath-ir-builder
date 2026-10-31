@@ -77,6 +77,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:OCRTextExists DisplayName="HELLO42 の文字があるか（OCR）" Occurrence="1" Result="[exists]" Text="HELLO42" sap2010:WorkflowViewState.IdRef="OCRTextExists_1">
+              <ui:OCRTextExists.Target>
+                <ui:Target Id="19f6daa3-b7a9-58cd-bd8d-5e3817ab0c7c" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" />
+              </ui:OCRTextExists.Target>
               <ui:OCRTextExists.OCREngine>
                 <ActivityFunc x:TypeArguments="sdc:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
                   <ActivityFunc.Argument>
@@ -87,6 +90,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
               </ui:OCRTextExists.OCREngine>
             </ui:OCRTextExists>
             <ui:OCRTextExists DisplayName="無い文字は無いと返るか（OCR）" Occurrence="1" Result="[missing]" Text="QQXZ77" sap2010:WorkflowViewState.IdRef="OCRTextExists_2">
+              <ui:OCRTextExists.Target>
+                <ui:Target Id="b6525e57-c8ce-5acd-a738-9a6a7481bdfb" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" />
+              </ui:OCRTextExists.Target>
               <ui:OCRTextExists.OCREngine>
                 <ActivityFunc x:TypeArguments="sdc:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
                   <ActivityFunc.Argument>

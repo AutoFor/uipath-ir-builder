@@ -77,6 +77,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <ui:FindOCRText DisplayName="HELLO42 の文字を OCR で探す" Occurrence="1" Result="[found]" Text="HELLO42" sap2010:WorkflowViewState.IdRef="FindOCRText_1">
+              <ui:FindOCRText.Target>
+                <ui:Target Id="40892749-2116-59be-8dbe-2d171a3ab1f9" Selector="&lt;webctrl id='ocr' tag='DIV' /&gt;" />
+              </ui:FindOCRText.Target>
               <ui:FindOCRText.OCREngine>
                 <ActivityFunc x:TypeArguments="sdc:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
                   <ActivityFunc.Argument>

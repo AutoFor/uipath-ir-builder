@@ -61,7 +61,8 @@
       },
       "props": {
         "OpenMode": "Always",
-        "CloseMode": "Always"
+        "CloseMode": "Always",
+        "InteractionMode": "DebuggerApi"
       },
       "body": [
         {

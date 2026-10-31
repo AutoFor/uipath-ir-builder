@@ -72,9 +72,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <ui:Hover DisplayName="先に別の場所へカーソルを動かす" sap2010:WorkflowViewState.IdRef="Hover_1">
+              <ui:Hover.Target>
+                <ui:Target Id="d3e20536-2158-5788-b54f-8f0868af2e44" Selector="&lt;webctrl tag='H1' /&gt;" />
+              </ui:Hover.Target>
+            </ui:Hover>
             <ui:HoverText ContinueOnError="False" DelayBefore="100" DelayMS="300" DisplayName="HoverMe の文字にホバー" FormattedText="False" Occurrence="1" SendWindowMessages="False" Text="HoverMe" sap2010:WorkflowViewState.IdRef="HoverText_1">
               <ui:HoverText.Target>
-                <ui:Target Id="d3e20536-2158-5788-b54f-8f0868af2e44" Selector="&lt;webctrl tag='BODY' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
+                <ui:Target Id="d5ade07c-3afb-5558-8c68-62abdf57a662" Selector="&lt;webctrl tag='BODY' /&gt;" TimeoutMS="10000" WaitForReady="INTERACTIVE" />
               </ui:HoverText.Target>
               <ui:HoverText.CursorPosition>
                 <ui:CursorPosition OffsetX="0" OffsetY="0" Position="Center" />
@@ -85,7 +90,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
               </ui:GetValue.Value>
               <ui:GetValue.Target>
-                <ui:Target Id="d5ade07c-3afb-5558-8c68-62abdf57a662" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+                <ui:Target Id="bed26e2a-7358-55e9-8902-f5ac683e2fe3" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
               </ui:GetValue.Target>
             </ui:GetValue>
             <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />

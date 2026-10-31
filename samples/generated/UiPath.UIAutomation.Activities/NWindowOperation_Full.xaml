@@ -63,13 +63,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="NWindowOperation_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-m3-note.txt&quot;)]" Name="notePath" />
-    </Sequence.Variables>
-    <ui:WriteTextFile DisplayName="メモ帳に開かせるファイルを書く" FileName="[notePath]" Text="uia-m3" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="メモ帳を開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="b3cb4a6a-193c-5121-89dd-8fbec675a045" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="テスト用のウィンドウを開く" HealingAgentBehavior="Job" OpenMode="Always" ScopeGuid="b3cb4a6a-193c-5121-89dd-8fbec675a045" Version="V2" sap2010:WorkflowViewState.IdRef="NApplicationCard_1">
       <uix:NApplicationCard.TargetApp>
-        <uix:TargetApp Arguments="[notePath]" FilePath="C:/Windows/System32/notepad.exe" Selector="&lt;wnd app='notepad.exe' title='uia-m3-note.txt*' /&gt;" Version="V3" />
+        <uix:TargetApp Arguments="-NoProfile -WindowStyle Hidden -Command &quot;Add-Type -AssemblyName System.Windows.Forms; $f=New-Object System.Windows.Forms.Form; $f.Text='UIA Window Test'; [System.Windows.Forms.Application]::Run($f)&quot;" FilePath="C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe" Selector="&lt;wnd app='powershell.exe' title='UIA Window Test' /&gt;" Version="V3" />
       </uix:NApplicationCard.TargetApp>
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
@@ -77,11 +73,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NWindowOperation ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DisplayName="メモ帳を動かして大きさを変える（全部入り）" HealingAgentBehavior="Disabled" Height="500" Operation="Move" ScopeIdentifier="b3cb4a6a-193c-5121-89dd-8fbec675a045" Timeout="20" Version="V5" Width="700" X="100" Y="100" sap2010:WorkflowViewState.IdRef="NWindowOperation_1">
-              <uix:NWindowOperation.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;wnd app='notepad.exe' title='uia-m3-note.txt*' /&gt;" Guid="902025bd-89b6-55ff-b84a-d853241ecb32" ScopeSelectorArgument="&lt;wnd app='notepad.exe' title='uia-m3-note.txt*' /&gt;" SearchSteps="Selector" Version="V6" />
-              </uix:NWindowOperation.Target>
-            </uix:NWindowOperation>
+            <uix:NWindowOperation ContinueOnError="False" DelayAfter="0.3" DelayBefore="0.1" DisplayName="ウィンドウを動かして大きさを変える（全部入り）" HealingAgentBehavior="Disabled" Height="500" Operation="Move" ScopeIdentifier="b3cb4a6a-193c-5121-89dd-8fbec675a045" Timeout="20" Version="V5" Width="700" X="100" Y="100" sap2010:WorkflowViewState.IdRef="NWindowOperation_1" />
             <ui:LogMessage Level="Info" Message="[&quot;moved&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
           </Sequence>
         </ActivityAction>
