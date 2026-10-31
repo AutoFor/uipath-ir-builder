@@ -184,6 +184,8 @@ Linear のイシュー（1アクティビティ1件）の進め方、ファイ�
 ```bash
 node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]   # XAML を IR にする
 node tools/ir/migrate-report.ts <file.xaml>... [--json]                           # Coded への置き換えの見積もり
+node tools/verify/migrate-verify.mjs --name <作業名> --scan <pkg>...              # 通しの確認の対象を分類する（窓口を使わない）
+node tools/verify/migrate-verify.mjs --name <作業名> --pkg <pkg> --limit 20       # XAML → IR → C# を窓口で build / run し、元の期待ログと比べる。実物の XAML はファイルで渡す（XAML と C# のログを比べる）
 node tools/ir/migrate-report.ts --dropped-props                                   # 全対応表の ignore を knowledge/coded-dropped-props.md に書き出す
 ```
 

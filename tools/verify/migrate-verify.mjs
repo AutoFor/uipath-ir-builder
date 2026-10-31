@@ -128,6 +128,13 @@ if (opt.limit && targets.length > opt.limit && !opt.filter) {
   const step = targets.length / opt.limit;
   targets = Array.from({ length: opt.limit }, (_, i) => targets[Math.floor(i * step + opt.skip) % targets.length]);
 }
+// InvokeWorkflowFile の呼び出し先も一緒に流す（無いと run で「ワークフローが見つかりません」になる）
+for (let i = 0; i < targets.length; i++) {
+  for (const m of readFileSync(targets[i].file, "utf8").matchAll(/WorkflowFileName="([^"\\/]+)\.xaml"/g)) {
+    const callee = rows.find((r) => r.workflow === m[1]);
+    if (callee && !targets.includes(callee)) targets.push(callee);
+  }
+}
 targets = [...new Map(targets.map((r) => [r.workflow, r])).values()];
 for (const r of real) {
   console.log(`${r.status === "ok" ? "OK" : "NG"} 取り込みと生成 ${r.file}`);
