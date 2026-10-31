@@ -10,6 +10,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { loadCatalog } from "./catalog.ts";
 import { generate } from "./generate.ts";
+import { generateCoded } from "./generate-coded.ts";
 import { CATALOG_FILES, canonLines, checkRoundTrip, importAndCheck, importXaml, irType, normalizeXaml, parseXml, repoRoot as root } from "./import-xaml.ts";
 import { loadMappings } from "./mapping.ts";
 import { droppedPropsMarkdown, formatReport, loadBehaviorNotes, reportWorkflow } from "./migrate-report.ts";
@@ -133,6 +134,33 @@ const report = (file: string) => {
   const f = join(root, "samples", "generated", file);
   return reportWorkflow(f, readFileSync(f, "utf8"), cat, maps, notes);
 };
+
+const importSample = (file: string) => importXaml(readFileSync(join(root, "samples", "generated", file), "utf8"), cat, maps).wf!;
+
+test("CultureInfo の属性は文字列のリテラルになる（C# で ja-JP という式にしない）", () => {
+  const n = importSample("UiPath.System.Activities/FormatDateAsText_Min.xaml").body.find((x) => x.act === "FormatDateAsText")!;
+  assert.deepEqual(n.props!.LocalizationCode, { lit: "ja-JP" });
+});
+
+for (const [file, act] of [["GetQueueItems_Full", "GetQueueItems"], ["SetTransactionStatus_Var", "SetTransactionStatus"]])
+  test(`既定値を落としても対応表の when がそろう：${file}`, () => {
+    const wf = importSample(`UiPath.System.Activities/${file}.xaml`);
+    const issues = generateCoded(wf, cat, maps, { namespace: "Migrated" }).issues;
+    assert.deepEqual(issues.filter((i) => i.code === "MAPPING_UNUSED_PROP"), [], act);
+  });
+
+test("Activity<T> の子は、値を返すアクティビティでもよい（AnchorProvider）", () => {
+  const seq = importSample("UiPath.UIAutomation.Activities/AnchorBase_Min.xaml").body.find((x) => x.act === "OpenBrowser")!;
+  const anchor = JSON.stringify(seq);
+  assert.match(anchor, /"AnchorProvider":\[\{"act":"WaitUiElementAppear"/);
+});
+
+test("変数の既定値の TimeSpan は TimeSpan.Parse の式になる", () => {
+  const head = `xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"`;
+  const r = importXaml(`<Activity x:Class="A" ${head}><Sequence><Sequence.Variables><Variable x:TypeArguments="s:TimeSpan" Default="00:05:00" Name="d" /></Sequence.Variables></Sequence></Activity>`, cat, maps);
+  assert.deepEqual(r.errors, []);
+  assert.equal(r.wf!.body[0].variables![0].default, 'TimeSpan.Parse("00:05:00")');
+});
 
 test("見積もり：対応表の ignore で捨てられる値を一覧にする（対応表の中身は固定で持たない）", () => {
   // 対応表から ignore を持つアクティビティを選び、サンプルがあるものを確かめる

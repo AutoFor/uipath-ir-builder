@@ -1,0 +1,102 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="VbExpressions" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="VbExpressions" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Default="[&quot;a,b&quot;]" Name="s" />
+      <Variable x:TypeArguments="x:Int32" Default="[3]" Name="n" />
+      <Variable x:TypeArguments="scg:List(x:String)" Default="[New List(Of String) From {&quot;a&quot;, &quot;bb&quot;, &quot;ccc&quot;}]" Name="items" />
+      <Variable x:TypeArguments="x:Object" Default="[&quot;text&quot;]" Name="o" />
+      <Variable x:TypeArguments="sd:DataTable" Default="[New DataTable()]" Name="dt" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:Object" To="[dt.Columns.Add(&quot;A&quot;).DefaultValue]" Value="[&quot;d&quot;]" sap2010:WorkflowViewState.IdRef="Assign_1" />
+    <Assign x:TypeArguments="x:String" To="[dt.Rows.Add(&quot;x1&quot;).RowError]" Value="[&quot;&quot;]" sap2010:WorkflowViewState.IdRef="Assign_2" />
+    <ui:LogMessage Message="[&quot;vbCr=&quot; &amp; (&quot;a&quot; &amp; vbCr &amp; &quot;b&quot;).Length.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage Message="[&quot;vbLf=&quot; &amp; (&quot;a&quot; &amp; vbLf &amp; &quot;b&quot;).IndexOf(vbLf).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+    <ui:LogMessage Message="[&quot;vbCrLf=&quot; &amp; (&quot;a&quot; &amp; vbCrLf).Length.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
+    <ui:LogMessage Message="[&quot;vbTab=&quot; &amp; (&quot;a&quot; &amp; vbTab).Length.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />
+    <ui:LogMessage Message="[&quot;vbNewLine=&quot; &amp; (vbNewLine = Environment.NewLine).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_5" />
+    <ui:LogMessage Message="[&quot;ControlChars=&quot; &amp; (&quot;a&quot; &amp; ControlChars.Tab).Length.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_6" />
+    <ui:LogMessage Message="[&quot;Left=&quot; &amp; Left(s, 1) &amp; Mid(s, 3, 1) &amp; Right(s, 1) &amp; UCase(s) &amp; Len(s).ToString &amp; InStr(s, &quot;,&quot;).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_7" />
+    <ui:LogMessage Message="[&quot;IsNumeric=&quot; &amp; IsNumeric(&quot;12&quot;).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_8" />
+    <ui:LogMessage Message="[&quot;Split=&quot; &amp; s.Split(&quot;,&quot;c)(1)]" sap2010:WorkflowViewState.IdRef="LogMessage_9" />
+    <ui:LogMessage Message="[&quot;If=&quot; &amp; If(n &gt; 1, &quot;big&quot;, &quot;small&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_10" />
+    <ui:LogMessage Message="[&quot;IfNull=&quot; &amp; If(CType(Nothing, String), &quot;dflt&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_11" />
+    <ui:LogMessage Message="[&quot;IIf=&quot; &amp; IIf(n &gt; 5, &quot;big&quot;, &quot;small&quot;).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_12" />
+    <ui:LogMessage Message="[&quot;Not=&quot; &amp; (Not s = &quot;x&quot;).ToString &amp; (Not o Is Nothing).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_13" />
+    <ui:LogMessage Message="[&quot;Div=&quot; &amp; (7 / 2).ToString &amp; &quot; &quot; &amp; (n / 2).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_14" />
+    <ui:LogMessage Message="[&quot;Count=&quot; &amp; items.Where(Function(x) x &lt;&gt; &quot;a&quot;).Count.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_15" />
+    <ui:LogMessage Message="[&quot;Select=&quot; &amp; String.Join(&quot;|&quot;, items.Select(Function(x) x.ToUpper))]" sap2010:WorkflowViewState.IdRef="LogMessage_16" />
+    <ui:LogMessage Message="[&quot;Any=&quot; &amp; items.Any(Function(x As String) x.Length = 3).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_17" />
+    <ui:LogMessage Message="[&quot;Cast=&quot; &amp; String.Join(&quot;|&quot;, dt.Rows.Cast(Of DataRow).Select(Function(r) r(&quot;A&quot;).ToString))]" sap2010:WorkflowViewState.IdRef="LogMessage_18" />
+    <ui:LogMessage Message="[&quot;Index=&quot; &amp; dt.Rows(0)(&quot;A&quot;).ToString &amp; dt.Rows(0).Item(&quot;A&quot;).tostring &amp; dt.Rows(0).Field(Of String)(&quot;A&quot;)]" sap2010:WorkflowViewState.IdRef="LogMessage_19" />
+    <ui:LogMessage Message="[&quot;GetType=&quot; &amp; New DataColumn(&quot;M&quot;, GetType(String)).DataType.Name]" sap2010:WorkflowViewState.IdRef="LogMessage_20" />
+    <ui:LogMessage Message="[&quot;TypeOf=&quot; &amp; (TypeOf o Is String).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_21" />
+    <ui:LogMessage Message="[&quot;With=&quot; &amp; (New System.Diagnostics.ProcessStartInfo(&quot;p&quot;) With {.Arguments = &quot;q&quot;, .CreateNoWindow = True}).Arguments]" sap2010:WorkflowViewState.IdRef="LogMessage_22" />
+    <ui:LogMessage Message="[&quot;Array=&quot; &amp; {&quot;a&quot;, &quot;b&quot;}.Length.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_23" />
+    <ui:LogMessage Message="[&quot;Date=&quot; &amp; #1/2/2020#.Day.ToString &amp; (Now.Year &gt; 2000).ToString &amp; (Today &lt;= Now).ToString &amp; Date.MaxValue.Year.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_24" />
+    <ui:LogMessage Message="[&quot;Hex=&quot; &amp; (&amp;H10).ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_25" />
+    <ui:LogMessage Message="[&quot;Parse=&quot; &amp; (Integer.Parse(&quot;5&quot;) * 2).ToString &amp; CInt(&quot;5&quot;).ToString &amp; CStr(5)]" sap2010:WorkflowViewState.IdRef="LogMessage_26" />
+    <ui:LogMessage Message="[&quot;Named=&quot; &amp; s.Split({&quot;,&quot;c}, count:=1)(0)]" sap2010:WorkflowViewState.IdRef="LogMessage_27" />
+  </Sequence>
+</Activity>
