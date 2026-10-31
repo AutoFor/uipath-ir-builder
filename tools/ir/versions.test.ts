@@ -89,7 +89,7 @@ test("古い版：XAML は注意付きで作れ、C# ははっきりエラー", 
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stderr, /readOnly/);
   assert.match(r.stderr, /objects\.json が無い/);
-  assert.match(r.stderr, /既定 XAML は d+ 件/);
+  assert.match(r.stderr, /既定 XAML は \d+ 件/);
   const c = node(genCoded, greet, "--check", "--project", p);
   assert.equal(c.status, 2);
   assert.match(c.stderr, /services（Coded API）が無く/);
