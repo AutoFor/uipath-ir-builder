@@ -48,7 +48,7 @@
         "EnableDynamicForms": false,
         "EnableV2": false,
         "FormLayout": {
-          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false}]"
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false}]"
         }
       },
       "objs": {

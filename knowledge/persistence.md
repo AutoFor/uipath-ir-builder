@@ -13,7 +13,7 @@
 | 中断と再開 | 動く。Suspended → タスク完了 → 再開 → Successful | 同上、`2eabc575-f600-4ea3-973a-ec476fdade82` |
 | `FormData` の Out、InOut の戻り | 変数に戻る（`comment=API 完了`、`note=note-changed`） | `3c5201f0` |
 | `TaskAction` の値 | **ボタンの `key`**（`label` ではない）。`key: "approve"` なら `approve`。`Approve` で完了しようとすると「Provided form action does not match any button」 | `3c5201f0`、`2eabc575`（reject） |
-| `action: "event"` のボタンでの完了 | `key` で完了できる（`event` の値は試していない） | `9cd06a40-427d-4062-8761-14d865168817` |
+| `action: "event"` のボタンでの完了 | **API では** `key` で完了できる（API は `key` しか見ない）。**画面で押すと完了しない**（ユーザーの報告：タスク 100230032 で「承認」を押しても Pending、Action=null、ジョブ bf97f878 は Suspended のまま）。原因は推定：form.io の `action:"event"` はイベントを出すだけで送信しない。以前の「event で完了できる」は画面の確認ではなかった | `9cd06a40-427d-4062-8761-14d865168817`（API のみ） |
 | 再開後の変数 | wait の前に入れた変数、In 引数とも残る。`task` は `Status=Completed` と `Action` と `Data` が入って戻る | `3c5201f0` |
 | `FormTaskApproval.full`（直したもの）で分岐 | `承認: ok` が出た | `67cd1cbf-bd40-4cd1-b92c-0828bad4978e` |
 | 無いタスクカタログ（`TaskCatalog`） | **落ちる**。「No task catalog exists with name ... Error code: 2451」。build は通る | `8a88e19c-94b8-49b7-971d-9c842d52eaf0` |
@@ -33,14 +33,14 @@
 
 エラー `(this.hook(...) || []).forEach is not a function` は form.io のもの。`NestedComponent.addComponents` が `this.hook('addComponents', this.componentComponents, this) || []` に `forEach` する（公開パッケージ `formiojs` 4.14.13 のソースで確認。Action Center に入っている版は未確認）。`componentComponents` は `component.components` で、ここが配列でなくオブジェクトだと落ちる。スタックは `setForm` → `createRenderer` → `new Webform` → `set form`。
 
-**`FormLayoutGuid` が同じだと、新しい `FormLayout` は使われない。** サーバーは最初に登録したレイアウトを使い続ける。パッケージ 1.0.1 から 1.0.3 は `FormLayoutGuid` が同じ（`1ab6e056-...`）で、1.0.3 の XAML は配列に `action: "event"` のボタンなのに、そのタスク 100227691 の保存された形は 1.0.1 のオブジェクトと `action: "submit"` のまま（どれも `FormLayoutId` 100000211）。生成器の GUID は、以前はワークフロー名と通し番号だけから作っていたので、**レイアウトを変えて再 publish しても効かなかった**。今は、リテラルの `FormLayout` ならレイアウトの文字列のハッシュも混ぜて作る（`contentGuid`、`tools/ir/uia.ts`）ので、レイアウトを変えれば別の GUID になる（式のときは今までどおり）。**この GUID で再 publish すると画面が出ることを確かめた**（パッケージ 1.0.7、ジョブ `bf97f878-a6a9-4bc4-81f1-d11cfc99f524`、タスク 100230032：新しい `FormLayoutId` 100000214、保存された形は配列。Chrome で画面を開き、請求書の値・案内文・コメント欄・承認／却下のボタンが出た。AI が見たもので、人が完了して再開するところは未確認）。以前の GUID で登録済みのレイアウトは、テナントに残る。形の比較用の見本 `FormTaskLayoutShapes.full` は配列だけにした（オブジェクトの形は `samples/ir-invalid/FormLayoutObject`）。
+**`FormLayoutGuid` が同じだと、新しい `FormLayout` は使われない。** サーバーは最初に登録したレイアウトを使い続ける。パッケージ 1.0.1 から 1.0.3 は `FormLayoutGuid` が同じ（`1ab6e056-...`）で、1.0.3 の XAML は配列なのに、そのタスク 100227691 の保存された形は 1.0.1 のオブジェクトと `action: "submit"` のまま（どれも `FormLayoutId` 100000211）。生成器の GUID は、以前はワークフロー名と通し番号だけから作っていたので、**レイアウトを変えて再 publish しても効かなかった**。今は、リテラルの `FormLayout` ならレイアウトの文字列のハッシュも混ぜて作る（`contentGuid`、`tools/ir/uia.ts`）ので、レイアウトを変えれば別の GUID になる（式のときは今までどおり）。**この GUID で再 publish すると画面が出ることを確かめた**（パッケージ 1.0.7、ジョブ `bf97f878-a6a9-4bc4-81f1-d11cfc99f524`、タスク 100230032：新しい `FormLayoutId` 100000214、保存された形は配列。Chrome で画面を開き、請求書の値・案内文・コメント欄・承認／却下のボタンが出た。AI が見たもので、人が完了して再開するところは未確認）。以前の GUID で登録済みのレイアウトは、テナントに残る。形の比較用の見本 `FormTaskLayoutShapes.full` は配列だけにした（オブジェクトの形は `samples/ir-invalid/FormLayoutObject`）。
 
 - API で完了するには、`FormTask` は先に割り当てが要る（無いと「This action is no longer assigned to you」）。`QuickFormTask` は要らなかった
-- 部品は `{type,key,label,input,disabled}`、ボタンは `{type,key,label,action:"event",event,theme,input,tableView}`
-- 未確認：**保留中のタスクを人が画面で入力して完了し、ワークフローが再開すること**。画面で見たのは完了済みのタスクだけ
+- 部品は `{type,key,label,input,disabled}`、ボタンは `{type,key,label,theme,input,tableView}`（**`action` と `event` は付けない**。ユーザーが画面で完了できたタスク 100221082 のボタンがこの形で、`Action` も `Event` も無い。`action:"event"` は検証エラー `FORM_LAYOUT_BUTTON_EVENT`）
+- 未確認：**保留中のタスクを人が画面で入力して完了し、ワークフローが再開すること**。人の完了の確認は未了。`action` と `event` を外したボタンのタスク（パッケージ 1.0.8、ジョブ `ba07e724-9bdb-4dae-9af9-e4a35759c719`、タスク 100234436、`FormLayoutId` 100000217）を作って保存された形（`Action` 無し）まで確かめたが、人が押して完了するかはまだ
 - `Data` のキーは `FormData` の名前のまま（`InvoiceNo`）。Out の値は完了時の `--data` のキーで渡す
 
-**IR の検証（`tools/ir/persistence.ts`）**：`CreateFormTask` に `FormLayout` が無いと `FORM_LAYOUT_MISSING`。リテラルが JSON の配列でないと `FORM_LAYOUT_NOT_ARRAY`、JSON として読めない（空文字も）と `FORM_LAYOUT_BAD_JSON`。式（変数、VB の式）は中身を見ない。`FormLayoutGuid` だけを渡す形は試していないので、`FormLayout` が無ければ弾く。未確認：シリアライズできない変数と `ForEach` の中の中断。
+**IR の検証（`tools/ir/persistence.ts`）**：リテラルのボタン（入れ子の `components`、`columns` の中も）に `action:"event"` があると `FORM_LAYOUT_BUTTON_EVENT`。`CreateFormTask` に `FormLayout` が無いと `FORM_LAYOUT_MISSING`。リテラルが JSON の配列でないと `FORM_LAYOUT_NOT_ARRAY`、JSON として読めない（空文字も）と `FORM_LAYOUT_BAD_JSON`。式（変数、VB の式）は中身を見ない。`FormLayoutGuid` だけを渡す形は試していないので、`FormLayout` が無ければ弾く。未確認：シリアライズできない変数と `ForEach` の中の中断。
 
 ### 手順
 
