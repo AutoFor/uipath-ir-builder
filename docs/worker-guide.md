@@ -358,7 +358,7 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
 - 検証のエラー：`UIA_NO_SCOPE`（Modern のターゲットが `NApplicationCard` の外）、`UIA_TARGET_MISSING`（`Target` / `TargetApp` が無い）、`UIA_SEARCH_STEPS`（`SearchSteps` が無い）、`UIA_TARGET_EMPTY`（セレクタなど探す手がかりが無い）、`BAD_OBJ`（オブジェクトの形が違う）。例は `samples/ir-invalid/Uia.json`
 
 - `NSetValue`（UI 要素を更新）の `Target` は `"TargetType": "SemanticBased"` が要る。無いと build が「No data is available for the selected targeting methods」で落ちる。`SearchSteps` は `SemanticSelector` か `Semantic`
-- `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）
+- `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）。原因は Helm に機能 `JitCustomTypeServiceV4` が無いこと（`StudioCompatibilityValidator`）で、プロジェクトのファイルでは直せない
 
 ### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
 
