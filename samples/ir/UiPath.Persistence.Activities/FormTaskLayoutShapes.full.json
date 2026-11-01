@@ -1,0 +1,124 @@
+{
+  "workflow": "FormTaskLayoutShapes_Full",
+  "arguments": [
+    {
+      "name": "in_InvoiceNo",
+      "dir": "In",
+      "type": "String"
+    }
+  ],
+  "variables": [
+    {
+      "name": "objectTask",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    },
+    {
+      "name": "comment",
+      "type": "String"
+    },
+    {
+      "name": "objectComment",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "name": "オブジェクトの形（display と components）",
+      "props": {
+        "TaskTitle": "\"uipath-ir-test-shape-object \" & in_InvoiceNo",
+        "TaskPriority": "Low",
+        "Labels": {
+          "lit": "uipath-ir-test"
+        },
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "{\"display\":\"form\",\"components\":[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false}]}"
+        },
+        "TaskOutput": "objectTask"
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "InvoiceNo",
+            "dir": "In",
+            "type": "String",
+            "value": "in_InvoiceNo"
+          },
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "objectComment"
+          }
+        ]
+      }
+    },
+    {
+      "act": "CreateFormTask",
+      "name": "配列の形",
+      "props": {
+        "TaskTitle": "\"uipath-ir-test-shape-array \" & in_InvoiceNo",
+        "TaskPriority": "Low",
+        "Labels": {
+          "lit": "uipath-ir-test"
+        },
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"content\",\"key\":\"guide\",\"label\":\"案内\",\"input\":false,\"html\":\"<p>請求書 <b>{{data.InvoiceNo}}</b> を確認してください</p>\"},{\"type\":\"textarea\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true,\"rows\":3},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"承認\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Reject\",\"label\":\"却下\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+        },
+        "TaskOutput": "task"
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "InvoiceNo",
+            "dir": "In",
+            "type": "String",
+            "value": "in_InvoiceNo"
+          },
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"created object=\" & Convert.ToString(objectTask.Id) & \" array=\" & Convert.ToString(task.Id)"
+      }
+    },
+    {
+      "act": "WaitForFormTaskAndResume",
+      "name": "配列の形のタスクを待つ",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task",
+        "StatusMessage": {
+          "lit": "uipath-ir-test shape"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"resume action=\" & action & \" comment=\" & comment"
+      }
+    }
+  ]
+}
