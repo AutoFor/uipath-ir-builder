@@ -57,3 +57,15 @@ test("ほかの GUID（BulkFormLayoutGuid）はレイアウトで変わらない
   const bulk = (x: string) => /BulkFormLayoutGuid="([^"]+)"/.exec(x)![1];
   assert.equal(bulk(generate(wf("I1", { lit: arr }), cat)), bulk(generate(wf("I1", { lit: "[]" }), cat)));
 });
+
+const btn = (extra: object) => ({ type: "button", key: "approve", label: "承認", theme: "primary", input: true, tableView: false, ...extra });
+test("ボタンの action:\"event\" は弾く（直下、入れ子の components、columns の中）", () => {
+  const top = JSON.stringify([btn({ action: "event", event: "Approve" })]);
+  const nested = JSON.stringify([{ type: "panel", key: "p", components: [btn({ action: "event", event: "Approve" })] }]);
+  const cols = JSON.stringify([{ type: "columns", key: "c", columns: [{ components: [btn({}) ] }, { components: [btn({ action: "event" })] }] }]);
+  for (const l of [top, nested, cols]) assert.deepEqual(codes(wf("J1", { lit: l })), ["FORM_LAYOUT_BUTTON_EVENT"], l);
+});
+test("action の無いボタン、submit のボタン、button 以外の action は通す", () => {
+  assert.deepEqual(codes(wf("J2", { lit: JSON.stringify([btn({}), btn({ action: "submit" }), { type: "textfield", key: "a", action: "event" }]) })), []);
+});
+test("式のときはボタンを見ない", () => assert.deepEqual(codes(wf("J3", "in_Layout")), []));

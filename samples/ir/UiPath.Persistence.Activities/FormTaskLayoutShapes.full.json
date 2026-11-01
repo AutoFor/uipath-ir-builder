@@ -33,7 +33,7 @@
         },
         "GenerateInputFields": false,
         "FormLayout": {
-          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"content\",\"key\":\"guide\",\"label\":\"案内\",\"input\":false,\"html\":\"<p>請求書 <b>{{data.InvoiceNo}}</b> を確認してください</p>\"},{\"type\":\"textarea\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true,\"rows\":3},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"承認\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Reject\",\"label\":\"却下\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"content\",\"key\":\"guide\",\"label\":\"案内\",\"input\":false,\"html\":\"<p>請求書 <b>{{data.InvoiceNo}}</b> を確認してください</p>\"},{\"type\":\"textarea\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true,\"rows\":3},{\"type\":\"button\",\"label\":\"承認\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"却下\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
         },
         "TaskOutput": "task"
       },

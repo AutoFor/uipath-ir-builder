@@ -47,6 +47,17 @@ export function checkFormLayout(n: Node, path: string, add: (path: string, code:
   }
   if (!Array.isArray(parsed))
     add(at, "FORM_LAYOUT_NOT_ARRAY", "FormLayout のリテラルは JSON の配列にする（{\"components\":[...]} のようなオブジェクトだと Action Center の画面が空になる。knowledge/persistence.md）");
+  else if (hasEventButton(parsed))
+    add(at, "FORM_LAYOUT_BUTTON_EVENT", "ボタンに action:\"event\" がある（form.io はイベントを出すだけで送信しないので、画面で押してもタスクが完了しない疑いが強い。action と event を外し、{type,key,label,theme,input,tableView} にする。knowledge/persistence.md）");
+}
+
+// 入れ子の components、columns の中も含め、action:"event" のボタンを探す
+function hasEventButton(x: unknown): boolean {
+  if (Array.isArray(x)) return x.some(hasEventButton);
+  if (x === null || typeof x !== "object") return false;
+  const o = x as Record<string, unknown>;
+  if (o.type === "button" && o.action === "event") return true;
+  return Object.values(o).some(hasEventButton);
 }
 
 export function checkPersistence(wf: Workflow, add: (path: string, code: string, message: string) => void) {

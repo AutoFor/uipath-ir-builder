@@ -72,7 +72,7 @@
         "ExternalTag": "in_InvoiceNo",
         "GenerateInputFields": true,
         "FormLayout": {
-          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"textfield\",\"key\":\"Note\",\"label\":\"メモ\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"label\":\"Approve\",\"key\":\"approve\",\"event\":\"Approve\",\"theme\":\"primary\",\"input\":false,\"tableView\":false},{\"type\":\"button\",\"action\":\"event\",\"label\":\"Reject\",\"key\":\"reject\",\"event\":\"Reject\",\"theme\":\"danger\",\"input\":false,\"tableView\":false}]"
+          "lit": "[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"textfield\",\"key\":\"Note\",\"label\":\"メモ\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":false,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":false,\"tableView\":false}]"
         },
         "TaskOutput": "task"
       },
@@ -140,7 +140,7 @@
         "TaskPriority": "Low",
         "GenerateInputFields": false,
         "FormLayout": {
-          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"label\":\"Approve\",\"key\":\"approve\",\"event\":\"Approve\",\"theme\":\"primary\",\"input\":false,\"tableView\":false}]"
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":false,\"tableView\":false}]"
         },
         "TaskOutput": "layoutTask"
       },
