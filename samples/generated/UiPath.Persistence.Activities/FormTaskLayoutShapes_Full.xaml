@@ -1,0 +1,97 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="FormTaskLayoutShapes_Full" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:upaf="clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_InvoiceNo" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Persistence.Activities.FormTask</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>UiPath.Persistence.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="FormTaskLayoutShapes_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="upaf:FormTaskData" Name="objectTask" />
+      <Variable x:TypeArguments="upaf:FormTaskData" Name="task" />
+      <Variable x:TypeArguments="x:String" Name="action" />
+      <Variable x:TypeArguments="x:String" Name="comment" />
+      <Variable x:TypeArguments="x:String" Name="objectComment" />
+    </Sequence.Variables>
+    <upaf:CreateFormTask BulkFormLayoutGuid="59dad0cc-ecf6-5c41-955d-525ca0e8a606" DisplayName="オブジェクトの形（display と components）" EnableBulkEdit="False" EnableDynamicForms="False" EnableV2="False" EndCriteria="TaskAssigned" FormLayout="{}{&quot;display&quot;:&quot;form&quot;,&quot;components&quot;:[{&quot;type&quot;:&quot;textfield&quot;,&quot;key&quot;:&quot;InvoiceNo&quot;,&quot;label&quot;:&quot;請求書&quot;,&quot;input&quot;:true,&quot;disabled&quot;:true},{&quot;type&quot;:&quot;textfield&quot;,&quot;key&quot;:&quot;Comment&quot;,&quot;label&quot;:&quot;コメント&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;action&quot;:&quot;event&quot;,&quot;event&quot;:&quot;Approve&quot;,&quot;label&quot;:&quot;Approve&quot;,&quot;key&quot;:&quot;approve&quot;,&quot;theme&quot;:&quot;primary&quot;,&quot;input&quot;:true,&quot;tableView&quot;:false}]}" FormLayoutGuid="d589ae93-9d13-51c8-892a-26e8a87326f0" GenerateInputFields="False" Labels="uipath-ir-test" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[objectTask]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="[&quot;uipath-ir-test-shape-object &quot; &amp; in_InvoiceNo]" sap2010:WorkflowViewState.IdRef="CreateFormTask_1">
+      <upaf:CreateFormTask.FormData>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="x:String" x:Key="InvoiceNo">[in_InvoiceNo]</InArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="Comment">[objectComment]</OutArgument>
+        </scg:Dictionary>
+      </upaf:CreateFormTask.FormData>
+    </upaf:CreateFormTask>
+    <upaf:CreateFormTask BulkFormLayoutGuid="d1474ff5-bdbe-5f0f-9f28-3d57271499c4" DisplayName="配列の形" EnableBulkEdit="False" EnableDynamicForms="False" EnableV2="False" EndCriteria="TaskAssigned" FormLayout="[&quot;[{&quot;&quot;type&quot;&quot;:&quot;&quot;textfield&quot;&quot;,&quot;&quot;key&quot;&quot;:&quot;&quot;InvoiceNo&quot;&quot;,&quot;&quot;label&quot;&quot;:&quot;&quot;請求書&quot;&quot;,&quot;&quot;input&quot;&quot;:true,&quot;&quot;disabled&quot;&quot;:true},{&quot;&quot;type&quot;&quot;:&quot;&quot;content&quot;&quot;,&quot;&quot;key&quot;&quot;:&quot;&quot;guide&quot;&quot;,&quot;&quot;label&quot;&quot;:&quot;&quot;案内&quot;&quot;,&quot;&quot;input&quot;&quot;:false,&quot;&quot;html&quot;&quot;:&quot;&quot;&lt;p&gt;請求書 &lt;b&gt;{{data.InvoiceNo}}&lt;/b&gt; を確認してください&lt;/p&gt;&quot;&quot;},{&quot;&quot;type&quot;&quot;:&quot;&quot;textarea&quot;&quot;,&quot;&quot;key&quot;&quot;:&quot;&quot;Comment&quot;&quot;,&quot;&quot;label&quot;&quot;:&quot;&quot;コメント&quot;&quot;,&quot;&quot;input&quot;&quot;:true,&quot;&quot;rows&quot;&quot;:3},{&quot;&quot;type&quot;&quot;:&quot;&quot;button&quot;&quot;,&quot;&quot;action&quot;&quot;:&quot;&quot;event&quot;&quot;,&quot;&quot;event&quot;&quot;:&quot;&quot;Approve&quot;&quot;,&quot;&quot;label&quot;&quot;:&quot;&quot;承認&quot;&quot;,&quot;&quot;key&quot;&quot;:&quot;&quot;approve&quot;&quot;,&quot;&quot;theme&quot;&quot;:&quot;&quot;primary&quot;&quot;,&quot;&quot;input&quot;&quot;:true,&quot;&quot;tableView&quot;&quot;:false},{&quot;&quot;type&quot;&quot;:&quot;&quot;button&quot;&quot;,&quot;&quot;action&quot;&quot;:&quot;&quot;event&quot;&quot;,&quot;&quot;event&quot;&quot;:&quot;&quot;Reject&quot;&quot;,&quot;&quot;label&quot;&quot;:&quot;&quot;却下&quot;&quot;,&quot;&quot;key&quot;&quot;:&quot;&quot;reject&quot;&quot;,&quot;&quot;theme&quot;&quot;:&quot;&quot;danger&quot;&quot;,&quot;&quot;input&quot;&quot;:true,&quot;&quot;tableView&quot;&quot;:false}]&quot;]" FormLayoutGuid="0ad77c6a-f55c-59ea-8e7e-50293b9d36c4" GenerateInputFields="False" Labels="uipath-ir-test" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="[&quot;uipath-ir-test-shape-array &quot; &amp; in_InvoiceNo]" sap2010:WorkflowViewState.IdRef="CreateFormTask_2">
+      <upaf:CreateFormTask.FormData>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="x:String" x:Key="InvoiceNo">[in_InvoiceNo]</InArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="Comment">[comment]</OutArgument>
+        </scg:Dictionary>
+      </upaf:CreateFormTask.FormData>
+    </upaf:CreateFormTask>
+    <ui:LogMessage Level="Info" Message="[&quot;created object=&quot; &amp; Convert.ToString(objectTask.Id) &amp; &quot; array=&quot; &amp; Convert.ToString(task.Id)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <upaf:WaitForFormTaskAndResume DisplayName="配列の形のタスクを待つ" StatusMessage="uipath-ir-test shape" TaskAction="[action]" TaskInput="[task]" TaskOutput="[task]" sap2010:WorkflowViewState.IdRef="WaitForFormTaskAndResume_1" />
+    <ui:LogMessage Level="Info" Message="[&quot;resume action=&quot; &amp; action &amp; &quot; comment=&quot; &amp; comment]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+  </Sequence>
+</Activity>
