@@ -55,6 +55,8 @@ node --test "tools/maestro/*.test.mjs"                                  # テス
 
 - **Flow の空の分岐**：どの工程でも止まらない（`EmptyArm.flow.ts`）。SDK の README は `check` が止めると書いているが、`(e) => {}` では止まらなかった。害があるかは分からない
 - **テナントに無い資源**：`--tenant` を付けないと通る（AUT-1079）
+- **動かない BPMN の Action App**：SDK の `humanTask({ app })` の成果物は全工程を通るが、実行で 170000 で落ちる。`tools/maestro/bpmn-app-task.mjs` で書き換える（AUT-1079）
+- **足りない引数**：Case のエージェントに `.inputs()` が無くても `--tenant` まで通る
 - **実行時の間違い**：RPA の引数名など。SDK の文書も、ローカルでは分からないと書いている
 
 ## 残る warning
@@ -88,4 +90,6 @@ node --test "tools/maestro/*.test.mjs"                                  # テス
 - `.flow` の `id` が UUID でなくても（`Minimal`）動いた
 - `flow debug` には `--timeout` があるが、`bpmn debug` と `case debug` には無い。人のタスクの前で止まる debug は、裏で流して別のコマンドでタスクを完了する
 
-試していないもの：テナントの資源を指すノード（`Rpa.flow.ts` など）の実行、`solution publish`、入力なしの `VARIABLE_NOT_SET`、ループ、並列、Case の複数ステージ。
+テナントの資源を指すノードの実行は [docs/maestro-tenant-resources.md](maestro-tenant-resources.md)（AUT-1079）。`ExpenseCase.json` の 170004 は、Action App を指定すると消えた。
+
+試していないもの：入力なしの `VARIABLE_NOT_SET`、ループ、並列、Case の複数ステージ。

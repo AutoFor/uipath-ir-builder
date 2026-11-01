@@ -1,0 +1,62 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "gpt-4o-mini-2024-07-18",
+    "maxTokens": 32,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 2,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "input": {
+        "type": "string",
+        "description": "User input"
+      }
+    },
+    "required": [
+      "input"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "Agent response"
+      }
+    }
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Reply with the word in the input, in upper case. Output only that word.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Reply with the word in the input, in upper case. Output only that word."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "{{input.input}}",
+      "contentTokens": [
+        {
+          "type": "variable",
+          "rawString": "input.input"
+        }
+      ]
+    }
+  ],
+  "projectId": "d1fc51cc-7fda-41f2-b19b-558393edd9f5"
+}

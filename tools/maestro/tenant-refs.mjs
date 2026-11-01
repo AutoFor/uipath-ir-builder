@@ -42,10 +42,13 @@ function fromBindings(bindings) {
 export function extractRefs(family, text) {
   if (family === "bpmn") {
     const refs = [];
+    const apps = [];
     for (const m of text.matchAll(/<uipath:binding\b[^>]*>/g)) {
-      const attr = (n) => m[0].match(new RegExp(`\\b${n}="([^"]*)"`))?.[1];
+      const attr = (n) => m[0].match(new RegExp(`\\b${n}="([^"]*)"`))?.[1]?.replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
       if (low(attr("resource")) === "connection" && attr("propertyAttribute") === "ConnectionId") refs.push({ kind: "connection", id: attr("default") });
+      if (low(attr("resource")) === "app") apps.push({ resource: "app", resourceKey: attr("resourceKey"), propertyAttribute: attr("propertyAttribute"), default: attr("default") });
     }
+    refs.push(...fromBindings(apps));
     // startProcess は binding を作らず、context に folderPath と name を直接書く
     for (const m of text.matchAll(/name="folderPath"[^>]*value="([^"]*)"\s*\/>\s*<uipath:input name="name"[^>]*value="([^"]*)"/g)) {
       if (!m[1].startsWith("=") && !m[2].startsWith("=")) refs.push({ kind: "process", name: m[2], folder: m[1] });
