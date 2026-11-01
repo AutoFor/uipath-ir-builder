@@ -63,6 +63,7 @@ test("グループの全員（AllUsers）のタスクを見つける", () => {
   const flow = (type) => JSON.stringify({ nodes: [{ id: "h", type: "uipath.human-in-the-loop", inputs: { recipient: { assignee: { type, value: "G" } } } }] });
   assert.deepEqual(allUsersTasks("flow", flow("staticGroupName")), ["h"]);
   assert.deepEqual(allUsersTasks("flow", flow("workload")), []);
+  assert.deepEqual(allUsersTasks("flow", JSON.stringify({ nodes: [{ id: "d", type: "uipath.human-in-the-loop", inputs: { recipient: { assignee: { type: "group" } } } }] })), []); // 既定の値（値なし）は未割り当て
   const kase = (data) => JSON.stringify({ stages: [{ tasks: [{ type: "action", displayName: "A", data }] }] });
   assert.deepEqual(allUsersTasks("case", kase({ assignmentCriteria: "AllUsers", recipient: { Type: 1, Value: "G" } })), ["A"]);
   assert.deepEqual(allUsersTasks("case", kase({ assignmentCriteria: "Workload", recipient: { Type: 1, Value: "G" } })), []);

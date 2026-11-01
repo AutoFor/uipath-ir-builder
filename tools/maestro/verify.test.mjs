@@ -178,7 +178,7 @@ test("割り当て（AUT-1090）：指定があれば warning なし、無けれ
   for (const f of ["assign/AssignUser.flow.ts", "assign/AssignGroup.flow.ts", "assign/AssignUser.case.ts", "assign/AssignGroup.case.ts"]) {
     const r = v(f);
     assert.equal(r.ok, true, `${f}: ${JSON.stringify(r.steps)}`);
-    assert.deepEqual(codes(r, "assign"), [], f);
+    assert.deepEqual(codes(r, "assign"), f.includes("AssignGroup") ? ["TASK_GROUP_ALL_USERS"] : [], f); // グループの全員は個人ワークスペースの実測で未割り当て
   }
   for (const f of ["ok/Approval.flow.ts", "ok/Approval.bpmn.ts", "ok/Approval.case.ts", "assign/AssignForm.bpmn.ts"]) {
     const r = v(f);
@@ -193,7 +193,7 @@ test("割り当て（AUT-1090）：BPMN と Case の後処理の成果物が val
   writeFileSync(bpmnFile, assignBpmn(readFileSync(form.artifact, "utf8"), { task: "review", type: "group", value: "Reviewers" }));
   const b = verifyFile(uip, bpmnFile, join(out, "assigned"));
   assert.equal(b.ok, true, JSON.stringify(b.steps));
-  assert.deepEqual(codes(b, "assign"), []);
+  assert.deepEqual(codes(b, "assign"), ["TASK_GROUP_ALL_USERS"]);
   assert.match(readFileSync(b.artifact, "utf8"), /name="recipient"[\s\S]*"Value":"Reviewers","Type":1/); // format で消えない
   const plan = verifyFile(uip, resolve(here, "fixtures", "assign", "AssignGroup.case.ts"), out);
   const caseFile = join(out, "AssignGroupAssigned.json");

@@ -95,7 +95,7 @@ export function allUsersTasks(family, text) {
   }
   const doc = JSON.parse(text);
   walk(doc, (o) => {
-    if (family === "flow" && typeof o.type === "string" && o.type.startsWith("uipath.human-in-the-loop") && "inputs" in o && ["group", "staticGroupName"].includes(o.inputs?.recipient?.assignee?.type)) out.push(o.id);
+    if (family === "flow" && typeof o.type === "string" && o.type.startsWith("uipath.human-in-the-loop") && "inputs" in o && o.inputs?.recipient?.assignee?.value && ["group", "staticGroupName"].includes(o.inputs?.recipient?.assignee?.type)) out.push(o.id);
     if (family === "case" && o.type === "action" && o.data?.recipient?.Value && o.data.recipient.Type === 1 && !["Workload", "RoundRobin"].includes(o.data.assignmentCriteria)) out.push(o.displayName ?? o.id);
   });
   return out;
