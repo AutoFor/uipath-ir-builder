@@ -1,0 +1,67 @@
+{
+  "workflow": "CreateUserAction_Assign",
+  "variables": [
+    {
+      "name": "task1",
+      "type": "UserActionData"
+    },
+    {
+      "name": "task2",
+      "type": "UserActionData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "アプリをユーザーに割り当てる"
+        },
+        "TaskPriority": "Low",
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "TaskOutput": "task1"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      }
+    },
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "アプリをグループに割り当てる"
+        },
+        "TaskPriority": "Low",
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "TaskOutput": "task2"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "AllUsersDescription"
+          },
+          "Id": {
+            "lit": "AllUsers"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_AllUsersName"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "workflow": "AssignTasks_Group",
+  "arguments": [
+    {
+      "name": "in_TaskId",
+      "dir": "In",
+      "type": "Int64"
+    }
+  ],
+  "variables": [
+    {
+      "name": "failed",
+      "type": "List<TaskAssignmentResponse>"
+    }
+  ],
+  "body": [
+    {
+      "act": "AssignTasks",
+      "name": "グループの全員に割り当てる",
+      "props": {
+        "TaskAssignmentType": "Assign",
+        "TaskId": "in_TaskId",
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "FailedTaskAssignments": "failed"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "AllUsersDescription"
+          },
+          "Id": {
+            "lit": "AllUsers"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_AllUsersName"
+          }
+        }
+      }
+    }
+  ]
+}

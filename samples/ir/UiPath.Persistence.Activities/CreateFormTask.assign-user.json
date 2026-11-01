@@ -1,0 +1,55 @@
+{
+  "workflow": "CreateFormTask_AssignUser",
+  "variables": [
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "comment",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "ユーザーに割り当てるフォーム"
+        },
+        "TaskPriority": "Low",
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+        },
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "TaskOutput": "task"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment"
+          }
+        ]
+      }
+    }
+  ]
+}

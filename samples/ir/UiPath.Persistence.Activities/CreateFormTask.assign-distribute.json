@@ -1,0 +1,103 @@
+{
+  "workflow": "CreateFormTask_AssignDistribute",
+  "variables": [
+    {
+      "name": "task1",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "comment1",
+      "type": "String"
+    },
+    {
+      "name": "task2",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "comment2",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "順番に割り当てるフォーム"
+        },
+        "TaskPriority": "Low",
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+        },
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "TaskOutput": "task1"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "RoundRobinDescription"
+          },
+          "Id": {
+            "lit": "RoundRobin"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_RoundRobinName"
+          }
+        }
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment1"
+          }
+        ]
+      }
+    },
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "作業負荷で割り当てるフォーム"
+        },
+        "TaskPriority": "Low",
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+        },
+        "Group": {
+          "lit": "Reviewers"
+        },
+        "TaskOutput": "task2"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "WorkloadDescription"
+          },
+          "Id": {
+            "lit": "Workload"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_WorkloadName"
+          }
+        }
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment2"
+          }
+        ]
+      }
+    }
+  ]
+}

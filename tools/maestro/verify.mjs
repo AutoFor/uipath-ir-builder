@@ -26,6 +26,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSyn
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
+import { unassignedTasks } from "./task-assign.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -208,6 +209,7 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
   }
   const target = artifact;
+  if (existsSync(target)) results.push({ name: "assign", ...checkAssign(info.family, target) });
   if (opts.tenant) {
     if (!existsSync(target)) results.push({ name: "tenant", status: "skip", ms: 0, diagnostics: [], reason: "前の工程の成果物が無い" });
     else results.push({ name: "tenant", ...checkTenant(uipJs, info.family, target) });
@@ -220,6 +222,19 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   const j = judge(results, opts.strict);
   const steps = results.map(({ data, ...s }) => s);
   return { file: input, family: info.family, artifact: existsSync(artifact) ? artifact : null, ...j, steps };
+}
+
+// 割り当て先の無い人のタスク（AUT-1090）。未割り当てでも動くので error にしない。--strict では NG になる
+function checkAssign(family, artifact) {
+  const started = Date.now();
+  let names;
+  try {
+    names = unassignedTasks(family, readFileSync(artifact, "utf8"));
+  } catch {
+    return { status: "skip", ms: Date.now() - started, diagnostics: [], reason: "成果物が読めない（validate の結果を見る）" };
+  }
+  const diagnostics = names.map((where) => ({ level: "warning", code: "TASK_UNASSIGNED", where, message: "人のタスクに割り当て先が無い。未割り当てで作られる（docs/task-assignment.md）" }));
+  return { status: names.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
 }
 
 // テナントの一覧は、1回の実行で1度だけ読む

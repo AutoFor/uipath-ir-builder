@@ -60,12 +60,25 @@ function hasEventButton(x: unknown): boolean {
   return Object.values(o).some(hasEventButton);
 }
 
+// Criteria.Id の値（AUT-1090）。DLL のユーザー文字列と、API クライアントの enum の文字列にあるのはこの4つだけ。build は値を見ないので、ここで止める
+const CRITERIA_IDS = new Set(["SingleUser", "AllUsers", "RoundRobin", "Workload"]);
+
+function checkCriteria(n: Node, path: string, add: (path: string, code: string, message: string) => void) {
+  for (const prop of ["AssignmentCriteria", "ReassignCriteria"]) {
+    const id = (n.objs?.[prop] as { Id?: Value } | undefined)?.Id;
+    const lit = formLayoutLiteral(id);
+    if (lit !== undefined && !CRITERIA_IDS.has(lit))
+      add(`${path}.objs.${prop}.Id`, "ASSIGNMENT_CRITERIA_ID", `割り当て条件の Id "${lit}" は無い（${[...CRITERIA_IDS].join(" / ")}。knowledge/persistence.md）`);
+  }
+}
+
 export function checkPersistence(wf: Workflow, add: (path: string, code: string, message: string) => void) {
   const walk = (nodes: Node[], base: string, scope: string | undefined) =>
     nodes.forEach((n, i) => {
       const path = `${base}[${i}]`;
       const name = shortName(n.act);
       if (name === "CreateFormTask") checkFormLayout(n, path, add);
+      checkCriteria(n, path, add);
       if (scope && SCOPE_CHECKED.has(name))
         add(path, "PERSIST_IN_NO_PERSIST_SCOPE", `${name} は ${scope} の中に置けない（永続化できないスコープ。外に出す）`);
       const inner = NO_PERSIST_SCOPES.has(name) ? name : scope;
