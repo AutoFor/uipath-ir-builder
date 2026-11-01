@@ -1,0 +1,6 @@
+{
+  "inputs": { "type": "object", "properties": { "note": { "type": "string", "required": false, "description": "確認する内容" } } },
+  "outputs": { "type": "object", "properties": { "comment": { "type": "string", "required": false, "description": "確認者のコメント" } } },
+  "inOuts": { "type": "object", "properties": {} },
+  "outcomes": { "type": "object", "properties": { "Approve": { "type": "string" }, "Reject": { "type": "string" } } }
+}

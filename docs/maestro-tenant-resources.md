@@ -78,9 +78,47 @@ AUT-1071 で残した「Case の `action` はフォームをどう書くのか�
 
 見ていないもの：権限（ログインした人に見えても、実行するアカウントに見えるとは限らない）、引数の名前と型、フォルダのパスの表記の揺れ（入れ子のフォルダは試していない）。
 
+## テナントで動かした結果（2026-11-02）
+
+`flow debug` / `bpmn debug` / `case debug` で確かめた。上の節は読み取りだけの時点の記録で、ここがその後の結果。エージェントと Action App は個人ワークスペースに作った（AUT-1079）。
+
+| ノード | Flow | BPMN | Case |
+| --- | --- | --- | --- |
+| RPA（`Rpa.*`、`Common/TestHelloWorld`） | Completed | Completed | Completed |
+| コネクタ（`Slack.*`、ユーザーグループの一覧） | Completed | Completed | Completed |
+| エージェント（`Agent.*`） | Completed | Completed | Completed（`.inputs()` を付けた後） |
+| Action App（`App.*`） | タスクができた | タスクができた（**書き換えが要る**） | タスクができた |
+
+Action App の3つとも、**人が完了して先へ進むところは未確認**（タスクは未完了のまま）。
+
+資源：
+
+| 資源 | 名前 | 場所 | 中身 |
+| --- | --- | --- | --- |
+| エージェント | `uipath-ir-test-agent`（ソリューションのパッケージ `uipath-ir-test-agentSolution` 1.0.0） | 個人ワークスペース配下の `uipath-ir-test-agent` | `gpt-4o-mini`。語を大文字で返すだけ。`maxTokens` 32 |
+| Coded Action App | `uipath-ir-test-approval` 1.0.0（URL のパスは `ir-test-approval`） | 個人ワークスペース | 入力 `note`、出力 `comment`、Approve / Reject |
+
+ソースは `tools/maestro/fixtures/resources/`。
+
+### 分かったこと
+
+- **Case の 170004 は Action App を指定すると消えた**。`.action({ app: { name, folder } })` でタスク（`AppTask`）ができる
+- **Case の QuickForm は SDK では書けないが、`caseplan.json` と `.hitl.json` を手で足すと動く**（`QuickFormTask` ができた）。Skill の `hitl-casetask-action.md` の Path 1 の形。`data.outputs[]` に `id` が無いと `validate` が `CASE_MGMT_OUTPUT_ID_MISSING` で止める。`id` を足すと `validate` は通るが、足した形での実行はしていない（実行したのは `id` なしの形）
+- **BPMN の `humanTask({ app })` はそのままでは動かない**。SDK が作る `Actions.HITL` v1 + `appId` は `170000 Failure in the AppTasks request` で落ちた（アプリの ID、システム名、`appVersion`、`key` の組み合わせを4通り）。Case の compile が作る BPMN と同じ v2 + `name` / `folderPath` の binding に直すと動く。`validate` はどちらも通すので、止まらない
+- **`tools/maestro/bpmn-app-task.mjs`** がこの書き換えをする。format の後に流し、`entry-points.json` を消して `bpmn refresh`
+- **Case のエージェントは `.inputs()` を付けないと落ちる**。`AGENT_STARTUP.INPUT_VALIDATION_ERROR`。`validate --strict` と `--tenant` は通す（引数は見ていない）
+- **Flow の `app.inputs` の値は式として読まれる**。`"Flow から"` は `=js:Flow から` になって落ちる。文字列は `"'Flow から'"` と書く。BPMN と Case は文字列のまま
+- **失敗の理由は `bpmn debug` と `case debug` の結果に出ない**。`uip traces spans get <インスタンスの ID>` の `Incident` のスパンに出る。`instance incidents` は空だった
+- **Faulted のインスタンスの job は `Running` のまま残る**（`uip or jobs list` で見えた）
+- **コネクタは接続先で落ちることがある**。ノードの形とは別の話：Outlook は `MailboxNotEnabledForRESTAPI`、OneDrive は `Tenant does not have a SPO license`（Flow で確認。この Microsoft 365 のテナントの事情）、Google Drive は `parentID: "root"` が 404
+- **個人ワークスペースの Teams の接続は、Flow では通るが BPMN では 404**（`Missing instance ... and folder cb95b4b9...`）。Case も同じ接続で Faulted（Case では理由を読めていない）。`0_Prd` の Slack の接続は3形式とも通るので、形式の問題ではなく接続の置き場所の問題だと推定する。原因は未確認
+- **`codedapp deploy` はパス名に `uipath-` で始まる名前を拒む**（`This name is reserved`。`codedapp validate` は空きと答える。`uipath` を含むのが理由だというのは推定）。`--path-name` で別の名前を渡す
+- **`solution publish` と `codedapp publish` は既定でテナントのフィードに出す**。個人ワークスペースには `--personal-workspace` が要る。`deploy run --personal-workspace` は個人ワークスペースのフィードしか見ない
+- **`solution resources list --kind App` に出るまで少し時間がかかる**（デプロイの直後は 0 件で、数分後に出た）
+
+未確認：人が完了した後の分岐と出力、アプリの画面に `note` が出るか（`uip tasks get` は `Note` と大文字で見せる。CLI の表記か、実際のキーかは分かっていない）、`solution deploy` したプロセスとしての実行（どれも debug）。
+
 ## 残り
 
-- **実際に動くか**：どの資源も動かしていない。AUT-1080 で、まず `Rpa.flow.ts` のように副作用の無いものから当てるのがよい。SDK の文書には、`check`、`compile`、`validate` を通ったのにクラウドで `170009` で落ちた例が書かれている
-- **エージェントと Action App の実物**：テナントに公開されたら、架空の名前の例を実物に置き換える。Flow の `action-app` の成果物には `inputSchema` / `outputSchema` が入らなかった（Skill の文書の例には入っている）。要るかは未確認
-- **BPMN のエージェントと Action App、Case のエージェント**：書いていない
+- **人の操作**：Action App のタスクを画面で完了して、再開と出力を確かめる
 - **`prepare --resolve`**：流していない
