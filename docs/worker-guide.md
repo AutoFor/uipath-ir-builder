@@ -358,7 +358,9 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
 - 検証のエラー：`UIA_NO_SCOPE`（Modern のターゲットが `NApplicationCard` の外）、`UIA_TARGET_MISSING`（`Target` / `TargetApp` が無い）、`UIA_SEARCH_STEPS`（`SearchSteps` が無い）、`UIA_TARGET_EMPTY`（セレクタなど探す手がかりが無い）、`BAD_OBJ`（オブジェクトの形が違う）。例は `samples/ir-invalid/Uia.json`
 
 - `NSetValue`（UI 要素を更新）の `Target` は `"TargetType": "SemanticBased"` が要る。無いと build が「No data is available for the selected targeting methods」で落ちる。`SearchSteps` は `SemanticSelector` か `Semantic`
-- `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）。原因は Helm に機能 `JitCustomTypeServiceV4` が無いこと（`StudioCompatibilityValidator`）で、プロジェクトのファイルでは直せない
+- `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）。原因は Helm に機能 `JitCustomTypeServiceV4` が無いこと（`StudioCompatibilityValidator`）で、プロジェクトのファイルでは直せない。
+  - **build で確かめたこと**（AUT-706、2026-11-01、Helm 1.204.2、UIAutomation 26.10.6。4回とも build は NG）：①FieldMappings ありの最小形は `This activity requires UiPath Studio 23.10 or newer.`。②FieldMappings なしは、`_build.txt` に「Discover the fields from screen in order to use this activity.」と「This activity requires UiPath Studio 23.10 or newer.」の**両方**が出る（ProjectPackager の最終行には先に出た Discover だけが載る。前回の記録が Discover だけだったのはこのため）。③project.json の studioVersion を 23.10.0.0 / 25.10.0.0 にしても（作業用プロジェクトに反映されていることを確認）、①と同じエラー。
+  - **推定**（コードの読み取り。build では未確認）：V4 の判定は Helm 側の機能一覧で決まるので、プロジェクトのファイルでは通らない。Helm が V4 を返す版になるか、Studio（GUI）で検証するしかない
 
 ### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
 
