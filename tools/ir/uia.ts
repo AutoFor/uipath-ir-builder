@@ -37,8 +37,13 @@ const ELEMENT_SCOPE = "UiPath.UIAutomationNext.Activities.NElementScope";
 let guidSeed = "";
 let guidCount = 0;
 export function resetGuids(seed: string) { guidSeed = seed; guidCount = 0; }
-export function nextGuid(): string {
-  const h = createHash("sha1").update(`${guidSeed}#${++guidCount}`).digest("hex");
+export function nextGuid(): string { return guidFrom(`${guidSeed}#${++guidCount}`); }
+// 直前に nextGuid で取った番号に、中身（レイアウトの文字列など）を足して決める GUID。同じ入力からは同じ GUID、中身が変われば別の GUID
+export function contentGuid(content: string): string {
+  return guidFrom(`${guidSeed}#${guidCount}#${createHash("sha1").update(content).digest("hex")}`);
+}
+function guidFrom(src: string): string {
+  const h = createHash("sha1").update(src).digest("hex");
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${"89ab"[parseInt(h[16], 16) % 4]}${h.slice(17, 20)}-${h.slice(20, 32)}`;
 }
 

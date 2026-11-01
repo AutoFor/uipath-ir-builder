@@ -1,1 +1,1 @@
-{"noRun":"Orchestrator と Action Center が要る。同じ形の FormLayout は、タスクは作れて API で完了できたが、画面には何も出なかった（knowledge/persistence.md）"}
+{"noRun":"Orchestrator と Action Center が要る。配列の FormLayout（画面に出る形）。テナントで確かめた結果は knowledge/persistence.md（AUT-1076）"}
