@@ -84,6 +84,23 @@ export function unassignedTasks(family, text) {
   return out;
 }
 
+/** グループの全員（AllUsers）に割り当てるタスクの名前を返す。個人ワークスペースの実測では3形式とも未割り当てのままだった（docs/task-assignment.md） */
+export function allUsersTasks(family, text) {
+  const out = [];
+  if (family === "bpmn") {
+    for (const m of text.matchAll(/<bpmn:(userTask|task)\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/bpmn:\1>/g)) {
+      if (m[3].includes('value="Actions.HITL"') && /name="assignmentCriteria"[^>]*value="AllUsers"/.test(m[3])) out.push(m[2]);
+    }
+    return out;
+  }
+  const doc = JSON.parse(text);
+  walk(doc, (o) => {
+    if (family === "flow" && typeof o.type === "string" && o.type.startsWith("uipath.human-in-the-loop") && "inputs" in o && o.inputs?.recipient?.assignee?.value && ["group", "staticGroupName"].includes(o.inputs?.recipient?.assignee?.type)) out.push(o.id);
+    if (family === "case" && o.type === "action" && o.data?.recipient?.Value && o.data.recipient.Type === 1 && !["Workload", "RoundRobin"].includes(o.data.assignmentCriteria)) out.push(o.displayName ?? o.id);
+  });
+  return out;
+}
+
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
   const [file, task, type, value] = process.argv.slice(2);
   if (!value) {

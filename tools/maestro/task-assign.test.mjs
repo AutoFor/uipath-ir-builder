@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { assignBpmn, assignCase, unassignedTasks } from "./task-assign.mjs";
+import { allUsersTasks, assignBpmn, assignCase, unassignedTasks } from "./task-assign.mjs";
 
 const xml = (ver = "v2", extra = "") => `<bpmn:process id="P">
 <bpmn:userTask id="review"><bpmn:extensionElements><uipath:activity version="v1">
@@ -55,4 +55,17 @@ test("未割り当ての検出：Flow、Case", () => {
   const task = (data) => JSON.stringify({ t: [{ type: "action", displayName: "A", id: "x", data }, { type: "rpa", displayName: "B", data: {} }] });
   assert.deepEqual(unassignedTasks("case", task({})), ["A"]);
   assert.deepEqual(unassignedTasks("case", task({ recipient: { Type: 2, Value: "a@example.com" } })), []);
+});
+
+test("グループの全員（AllUsers）のタスクを見つける", () => {
+  assert.deepEqual(allUsersTasks("bpmn", assignBpmn(xml(), { task: "review", type: "group", value: "G" })), ["review"]);
+  assert.deepEqual(allUsersTasks("bpmn", assignBpmn(xml(), { task: "review", type: "workload", value: "G" })), []);
+  const flow = (type) => JSON.stringify({ nodes: [{ id: "h", type: "uipath.human-in-the-loop", inputs: { recipient: { assignee: { type, value: "G" } } } }] });
+  assert.deepEqual(allUsersTasks("flow", flow("staticGroupName")), ["h"]);
+  assert.deepEqual(allUsersTasks("flow", flow("workload")), []);
+  assert.deepEqual(allUsersTasks("flow", JSON.stringify({ nodes: [{ id: "d", type: "uipath.human-in-the-loop", inputs: { recipient: { assignee: { type: "group" } } } }] })), []); // 既定の値（値なし）は未割り当て
+  const kase = (data) => JSON.stringify({ stages: [{ tasks: [{ type: "action", displayName: "A", data }] }] });
+  assert.deepEqual(allUsersTasks("case", kase({ assignmentCriteria: "AllUsers", recipient: { Type: 1, Value: "G" } })), ["A"]);
+  assert.deepEqual(allUsersTasks("case", kase({ assignmentCriteria: "Workload", recipient: { Type: 1, Value: "G" } })), []);
+  assert.deepEqual(allUsersTasks("case", kase({ recipient: { Type: 2, Value: "a@example.com" } })), []);
 });

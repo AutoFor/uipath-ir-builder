@@ -26,7 +26,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSyn
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
-import { unassignedTasks } from "./task-assign.mjs";
+import { allUsersTasks, unassignedTasks } from "./task-assign.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -227,14 +227,17 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
 // 割り当て先の無い人のタスク（AUT-1090）。未割り当てでも動くので error にしない。--strict では NG になる
 function checkAssign(family, artifact) {
   const started = Date.now();
-  let names;
+  let names, all;
   try {
-    names = unassignedTasks(family, readFileSync(artifact, "utf8"));
+    const text = readFileSync(artifact, "utf8");
+    names = unassignedTasks(family, text);
+    all = allUsersTasks(family, text);
   } catch {
     return { status: "skip", ms: Date.now() - started, diagnostics: [], reason: "成果物が読めない（validate の結果を見る）" };
   }
   const diagnostics = names.map((where) => ({ level: "warning", code: "TASK_UNASSIGNED", where, message: "人のタスクに割り当て先が無い。未割り当てで作られる（docs/task-assignment.md）" }));
-  return { status: names.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
+  diagnostics.push(...all.map((where) => ({ level: "warning", code: "TASK_GROUP_ALL_USERS", where, message: "グループの全員への割り当ては、個人ワークスペースの実測で未割り当てのままだった。Workload は割り当たった（docs/task-assignment.md）" })));
+  return { status: diagnostics.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
 }
 
 // テナントの一覧は、1回の実行で1度だけ読む

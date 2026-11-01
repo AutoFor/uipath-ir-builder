@@ -2,7 +2,7 @@
 
 イシュー：AUT-1090。2026-11-02 時点。`UiPath.Persistence.Activities` 1.13.0、`@uipath/maestro-builder-sdk` 6.66.5、`uip` 1.204.0。
 
-**テナントへの書き込みはしていない。** 「読んだ」はテナントの読み取りか DLL・SDK・文書の読み取りで、**指定した人に実際に割り当たることは、どの形式でもまだ確かめていない**。確かめる手順は最後の節。
+**Maestro 3形式（Flow、BPMN、Case）は 2026-11-02 に個人ワークスペースで `debug` して実測した（下の「テナントでの実測」）。XAML は run できず未確認。** 「読んだ」はテナントの読み取りか DLL・SDK・文書の読み取り。確かめる手順は最後の節。
 
 ## Action Center の割り当ての仕組み
 
@@ -141,6 +141,47 @@ node tools/maestro/task-assign.mjs <caseplan.json> <タスクの displayName> gr
 4. **BPMN**：`AssignForm.bpmn.ts` を compile、format、`task-assign.mjs`、`entry-points.json` を消して `bpmn refresh`、`bpmn debug`。Action App は `tenant/App.bpmn.ts` に `bpmn-app-task.mjs` の後で流す
 5. **Case**：`AssignUser.case.ts` を `case debug`。グループは `AssignGroup.case.ts` を、(a) SDK のまま `"user"`、(b) `task-assign.mjs` の `AllUsers`、(c) `assignmentCriteria` を消す、の3通りで試し、効くものに `task-assign.mjs` を合わせる
 6. 終わったら、作ったタスクを片付ける
+
+## テナントでの実測（2026-11-02）
+
+個人ワークスペース（`cb95b4b9-...`）、`uip` 1.204.0。`flow debug` / `bpmn debug` / `case debug`。担当者欄は `uip tasks get` の値。ユーザーはログイン中の本人（メールは書かない）。グループは**既存の組み込みグループ `Automation Developers`**（メンバーは本人と UnAttended のロボットアカウントだけ）を読み取りで選んだ。グループは作っていない。
+
+| 形式 | 指定 | タスク | 状態 | `TaskAssignmentCriteria` | 担当者 | インスタンス／ジョブ |
+| --- | --- | --- | --- | --- | --- | --- |
+| Flow（QuickForm） | `user` | 100235303 | Pending | SingleUser | 本人 | `598616e8-5501-4d11-a47b-f2b5d0684c19` |
+| BPMN（QuickForm） | `task-assign.mjs` user | 100235312 | Pending | SingleUser | 本人 | `25d54538-a180-4837-bc85-95e0d859ae94` |
+| Case（Action App） | `recipient: "<メール>"`（SDK の `"user"`） | 100235318 | Pending | SingleUser | 本人 | `3f115e9d-3ad1-49bc-b559-184a287baafa` |
+| Flow（Action App） | `staticGroupName` | 100235316 | **Unassigned** | SingleUser | なし | `800b267f-ad74-4b97-ae0a-e0198f64a32c` |
+| Flow（Action App） | `group`（名前） | 100235317 | **Unassigned** | SingleUser | なし | `2ba9ccda-1083-4e77-bfa9-a3d8e776018f` |
+| Flow（Action App） | `workload` | 100235324 | Pending | **Workload** | 本人（`TaskAssignees` に DirectoryUser） | `5a3adb05-3f2e-44db-94b9-64bcea116459` |
+| BPMN（QuickForm） | group（AllUsers） | 100235329 | **Unassigned** | SingleUser | なし | `33e02493-408e-427e-9f25-72d1c8bc5bab` |
+| BPMN（QuickForm） | workload | 100235333 | Pending | Workload | 本人 | `fb0d3d85-8a71-4186-8218-28a8b250a6f5` |
+| Case（Action App） | (a) SDK のまま `"user"` + Type 1 | 100235340 | **Unassigned** | SingleUser | なし | `f296318d-5e89-40a6-91cc-0c75b6a79a40` |
+| Case | (b) `AllUsers`（`task-assign.mjs`） | 100235341 | **Unassigned** | SingleUser | なし | `4fe3c52c-deaa-4080-b5a4-497714aa4c02` |
+| Case | (c) `assignmentCriteria` を消す | 100235346 | **Unassigned** | SingleUser | なし | `6552f5b6-8d66-4f65-8994-8edda6acc8d6` |
+| Case | `Workload`（`task-assign.mjs`） | 100235343 | Pending | Workload | 本人 | `adffbd87-bc21-4f2c-910d-32b1e710530d` |
+
+Case の (a)(b)(c) は重なって起動し、もう1組もできた（タスク 100235335〜100235337、ジョブ `325711a0-...`、`8c94c048-...`、`5c8066ff-...`）。どれが a か b か c かは確証が無いが、**6件とも未割り当て**で結果は同じ。BPMN の workload の重複（`34a34877-e3a5-4abc-85f5-dead107e8f6a`）は Faulted で、タスクはできていない。
+
+分かったこと：
+
+- **ユーザーの割り当ては3形式とも効いた**。Case は SDK が書く `assignmentCriteria: "user"` のままで効く
+- **グループの全員（`AllUsers` 相当）は、3形式とも未割り当てのまま**。タスクの条件も `SingleUser` のままで、`TaskAssignees` は空。エンジンはグループ名を受け取っている（`uip traces spans get` の `hitlTaskConfiguredAssignee` が `Automation Developers`）のに、タスクに反映されない。同じグループで `Workload` は割り当たるので、グループの権限の問題ではないように見える（推定）。原因は未確認。画面は見ていないので、`AllUsers` の意味の未割り当てが API では `SingleUser` と見えるだけ、という可能性は残る
+- **`Workload` は Flow、BPMN、Case で割り当たった**（担当は本人。グループの人間のメンバーが本人だけのため）。`RoundRobin` は流していない
+- `fixtures/assign/AssignGroup.*.ts` のグループ指定（Flow の `group`、Case の `type: 1`）は `AllUsers` なので、未割り当てになる。人に割り当てたいときは `workload` を使う
+- 窓口 `verify.mjs` に warning `TASK_GROUP_ALL_USERS` を足した（Flow の `group`/`staticGroupName`、BPMN と Case の `AllUsers`）
+
+### XAML は実測できていない
+
+- 窓口の runner は動いていた。`CreateFormTask.assign-user` をローカルの `rpa run` で流すと、`An organization unit is required for this action. Error code: 1101` で落ちた（ローカル実行にフォルダの文脈が無い）。タスクはできていない
+- パッケージのアップロード（`uip or packages upload`、個人ワークスペース）は、許可の範囲外として権限で拒否された。迂回していない。pack までは通った（`uipath-ir-test-assign` 1.0.1：`FormTaskAssign.full`、`CreateFormTask.assign-*`、`CreateUserAction.assign`、`.timer`、`CreateExternalTask.full`、`AssignTasks.*`）
+- **未確認**：`FormTaskAssign.full` で本人に割り当たるか、`AssignmentCriteria` を外した形、`CreateUserAction.assign`、`AssignTasks.group`、`SingleUser` + `Group` が実行時に `GroupNotAllowedForSingleUserAssignment` で落ちるか（`CreateFormTask.timer`、`CreateExternalTask.full`、`AssignTasks.full`）。アップロードを許可すれば、下の手順 1、2 で確かめられる
+
+### そのほか未確認
+
+- Flow `custom`、Case の `{ type: 3 }`、`RoundRobin`
+- 人が画面で見たときの `AllUsers` のタスクの扱い
+- 残したインスタンスは Running のまま（タスクが Pending か Unassigned のため）。上の表のジョブ。人が完了するか、後で止める
 
 ## 文書
 
