@@ -28,7 +28,7 @@
 | 渡した文字列 | 保存された形 | 画面 | 根拠（タスク） |
 | --- | --- | --- | --- |
 | `[...]` | `{Components:[...],Version:1}` | 出る。値も入る | 100227750（部品の入ったコンテナ `columns` でも出る：別のフォルダの 100221082） |
-| `{"components":[...]}` | `{Components:{Components:[...]},Version:1}` | 空。下のエラー | 100227660、100227691 |
+| `{"components":[...]}` | `{Components:{Components:[...]},Version:1}` | 空。下のエラー | 100227691（100227660 も空。エラーとの紐づけは取っていない） |
 | `{"display":"form","components":[...]}` | `{Components:{Display:"form",Components:[...]},Version:1}` | 空。同じエラー | 100217692（削除済みのタスク。`display` では直らない） |
 
 エラー `(this.hook(...) || []).forEach is not a function` は form.io のもの。`NestedComponent.addComponents` が `this.hook('addComponents', this.componentComponents, this) || []` に `forEach` する（公開パッケージ `formiojs` 4.14.13 のソースで確認。Action Center に入っている版は未確認）。`componentComponents` は `component.components` で、ここが配列でなくオブジェクトだと落ちる。スタックは `setForm` → `createRenderer` → `new Webform` → `set form`。
@@ -97,7 +97,7 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 ## フォーム
 
-`FormLayout` は文字列で、build は中身を見ない。書き方は上の節（配列で書く）。`CreateFormTask.layout` の JSON は調査のときの推測のまま（`verify.json` に明記）。
+`FormLayout` は文字列で、build は中身を見ない。書き方は上の節（配列で書く）。`CreateFormTask.layout` の JSON は調査のときの推測のままで、画面が空になるオブジェクトの形（`verify.json` に明記）。
 
 ## 書けないプロパティ（AUT-1073）
 
