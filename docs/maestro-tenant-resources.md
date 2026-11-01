@@ -116,7 +116,9 @@ Action App の3つとも、**人が完了して先へ進むところは未確認
 - **`solution publish` と `codedapp publish` は既定でテナントのフィードに出す**。個人ワークスペースには `--personal-workspace` が要る。`deploy run --personal-workspace` は個人ワークスペースのフィードしか見ない
 - **`solution resources list --kind App` に出るまで少し時間がかかる**（デプロイの直後は 0 件で、数分後に出た）
 
-未確認：人が完了した後の分岐と出力、アプリの画面に `note` が出るか（`uip tasks get` は `Note` と大文字で見せる。CLI の表記か、実際のキーかは分かっていない）、`solution deploy` したプロセスとしての実行（どれも debug）。
+人が画面で Approve を押して完了した（2026-11-02）。インスタンスは完了の直後に Completed になった：Flow `9bba93f0`（タスク 100234660）、BPMN `81503338`（100234709）、Case `d3e42512`（100234611 と 100234687。Case は同じインスタンスと時刻からの判断）。タスクの `Data` の `Comment` に入力が戻った（100234709、100234611）。
+
+未確認：人が完了した後の分岐と、インスタンスの出力、Reject での完了、アプリの画面に `note` が出るか（`uip tasks get` は `Note` と大文字で見せる。CLI の表記か、実際のキーかは分かっていない）、`solution deploy` したプロセスとしての実行（どれも debug）。
 
 ## 残り
 
