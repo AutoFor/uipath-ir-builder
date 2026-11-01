@@ -4,7 +4,7 @@
 
 ## テナントで動かして分かったこと（AUT-1076）
 
-2026-11-01、`autofor/DefaultTenant`、個人用ワークスペース、`--runtime-type Development`（この PC のロボット）。タスクはどれも API（`uip tasks assign` → `uip tasks complete`）で完了した。**人が画面で完了したものは無い。**
+2026-11-01、`autofor/DefaultTenant`、個人用ワークスペース、`--runtime-type Development`（この PC のロボット）。下の表のタスクはどれも API（`uip tasks assign` → `uip tasks complete`）で完了した。人が画面で完了して再開を確かめたのは、次の節のタスク 100234436（2026-11-02）。
 
 | 確かめたこと | 結果 | 根拠のジョブ |
 | --- | --- | --- |
@@ -37,7 +37,8 @@
 
 - API で完了するには、`FormTask` は先に割り当てが要る（無いと「This action is no longer assigned to you」）。`QuickFormTask` は要らなかった
 - 部品は `{type,key,label,input,disabled}`、ボタンは `{type,key,label,theme,input,tableView}`（**`action` と `event` は付けない**。ユーザーが画面で完了できたタスク 100221082 のボタンがこの形で、`Action` も `Event` も無い。`action:"event"` は検証エラー `FORM_LAYOUT_BUTTON_EVENT`）
-- 未確認：**保留中のタスクを人が画面で入力して完了し、ワークフローが再開すること**。人の完了の確認は未了。`action` と `event` を外したボタンのタスク（パッケージ 1.0.8、ジョブ `ba07e724-9bdb-4dae-9af9-e4a35759c719`、タスク 100234436、`FormLayoutId` 100000217）を作って保存された形（`Action` 無し）まで確かめたが、人が押して完了するかはまだ
+- **人が画面で押して完了し、ワークフローが再開することを確かめた**（2026-11-02。`action` と `event` を外したボタン、パッケージ 1.0.8、ジョブ `ba07e724-9bdb-4dae-9af9-e4a35759c719`、タスク 100234436、`FormLayoutId` 100000217）。`Action` は `approve`、ジョブは Successful。同じ画面で `action:"event"` のボタン（タスク 100230032）は、押しても保留中のままだった（人の報告と API の状態）。`action:"event"` が送信しないことが原因というのは、この違いと form.io の作りからの推定
+- 未確認：画面で入力したコメントが戻ること（このときコメントは空で、ログも `comment=` だった）。却下のボタンの画面での完了
 - `Data` のキーは `FormData` の名前のまま（`InvoiceNo`）。Out の値は完了時の `--data` のキーで渡す
 
 **IR の検証（`tools/ir/persistence.ts`）**：リテラルのボタン（入れ子の `components`、`columns` の中も）に `action:"event"` があると `FORM_LAYOUT_BUTTON_EVENT`。`CreateFormTask` に `FormLayout` が無いと `FORM_LAYOUT_MISSING`。リテラルが JSON の配列でないと `FORM_LAYOUT_NOT_ARRAY`、JSON として読めない（空文字も）と `FORM_LAYOUT_BAD_JSON`。式（変数、VB の式）は中身を見ない。`FormLayoutGuid` だけを渡す形は試していないので、`FormLayout` が無ければ弾く。未確認：シリアライズできない変数と `ForEach` の中の中断。
