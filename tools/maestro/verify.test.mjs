@@ -1,11 +1,12 @@
 // 実行: node --test "tools/maestro/*.test.mjs"（uip と SDK が要る部分は、無ければ飛ばす）
 import assert from "node:assert/strict";
-import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { after, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
+import { assignBpmn, assignCase } from "./task-assign.mjs";
 import { parseTsc, classify, dropRepeated, findUip, judge, normalizeEnvelope, parseEnvelope, parseIssueLines, planSteps, verifyFile } from "./verify.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -121,13 +122,13 @@ test("HITL の status は check でしか止まらない（validate は通る）
   const r = verifyFile(uip, broken("HitlStatus.flow.ts"), out);
   assert.equal(r.ok, false);
   assert.deepEqual(codes(r, "check"), ["HITL_READ_STATUS"]);
-  assert.deepEqual(status(r), { types: "ok", check: "ng", compile: "ok", validate: "ok" });
+  assert.deepEqual(status(r), { types: "ok", check: "ng", compile: "ok", validate: "ok", assign: "warn" });
 });
 
 test("script の文法と型の間違いは validate --strict-expressions でしか止まらない", { skip }, () => {
   for (const f of ["ScriptSyntax.flow.ts", "ScriptType.flow.ts"]) {
     const r = verifyFile(uip, broken(f), out);
-    assert.deepEqual(status(r), { types: "ok", check: "ok", compile: "ok", validate: "ng" }, f);
+    assert.deepEqual(status(r), { types: "ok", check: "ok", compile: "ok", validate: "ng", assign: "ok" }, f);
     assert.ok(codes(r, "validate").includes("EXPRESSION_DIAGNOSTIC"), f);
   }
 });
@@ -167,9 +168,38 @@ test("できあがった .bpmn を渡しても、元のファイルは変えな�
   copyFileSync(first.artifact, src);
   const before = readFileSync(src, "utf8");
   const r = verifyFile(uip, src, join(out, "copy"));
-  assert.deepEqual(r.steps.map((s) => s.name), ["format", "validate"]);
+  assert.deepEqual(r.steps.map((s) => s.name), ["format", "validate", "assign"]);
   assert.equal(readFileSync(src, "utf8"), before);
   rmSync(src);
+});
+
+test("割り当て（AUT-1090）：指定があれば warning なし、無ければ TASK_UNASSIGNED。どちらも止めない", { skip }, () => {
+  const v = (f) => verifyFile(uip, resolve(here, "fixtures", f), out);
+  for (const f of ["assign/AssignUser.flow.ts", "assign/AssignGroup.flow.ts", "assign/AssignUser.case.ts", "assign/AssignGroup.case.ts"]) {
+    const r = v(f);
+    assert.equal(r.ok, true, `${f}: ${JSON.stringify(r.steps)}`);
+    assert.deepEqual(codes(r, "assign"), [], f);
+  }
+  for (const f of ["ok/Approval.flow.ts", "ok/Approval.bpmn.ts", "ok/Approval.case.ts", "assign/AssignForm.bpmn.ts"]) {
+    const r = v(f);
+    assert.equal(r.ok, true, f);
+    assert.deepEqual(codes(r, "assign"), ["TASK_UNASSIGNED"], f);
+  }
+});
+
+test("割り当て（AUT-1090）：BPMN と Case の後処理の成果物が validate を通る", { skip }, () => {
+  const form = verifyFile(uip, resolve(here, "fixtures", "assign", "AssignForm.bpmn.ts"), out);
+  const bpmnFile = join(out, "AssignFormAssigned.bpmn");
+  writeFileSync(bpmnFile, assignBpmn(readFileSync(form.artifact, "utf8"), { task: "review", type: "group", value: "Reviewers" }));
+  const b = verifyFile(uip, bpmnFile, join(out, "assigned"));
+  assert.equal(b.ok, true, JSON.stringify(b.steps));
+  assert.deepEqual(codes(b, "assign"), []);
+  assert.match(readFileSync(b.artifact, "utf8"), /name="recipient"[\s\S]*"Value":"Reviewers","Type":1/); // format で消えない
+  const plan = verifyFile(uip, resolve(here, "fixtures", "assign", "AssignGroup.case.ts"), out);
+  const caseFile = join(out, "AssignGroupAssigned.json");
+  writeFileSync(caseFile, assignCase(readFileSync(plan.artifact, "utf8"), { task: "Approve", type: "group", value: "Reviewers" }));
+  const c = verifyFile(uip, caseFile, join(out, "assigned"));
+  assert.equal(c.ok, true, JSON.stringify(c.steps));
 });
 
 test("穴：空の分岐はどの工程でも止まらない（SDK の版が変わって止まるようになったら、この例を見直す）", { skip }, () => {

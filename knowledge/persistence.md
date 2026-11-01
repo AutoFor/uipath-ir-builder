@@ -104,9 +104,9 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 足したもの：`System.Byte`、`System.Guid`（属性）、`Criteria`（`objs`。`*.objects.json`）。
 
-`Criteria` は既定 XAML に出た `Id="SingleUser"` の形しかサンプルに書いていない。DLL の文字列に `AllUsers`、`RoundRobin`、`Workload` があるが、`Id` の正しい値か確かめられない。build は値を見ない。
+`Criteria` の `Id` は `SingleUser`、`AllUsers`、`RoundRobin`、`Workload` の4つ（AUT-1090。DLL のユーザー文字列、製品の Flow → BPMN の変換、文書で一致）。build は値を見ないので、検証 `ASSIGNMENT_CRITERIA_ID` が見る。書き方と割り当て全体は `docs/task-assignment.md`。
 
-既定 XAML は `AssignmentCriteria="{x:Reference __ReferenceID0}"` を出すが、生成器はこの属性を既定値に使わない（参照先の要素が無いと壊れる）。省いたときに実行時に動くかは未確認。
+既定 XAML は `AssignmentCriteria="{x:Reference __ReferenceID0}"` を出すが、生成器はこの属性を既定値に使わない（参照先の要素が無いと壊れる）。割り当て先も条件も省くと、`Unassigned`、`TaskAssignmentCriteria: SingleUser` で作られる（AUT-1076 のタスクを AUT-1090 で読んだ）。ユーザーだけ書いて条件を省いたときに効くかは未確認。
 
 残り（`CreateUserAction`）：
 
@@ -118,6 +118,6 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 ## build で分かった制約（サンプルを書くときの注意）
 
 - `ConfigureTaskTimer`：時間は 15〜129600 分（`TimerDays` / `TimerHours` / `TimerMinutes` か `TimerDuration`）。`EndCriteria: TaskAssigned` の `Outcome` は `Reassign` か `AutoComplete` だけ。既定の組み合わせ（`TaskAssigned` と `Notify`）は通らない
-- `AssignTasks`：`EnableMultipleAssignments` が false なら `UserId` か `UserNameOrEmail` が要る（`Group` だけでは通らない）
+- `AssignTasks`：`EnableMultipleAssignments` が false で条件が `SingleUser` か無しなら `UserId` か `UserNameOrEmail` が要る（`Group` だけでは通らない）。`AllUsers` か `RoundRobin` と `Group` なら、ユーザーなしで通る（AUT-1090）
 - `BindingsKey`（`AddQueueItemAndGetReference`、`StartJobAndGetReference`）、`AppBindingsKey`、`CatalogBindingsKey`：setter が無く `Cannot set unknown member`。カタログを今の抽出器で作り直して `readOnly` にした
 - サンプルの `Id`、タスクのカタログ名、`SolutionApp` などの値は置き物で、テナントに実物は無い

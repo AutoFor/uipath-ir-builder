@@ -1,0 +1,86 @@
+{
+  "workflow": "FormTaskAssign_Full",
+  "arguments": [
+    {
+      "name": "in_Assignee",
+      "dir": "In",
+      "type": "String"
+    }
+  ],
+  "variables": [
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "comment",
+      "type": "String"
+    },
+    {
+      "name": "action",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "割り当ての確認"
+        },
+        "TaskPriority": "Low",
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]"
+        },
+        "UserNameOrEmail": "in_Assignee",
+        "TaskOutput": "task"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Description": {
+            "lit": "SingleUserDescription"
+          },
+          "Id": {
+            "lit": "SingleUser"
+          },
+          "Name": {
+            "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
+          }
+        }
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "comment"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"created id=\" & Convert.ToString(task.Id) & \" assignee=\" & in_Assignee"
+      }
+    },
+    {
+      "act": "WaitForFormTaskAndResume",
+      "props": {
+        "TaskInput": "task",
+        "TaskAction": "action",
+        "TaskOutput": "task"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"resume action=\" & action & \" comment=\" & comment"
+      }
+    }
+  ]
+}
