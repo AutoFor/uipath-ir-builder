@@ -33,14 +33,14 @@
 
 エラー `(this.hook(...) || []).forEach is not a function` は form.io のもの。`NestedComponent.addComponents` が `this.hook('addComponents', this.componentComponents, this) || []` に `forEach` する（公開パッケージ `formiojs` 4.14.13 のソースで確認。Action Center に入っている版は未確認）。`componentComponents` は `component.components` で、ここが配列でなくオブジェクトだと落ちる。スタックは `setForm` → `createRenderer` → `new Webform` → `set form`。
 
-**`FormLayoutGuid` が同じだと、新しい `FormLayout` は使われない。** サーバーは最初に登録したレイアウトを使い続ける。パッケージ 1.0.1 から 1.0.3 は `FormLayoutGuid` が同じ（`1ab6e056-...`）で、1.0.3 の XAML は配列に `action: "event"` のボタンなのに、そのタスク 100227691 の保存された形は 1.0.1 のオブジェクトと `action: "submit"` のまま（どれも `FormLayoutId` 100000211）。生成器の GUID はワークフロー名と通し番号から作るので、**レイアウトを変えて再 publish しても効かない**。形を試すときは、ワークフロー名を変える（見本 `FormTaskLayoutShapes.full`）。以前の「配列でも `action: "event"` でも空」という記録は、これで前の形を見ていただけで、誤り。
+**`FormLayoutGuid` が同じだと、新しい `FormLayout` は使われない。** サーバーは最初に登録したレイアウトを使い続ける。パッケージ 1.0.1 から 1.0.3 は `FormLayoutGuid` が同じ（`1ab6e056-...`）で、1.0.3 の XAML は配列に `action: "event"` のボタンなのに、そのタスク 100227691 の保存された形は 1.0.1 のオブジェクトと `action: "submit"` のまま（どれも `FormLayoutId` 100000211）。生成器の GUID は、以前はワークフロー名と通し番号だけから作っていたので、**レイアウトを変えて再 publish しても効かなかった**。今は、リテラルの `FormLayout` ならレイアウトの文字列のハッシュも混ぜて作る（`contentGuid`、`tools/ir/uia.ts`）ので、レイアウトを変えれば別の GUID になる（式のときは今までどおり）。ただし**この GUID で再 publish して画面が変わることは、build もテナントも未確認**（生成器の修正だけ）。以前の GUID で登録済みのレイアウトは、テナントに残る。形の比較用の見本 `FormTaskLayoutShapes.full` は配列だけにした（オブジェクトの形は `samples/ir-invalid/FormLayoutObject`）。
 
 - API で完了するには、`FormTask` は先に割り当てが要る（無いと「This action is no longer assigned to you」）。`QuickFormTask` は要らなかった
 - 部品は `{type,key,label,input,disabled}`、ボタンは `{type,key,label,action:"event",event,theme,input,tableView}`
 - 未確認：**保留中のタスクを人が画面で入力して完了し、ワークフローが再開すること**。画面で見たのは完了済みのタスクだけ
 - `Data` のキーは `FormData` の名前のまま（`InvoiceNo`）。Out の値は完了時の `--data` のキーで渡す
 
-足してよさそうな検証（未実装）：`CreateFormTask` に `FormLayout` が無いと実行時に落ちる。`FormLayoutGuid` で渡す場合は試していない。シリアライズできない変数と `ForEach` の中の中断は、今回も試していない。
+**IR の検証（`tools/ir/persistence.ts`）**：`CreateFormTask` に `FormLayout` が無いと `FORM_LAYOUT_MISSING`。リテラルが JSON の配列でないと `FORM_LAYOUT_NOT_ARRAY`、JSON として読めない（空文字も）と `FORM_LAYOUT_BAD_JSON`。式（変数、VB の式）は中身を見ない。`FormLayoutGuid` だけを渡す形は試していないので、`FormLayout` が無ければ弾く。未確認：シリアライズできない変数と `ForEach` の中の中断。
 
 ### 手順
 
@@ -97,7 +97,7 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 ## フォーム
 
-`FormLayout` は文字列で、build は中身を見ない。書き方は上の節（配列で書く）。`CreateFormTask.layout` の JSON は調査のときの推測のままで、画面が空になるオブジェクトの形（`verify.json` に明記）。
+`FormLayout` は文字列で、build は中身を見ない。書き方は上の節（配列で書く）。生成器の検証がリテラルの形を見る（上の節）。`CreateFormTask.layout` は配列の形に直した（以前はオブジェクトで、画面が空になる形だった）。
 
 ## 書けないプロパティ（AUT-1073）
 

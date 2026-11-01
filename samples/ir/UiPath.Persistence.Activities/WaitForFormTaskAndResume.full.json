@@ -18,7 +18,10 @@
           "lit": "確認"
         },
         "TaskPriority": "Medium",
-        "TaskOutput": "task"
+        "TaskOutput": "task",
+        "FormLayout": {
+          "lit": "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false}]"
+        }
       }
     },
     {

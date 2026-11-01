@@ -1,7 +1,7 @@
 // 永続化（UiPath.Persistence.Activities）だけに要る検査。理由と確かめ方は knowledge/persistence.md。
 // 表に載せるのは、build で落ちることを確かめたものだけ。
 
-import type { Workflow, Node } from "./types.ts";
+import type { Workflow, Node, Value } from "./types.ts";
 
 // ジョブを中断するアクティビティ。このどれかを含むファイルは project.json のエントリポイントにする（ST-DBP-024）
 export const SUSPENDING = new Set(["WaitForFormTaskAndResume", "WaitForExternalTaskAndResume", "WaitForJobAndResume", "WaitForQueueItemAndResume", "WaitForUserActionAndResume", "ResumeAfterDelay"]);
@@ -25,11 +25,36 @@ function children(n: Node): [string, Node[]][] {
   return out;
 }
 
+// CreateFormTask の FormLayout（AUT-1076）。リテラルは JSON の配列にする。式（変数、VB の式）は実行時まで分からないので見ない。
+// 返り値：undefined = 式（検査しない）、それ以外 = リテラルの文字列
+export function formLayoutLiteral(v: Value | undefined): string | undefined {
+  return v !== undefined && typeof v === "object" && "lit" in v ? v.lit : undefined;
+}
+
+export function checkFormLayout(n: Node, path: string, add: (path: string, code: string, message: string) => void) {
+  const v = n.props?.FormLayout;
+  if (v === undefined) {
+    add(`${path}.props`, "FORM_LAYOUT_MISSING", "CreateFormTask に FormLayout が無い（実行時に「フォーム レイアウト無効」で落ちる。GenerateInputFields だけでは動かない。JSON の配列を書く）");
+    return;
+  }
+  const lit = formLayoutLiteral(v);
+  if (lit === undefined) return;
+  const at = `${path}.props.FormLayout`;
+  let parsed: unknown;
+  try { parsed = JSON.parse(lit); } catch (e) {
+    add(at, "FORM_LAYOUT_BAD_JSON", `FormLayout のリテラルが JSON として読めない（${(e as Error).message}）。JSON の配列を書く`);
+    return;
+  }
+  if (!Array.isArray(parsed))
+    add(at, "FORM_LAYOUT_NOT_ARRAY", "FormLayout のリテラルは JSON の配列にする（{\"components\":[...]} のようなオブジェクトだと Action Center の画面が空になる。knowledge/persistence.md）");
+}
+
 export function checkPersistence(wf: Workflow, add: (path: string, code: string, message: string) => void) {
   const walk = (nodes: Node[], base: string, scope: string | undefined) =>
     nodes.forEach((n, i) => {
       const path = `${base}[${i}]`;
       const name = shortName(n.act);
+      if (name === "CreateFormTask") checkFormLayout(n, path, add);
       if (scope && SCOPE_CHECKED.has(name))
         add(path, "PERSIST_IN_NO_PERSIST_SCOPE", `${name} は ${scope} の中に置けない（永続化できないスコープ。外に出す）`);
       const inner = NO_PERSIST_SCOPES.has(name) ? name : scope;

@@ -1,0 +1,22 @@
+{
+  "workflow": "FormLayoutMissing",
+  "variables": [
+    {
+      "name": "t",
+      "type": "FormTaskData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "x"
+        },
+        "TaskPriority": "Low",
+        "GenerateInputFields": true,
+        "TaskOutput": "t"
+      }
+    }
+  ]
+}

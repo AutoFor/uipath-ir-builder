@@ -5,8 +5,9 @@ import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentLi
 import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
-import { prepareUia, emitObjs, nextGuid, resetGuids } from "./uia.ts";
+import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
 import { excelPrefixes } from "./excel.ts";
+import { formLayoutLiteral } from "./persistence.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
@@ -125,7 +126,10 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     // get-default-xaml に出た既定値のうち、IR が書いていないもの（Version=V5 など）
     for (const [k, v] of Object.entries(cat.defaults.get(a.className) ?? {})) {
       if (attrs.some(([x]) => x === k) || !a.props.some((p) => p.name === k)) continue;
-      attrs.push([k, /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v) ? nextGuid() : v]);
+      // FormLayoutGuid は、同じ値だとテナントが最初のレイアウトを使い続ける（AUT-1076）。リテラルのレイアウトは中身も混ぜて決める
+      const layout = a.className === "CreateFormTask" && k === "FormLayoutGuid" ? formLayoutLiteral(n.props?.FormLayout) : undefined;
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v)) attrs.push([k, v]);
+      else { const g = nextGuid(); attrs.push([k, layout !== undefined ? contentGuid(layout) : g]); }
     }
     const first = (k: string) => (k === "x:TypeArguments" ? 0 : k === "x:Key" ? 1 : 2);
     attrs.sort(([x], [y]) => first(x) - first(y) || x.localeCompare(y));

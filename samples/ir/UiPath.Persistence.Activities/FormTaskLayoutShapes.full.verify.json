@@ -1,1 +1,1 @@
-{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る。FormLayout の形を画面で比べるサンプル。テナントで確かめた結果は knowledge/persistence.md（AUT-1076）"}
+{"entryPoint":true,"buildAlone":true,"noRun":"Orchestrator と Action Center が要る。配列の FormLayout を新しい GUID（レイアウトの中身から決まる）で作り、画面で確かめるサンプル（1.0.7 用）。オブジェクトの形は samples/ir-invalid/FormLayoutObject。テナントで確かめた結果は knowledge/persistence.md（AUT-1076）"}

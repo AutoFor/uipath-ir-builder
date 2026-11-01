@@ -1,0 +1,54 @@
+{
+  "workflow": "FormLayoutObject",
+  "variables": [
+    {
+      "name": "objectTask",
+      "type": "FormTaskData"
+    },
+    {
+      "name": "objectComment",
+      "type": "String"
+    }
+  ],
+  "arguments": [
+    {
+      "name": "in_InvoiceNo",
+      "dir": "In",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "name": "オブジェクトの形（display と components）",
+      "props": {
+        "TaskTitle": "\"uipath-ir-test-shape-object \" & in_InvoiceNo",
+        "TaskPriority": "Low",
+        "Labels": {
+          "lit": "uipath-ir-test"
+        },
+        "GenerateInputFields": false,
+        "FormLayout": {
+          "lit": "{\"display\":\"form\",\"components\":[{\"type\":\"textfield\",\"key\":\"InvoiceNo\",\"label\":\"請求書\",\"input\":true,\"disabled\":true},{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"action\":\"event\",\"event\":\"Approve\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false}]}"
+        },
+        "TaskOutput": "objectTask"
+      },
+      "dicts": {
+        "FormData": [
+          {
+            "name": "InvoiceNo",
+            "dir": "In",
+            "type": "String",
+            "value": "in_InvoiceNo"
+          },
+          {
+            "name": "Comment",
+            "dir": "Out",
+            "type": "String",
+            "value": "objectComment"
+          }
+        ]
+      }
+    }
+  ]
+}

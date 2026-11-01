@@ -1,1 +1,1 @@
-{"noRun":"Orchestrator と Action Center が要る。FormLayout が無いので build は通るが、テナントで実行すると落ちる（knowledge/persistence.md）。プロパティの最小の例"}
+{"noRun":"Orchestrator と Action Center が要る。FormLayout（配列）を足した最小の例。FormLayout が無いと検証で弾く（knowledge/persistence.md）"}
