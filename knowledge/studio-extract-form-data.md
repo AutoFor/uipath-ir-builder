@@ -65,3 +65,67 @@ JIT の型（`JitCustomTypes`、`FieldMappings` から作る型）の DLL は `.
 - 足したもの：Studio 保存の XAML の取り込みテスト、サンプル置き場、この記録。
 - 直せないもの：JIT の型の DLL、`.objects` の記述子（Studio が画面を指して作る）。生成器の範囲外。
 - `FieldMappings` の項目ありの形は、「画面から項目を検出」を一度やって保存してもらえれば確かめられる。
+
+## 「画面から項目を検出」が何も起こさない件（AUT-1088 追加調査、2026-11-03）
+
+Studio 26.0.204、UIAutomation 26.10.6。ローカルの DLL（`UiPath.UIAutomationNext.Activities.Design.dll` と、Semantic 部分が ILMerge された `UiPath.UIAutomationNext.Activities.dll`）を ilspycmd で読み、ログと突き合わせた。ネットワーク呼び出し、Studio、ロボットには触っていない。DLL の中身はリポジトリに入れない。
+
+### 呼び出しの流れ（コードの読み取り）
+
+1. `ExtractFormDataViewModel.DiscoverAsync`：`IsDiscovering` 中なら何もしない → `IsCustomTypeGenerationSupported`（Studio の機能 `JitCustomTypeServiceV4`）が偽なら Error `Morph is not supported by Studio` で戻る → `IsLoggedInAsync` が偽なら Error `User is not logged in.` と画面のダイアログ → `DiscoverFieldsAsync`。
+2. `DiscoverFieldsAsync`：対象アプリが null なら**ログなしで null**。ブラウザーが対象外なら Error と ダイアログ。それ以外は `DiscoverFieldsService.DiscoverAsync`。例外は `UiAutomationException` なら Error ログとダイアログ、その他も Error ログとダイアログ。どちらも null を返す。
+3. 呼び出し元は null か空なら Error `[EFD]: No fields discovered.` を書いて戻る。つまりこのメッセージは「結果が空」ではなく「直前に例外があった、または対象アプリが取れなかった」ときに出る。
+4. `DiscoverInternalAsync`：ブラウザー種別（`SemanticRuntimeBrowserTypes`）を確認 → アプリを前面化 → 500ms 待つ → デバッガー接続（`BrowserDebuggerScope.AttachAsync`）→ `GetSemanticCacheOptionsAsync`（**スクリーンショットを撮る**。失敗すると例外 `Failed to capture screenshot.`）→ 進捗スケルトン表示（ログの showLoadingSkeleton）→ `SemanticRuntimeService.GetSemanticCacheAsync`（例外は中で握って `SemanticCache(ex)` にする。Error ログは出る）→ キャッシュが無効、スキーマが空、表示名が全部空のどれかなら `DiscoverFormFieldsException`（ダイアログ）。成功なら表示名の配列を返す。スケルトンの hide は `DisposeAsync` なので、成功でも失敗でも出る。
+5. 成功後：`GetFieldMappings`（表示名 → プロパティ名）→ 現在の値と同じなら Debug `Nothing to do` → 違えば `FieldMappings.Value = …` → `UpdateTypeAsync` → `MorphAsync` → `IDesignerCustomTypesService.UseCustomTypeAsync("FormData", …)`（`.local/.jit` に型の DLL を作る）。
+
+### 検出が依存するもの（コードの読み取り）
+
+- **ログイン**：`IAccessProviderService.IsLoggedInAsync` だけがゲート。未ログインなら Error とダイアログで止まる。
+- **クラウド**：検出の本体はブラウザー拡張経由の DOM 抽出（`DOMExtractorService`）で、ローカルで動く。クラウドを呼ぶ箇所は、(a) `ServerConfigurationService.GetAsync<DOMExtractorConfig>`（Semantic プロキシの ConfigurationV2。失敗時は埋め込みリソースに落ちる。結果はメモリに1時間）、(b) `DOMRelationsService`（入力欄に強いアンカーが無いときだけ、DOM の関係を Semantic プロキシに問い合わせる。タイムアウト3秒、失敗は握りつぶして空）。どちらも失敗しても検出は止まらない。スキーマ照合（`SchemaMatching`）や LLM Gateway（ScreenPlay）はフォーム項目の検出では使わない（実行時の検索や AI エージェント用）。
+- **ライセンス、AI Trust Layer、Autopilot ポリシー、機能フラグ**：検出の経路（上の 1〜5）には、これらを判定する分岐は**見つからなかった**。ログイン以外でゲートになるのは Studio の `JitCustomTypeServiceV4` だけ。
+- **キャッシュ**：`ISemanticCache` はメモリ上のオブジェクトで、ファイルには残らない。ディスクのキャッシュは無い。0.2 秒の理由は、拡張の JS が注入済みで DOM 抽出と安定判定が速く済むため、と**推定**（初回 2.8 秒はスクリプト注入と設定取得を含む）。
+- **RDP、Remote UIA**：`RemoteUiaProcessService` は UIAutomation の別プロセスとの接続の仕組みで、検出の分岐には使われていない。ただしスクリーンショットは `DriverAsyncService.GetBrowserViewportAsync` など拡張との通信に依存する。
+
+### ログから絞ったこと（実測）
+
+`2026-11-03_UIAutomation.log` と `_UiPath.Studio.Project.log`：
+
+| 時刻 | 起きたこと | 読み |
+| --- | --- | --- |
+| 07:29、07:30 | スケルトン表示から非表示まで 3.0 秒、3.3 秒。**エラーなし** | 例外なしで `DiscoverInternalAsync` を通った |
+| 08:02〜08:04 | 6 回、`AttachDebugger` が `0x800402E1`、`get_viewportRegion` が `0x80040233`、`Failed to capture screenshot.` → ダイアログ → `No fields discovered.` | file:/// でスクリーンショット失敗。例外から「No fields」までの隙間は、ダイアログを閉じるまでの時間（最後の 08:04:12 → 08:13:18 は 9 分） |
+| 08:13:18 | `No fields discovered.` | 08:04:12 の例外のダイアログを閉じた直後。http にした後の失敗ではない |
+| 08:14:19 以降 | スケルトン 2.8 秒、1.5 秒、0.2 秒、0.15 秒、0.1 秒。**例外も `No fields discovered.` も `User is not logged in.` も無い** | スクリーンショットは成功し、`DiscoverFieldsAsync` は空でも null でもない配列を返した（上の 2〜4 の Error 経路はすべてログが出る作りなので、出ていないことで除外できる） |
+
+つまり、**08:14 以降は「検出できなかった」のではなく、検出は成功した可能性が高い**。ユーザーの見立て（「No fields discovered」が続く）は、08:13 の1行を http の結果と取り違えている（**実測**）。成功後に残る経路は 5 の後半で、Debug ログ（`Discovered N fields`、`Generated N properties`、`Nothing to do`、`Field mappings updated`、`Morphing to type`）はこの環境のログに**1行も出ていない**（Debug が出力されない設定）ため、どこで止まったかは見えない。
+
+別件（実測）：`.screenshots/` に 08:14:15 の画像があり、テスト用フォーム（申請者名、メールアドレス、電話番号、申請日、部署、金額、区分…）が写っている。`.objects` にも画面の記述子が増えている。スクリーンショットはフォームを正しく捉えている。Main.xaml は `FieldMappings="{x:Null}"`、`NApplicationCard` は `InteractionMode="DebuggerApi"`、`NExtractFormDataGeneric` は `Version="V5"`、`.local/.jit/cache` は 06:43 の `GlobalVariables.*.dll` だけ。
+
+### 原因（実測と推定を分ける）
+
+- **実測**：file:/// のときの失敗は、拡張がページに接続できないこと（`AttachDebugger` `0x800402E1`、`get_viewportRegion` `0x80040233`）で起きたスクリーンショット失敗。Chrome の拡張に「ファイルの URL へのアクセスを許可する」が無い、または `file://` で拡張が動かないための失敗、と**推定**。http にしたら解消し、以降はスクリーンショット例外が出ていない（**実測**）。
+- **実測**：08:14 以降はエラー経路を通っていない。クラウド、ライセンス、ポリシーが原因とする証拠は無い。
+- **推定（未確認）**：検出は成功したが、`FieldMappings.Value` の代入後の `UseCustomTypeAsync`（JIT の型づくり）で、Studio 側が何もせず戻っている。根拠は、検出が成功なら残る分岐がここだけであること、`.local/.jit` に新しい DLL が出ていないこと、06:43 に `JitAssemblyProjectEndpoint.UpdateDesigners` の NullReferenceException が出ていること、それと「モデル」の選択肢が空で Path Mini のままのこと（これは別機能の可能性もある）。別の可能性として、保存したときの Main.xaml がデザイナーの値を反映していない（保存のタイミング）ことも**否定できない**。
+- 「No license exist」「対話型接続は利用できません」（Studio.log）は、検出のログインゲート（`IsLoggedInAsync`）を通ったことと矛盾して見える。`IsLoggedInAsync` の実装（定義は Design の外の共有アセンブリ）は**読めていない**。ログインしていないのにゲートを通る可能性は否定できない。
+
+### 直すなら（ユーザー、テナント管理者）
+
+- file:/// ではなく http://127.0.0.1:8765/ を使う（済み）。Chrome の拡張の詳細で「ファイルの URL へのアクセスを許可する」をオンにすれば file:/// も試せる。
+- Studio 側で、UIAutomation のログレベルを Debug にして（Studio の設定のログ、または UIAutomation の詳細ログ）もう一度検出する。`[EFD]: Discovered N fields.` と `[BESDVM]: Morphing to type.` が出れば、どこで止まったか分かる。`UpdateTypeAsync` の後に `[BESDVM]` が無ければ、型づくりの手前。
+- 検出後に、プロジェクトをいったん保存して Main.xaml を開き直し、`FieldMappings` と `.local/.jit` に新しい DLL が出たかを見る。
+- Studio にサインイン（Orchestrator に接続）してから試す（`対話型接続は利用できません` の状態を解く）。
+- テナント管理者に頼むことは、今回の調査からは**無い**（ライセンスやポリシーが原因という証拠が無いため）。
+
+### まだ分からないこと
+
+- 検出が返した項目の数と名前。Debug ログが無く、型が作られた形跡も無い。
+- `IsLoggedInAsync` の実装と、この Studio の状態での値。
+- `JitCustomTypeServiceV4` が Studio 26.0.204 の GUI で有効か（無ければ警告が出て「項目の検出」ボタン自体が隠れるはずで、押せているので有効と**推定**）。
+- 「モデル」プロパティが空の理由。今回読んだ経路には出てこない（別のクラスの可能性）。
+
+### 生成器への影響
+
+- 生成器は `FieldMappings` を **dicts** で直接書く（項目の検出を使わない）ので、検出が動かなくても出力の形には影響しない。検出が返す表示名からプロパティ名への変換は `GetFieldMappings`（`ToPropertyName`。型名 `FormData` と同じ名前は先頭に `_`、重複は `_1`、`_2`）で、**生成器が写すならこの規則**。
+- 項目ありの `FieldMappings` の実物は、まだ Studio から取れていない。上の「直すなら」で検出が通り、型が作られれば確かめられる。
+- 型の DLL（`.local/.jit`）は生成器では作れない（従来どおり）。Helm の `JitCustomTypeServiceV4` が無い件（AUT-706）も変わらない。
+- `NApplicationCard` に `InteractionMode="DebuggerApi"` が付くことを今回の実物で確認した。生成器は付けていないが、検出が `DebuggerScope` を使う経路なので、Extract の実行時の挙動には関係する可能性がある（未確認）。
