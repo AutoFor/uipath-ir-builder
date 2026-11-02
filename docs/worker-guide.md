@@ -361,6 +361,7 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
 - `NExtractFormDataGeneric` は Studio の外の build が通らないので `samples/ir-unbuildable/` に置く（build を巻き添えにしない。テストは検証と生成だけ。verify.json の `unbuildable` に理由）。原因は Helm に機能 `JitCustomTypeServiceV4` が無いこと（`StudioCompatibilityValidator`）で、プロジェクトのファイルでは直せない。
   - **build で確かめたこと**（AUT-706、2026-11-01、Helm 1.204.2、UIAutomation 26.10.6。4回とも build は NG）：①FieldMappings ありの最小形は `This activity requires UiPath Studio 23.10 or newer.`。②FieldMappings なしは、`_build.txt` に「Discover the fields from screen in order to use this activity.」と「This activity requires UiPath Studio 23.10 or newer.」の**両方**が出る（ProjectPackager の最終行には先に出た Discover だけが載る。前回の記録が Discover だけだったのはこのため）。③project.json の studioVersion を 23.10.0.0 / 25.10.0.0 にしても（作業用プロジェクトに反映されていることを確認）、①と同じエラー。
   - **推定**（コードの読み取り。build では未確認）：V4 の判定は Helm 側の機能一覧で決まるので、プロジェクトのファイルでは通らない。Helm が V4 を返す版になるか、Studio（GUI）で検証するしかない
+  - **Studio で保存した実物との比較**（AUT-1088、2026-11-03、Studio 26.0.204.0、UIAutomation 25.2.1-preview が入る）：フォーム データを抽出を置いただけの Main.xaml は `samples/xaml-import/StudioExtractFormData.xaml`。形は生成器と一致し、差は `Version`（Studio は書かない。生成器は V5）、`FieldMappings="{x:Null}"`（項目なし）、`Target` なしだけ。project.json の増分は `UiPath.UIAutomation.Activities` の依存、増えたファイルは `.objects/.metadata|.type` と `.local` の解決結果だけで、JIT の型の DLL は出ていない。検証が通ったかは**未確認**（ログに結果なし）。表と根拠は `knowledge/studio-extract-form-data.md`
 
 ### 8-E. Excel（UiPath.Excel.Activities 3.6.1）
 

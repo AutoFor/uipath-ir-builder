@@ -86,6 +86,21 @@ test("Studio が書く形を読む", () => {
   assert.equal(r.roundTrip?.sameMeaning, true, r.warnings.map((w) => w.message).join("\n"));
 });
 
+// Studio 26.0.204.0 で「フォーム データを抽出」を置いて保存した Main.xaml をそのまま置いたもの（AUT-1088。画面の情報なし。FieldMappings={x:Null}、Target なし、Version 属性なし）
+test("Studio が保存した NExtractFormDataGeneric を読む（AUT-1088）", () => {
+  const r = importAndCheck(fixture("StudioExtractFormData.xaml"), cat);
+  assert.deepEqual(r.errors, []);
+  const ext = r.wf!.body[0].body![0].body![0].body![0];
+  assert.equal(ext.act, "NExtractFormDataGeneric");
+  assert.equal(ext.typeArg, "Object");
+  assert.equal(ext.dicts, undefined, "FieldMappings={x:Null} は値なし");
+  assert.ok(r.dropped.some((d) => d.kind === "値なし" && d.name === "FieldMappings"));
+  // Studio は Target 無しで保存できる。生成器の検証は Target / InUiElement を求める（Studio の外で build できる形にするため）
+  assert.deepEqual(r.validation.map((v) => v.code).sort(), ["UIA_TARGET_EMPTY", "UIA_TARGET_MISSING"]);
+  // 作り直すと Version=V5 が増える差（Studio 26.0.204 + UIAutomation 25.2.1-preview は Version を書かない。生成器は Helm の既定 XAML に合わせて V5 を書く）
+  assert.deepEqual(r.warnings.filter((w) => w.code === "ROUNDTRIP_ADDED").map((w) => w.message.replace(/^.*@/, "@")), ["@Version=V5"]);
+});
+
 const expectErrors = (name: string, codes: string[]) => test(`取り込めない形 ${name}`, () => {
   const r = importXaml(fixture(`unsupported/${name}`), cat);
   const got = new Set(r.errors.map((e) => e.code));
