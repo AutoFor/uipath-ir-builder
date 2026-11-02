@@ -171,20 +171,37 @@ Case の (a)(b)(c) は重なって起動し、もう1組もできた（タスク
 - `fixtures/assign/AssignGroup.*.ts` のグループ指定（Flow の `group`、Case の `type: 1`）は `AllUsers` なので、未割り当てになる。人に割り当てたいときは `workload` を使う
 - 窓口 `verify.mjs` に warning `TASK_GROUP_ALL_USERS` を足した（Flow の `group`/`staticGroupName`、BPMN と Case の `AllUsers`）
 
-### XAML は実測できていない
+### XAML の実測（2026-11-02〜03、個人ワークスペース）
 
-- 窓口の runner は動いていた。`CreateFormTask.assign-user` をローカルの `rpa run` で流すと、`An organization unit is required for this action. Error code: 1101` で落ちた（ローカル実行にフォルダの文脈が無い）。タスクはできていない
-- **2026-11-02 の 2 回目：アップロードは許可されたが、ジョブが実行できなかった。XAML の割り当ては引き続き未確認。**
-  - フィードの指定：`uip or packages upload` の既定の宛先は**テナントのフィード**。`--feed-id` と `--folder-key` は同時に指定できない（`Error resolving package feed`）ので、`uip or feeds list` で見つけた個人ワークスペースのフィード ID（`78dbfd6f-...`）を `--feed-id` だけで渡した。アップロード後、`packages list --feed-id` で個人ワークスペースのフィードに `uipath-ir-test-assign:1.0.2` があり、テナントのプロセスのフィード（`78cf1c03-...`）、Autopilot のフィード、`(Converted)` のフィードに無いことを確かめた
-  - パッケージ `uipath-ir-test-assign` 1.0.2：1.0.1 の 9 本に、`AssignmentCriteria` を外した `CreateFormTask_NoCritUser_T`（`UserNameOrEmail` だけ）と `CreateFormTask_NoCritGroup_T`（`Group` だけ）を足した 11 本。IR は `out/`（gitignore。実アドレス入り）
-  - プロセス（個人ワークスペース、`--entry-point` ごと）：`uipath-ir-test-assign-formtask`、`-user`、`-group`、`-distribute`、`-nocrit-user`、`-nocrit-group`、`-useraction`、`-timer`、`-external`、`-assigntasks-full`、`-assigntasks-group`。アップロードで自動でできた `uipath-ir-test-assign`（Main.xaml）もある
-  - `jobs start --runtime-type Development` で `FormTaskAssign.full` を起動したが、ジョブ `39406135-5c6a-4a07-8f6f-b470c7e6070e` は **Pending のまま動かない**。`PendingReasons`：`TemplateNoHostsAvailable`、`DynamicJobConnectedMachinesInvalid`、`DynamicJobConnectedMachinesUserCredentialsInvalid`、`DynamicJobConnectedMachinesWindowsRobotVersionInvalid`（フォルダーに該当するマシンが接続されていない）。`uip or folders runtimes` では Development が Total 1、Connected 0
-  - `--runtime-type Serverless` は HTTP 400（クロスプラットフォーム非対応のプロセスでは開始できない）
-  - 原因（推定）：この PC のロボットは 2026-11-01 から `UiRobotSvc` のサービスモードで、マシンキーで `DESKTOP` として接続している（ProgramData の Robot.log）。ユーザーモードの Robot.log（`AppDataLocalUiPathLogsinternal`）は 11-01 07:01 から更新が無く、個人ワークスペースの Development が接続されていない。10-31 から 11-01 午前の `uipath-ir-test-ac*` のジョブが DESKTOP / AURA で動いたのは、サービスモードにする前のユーザーモード（と別 PC）だった。戻すには、Assistant をユーザーモードで接続し直す（ロボットの設定を変えるので、今回はやっていない）
-  - 同じ理由でローカル実行も 1101（`CreateFormTask_AssignUser_T`、2026-11-02 08:12 の Execution.log）
-  - Pending のジョブは残してある。個人ワークスペースのロボットが繋がると動き出し、タスクができる
+- 経緯：窓口の runner でのローカル実行は `An organization unit is required for this action. Error code: 1101`（フォルダの文脈が無い）。そこで `uip or packages upload --feed-id <個人ワークスペースのフィード>` で `uipath-ir-test-assign` 1.0.2 を上げ、個人ワークスペースのプロセス（`-formtask`、`-user`、`-group`、`-distribute`、`-nocrit-user`、`-nocrit-group`、`-useraction`、`-timer`、`-external`、`-assigntasks-full`、`-assigntasks-group`）を `--runtime-type Development` で流した。`--feed-id` と `--folder-key` は併用できず、既定の宛先はテナントのフィード。2026-11-02 はロボットが繋がらず Pending のままだった（`UiRobotSvc` のサービスモード）。11-03 06:26 に Development が繋がって流れた
+- ジョブが Suspended になる形（`FormTaskAssign.full`）は枠を占めず、あとのジョブは続けて流れた
 
-起動の手順（ロボットが繋がったあと）：
+| 形 | プロセス | ジョブ | 結果 | タスク | Status / 条件 / 担当者 |
+| --- | --- | --- | --- | --- | --- |
+| `FormTaskAssign.full`（`in_Assignee` に本人） | formtask | `39406135-5c6a-4a07-8f6f-b470c7e6070e` | Suspended（タスク待ち） | 100241773 | Pending / SingleUser / 本人 |
+| `CreateFormTask.assign-user` | user | `42eee8da-bf95-4704-a1ed-46bd97c389b3` | Successful | 100241791 | Pending / SingleUser / 本人 |
+| `CreateFormTask.nocrit-user`（`AssignmentCriteria` なし、`UserNameOrEmail` のみ） | nocrit-user | `81e85d64-16f5-4dc1-951b-339da04e3cd7` | Successful | 100241798 | Pending / SingleUser / 本人 |
+| `CreateFormTask.nocrit-group`（`Group` のみ） | nocrit-group | `5ca8525a-eab2-41af-bac8-44a475979b29` | Successful | 100241800 | **Unassigned** / SingleUser / なし |
+| 同上（`AssignTasks.full` 用に 2 つ目） | nocrit-group | `b5a4ad51-92d3-47d5-9164-8681b6cf9339` | Successful | 100241805 | **Unassigned** / SingleUser / なし |
+| `CreateFormTask.assign-group`（`AllUsers` + `Group`） | group | `d8c9df1a-a3ee-4768-9dd6-5e3b8c65f206` | **Faulted** | なし | `Action cannot be assigned to this user due to insufficient permissions Error code: 2414` |
+| `CreateFormTask.assign-distribute` | distribute | `d826a363-dc09-47b8-b19f-068f85035c2d` | **Faulted** | なし | `You do not have the required permissions to change the assignee of the action Error code: 2415` |
+| `CreateUserAction.assign` | useraction | `504f8689-30c0-4d45-bab2-bc53820ba6bc` | **Faulted** | なし | `Object reference not set to an instance of an object.`（`PersistenceActivityException`、`CreateUserAction` 内） |
+| `CreateFormTask.timer`（`SingleUser` + `Group` + `UserNameOrEmail`、Reassign も同形） | timer | `fc27ef75-7399-4b1a-bf5e-f4dde389aacc` | Successful | 100241803 | Pending / SingleUser / 本人 |
+| `AssignTasks.group`（`in_TaskId`=100241800） | assigntasks-group | `735109f8-4fca-4097-9b4c-bd791f981a40` | Successful | 100241800 | **Unassigned のまま** / SingleUser / なし |
+| `AssignTasks.full`（`Reassign`、`Group` + `UserNameOrEmail`、`in_TaskId`=100241805） | assigntasks-full | `cc8b13b8-ee6d-4e8c-8711-646092a33fdc` | Successful | 100241805 | **Unassigned のまま** / SingleUser / なし |
+| `CreateExternalTask.full`（`TaskCatalog="External"`） | external | `44503a3e-f095-46b1-852b-765b9129fd1d` | **Faulted** | なし | `No task catalog exists with name External Error code: 2451` |
+
+どのタスクも `TaskAssignees` は空だった（`uip tasks get`）。実メールアドレスはここに書かない。
+
+分かったこと（実測）：
+
+- **ユーザー指定（`UserNameOrEmail`）は XAML でも効く**。`AssignmentCriteria` を外しても効く（`CreateFormTask.nocrit-user`）。Maestro の「ユーザーだけ書いて条件を省いたときに効くか」はこれで確認できた（XAML では効く）
+- **`Group` だけ（条件なし）は未割り当て**（Maestro の「グループの全員は未割り当て」と同じ）。`AssignTasks` の `AllUsers` + `Group` もタスクを割り当てなかった（ジョブは成功扱い。失敗した割り当ては `FailedTaskAssignments` に入るが、中身は取っていない）
+- `CreateFormTask` の `AssignmentCriteria=AllUsers` + `Group`（`assign-group`）と `assign-distribute` は、この個人ワークスペースでは**権限エラー（2414、2415）で落ちた**。原因は未確認（推定：`Automation Developers` に個人ワークスペースのフォルダでの割り当て権限が無い、または実行ユーザーに割り当ての権限が足りない。フォルダやロールの変更は許可外なので試していない）
+- **`SingleUser` + `Group` は XAML の実行時には弾かれなかった**。`CreateFormTask.timer`（`SingleUser`、`Group`、`UserNameOrEmail`）は成功し、`UserNameOrEmail` の本人に割り当たった。`GroupNotAllowedForSingleUserAssignment` は出なかったので、生成器と検証には止める修正を入れていない。`AssignTasks.full` も同形で成功したが、タスクは割り当たらなかった（`Group` が優先されたのか、`Reassign` が未割り当てのタスクに効かないのかは切り分けていない）。`CreateExternalTask.full` はカタログ不在で落ちたので、この形は未確認
+- `CreateUserAction.assign` は `NullReferenceException` 相当で落ちた。1 つの XAML に user 用と group 用の 2 つの `CreateUserAction` があり、どちらで落ちたかは切り分けていない。アプリ（`AppId` 等）を指定していない形なので、アプリの指定が要る可能性があるが推定
+
+起動の手順：
 
 ```bash
 F=cb95b4b9-2397-47d8-bd95-185ad630dd91
@@ -192,9 +209,7 @@ uip or processes list --folder-key $F --limit 100 --output-filter "[?contains(Na
 uip or jobs start <キー> --folder-key $F --runtime-type Development --input-arguments '{"in_Assignee":"<メール>"}'   # formtask だけ。assigntasks-* は {"in_TaskId":<番号>}
 ```
 
-`assigntasks-*` は未割り当てのタスク（`-group` で作ったもの）の番号を `in_TaskId` に渡す。
-
-- **未確認**：`FormTaskAssign.full` で本人に割り当たるか、`AssignmentCriteria` を外した形、`CreateUserAction.assign`、`AssignTasks.group`、`SingleUser` + `Group` が実行時に `GroupNotAllowedForSingleUserAssignment` で落ちるか（`CreateFormTask.timer`、`CreateExternalTask.full`、`AssignTasks.full`）、XAML の `AllUsers` が Maestro と同じく未割り当てになるか。生成器と検証の修正は、落ちると分かるまで入れていない（推定だけでは弾かない）
+- **未確認**：`RoundRobin`、`CreateUserAction` のどちらの呼び出しで落ちるか、`CreateExternalTask` の `SingleUser` + `Group`（`External` カタログが無い。カタログの作成は許可外）、`AssignTasks.full` で未割り当てのままだった理由、`assign-group` と `assign-distribute` の権限エラーの原因、人が画面で見たときの `AllUsers` の扱い
 
 ### そのほか未確認
 
