@@ -2,7 +2,7 @@
 
 イシュー：AUT-1090。2026-11-02 時点。`UiPath.Persistence.Activities` 1.13.0、`@uipath/maestro-builder-sdk` 6.66.5、`uip` 1.204.0。
 
-**Maestro 3形式（Flow、BPMN、Case）は 2026-11-02 に個人ワークスペースで `debug` して実測した（下の「テナントでの実測」）。XAML は run できず未確認。** 「読んだ」はテナントの読み取りか DLL・SDK・文書の読み取り。確かめる手順は最後の節。
+**Maestro 3形式（Flow、BPMN、Case）は 2026-11-02 に個人ワークスペースで `debug` して実測した（下の「テナントでの実測」）。XAML はパッケージを個人ワークスペースに上げたが、ロボットが繋がらずジョブが動かず、未確認。** 「読んだ」はテナントの読み取りか DLL・SDK・文書の読み取り。確かめる手順は最後の節。
 
 ## Action Center の割り当ての仕組み
 
@@ -174,8 +174,27 @@ Case の (a)(b)(c) は重なって起動し、もう1組もできた（タスク
 ### XAML は実測できていない
 
 - 窓口の runner は動いていた。`CreateFormTask.assign-user` をローカルの `rpa run` で流すと、`An organization unit is required for this action. Error code: 1101` で落ちた（ローカル実行にフォルダの文脈が無い）。タスクはできていない
-- パッケージのアップロード（`uip or packages upload`、個人ワークスペース）は、許可の範囲外として権限で拒否された。迂回していない。pack までは通った（`uipath-ir-test-assign` 1.0.1：`FormTaskAssign.full`、`CreateFormTask.assign-*`、`CreateUserAction.assign`、`.timer`、`CreateExternalTask.full`、`AssignTasks.*`）
-- **未確認**：`FormTaskAssign.full` で本人に割り当たるか、`AssignmentCriteria` を外した形、`CreateUserAction.assign`、`AssignTasks.group`、`SingleUser` + `Group` が実行時に `GroupNotAllowedForSingleUserAssignment` で落ちるか（`CreateFormTask.timer`、`CreateExternalTask.full`、`AssignTasks.full`）。アップロードを許可すれば、下の手順 1、2 で確かめられる
+- **2026-11-02 の 2 回目：アップロードは許可されたが、ジョブが実行できなかった。XAML の割り当ては引き続き未確認。**
+  - フィードの指定：`uip or packages upload` の既定の宛先は**テナントのフィード**。`--feed-id` と `--folder-key` は同時に指定できない（`Error resolving package feed`）ので、`uip or feeds list` で見つけた個人ワークスペースのフィード ID（`78dbfd6f-...`）を `--feed-id` だけで渡した。アップロード後、`packages list --feed-id` で個人ワークスペースのフィードに `uipath-ir-test-assign:1.0.2` があり、テナントのプロセスのフィード（`78cf1c03-...`）、Autopilot のフィード、`(Converted)` のフィードに無いことを確かめた
+  - パッケージ `uipath-ir-test-assign` 1.0.2：1.0.1 の 9 本に、`AssignmentCriteria` を外した `CreateFormTask_NoCritUser_T`（`UserNameOrEmail` だけ）と `CreateFormTask_NoCritGroup_T`（`Group` だけ）を足した 11 本。IR は `out/`（gitignore。実アドレス入り）
+  - プロセス（個人ワークスペース、`--entry-point` ごと）：`uipath-ir-test-assign-formtask`、`-user`、`-group`、`-distribute`、`-nocrit-user`、`-nocrit-group`、`-useraction`、`-timer`、`-external`、`-assigntasks-full`、`-assigntasks-group`。アップロードで自動でできた `uipath-ir-test-assign`（Main.xaml）もある
+  - `jobs start --runtime-type Development` で `FormTaskAssign.full` を起動したが、ジョブ `39406135-5c6a-4a07-8f6f-b470c7e6070e` は **Pending のまま動かない**。`PendingReasons`：`TemplateNoHostsAvailable`、`DynamicJobConnectedMachinesInvalid`、`DynamicJobConnectedMachinesUserCredentialsInvalid`、`DynamicJobConnectedMachinesWindowsRobotVersionInvalid`（フォルダーに該当するマシンが接続されていない）。`uip or folders runtimes` では Development が Total 1、Connected 0
+  - `--runtime-type Serverless` は HTTP 400（クロスプラットフォーム非対応のプロセスでは開始できない）
+  - 原因（推定）：この PC のロボットは 2026-11-01 から `UiRobotSvc` のサービスモードで、マシンキーで `DESKTOP` として接続している（ProgramData の Robot.log）。ユーザーモードの Robot.log（`AppDataLocalUiPathLogsinternal`）は 11-01 07:01 から更新が無く、個人ワークスペースの Development が接続されていない。10-31 から 11-01 午前の `uipath-ir-test-ac*` のジョブが DESKTOP / AURA で動いたのは、サービスモードにする前のユーザーモード（と別 PC）だった。戻すには、Assistant をユーザーモードで接続し直す（ロボットの設定を変えるので、今回はやっていない）
+  - 同じ理由でローカル実行も 1101（`CreateFormTask_AssignUser_T`、2026-11-02 08:12 の Execution.log）
+  - Pending のジョブは残してある。個人ワークスペースのロボットが繋がると動き出し、タスクができる
+
+起動の手順（ロボットが繋がったあと）：
+
+```bash
+F=cb95b4b9-2397-47d8-bd95-185ad630dd91
+uip or processes list --folder-key $F --limit 100 --output-filter "[?contains(Name,'uipath-ir-test-assign')].{n:Name,k:Key}"
+uip or jobs start <キー> --folder-key $F --runtime-type Development --input-arguments '{"in_Assignee":"<メール>"}'   # formtask だけ。assigntasks-* は {"in_TaskId":<番号>}
+```
+
+`assigntasks-*` は未割り当てのタスク（`-group` で作ったもの）の番号を `in_TaskId` に渡す。
+
+- **未確認**：`FormTaskAssign.full` で本人に割り当たるか、`AssignmentCriteria` を外した形、`CreateUserAction.assign`、`AssignTasks.group`、`SingleUser` + `Group` が実行時に `GroupNotAllowedForSingleUserAssignment` で落ちるか（`CreateFormTask.timer`、`CreateExternalTask.full`、`AssignTasks.full`）、XAML の `AllUsers` が Maestro と同じく未割り当てになるか。生成器と検証の修正は、落ちると分かるまで入れていない（推定だけでは弾かない）
 
 ### そのほか未確認
 
