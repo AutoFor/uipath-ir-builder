@@ -209,6 +209,16 @@ uip or processes list --folder-key $F --limit 100 --output-filter "[?contains(Na
 uip or jobs start <キー> --folder-key $F --runtime-type Development --input-arguments '{"in_Assignee":"<メール>"}'   # formtask だけ。assigntasks-* は {"in_TaskId":<番号>}
 ```
 
+### 2026-11-03 追加（AUT-1104、読み取りとジョブのログだけ）
+
+run の窓口（runner.mjs）が止まっていた（`runner.alive` の最終更新が 2026-11-02 16:13）ので、1 呼び出しずつに分けた版の pack ができず、新しいジョブは流していない。既存のジョブのログと、グループとロールの読み取りで分かったこと。
+
+- **`AssignTasks.full` の `FailedTaskAssignments` は 1 件だった**（実測。ジョブ `cc8b13b8-...` のログ「失敗: 1」）。つまりジョブは Successful でも、`Reassign` の割り当ては**試されて失敗した**。「未割り当てのタスクに効かない」より、「割り当てを試みたが拒否された」側。失敗の中身（理由、対象）は XAML が件数しか出していないので未確認（推定：2414 と同じ、グループのメンバーに権限が無い失敗）
+- **`assign-distribute` の 2415 は `RoundRobin` の呼び出し**（実測）。XAML は上から順に実行され、`RoundRobin` が先頭で、そこで落ちたので `Workload` の呼び出しには着いていない。`Workload` の XAML 単体は未確認（Maestro では割り当たった）
+- **2414 と 2415 の原因の手がかり**（読み取り。`uip admin authorization check-access`）：`Automation Developers` のメンバーは本人と `UnAttended`（ロボットアカウント）の 2 つ。個人ワークスペースのフォルダで役割があるのは本人（Personal Workspace Administrator）だけで、**グループにも `UnAttended` にもフォルダの役割が 0 件**。`AllUsers` と `RoundRobin` はグループのメンバーを割り当て先に選ぶので、フォルダに入っていないメンバーに当たって拒否された、という説明が合う（**推定**）。`Group` だけ（条件なし）は割り当てを試みないので成功する、とも合う。確かめる実験（`SingleUser` の `Group` 無し、`Workload`、存在しないグループ名との比較）は、窓口が戻れば流せる。フォルダへのグループの追加は許可外
+- **`CreateUserAction`**：ログのスタックは `BaseOrchestratorClientAsyncActivity.EndExecute` → `ThrowIfNeeded` で、エラーは 1.5 秒で出ている（タスク作成のリクエスト側。実測）。生成した XAML は `AppActionData`、`AppActionPropertiesMetadata`、`State`、`SolutionAppResources` が無く、アプリの指定（`SolutionApp` など）も無い（既定 XAML には空の辞書と `RecordDynamicActionPropertiesState` がある）。どれが null で落ちるかは未確認（推定）。user 用と group 用のどちらが落ちたかも未確認
+- 窓口が戻ったら流す形（未実行）：`CreateUserAction` の user のみ、group のみ。`CreateFormTask` の `RoundRobin`、`Workload`、`AllUsers` + `UserNameOrEmail`（`Group` 無し）、`AllUsers` + 存在しないグループ。`AssignTasks` の `FailedTaskAssignments` を `Newtonsoft.Json.JsonConvert.SerializeObject(failed)` でログに出す版（`Assign` と `Reassign`）。パッケージは 1.0.3 以降
+
 - **未確認**：`RoundRobin`、`CreateUserAction` のどちらの呼び出しで落ちるか、`CreateExternalTask` の `SingleUser` + `Group`（`External` カタログが無い。カタログの作成は許可外）、`AssignTasks.full` で未割り当てのままだった理由、`assign-group` と `assign-distribute` の権限エラーの原因、人が画面で見たときの `AllUsers` の扱い
 
 ### そのほか未確認

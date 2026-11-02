@@ -121,3 +121,7 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 - `AssignTasks`：`EnableMultipleAssignments` が false で条件が `SingleUser` か無しなら `UserId` か `UserNameOrEmail` が要る（`Group` だけでは通らない）。`AllUsers` か `RoundRobin` と `Group` なら、ユーザーなしで通る（AUT-1090）
 - `BindingsKey`（`AddQueueItemAndGetReference`、`StartJobAndGetReference`）、`AppBindingsKey`、`CatalogBindingsKey`：setter が無く `Cannot set unknown member`。カタログを今の抽出器で作り直して `readOnly` にした
 - サンプルの `Id`、タスクのカタログ名、`SolutionApp` などの値は置き物で、テナントに実物は無い
+
+## 割り当ての失敗の切り分け（AUT-1104、2026-11-03）
+
+読み取りとジョブのログだけ。run の窓口が止まっていて、新しいジョブは流せていない。結果と手順は `docs/task-assignment.md` の「2026-11-03 追加」。要点：`AssignTasks` の `FailedTaskAssignments` は件数 1（割り当てを試みて失敗。実測）、`assign-distribute` の 2415 は先頭の `RoundRobin`（実測）、`Automation Developers` のメンバー（本人以外に `UnAttended`）に個人ワークスペースのフォルダの役割が無い（読み取り。2414 の原因は**推定**）。
