@@ -106,7 +106,7 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 `Criteria` の `Id` は `SingleUser`、`AllUsers`、`RoundRobin`、`Workload` の4つ（AUT-1090。DLL のユーザー文字列、製品の Flow → BPMN の変換、文書で一致）。build は値を見ないので、検証 `ASSIGNMENT_CRITERIA_ID` が見る。書き方と割り当て全体は `docs/task-assignment.md`。
 
-既定 XAML は `AssignmentCriteria="{x:Reference __ReferenceID0}"` を出すが、生成器はこの属性を既定値に使わない（参照先の要素が無いと壊れる）。割り当て先も条件も省くと、`Unassigned`、`TaskAssignmentCriteria: SingleUser` で作られる（AUT-1076 のタスクを AUT-1090 で読んだ）。ユーザーだけ書いて条件を省いたときに効くかは未確認。
+既定 XAML は `AssignmentCriteria="{x:Reference __ReferenceID0}"` を出すが、生成器はこの属性を既定値に使わない（参照先の要素が無いと壊れる）。割り当て先も条件も省くと、`Unassigned`、`TaskAssignmentCriteria: SingleUser` で作られる（AUT-1076 のタスクを AUT-1090 で読んだ）。ユーザーだけ書いて条件を省いたときは、XAML では効いた（`UserNameOrEmail` のみで本人に割り当たる。docs/task-assignment.md の実測）。
 
 残り（`CreateUserAction`）：
 
