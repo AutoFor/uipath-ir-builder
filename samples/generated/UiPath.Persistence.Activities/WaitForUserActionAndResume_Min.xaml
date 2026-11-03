@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ns0="clr-namespace:UiPath.Persistence.Activities.Model.Apps;assembly=UiPath.Persistence.Activities"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:upau="clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -67,7 +68,11 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="upau:UserActionData" Name="task" />
       <Variable x:TypeArguments="x:String" Name="action" />
     </Sequence.Variables>
-    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task]" TaskPriority="Medium" TaskTimerEnabled="False" TaskTitle="アプリで確認" sap2010:WorkflowViewState.IdRef="CreateUserAction_1" />
+    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Outcome="Notify" SolutionApp="uipath-ir-test-approval" StartCriteria="TaskCreated" TaskOutput="[task]" TaskPriority="Medium" TaskTimerEnabled="False" TaskTitle="アプリで確認" sap2010:WorkflowViewState.IdRef="CreateUserAction_1">
+      <upau:CreateUserAction.CurrentAppTaskState>
+        <ns0:AppTaskState />
+      </upau:CreateUserAction.CurrentAppTaskState>
+    </upau:CreateUserAction>
     <upau:WaitForUserActionAndResume TaskAction="[action]" TaskInput="[task]" sap2010:WorkflowViewState.IdRef="WaitForUserActionAndResume_1" />
     <ui:LogMessage Level="Info" Message="[&quot;結果: &quot; &amp; action]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
   </Sequence>

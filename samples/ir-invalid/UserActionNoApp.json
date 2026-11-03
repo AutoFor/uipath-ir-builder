@@ -1,0 +1,24 @@
+{
+  "workflow": "UserActionNoApp",
+  "variables": [
+    {
+      "name": "task",
+      "type": "UserActionData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "t"
+        },
+        "TaskPriority": "Medium",
+        "TaskOutput": "task"
+      },
+      "objs": {
+        "CurrentAppTaskState": {}
+      }
+    }
+  ]
+}

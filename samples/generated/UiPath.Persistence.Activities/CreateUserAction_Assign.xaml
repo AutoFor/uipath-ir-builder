@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities"
+xmlns:ns1="clr-namespace:UiPath.Persistence.Activities.Model.Apps;assembly=UiPath.Persistence.Activities"
 xmlns:upau="clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
@@ -67,15 +68,21 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Variable x:TypeArguments="upau:UserActionData" Name="task1" />
       <Variable x:TypeArguments="upau:UserActionData" Name="task2" />
     </Sequence.Variables>
-    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task1]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="アプリをユーザーに割り当てる" UserNameOrEmail="user@example.com" sap2010:WorkflowViewState.IdRef="CreateUserAction_1">
+    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Outcome="Notify" SolutionApp="uipath-ir-test-approval" StartCriteria="TaskCreated" TaskOutput="[task1]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="アプリをユーザーに割り当てる" UserNameOrEmail="user@example.com" sap2010:WorkflowViewState.IdRef="CreateUserAction_1">
       <upau:CreateUserAction.AssignmentCriteria>
         <ns0:Criteria Description="SingleUserDescription" Id="SingleUser" Name="Activity_AssignTasks_AssignmentCriteria_SingleUserName" />
       </upau:CreateUserAction.AssignmentCriteria>
+      <upau:CreateUserAction.CurrentAppTaskState>
+        <ns1:AppTaskState />
+      </upau:CreateUserAction.CurrentAppTaskState>
     </upau:CreateUserAction>
-    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Group="Reviewers" Outcome="Notify" StartCriteria="TaskCreated" TaskOutput="[task2]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="アプリをグループに割り当てる" sap2010:WorkflowViewState.IdRef="CreateUserAction_2">
+    <upau:CreateUserAction ActionableNotification="False" EndCriteria="TaskAssigned" EnforcePropertyRefresh="False" Group="Reviewers" Outcome="Notify" SolutionApp="uipath-ir-test-approval" StartCriteria="TaskCreated" TaskOutput="[task2]" TaskPriority="Low" TaskTimerEnabled="False" TaskTitle="アプリをグループに割り当てる" sap2010:WorkflowViewState.IdRef="CreateUserAction_2">
       <upau:CreateUserAction.AssignmentCriteria>
         <ns0:Criteria Description="AllUsersDescription" Id="AllUsers" Name="Activity_AssignTasks_AssignmentCriteria_AllUsersName" />
       </upau:CreateUserAction.AssignmentCriteria>
+      <upau:CreateUserAction.CurrentAppTaskState>
+        <ns1:AppTaskState />
+      </upau:CreateUserAction.CurrentAppTaskState>
     </upau:CreateUserAction>
   </Sequence>
 </Activity>

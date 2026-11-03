@@ -6,6 +6,7 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities"
+xmlns:ns1="clr-namespace:UiPath.Persistence.Activities.Model.Apps;assembly=UiPath.Persistence.Activities"
 xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:upau="clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -79,6 +80,9 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <upau:CreateUserAction.ReassignCriteria>
         <ns0:Criteria Description="SingleUserDescription" Id="SingleUser" Name="Activity_AssignTasks_AssignmentCriteria_SingleUserName" />
       </upau:CreateUserAction.ReassignCriteria>
+      <upau:CreateUserAction.CurrentAppTaskState>
+        <ns1:AppTaskState />
+      </upau:CreateUserAction.CurrentAppTaskState>
     </upau:CreateUserAction>
   </Sequence>
 </Activity>

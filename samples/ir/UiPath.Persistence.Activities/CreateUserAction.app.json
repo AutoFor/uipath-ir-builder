@@ -1,0 +1,54 @@
+{
+  "workflow": "CreateUserAction_App",
+  "arguments": [
+    {
+      "name": "in_Assignee",
+      "dir": "In",
+      "type": "String"
+    }
+  ],
+  "variables": [
+    {
+      "name": "task",
+      "type": "UserActionData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateUserAction",
+      "props": {
+        "TaskTitle": {
+          "lit": "Action App の確認"
+        },
+        "TaskPriority": "Low",
+        "UserNameOrEmail": "in_Assignee",
+        "TaskOutput": "task",
+        "SolutionApp": {
+          "lit": "uipath-ir-test-approval"
+        }
+      },
+      "objs": {
+        "CurrentAppTaskState": {}
+      },
+      "dicts": {
+        "AppActionData": [
+          {
+            "name": "note",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "XAML から"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"created id=\" & Convert.ToString(task.Id)"
+      }
+    }
+  ]
+}

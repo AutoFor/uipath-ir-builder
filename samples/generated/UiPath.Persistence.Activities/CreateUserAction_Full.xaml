@@ -5,6 +5,7 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ns0="clr-namespace:UiPath.Persistence.Activities.Model.Apps;assembly=UiPath.Persistence.Activities"
 xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:upau="clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -66,12 +67,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Sequence.Variables>
       <Variable x:TypeArguments="upau:UserActionData" Name="task" />
     </Sequence.Variables>
-    <upau:CreateUserAction ActionableNotification="True" DisplayName="App タスクを作る" EndCriteria="TaskCompleted" EnforcePropertyRefresh="False" ExternalTag="INV-1" FolderPath="Shared" Group="Reviewers" Labels="invoice" Outcome="Notify" PrimaryActionableOutcome="Approve" PrimaryButtonLabel="承認" SecondaryActionableOutcome="Reject" SecondaryButtonLabel="却下" StartCriteria="TaskCreated" TaskCatalog="InvoiceApproval" TaskOutput="[task]" TaskPriority="High" TaskTimerEnabled="True" TaskTitle="アプリで確認" TimeoutMs="30000" TimerDuration="[TimeSpan.FromHours(4)]" sap2010:WorkflowViewState.IdRef="CreateUserAction_1">
+    <upau:CreateUserAction ActionableNotification="True" DisplayName="App タスクを作る" EndCriteria="TaskCompleted" EnforcePropertyRefresh="False" ExternalTag="INV-1" FolderPath="Shared" Group="Reviewers" Labels="invoice" Outcome="Notify" PrimaryActionableOutcome="Approve" PrimaryButtonLabel="承認" SecondaryActionableOutcome="Reject" SecondaryButtonLabel="却下" SolutionApp="uipath-ir-test-approval" StartCriteria="TaskCreated" TaskCatalog="InvoiceApproval" TaskOutput="[task]" TaskPriority="High" TaskTimerEnabled="True" TaskTitle="アプリで確認" TimeoutMs="30000" TimerDuration="[TimeSpan.FromHours(4)]" sap2010:WorkflowViewState.IdRef="CreateUserAction_1">
       <upau:CreateUserAction.AppActionData>
         <scg:Dictionary x:TypeArguments="x:String, Argument">
           <InArgument x:TypeArguments="x:String" x:Key="No">[&quot;INV-1&quot;]</InArgument>
         </scg:Dictionary>
       </upau:CreateUserAction.AppActionData>
+      <upau:CreateUserAction.CurrentAppTaskState>
+        <ns0:AppTaskState />
+      </upau:CreateUserAction.CurrentAppTaskState>
     </upau:CreateUserAction>
   </Sequence>
 </Activity>

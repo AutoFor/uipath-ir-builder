@@ -45,7 +45,10 @@
         "FolderPath": {
           "lit": "Shared"
         },
-        "TimeoutMs": 30000
+        "TimeoutMs": 30000,
+        "SolutionApp": {
+          "lit": "uipath-ir-test-approval"
+        }
       },
       "dicts": {
         "AppActionData": [
@@ -58,6 +61,9 @@
             }
           }
         ]
+      },
+      "objs": {
+        "CurrentAppTaskState": {}
       }
     }
   ]
