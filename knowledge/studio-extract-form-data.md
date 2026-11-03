@@ -129,3 +129,42 @@ Studio 26.0.204、UIAutomation 26.10.6。ローカルの DLL（`UiPath.UIAutomat
 - 項目ありの `FieldMappings` の実物は、まだ Studio から取れていない。上の「直すなら」で検出が通り、型が作られれば確かめられる。
 - 型の DLL（`.local/.jit`）は生成器では作れない（従来どおり）。Helm の `JitCustomTypeServiceV4` が無い件（AUT-706）も変わらない。
 - `NApplicationCard` に `InteractionMode="DebuggerApi"` が付くことを今回の実物で確認した。生成器は付けていないが、検出が `DebuggerScope` を使う経路なので、Extract の実行時の挙動には関係する可能性がある（未確認）。
+
+## Studio.CommandLine の analyze / analyze-file で検証できるか（AUT-1088、2026-11-03）
+
+`C:\Program Files\UiPathPlatform\Studio\26.0.204-cloud.25540\UiPath.Studio.CommandLine.exe`。すべて scratchpad にコピーしたプロジェクトに対して流した（元のフォルダ、Studio の設定、テナントには触っていない。git clone / commit / publish / options / manage は実行していない）。
+
+### 使い方（実測）
+
+- `analyze -p <project.json のパス> [-c <規則の設定ファイル>]`、`analyze-file -p <ワークフローの.xaml> [-c …]`。**注意**：ヘルプには `analyze-file` が `--workflow-file-path` と出るが、`-p` で動いた。`-p` にプロジェクトのフォルダではなく `project.json` を渡した。
+- 出力は標準出力に `#json{ … }`。キーは `<GUID>-FilePath` / `-ErrorCode` / `-ErrorSeverity` / `-Description` / `-Recommendation`（項目によって `-Item`）の平坦な辞書。Description は Studio の言語（日本語）。
+- 終了コード：**Error の指摘があれば 1、無ければ 0**（Warning と Info だけなら 0）。
+- SSH（High、セッション 0）から**そのまま動いた**。ログインも Studio の画面操作も要らない。プロジェクト全体で数秒〜十数秒。Studio が起動中でも動く（落とさなかった）。
+- 窓口（`runner.mjs`）は `verify.mjs` だけを流す作りで任意のコマンドは流せない。ただし analyze は SSH で動くので、窓口は不要。
+
+### 結果（実測）
+
+| 対象 | コマンド | 終了コード | 主な出力 |
+| --- | --- | --- | --- |
+| 1. `空のプロセス1` のコピー（Extract あり） | analyze / analyze-file | 0 / 0 | ST-USG-020 Warning（ログ未使用）、ST-MRD-002 Warning（フォーム データを抽出が既定の名前）、ST-USG-034、UI-ANA-016 Info（ブラウザーの URL）、ST-ANA-009 Info（アクティビティ数）ほか。**「23.10」「JIT」の文言は出ない** |
+| 2. `NExtractFormDataGeneric.min` から生成した XAML（Main.xaml として） | analyze / analyze-file | 0 / 0 | ST-USG-020 Warning、ST-ANA-009 Info（アクティビティ: 3 = 型が解決されて数えられた）。**23.10 の指摘なし** |
+| 3a. 対照：build が通る `Greet` | analyze / analyze-file | 0 / 0 | ST-USG-020 / ST-USG-010 Warning など |
+| 3b. わざと壊す：式の変数名違い（`in_Name`→`in_Nme`） | analyze / analyze-file | **0 / 0** | 3a と同じ指摘だけ。**検出されない** |
+| 3c. わざと壊す：閉じタグ不一致（XML 不正） | analyze-file | **1** | Error「ファイル … を解析できませんでした。理由: …」 |
+| 3d. わざと壊す：存在しない要素 `NoSuchActivity` | analyze-file | **1** | Error「ファイル … を読み込めませんでした。理由: 不明な型 '{…}NoSuchActivity'」 |
+
+### 何を見ていて、何を見ていないか
+
+- **見ている（実測）**：XAML の読み込み（XML として正しいか、要素の型が名前空間から解決できるか）と、ワークフロー アナライザーの規則（ST-*、UI-ANA-* など）。2 の XAML は読み込めて、`NExtractFormDataGeneric` を含むアクティビティ数が数えられた。
+- **見ていない（実測）**：式のコンパイル（未定義の変数が通る）。**`StudioCompatibilityValidator` の「requires UiPath Studio 23.10 or newer」も出ない**＝`uip rpa build` を落としているコンパイル前の検証には当たらない。空のプロジェクト 1 と、build が落ちる 2 の両方で同じく出ないので、**analyze が通っても build が通る保証にはならない**。
+- **推定（未確認）**：Studio 本体（Helm ではなく Studio の `WorkflowDesignApi`）に `JitCustomTypeServiceV4` があるかは、この出力からは分からない。analyze は検証の経路にその判定を持たないため、機能フラグの差は見えない。「画面から項目を検出」の失敗原因の調査にも使えない。
+
+### 結論
+
+人の画面操作なしで動き、**構造の壊れ（XML 不正、未知の型）と規則違反の検出には使える**。しかし AUT-1088 の本題である、Studio の検証パネルが出す JIT / 23.10 系のエラーと、式の型の誤りは取れない。**画面の検証の代わりにはならない**（補助にはなる）。
+
+### tools/verify への組み込み案（組み込みはマネジャーの判断後）
+
+- `verify.mjs` の build の前に、`analyze-file` を Error 判定だけに使う任意の段階（`--analyze`）として足す。終了コード 1 を失敗とし、Warning と Info は出力しない（`ST-USG-*` はほぼ必ず出るため）。
+- 作業用プロジェクトに XAML を書いた直後に流すので、窓口は不要。パスは固定せず、環境変数か `UiPath.Studio.CommandLine.exe` の探索で見つける。Studio の更新で版のフォルダ名が変わる点に注意。
+- 価値があるのは、build が `uip rpa` の Helm で落ちる（AUT-706 のような）ものを除いても、XML と型の壊れを build より前に早く、短く返せること。式の誤りは従来どおり build で見る。
