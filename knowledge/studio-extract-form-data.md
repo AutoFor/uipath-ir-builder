@@ -168,3 +168,5 @@ Studio 26.0.204、UIAutomation 26.10.6。ローカルの DLL（`UiPath.UIAutomat
 - `verify.mjs` の build の前に、`analyze-file` を Error 判定だけに使う任意の段階（`--analyze`）として足す。終了コード 1 を失敗とし、Warning と Info は出力しない（`ST-USG-*` はほぼ必ず出るため）。
 - 作業用プロジェクトに XAML を書いた直後に流すので、窓口は不要。パスは固定せず、環境変数か `UiPath.Studio.CommandLine.exe` の探索で見つける。Studio の更新で版のフォルダ名が変わる点に注意。
 - 価値があるのは、build が `uip rpa` の Helm で落ちる（AUT-706 のような）ものを除いても、XML と型の壊れを build より前に早く、短く返せること。式の誤りは従来どおり build で見る。
+
+標準入力を閉じずに流すと、120 秒で終わらなかった（1 回。出力 0 バイト）。`</dev/null` を付けると同じ対象が 3〜4 秒で終わる。標準入力が理由というのは、この比較からの推定。
