@@ -108,11 +108,13 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 既定 XAML は `AssignmentCriteria="{x:Reference __ReferenceID0}"` を出すが、生成器はこの属性を既定値に使わない（参照先の要素が無いと壊れる）。割り当て先も条件も省くと、`Unassigned`、`TaskAssignmentCriteria: SingleUser` で作られる（AUT-1076 のタスクを AUT-1090 で読んだ）。ユーザーだけ書いて条件を省いたときは、XAML では効いた（`UserNameOrEmail` のみで本人に割り当たる。docs/task-assignment.md の実測）。
 
+`CurrentAppTaskState` は `objs` で書けるようにした（次の節）。
+
 残り（`CreateUserAction`）：
 
 | プロパティ | 理由 |
 | --- | --- |
-| `AppActionPropertiesMetadata`、`CurrentAppTaskState`、`State` | 画面に出ない内部の状態（browsable=false）。Studio がアプリのスキーマから作るらしく、既定 XAML は空。中身の形を確かめられない |
+| `AppActionPropertiesMetadata`、`State` | 画面に出ない内部の状態（browsable=false）。DLL の読み取りでは、どちらもコンストラクターが空の値を入れ、`State` は実行時のコードで使われない。`AppActionPropertiesMetadata` は `Format` が `date` の項目の変換にだけ使う（書けないので、日付の項目は変換されない。実行では未確認） |
 | `TaskFieldsForDesktop` | `String[]` の素のプロパティ。既定は `{x:Null}` で形の手がかりが無い。Web 用の `TaskFieldsForWeb` は式で書ける |
 
 ## build で分かった制約（サンプルを書くときの注意）
@@ -122,10 +124,31 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 - `BindingsKey`（`AddQueueItemAndGetReference`、`StartJobAndGetReference`）、`AppBindingsKey`、`CatalogBindingsKey`：setter が無く `Cannot set unknown member`。カタログを今の抽出器で作り直して `readOnly` にした
 - サンプルの `Id`、タスクのカタログ名、`SolutionApp` などの値は置き物で、テナントに実物は無い
 
+## CreateUserAction は CurrentAppTaskState が要る（2026-11-03）
+
+**null の正体（コードの読み取り。1.13.0 を逆コンパイル）**：`CreateUserAction.CurrentAppTaskState`。`CreateAppTaskRequest` がリクエストを作るところで `CurrentAppTaskState.AppId` などを無条件に読む。コンストラクターは初期値を入れず（`AppActionData` などの辞書と違う）、既定 XAML も `{x:Null}`。`NullReferenceException` は同じメソッドの catch で `PersistenceActivityException(ex.Message)` に包まれるので、担当者や辞書やアプリ名によらず同じ文言で落ち、HTTP の前なので速い。Studio は画面でアプリを選ぶと値を入れる（`BaseSolutionResourceViewModel`）。
+
+**書き方**：`objs.CurrentAppTaskState` に空のオブジェクトを書き、`SolutionApp` にアプリ名を書く。見本は `samples/ir/UiPath.Persistence.Activities/CreateUserAction.app.json`。入力は `dicts.AppActionData`。
+
+```json
+{ "act": "CreateUserAction",
+  "props": { "TaskTitle": { "lit": "..." }, "TaskPriority": "Low", "SolutionApp": { "lit": "uipath-ir-test-approval" }, "UserNameOrEmail": "in_Assignee", "TaskOutput": "task" },
+  "objs": { "CurrentAppTaskState": {} },
+  "dicts": { "AppActionData": [ { "name": "note", "dir": "In", "type": "String", "value": { "lit": "..." } } ] } }
+```
+
+`FolderKey` が空なら、実行時に `GET .../action-apps/<SolutionApp>?folderName=<ジョブのフォルダ>` でアプリを引き、`AppId`、版、`FolderKey` をその結果で埋める（コード）。つまり **アプリのフォルダとジョブのフォルダが同じなら、ID を XAML に持たなくてよい**。
+
+**実測**（個人ワークスペース、`--runtime-type Development`、`uipath-ir-test-assign` 1.0.9、プロセス `uipath-ir-test-assign-f-cua-app`）：ジョブ `e1e3cc60-f205-4c37-87e5-31a90d5293e8` は Successful、タスク 100242681 は `AppTask`、Pending、SingleUser、本人に割り当て。`AppId` は名前から解決され、`FolderKey` は個人ワークスペース、`Data` に `note` の値が入った（`uip tasks get` はキーの先頭を大文字にして `Note` と出す）。`TaskCatalog` は書いていない。
+
+**検証**：`CurrentAppTaskState` が無いと `USER_ACTION_NO_APP_STATE`（上の実測と5件の Faulted で確かめた）。`FolderKey` も `SolutionApp` も無いと `USER_ACTION_NO_APP`（コードの読み取り。名前の無い URL になる。流してはいない）。例は `samples/ir-invalid/UserActionNoAppState.json`、`UserActionNoApp.json`。
+
+**未確認**：`AppId` と `FolderKey` を `CurrentAppTaskState` に直接書く形（コードでは引きに行かない）、別フォルダのアプリ（`FolderPath` はカタログ用で、アプリのフォルダはバインディングから読むコードなので、この形では届かないと推定）、`Group` での割り当て、`IsSolutionAuthoredApp`（`SolutionAppResources` あり）の経路、画面の表示、人の完了と `WaitForUserActionAndResume` の再開、`comment` の戻り。`CreateUserAction` の他のサンプル（`min`、`full`、`assign`、`solution`）は build だけ。
+
 ## 割り当ての失敗の切り分け（AUT-1104、2026-11-03）
 
 個人ワークスペースで形ごとに流した結果（ジョブ ID とタスク番号は `docs/task-assignment.md` の「2026-11-03 追加」）。実測：
-- `CreateUserAction` は user のみ、group のみのどちらも NullReference 相当で落ちる。空の辞書やアプリ名を足しても同じ。原因は未確認（実在する Action App が要る疑い。推定）
+- `CreateUserAction` は user のみ、group のみのどちらも NullReference 相当で落ちる。空の辞書やアプリ名を足しても同じ。原因は `CurrentAppTaskState` が null（上の節。当時の推定「実在する Action App が要る」ではなく、状態のオブジェクトが無いこと）
 - `CreateFormTask`：`RoundRobin` + `Group` は本人に割り当たる。`Workload` は 2415、`AllUsers` + 実在の `Group` は 2414、`AllUsers` + 存在しないグループは 2482。`AllUsers` に `UserNameOrEmail` だけ、`Group` のみ（条件なし）は落ちずに未割り当て。2414、2415 の原因は、役割の無いグループのメンバーに当たるため（推定）。検証 `ASSIGN_ALL_USERS_WITHOUT_GROUP` が前者の形を止める
 - `AssignTasks`：`Assign` は未割り当てのタスクに効く。`Reassign` は割り当て済みにしか使えず、未割り当ては 2413、同じ人は 2417、`Group` のみで割り当て済みは 2418。失敗してもジョブは Successful で、`FailedTaskAssignments` に入る
 - `CreateExternalTask`：読めるカタログ `default_du_actions` では担当者が効かない。`SingleUser` + `Group` の実行時の挙動は未確認

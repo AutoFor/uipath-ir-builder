@@ -79,6 +79,18 @@ function checkAllUsersUser(n: Node, path: string, add: (path: string, code: stri
     add(`${path}.props.UserNameOrEmail`, "ASSIGN_ALL_USERS_WITHOUT_GROUP", "AllUsers に UserNameOrEmail だけを書くと、ユーザーは無視されてタスクは Unassigned のままになる（実測）。人に割り当てるなら条件を SingleUser にする（knowledge/persistence.md）");
 }
 
+// CreateUserAction は実行時に CurrentAppTaskState を無条件に読む（1.13.0 の CreateAppTaskRequest。null だと NullReference でタスクができない。knowledge/persistence.md）。
+// コンストラクターは初期値を入れず、既定 XAML も {x:Null} なので、IR に書く。FolderKey が無いと実行時に名前でアプリを引くので、そのときは SolutionApp も要る
+function checkUserActionApp(n: Node, path: string, add: (path: string, code: string, message: string) => void) {
+  const state = n.objs?.CurrentAppTaskState as { FolderKey?: Value } | undefined;
+  if (!state) {
+    add(`${path}.objs`, "USER_ACTION_NO_APP_STATE", "CreateUserAction に CurrentAppTaskState が無い（実行時に Object reference not set で落ちる。build は通る。名前でアプリを引くなら objs.CurrentAppTaskState を {} にして SolutionApp を書く。knowledge/persistence.md）");
+    return;
+  }
+  if (state.FolderKey === undefined && n.props?.SolutionApp === undefined)
+    add(`${path}.props`, "USER_ACTION_NO_APP", "CreateUserAction にアプリの指定が無い（CurrentAppTaskState に FolderKey が無いと実行時に名前でアプリを引くので、SolutionApp にアプリ名を書く。knowledge/persistence.md）");
+}
+
 export function checkPersistence(wf: Workflow, add: (path: string, code: string, message: string) => void) {
   const walk = (nodes: Node[], base: string, scope: string | undefined) =>
     nodes.forEach((n, i) => {
@@ -87,6 +99,7 @@ export function checkPersistence(wf: Workflow, add: (path: string, code: string,
       if (name === "CreateFormTask") checkFormLayout(n, path, add);
       checkCriteria(n, path, add);
       if (name === "CreateFormTask") checkAllUsersUser(n, path, add);
+      if (name === "CreateUserAction") checkUserActionApp(n, path, add);
       if (scope && SCOPE_CHECKED.has(name))
         add(path, "PERSIST_IN_NO_PERSIST_SCOPE", `${name} は ${scope} の中に置けない（永続化できないスコープ。外に出す）`);
       const inner = NO_PERSIST_SCOPES.has(name) ? name : scope;

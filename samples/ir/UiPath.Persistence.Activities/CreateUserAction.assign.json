@@ -21,7 +21,10 @@
         "UserNameOrEmail": {
           "lit": "user@example.com"
         },
-        "TaskOutput": "task1"
+        "TaskOutput": "task1",
+        "SolutionApp": {
+          "lit": "uipath-ir-test-approval"
+        }
       },
       "objs": {
         "AssignmentCriteria": {
@@ -34,7 +37,8 @@
           "Name": {
             "lit": "Activity_AssignTasks_AssignmentCriteria_SingleUserName"
           }
-        }
+        },
+        "CurrentAppTaskState": {}
       }
     },
     {
@@ -47,7 +51,10 @@
         "Group": {
           "lit": "Reviewers"
         },
-        "TaskOutput": "task2"
+        "TaskOutput": "task2",
+        "SolutionApp": {
+          "lit": "uipath-ir-test-approval"
+        }
       },
       "objs": {
         "AssignmentCriteria": {
@@ -60,7 +67,8 @@
           "Name": {
             "lit": "Activity_AssignTasks_AssignmentCriteria_AllUsersName"
           }
-        }
+        },
+        "CurrentAppTaskState": {}
       }
     }
   ]

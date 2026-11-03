@@ -209,6 +209,10 @@ uip or processes list --folder-key $F --limit 100 --output-filter "[?contains(Na
 uip or jobs start <キー> --folder-key $F --runtime-type Development --input-arguments '{"in_Assignee":"<メール>"}'   # formtask だけ。assigntasks-* は {"in_TaskId":<番号>}
 ```
 
+### CreateUserAction の Faulted の決着（2026-11-03）
+
+下の `CreateUserAction` の Faulted は、どれも `CurrentAppTaskState` が null だったため（DLL の読み取り）。`objs.CurrentAppTaskState: {}` と実在のアプリ名の `SolutionApp` で、ジョブ `e1e3cc60-f205-4c37-87e5-31a90d5293e8` が Successful、タスク 100242681 が本人に割り当たった（実測）。詳しくは `knowledge/persistence.md`。下の表の推定はこの節が優先。残したもの：本人宛ての Pending のタスク 100242681（完了していない）、パッケージ `uipath-ir-test-assign` 1.0.9、プロセス `uipath-ir-test-assign-f-cua-app`。
+
 ### 2026-11-03 追加（AUT-1104、切り分けのジョブを流した）
 
 窓口が戻ったので、形ごとに XAML を分けて個人ワークスペースで流した。パッケージ `uipath-ir-test-assign` 1.0.3〜1.0.8 は個人ワークスペースのフィード（`--feed-id`）にだけ上げ、`packages list --feed-id` で同じフィードにあることを確認した。プロセスは `uipath-ir-test-assign-f-<形>`、`--runtime-type Development`。割り当て先は本人と `Automation Developers`。実メールアドレスは書かない。
