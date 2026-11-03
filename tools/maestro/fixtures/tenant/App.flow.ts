@@ -7,7 +7,7 @@ export default flow("app-node").name("AppNode")
     app: {
       name: "uipath-ir-test-approval",
       key: "ddab4478-d11a-4014-b717-2bc489edfade",
-      folderPath: "seiya-kawashima@autofor.co.jp's workspace",
+      folderPath: "PERSONAL_WORKSPACE",
       inputs: { note: "'Flow から'" },
       actionSchema: {
         inputs: { type: "object", properties: { note: { type: "string", required: false } } },

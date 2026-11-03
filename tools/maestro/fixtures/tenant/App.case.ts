@@ -5,7 +5,7 @@ export default casePlan("app-node").name("AppNode").identifier("APP")
     .task("Approve", (t) => t.action({
       title: "AUT-1079 Case の確認",
       priority: "Low",
-      app: { name: "uipath-ir-test-approval", folder: "seiya-kawashima@autofor.co.jp's workspace" },
+      app: { name: "uipath-ir-test-approval", folder: "PERSONAL_WORKSPACE" },
       inputs: [{ name: "note", value: "Case から" }],
       outputs: [{ name: "comment" }],
     }).entryWhen(rule("current-stage-entered")))

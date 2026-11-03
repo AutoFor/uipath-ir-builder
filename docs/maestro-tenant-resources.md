@@ -24,7 +24,7 @@
 
 ## 書き方と、確かめた範囲
 
-サンプルは `tools/maestro/fixtures/tenant/`。
+サンプルは `tools/maestro/fixtures/tenant/`。フォルダの `PERSONAL_WORKSPACE` は、テナントで流すときに実際の個人ワークスペースの名前に置き換える（名前にメールアドレスが入るのでコミットしない）。
 
 | 資源 | Flow | BPMN | Case | 確かめた範囲 |
 | --- | --- | --- | --- | --- |
