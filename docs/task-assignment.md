@@ -209,7 +209,50 @@ uip or processes list --folder-key $F --limit 100 --output-filter "[?contains(Na
 uip or jobs start <キー> --folder-key $F --runtime-type Development --input-arguments '{"in_Assignee":"<メール>"}'   # formtask だけ。assigntasks-* は {"in_TaskId":<番号>}
 ```
 
-### 2026-11-03 追加（AUT-1104、読み取りとジョブのログだけ）
+### 2026-11-03 追加（AUT-1104、切り分けのジョブを流した）
+
+窓口が戻ったので、形ごとに XAML を分けて個人ワークスペースで流した。パッケージ `uipath-ir-test-assign` 1.0.3〜1.0.8 は個人ワークスペースのフィード（`--feed-id`）にだけ上げ、`packages list --feed-id` で同じフィードにあることを確認した。プロセスは `uipath-ir-test-assign-f-<形>`、`--runtime-type Development`。割り当て先は本人と `Automation Developers`。実メールアドレスは書かない。
+
+| 形 | ジョブ | 結果 | タスク | Status / 担当 / エラー |
+| --- | --- | --- | --- | --- |
+| `CreateUserAction` user のみ | `ce5b7431-bdaf-4420-bde3-14bbc36861e2` | **Faulted** | なし | `Object reference not set to an instance of an object.` |
+| `CreateUserAction` group のみ | `8719c494-3ceb-444d-be7b-b8eecfe42063` | **Faulted** | なし | 同上 |
+| 同 user + 空の `AppActionData`、`SolutionAppResources` | `e8e1cd84-b8db-4fa3-afed-a2fd1afec2fc` | **Faulted** | なし | 同上 |
+| 同上 + `SolutionApp`、`SolutionTaskCatalog`（存在しない名前） | `91800802-7c2b-4237-917a-e7d47e9d5e44` | **Faulted** | なし | 同上 |
+| 同 user + `TaskCatalog`（存在しない名前） | `84d3a9c5-5763-4d4d-a6c1-08269894071f` | **Faulted** | なし | 同上 |
+| `CreateFormTask` `RoundRobin` + `Group` | `c24d8483-7574-4111-a88d-931947157743` | Successful | 100242534 | Pending / SingleUser / **本人** |
+| `CreateFormTask` `Workload` + `Group` | `033a9b7c-41b3-459b-a32e-eee11b33a766` | **Faulted** | なし | `You do not have the required permissions to change the assignee of the action Error code: 2415` |
+| `CreateFormTask` `AllUsers` + `Group`（実在。`assign-group` の再現） | `fbb3d525-9e7e-4012-ac65-f05c6702b96a` | **Faulted** | なし | `Action cannot be assigned to this user due to insufficient permissions Error code: 2414` |
+| `CreateFormTask` `AllUsers` + `UserNameOrEmail`（`Group` 無し） | `9e43f758-c73b-489a-8d40-3e389bae13ee` | Successful | 100242537 | **Unassigned** / SingleUser / なし |
+| `CreateFormTask` `AllUsers` + 存在しないグループ | `0a85aca0-b04a-402d-a948-252d520135d8` | **Faulted** | なし | `Local group not found or the group has insufficient permissions in this folder Error code: 2482` |
+| `CreateFormTask` `Group` のみ（条件なし） | `f228c8f1-1406-4327-bd1a-f8868bfd66b5` | Successful | 100242538 | **Unassigned** / SingleUser / なし |
+| `AssignTasks` `Assign` + 本人、未割り当て 100241800 | `18415022-c888-4309-98a3-36713c8c87e1` | Successful | 100241800 | **本人に割り当たった**（Pending）。失敗 0 件 |
+| `Reassign` + 本人、未割り当て 100241805 | `7042d027-b153-4b47-a546-aa7e93bd978b` | Successful | 100241805 | Unassigned のまま。失敗 1 件 `2413 Action must be assigned to a user before re-assigning/unassigning` |
+| `Reassign` + 本人 + `Group`（SingleUser）、未割り当て 100242538 | `b6093b08-8126-4a96-a25b-757333e71171` | Successful | 100242538 | 同上（2413。対象は本人） |
+| `Reassign` + `Group`（AllUsers）、未割り当て 100242537 | `ac02bef8-5ff3-4591-be48-d94360445270` | Successful | 100242537 | Unassigned のまま。失敗 1 件 `2414 Action cannot be assigned to this user due to insufficient permissions`（`UserNameOrEmail` は null） |
+| `Reassign` + 本人、本人に割り当て済み 100241800 | `a9c5b6f7-b602-4848-a2c3-592b2747844c` | Successful | 100241800 | 変化なし。失敗 1 件 `2417 No assignment performed, this Action is already assigned to the same user` |
+| `Reassign` + 本人 + `Group`、割り当て済み 100241800 | `0c6b2416-572f-4ef9-b166-97b43749b6d8` | Successful | 100241800 | 変化なし。2417 |
+| `Reassign` + `Group`（AllUsers）、割り当て済み 100241800 | `6b093d6c-4470-4035-889d-46ef93bfc272` | Successful | 100241800 | 変化なし。失敗 1 件 `2418 This Action is already assigned to another user` |
+| `CreateExternalTask`（カタログ `default_du_actions`）SingleUser + 本人 + `Group` | `36518325-0956-42c8-a71c-12aa223d7664` | Successful | 100242564 | **Unassigned** |
+| 同上、`Group` 無し | `615d5694-23f9-4a40-a172-633e676be83b` | Successful | 100242566 | **Unassigned** |
+
+分かったこと（実測。「推定」と書いたものだけ推定）：
+
+- **`CreateUserAction`**：user のみでも group のみでも同じ NullReference 相当で落ちる。担当者の指定は原因ではない。空の `AppActionData`、`SolutionAppResources`、存在しない `SolutionApp` / `SolutionTaskCatalog` / `TaskCatalog` を足しても同じ（`AppActionPropertiesMetadata`、`State` は IR で書けないので足せていない）。null の正体は**未確認**（推定：アプリのスキーマ由来の状態が空、または実在するアプリの指定が要る。個人ワークスペースに Action App が無く、実在のアプリでは確かめていない）。IR だけで動く形は見つかっていない
+- **`AllUsers` + `Group` の 2414**（再現した）：`AllUsers` に `UserNameOrEmail` だけ（`Group` 無し）だと落ちずに未割り当て、存在しないグループだと別のエラー 2482、`Group` のみ（条件なし）も未割り当て、`RoundRobin` + 同じグループは成功して本人に割り当たった。よってグループが読めないのでも、割り当てが使えないのでもなく、実在のグループの全メンバーへ割り当てようとして権限の無いメンバーで拒否される形（**推定**。`UnAttended` にフォルダの役割が無いことは読み取りで確認済み。メンバーやロールを変える対照実験は許可外でしていない）。`AssignTasks` の `Reassign` + `AllUsers` + `Group` も同じ 2414（実測）
+- **`RoundRobin` と `Workload`**：`RoundRobin`（`Group` 付き）は成功して本人に割り当たった。`Workload`（`Group` 付き）は 2415 で落ちた。前回「`assign-distribute` の 2415 は先頭の `RoundRobin`」としたのは**誤り**で、2415 は `Workload` の呼び出し。落ちる理由は推定（負荷の少ないメンバー、すなわち役割の無い `UnAttended` を選んで権限エラー。`RoundRobin` は 1 回だけの実測で、たまたま本人に当たった可能性がある）。Maestro では `Workload` が割り当たった（違いの理由は未確認）
+- **`AssignTasks` の `FailedTaskAssignments`**（`TaskId`、`UserId`、`UserNameOrEmail`、`ErrorCode`、`ErrorMessage` を持つ。`Newtonsoft.Json.JsonConvert.SerializeObject(failed)` で JSON にできる）：
+  - **`Assign` は未割り当てのタスクに効く**（本人。失敗 0 件）
+  - **`Reassign` は割り当て済みのタスクにしか使えない**。未割り当てだと 2413。前回の `AssignTasks.full` が未割り当てのままだった理由はこれ
+  - ユーザーのみ、ユーザー + `Group`：未割り当てなら 2413、同じ人に割り当て済みなら 2417。`Group` を足してもユーザーが優先される
+  - `Group` のみ（`AllUsers`）：未割り当てなら 2414、割り当て済みなら 2418
+  - 失敗してもジョブは Successful。`FailedTaskAssignments` を見ないと気づけない。別の人への再割り当てが通るかは**未確認**（他人への割り当ては許可外）
+- **`CreateExternalTask`**：個人ワークスペースで読めるカタログは `default_du_actions`（Document Understanding 用）だけ。`SingleUser` + 本人 + `Group` は弾かれず成功したが、`Group` 無しでも未割り当てで、このカタログでは担当者を無視する。汎用カタログでの `SingleUser` + `Group` は**未確認**
+- 検証にエラー `ASSIGN_ALL_USERS_WITHOUT_GROUP` を足した：`CreateFormTask` の `AllUsers` に `UserNameOrEmail` だけを書く形（ユーザーが無視されて未割り当てになる。実測）。`samples/ir-invalid/AllUsersWithoutGroup.json`
+
+残したもの：本人宛ての Pending のタスク 100242534、100241800。未割り当てのタスク 100242537、100242538、100241805、100242564、100242566、100241800 以外の前回分。ジョブはすべて終了済み。プロセス `uipath-ir-test-assign-f-*` 17 個と、個人ワークスペースのフィード上のパッケージ 1.0.3〜1.0.8。
+
+### 2026-11-03 追加の前の読み取り（上の実測で、`assign-distribute` の 2415 の呼び出しなど一部は訂正済み）
 
 run の窓口（runner.mjs）が止まっていた（`runner.alive` の最終更新が 2026-11-02 16:13）ので、1 呼び出しずつに分けた版の pack ができず、新しいジョブは流していない。既存のジョブのログと、グループとロールの読み取りで分かったこと。
 

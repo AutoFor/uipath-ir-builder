@@ -72,6 +72,13 @@ function checkCriteria(n: Node, path: string, add: (path: string, code: string, 
   }
 }
 
+// CreateFormTask の AllUsers に UserNameOrEmail だけを書く形（AUT-1104 の実測：ジョブは成功するが、ユーザーは無視されてタスクは Unassigned のまま。docs/task-assignment.md）
+function checkAllUsersUser(n: Node, path: string, add: (path: string, code: string, message: string) => void) {
+  const id = formLayoutLiteral((n.objs?.AssignmentCriteria as { Id?: Value } | undefined)?.Id);
+  if (id === "AllUsers" && n.props?.UserNameOrEmail !== undefined && n.props?.Group === undefined)
+    add(`${path}.props.UserNameOrEmail`, "ASSIGN_ALL_USERS_WITHOUT_GROUP", "AllUsers に UserNameOrEmail だけを書くと、ユーザーは無視されてタスクは Unassigned のままになる（実測）。人に割り当てるなら条件を SingleUser にする（knowledge/persistence.md）");
+}
+
 export function checkPersistence(wf: Workflow, add: (path: string, code: string, message: string) => void) {
   const walk = (nodes: Node[], base: string, scope: string | undefined) =>
     nodes.forEach((n, i) => {
@@ -79,6 +86,7 @@ export function checkPersistence(wf: Workflow, add: (path: string, code: string,
       const name = shortName(n.act);
       if (name === "CreateFormTask") checkFormLayout(n, path, add);
       checkCriteria(n, path, add);
+      if (name === "CreateFormTask") checkAllUsersUser(n, path, add);
       if (scope && SCOPE_CHECKED.has(name))
         add(path, "PERSIST_IN_NO_PERSIST_SCOPE", `${name} は ${scope} の中に置けない（永続化できないスコープ。外に出す）`);
       const inner = NO_PERSIST_SCOPES.has(name) ? name : scope;

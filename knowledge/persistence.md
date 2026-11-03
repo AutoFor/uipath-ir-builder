@@ -124,4 +124,8 @@ UI のほかのスコープ（`BrowserScope`、`OpenApplication`、`ElementScope
 
 ## 割り当ての失敗の切り分け（AUT-1104、2026-11-03）
 
-読み取りとジョブのログだけ。run の窓口が止まっていて、新しいジョブは流せていない。結果と手順は `docs/task-assignment.md` の「2026-11-03 追加」。要点：`AssignTasks` の `FailedTaskAssignments` は件数 1（割り当てを試みて失敗。実測）、`assign-distribute` の 2415 は先頭の `RoundRobin`（実測）、`Automation Developers` のメンバー（本人以外に `UnAttended`）に個人ワークスペースのフォルダの役割が無い（読み取り。2414 の原因は**推定**）。
+個人ワークスペースで形ごとに流した結果（ジョブ ID とタスク番号は `docs/task-assignment.md` の「2026-11-03 追加」）。実測：
+- `CreateUserAction` は user のみ、group のみのどちらも NullReference 相当で落ちる。空の辞書やアプリ名を足しても同じ。原因は未確認（実在する Action App が要る疑い。推定）
+- `CreateFormTask`：`RoundRobin` + `Group` は本人に割り当たる。`Workload` は 2415、`AllUsers` + 実在の `Group` は 2414、`AllUsers` + 存在しないグループは 2482。`AllUsers` に `UserNameOrEmail` だけ、`Group` のみ（条件なし）は落ちずに未割り当て。2414、2415 の原因は、役割の無いグループのメンバーに当たるため（推定）。検証 `ASSIGN_ALL_USERS_WITHOUT_GROUP` が前者の形を止める
+- `AssignTasks`：`Assign` は未割り当てのタスクに効く。`Reassign` は割り当て済みにしか使えず、未割り当ては 2413、同じ人は 2417、`Group` のみで割り当て済みは 2418。失敗してもジョブは Successful で、`FailedTaskAssignments` に入る
+- `CreateExternalTask`：読めるカタログ `default_du_actions` では担当者が効かない。`SingleUser` + `Group` の実行時の挙動は未確認
