@@ -1,0 +1,34 @@
+{
+  "workflow": "AllUsersWithoutGroup",
+  "variables": [
+    {
+      "name": "task",
+      "type": "FormTaskData"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateFormTask",
+      "props": {
+        "TaskTitle": {
+          "lit": "t"
+        },
+        "UserNameOrEmail": {
+          "lit": "user@example.com"
+        },
+        "FormLayout": {
+          "lit": "[]"
+        },
+        "TaskOutput": "task",
+        "TaskPriority": "Low"
+      },
+      "objs": {
+        "AssignmentCriteria": {
+          "Id": {
+            "lit": "AllUsers"
+          }
+        }
+      }
+    }
+  ]
+}
