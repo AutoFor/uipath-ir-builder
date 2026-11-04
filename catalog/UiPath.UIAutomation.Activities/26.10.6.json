@@ -36089,5 +36089,19 @@
     "UiPath.Core.Activities.Scrape.Tesseract.TesseractScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
     "UiPath.Core.Activities.Scrape.MicrosoftAzure.MicrosoftAzureComputerVisionScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'.",
     "UiPath.Core.Activities.Scrape.GoogleCloud.GoogleCloudScrapeEngine: TypeLoadException: Could not find type 'UiPath.OCR.Contracts.Scrape.ScrapeEngineBase' in assembly 'C:\\Users\\seiya\\.nuget\\packages\\uipath.ocr.activities\\4.3.0\\build\\net6.0\\UiPath.OCR.Contracts.dll'."
+  ],
+  "codedRegistries": [
+    {
+      "type": "UiPath.UIAutomationNext.API.ServiceCollectionRegister",
+      "vars": {
+        "uiAutomation": "UiPath.UIAutomationNext.API.Contracts.IUiAutomationAppService"
+      },
+      "namespaces": [
+        "System",
+        "UiPath.UIAutomationNext.API.Contracts",
+        "UiPath.UIAutomationNext.Enums",
+        "UiPath.UIAutomationNext.API.Models"
+      ]
+    }
   ]
 }

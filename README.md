@@ -29,6 +29,8 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
   --dll $N/uipath.codedworkflows/24.10.3/lib/net6.0-windows7.0/UiPath.CodedWorkflows.dll --out catalog/UiPath.CodedWorkflows/24.10.3.json
 ```
 
+API の DLL に Coded のサービスの登録クラス（`[assembly: CodedWorkflowsServiceRegistry]`）があれば、`codedRegistries` に変数名と型（`excel` → `IExcelService`）、Studio が `CodedWorkflow.cs` に足す using を書き出す。`tools/coded/check.ts` はこれで `system.` や `excel.` の変数を決める。
+
 Excel のように Coded の API が「サービスが返す型（handle）のメソッドや拡張メソッド」になっているパッケージは `--follow-returns` を付ける。サービスのメソッドが返す型をたどって `handles`（プロパティ・インデクサー・メソッド）、`*.API` 名前空間の拡張メソッドを `extensions`、出てきた enum を `enums` に書き出す：
 
 ```bash
@@ -44,7 +46,7 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.System.Activities | 26.10.0 | 186 |
 | UiPath.UIAutomation.Activities | 25.10.33 | 202 |
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
-| UiPath.CodedWorkflows | 24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ） |
+| UiPath.CodedWorkflows | 24.10.0〜24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ。4つの版で同じ） |
 | UiPath.Excel.Activities | 3.6.1 | 128（Coded の `IExcelService` と、`--follow-returns` で取った handles / extensions / enums も） |
 
 既定の版の一覧は `tools/ir/versions.ts` にある。`gen.ts` / `gen-coded.ts` / `coverage.ts` / `tools/coded/check.ts` に `--project <dir>` を渡すと、そのプロジェクトの `project.json` の `dependencies` の版を使う（無い版はエラー。[docs/version-upgrade.md](docs/version-upgrade.md)）。

@@ -15689,5 +15689,22 @@
       "SingleQuote"
     ]
   },
-  "warnings": []
+  "warnings": [],
+  "codedRegistries": [
+    {
+      "type": "UiPath.Excel.Activities.API.ExcelRegistry",
+      "vars": {
+        "excel": "UiPath.Excel.Activities.API.IExcelService"
+      },
+      "namespaces": [
+        "System",
+        "System.Collections.Generic",
+        "System.Data",
+        "UiPath.Excel",
+        "UiPath.Excel.Activities",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ]
 }

@@ -9,6 +9,10 @@ using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Ecma335 = System.Reflection.Metadata.Ecma335;
+using Emit = System.Reflection.Emit;
+using PE = System.Reflection.PortableExecutable;
+using SRM = System.Reflection.Metadata;
 
 var opts = Options.Parse(args);
 var resolver = new PathAssemblyResolver(ReferencePaths.Collect(opts));
@@ -103,11 +107,13 @@ if (opts.FollowReturns)
     }
 }
 
+var registries = opts.Dlls.SelectMany(d => Registries.Read(d, warnings)).ToList();
+
 var catalog = new Catalog(opts.Package, opts.Version, opts.Dlls.Select(Path.GetFileName).ToList()!,
     activities.OrderBy(a => a.ClassName).ToList(), services.Count > 0 ? services.OrderBy(s => s.ClrType).ToList() : null,
     handles.Count > 0 ? handles.OrderBy(s => s.ClrType).ToList() : null,
     extensions.Count > 0 ? extensions.OrderBy(s => s.ClrType).ToList() : null,
-    enums.Count > 0 ? enums : null, warnings);
+    enums.Count > 0 ? enums : null, warnings, registries.Count > 0 ? registries : null);
 
 Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.Out))!);
 File.WriteAllText(opts.Out, JsonSerializer.Serialize(catalog, Json.Options));
@@ -116,7 +122,11 @@ Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities
 // ---------------------------------------------------------------------------
 
 record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<ServiceInfo>? Services, List<ServiceInfo>? Handles,
-    List<ServiceInfo>? Extensions, SortedDictionary<string, List<string>>? Enums, List<string> Warnings);
+    List<ServiceInfo>? Extensions, SortedDictionary<string, List<string>>? Enums, List<string> Warnings, List<RegistryInfo>? CodedRegistries = null);
+
+// Coded のサービスの登録（[assembly: CodedWorkflowsServiceRegistry(typeof(X))] の X）。Studio はこれを読んで
+// .local/.codedworkflows/CodedWorkflow.cs を作る。vars は変数名 → 型（excel → IExcelService）、namespaces はそのファイルに足す using
+record RegistryInfo(string Type, SortedDictionary<string, string> Vars, List<string> Namespaces);
 
 // Coded Workflow から呼ぶサービス（system.LogMessage(...) の system の型）
 record ServiceInfo(string Name, string ClrType, string Assembly, List<string> Bases, List<MethodSig> Methods, List<PropSig>? Properties = null);
@@ -349,6 +359,90 @@ static class Services
         var obsolete = m.GetCustomAttributesData().Any(a => a.AttributeType.Name == "ObsoleteAttribute");
         return new MethodSig(m.Name, TypeNames.Format(m.ReturnType), ps, tps, obsolete);
     }
+}
+
+// Coded のサービスの登録クラスを読む。変数名は属性やシグネチャには無く、AutoImportedTypes の getter の IL にある
+// （ldstr "excel"; ldtoken IExcelService; ... Add）。MetadataLoadContext は IL の文字列を引けないので、System.Reflection.Metadata で直接読む
+static class Registries
+{
+    static readonly Dictionary<short, Emit.OpCode> OpCodes = typeof(Emit.OpCodes)
+        .GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => (Emit.OpCode)f.GetValue(null)!).ToDictionary(o => o.Value);
+
+    public static List<RegistryInfo> Read(string dll, List<string> warnings)
+    {
+        var result = new List<RegistryInfo>();
+        using var pe = new PE.PEReader(File.OpenRead(dll));
+        var md = SRM.PEReaderExtensions.GetMetadataReader(pe);
+        foreach (var ah in md.GetCustomAttributes(SRM.EntityHandle.AssemblyDefinition))
+        {
+            var a = md.GetCustomAttribute(ah);
+            if (a.Constructor.Kind != SRM.HandleKind.MemberReference) continue;
+            var parent = md.GetMemberReference((SRM.MemberReferenceHandle)a.Constructor).Parent;
+            if (Name(md, parent) != "UiPath.CodedWorkflows.CodedWorkflowsServiceRegistryAttribute") continue;
+            var blob = md.GetBlobReader(a.Value);
+            blob.ReadUInt16(); // prolog
+            var typeName = blob.ReadSerializedString()!.Split(',')[0];
+            var td = md.TypeDefinitions.Select(md.GetTypeDefinition).FirstOrDefault(t => md.GetString(t.Namespace) + "." + md.GetString(t.Name) == typeName);
+            if (td.Equals(default(SRM.TypeDefinition))) { warnings.Add($"{Path.GetFileName(dll)}: 登録クラス {typeName} が DLL に無い"); continue; }
+            var vars = new SortedDictionary<string, string>();
+            var namespaces = new List<string>();
+            foreach (var mh in td.GetMethods())
+            {
+                var m = md.GetMethodDefinition(mh);
+                var name = md.GetString(m.Name);
+                if (m.RelativeVirtualAddress == 0 || (name != "get_AutoImportedTypes" && name != "get_AutoImportedNamespaces")) continue;
+                string? pending = null;
+                foreach (var (op, token) in Walk(SRM.PEReaderExtensions.GetMethodBody(pe, m.RelativeVirtualAddress).GetILBytes()!))
+                {
+                    if (op == Emit.OpCodes.Ldstr.Value)
+                    {
+                        var s = md.GetUserString(Ecma335.MetadataTokens.UserStringHandle(token & 0xFFFFFF));
+                        if (name == "get_AutoImportedNamespaces") namespaces.Add(s); else pending = s;
+                    }
+                    else if (op == Emit.OpCodes.Ldtoken.Value && pending != null)
+                    {
+                        vars[pending] = Name(md, Ecma335.MetadataTokens.EntityHandle(token));
+                        pending = null;
+                    }
+                }
+            }
+            if (vars.Count == 0) warnings.Add($"{Path.GetFileName(dll)}: {typeName} から変数名を読めなかった");
+            result.Add(new RegistryInfo(typeName, vars, namespaces));
+        }
+        return result;
+    }
+
+    // IL を命令ごとに読む。トークンを持つ命令（InlineString / InlineTok など 4 バイト）だけ token を返す
+    static IEnumerable<(short Op, int Token)> Walk(byte[] il)
+    {
+        for (int i = 0; i < il.Length;)
+        {
+            short v = il[i] == 0xFE ? (short)(0xFE00 | il[i + 1]) : il[i];
+            var op = OpCodes[v];
+            i += op.Size;
+            var operand = op.OperandType switch
+            {
+                Emit.OperandType.InlineNone => 0,
+                Emit.OperandType.ShortInlineBrTarget or Emit.OperandType.ShortInlineI or Emit.OperandType.ShortInlineVar => 1,
+                Emit.OperandType.InlineVar => 2,
+                Emit.OperandType.InlineI8 or Emit.OperandType.InlineR => 8,
+                Emit.OperandType.InlineSwitch => 4 + 4 * BitConverter.ToInt32(il, i),
+                _ => 4,
+            };
+            yield return (v, operand == 4 ? BitConverter.ToInt32(il, i) : 0);
+            i += operand;
+        }
+    }
+
+    static string Name(SRM.MetadataReader md, SRM.EntityHandle h) => h.Kind switch
+    {
+        SRM.HandleKind.TypeReference => Full(md.GetTypeReference((SRM.TypeReferenceHandle)h).Namespace, md.GetTypeReference((SRM.TypeReferenceHandle)h).Name, md),
+        SRM.HandleKind.TypeDefinition => Full(md.GetTypeDefinition((SRM.TypeDefinitionHandle)h).Namespace, md.GetTypeDefinition((SRM.TypeDefinitionHandle)h).Name, md),
+        _ => h.Kind.ToString(),
+    };
+
+    static string Full(SRM.StringHandle ns, SRM.StringHandle name, SRM.MetadataReader md) =>
+        (ns.IsNil ? "" : md.GetString(ns) + ".") + md.GetString(name);
 }
 
 static class Attrs

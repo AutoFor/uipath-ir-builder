@@ -22,17 +22,28 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 export const BASE = "UiPath.CodedWorkflows.CodedWorkflowBase";
 
-// 変数名 → サービスの型。プロジェクトの .local/.codedworkflows/CodedWorkflow.cs（Studio が依存パッケージから生成する
-// CodedWorkflow の部分クラス）に書かれている。--project を渡すとそこから読み直す。これは
-// C:\Users\Public\uipath-ir-probe（System 26.10.0、UIAutomation 26.10.6、Excel 3.6.1、Mail 2.12.10、Testing 25.10.1）の値
-export const defaultServiceVars: Record<string, string> = {
-  system: "UiPath.Core.Activities.API.ISystemService",
-  uiAutomation: "UiPath.UIAutomationNext.API.Contracts.IUiAutomationAppService",
-  excel: "UiPath.Excel.Activities.API.IExcelService",
-  mail: "UiPath.Mail.Activities.Api.IMailService",
-  testing: "UiPath.Testing.API.ITestingService",
+// 変数名 → サービスの型。Studio は依存パッケージの API DLL の登録クラス（[assembly: CodedWorkflowsServiceRegistry]）を読んで
+// .local/.codedworkflows/CodedWorkflow.cs（CodedWorkflow の部分クラス）を生成する。カタログの codedRegistries がその写し。
+// 生成済みのプロジェクトを --project で渡したときは、そのファイルを読む（Studio が実際に作ったものが正）
+//
+// カタログの無いパッケージの変数。C:\Users\Public\uipath-ir-probe で Studio が生成したものと、登録クラスから読んだものが同じ
+// （Mail 2.12.10、Testing 25.10.1）。呼び出しはメソッドを確かめられず、NO_CATALOG の警告だけになる
+export const uncatalogedVars: Record<string, Record<string, string>> = {
+  "UiPath.Mail.Activities": { mail: "UiPath.Mail.Activities.Api.IMailService" },
+  "UiPath.Testing.Activities": { testing: "UiPath.Testing.API.ITestingService" },
 };
 export const defaultNamespace = "CatalogProbeNet8";
+
+// カタログの codedRegistries から変数名 → 型を集める
+export function registryVars(files: string[]): Record<string, string> {
+  const vars: Record<string, string> = {};
+  for (const f of files)
+    for (const r of JSON.parse(readFileSync(join(root, f), "utf8")).codedRegistries ?? []) Object.assign(vars, r.vars);
+  return vars;
+}
+
+// 既定（--project なし）はプローブのプロジェクトと同じ依存（System、UIAutomation、Excel、Mail、Testing）
+export const defaultServiceVars: Record<string, string> = { ...registryVars(DEFAULT_SERVICE_FILES), ...Object.assign({}, ...Object.values(uncatalogedVars)) };
 
 export type Param = { name: string; type: string; modifier?: string; optional: boolean; default?: string; params: boolean };
 export type Method = { name: string; returns: string; params: Param[]; typeParams?: string[]; obsolete: boolean };
@@ -53,9 +64,16 @@ export function loadServices(files = DEFAULT_SERVICE_FILES): Map<string, Service
 // プロジェクトから変数名 → 型と名前空間を読む。まだ一度もビルドしていないプロジェクトには生成コードが無いので、既定値を使う。
 // サービスの API は project.json の dependencies の版のカタログから読む（カタログに無い版、services の無い古い版は VersionError）
 export function loadContext(projectDir?: string): Context {
-  const files = projectDir && existsSync(join(projectDir, "project.json")) ? selectCatalogs(root, projectDir, { coded: true }).serviceFiles : DEFAULT_SERVICE_FILES;
+  const hasProject = !!projectDir && existsSync(join(projectDir, "project.json"));
+  const files = hasProject ? selectCatalogs(root, projectDir!, { coded: true }).serviceFiles : DEFAULT_SERVICE_FILES;
   const ctx: Context = { services: loadServices(files), vars: { ...defaultServiceVars }, namespace: defaultNamespace, projectDir };
   if (!projectDir) return ctx;
+  if (hasProject) {
+    // まだ生成コードが無いときの値：依存パッケージのカタログの登録クラスと、カタログの無いパッケージの既知の変数
+    const deps = Object.keys(JSON.parse(readFileSync(join(projectDir, "project.json"), "utf8").replace(/^﻿/, "")).dependencies ?? {}).map((d) => d.toLowerCase());
+    ctx.vars = registryVars(files);
+    for (const [pkg, vars] of Object.entries(uncatalogedVars)) if (deps.includes(pkg.toLowerCase())) Object.assign(ctx.vars, vars);
+  }
   const gen = join(projectDir, ".local", ".codedworkflows", "CodedWorkflow.cs");
   if (existsSync(gen)) {
     const src = readFileSync(gen, "utf8");

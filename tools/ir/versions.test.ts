@@ -104,6 +104,21 @@ test("古い版の UI：objs のターゲットは検証で弾かれ、例外で
   assert.doesNotMatch(r.stderr, /at .*\.ts:/);
 });
 
+test("Coded のサービス変数：生成コードが無ければ依存パッケージの登録クラスから決める", () => {
+  const sysOnly = loadContext(project({ "UiPath.System.Activities": "[26.10.0]" }));
+  assert.deepEqual(sysOnly.vars, { system: "UiPath.Core.Activities.API.ISystemService" });
+  const withMail = loadContext(project({ ...current, "UiPath.Mail.Activities": "[2.12.10]" }));
+  assert.deepEqual(Object.keys(withMail.vars).sort(), ["excel", "mail", "system", "uiAutomation"]);
+  // プローブで Studio が生成した CodedWorkflow.cs と同じ（System、UIAutomation、Excel、Mail、Testing）
+  assert.deepEqual(loadContext().vars, {
+    system: "UiPath.Core.Activities.API.ISystemService",
+    uiAutomation: "UiPath.UIAutomationNext.API.Contracts.IUiAutomationAppService",
+    excel: "UiPath.Excel.Activities.API.IExcelService",
+    mail: "UiPath.Mail.Activities.Api.IMailService",
+    testing: "UiPath.Testing.API.ITestingService",
+  });
+});
+
 test("services が無くても readOnly があれば古い形式にしない（Persistence は API の無いパッケージ）", () => {
   assert.deepEqual(selectCatalogs(root, project(current)).legacy, []);
 });

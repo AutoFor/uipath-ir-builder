@@ -27,11 +27,23 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 - In 引数：`Execute` の引数（名前もそのまま）
 - Out 引数：戻り値。1つなら `public string Execute(...)` で、引数名は `Output` になる。2つ以上なら名前付きタプル `public (string out_Message, int out_Length) Execute(...)` で、要素名が引数名になる
 - `ref` / `out` の引数は使えない（生成コードが `out` / `ref` を付けずに呼ぶので CS1620 でコンパイルが落ちる）。InOut は Coded では書けない
-- `RunWorkflow("coded/Greet.cs", 引数の辞書)` と書くと build は通る（run で呼べるかはまだ確かめていない）。戻り値の辞書のキーは上の引数名（Out が1つなら `"Output"`）
+- `RunWorkflow("coded/Greet.cs", 引数の辞書)` で別の Coded ワークフローを呼べる。戻り値の辞書のキーは上の引数名（Out が1つなら `"Output"`）。生成した `Main.cs` が `Greet.cs` を呼び、期待ログ（`samples/ir/Main.expected.log`）どおりに動くことを run で確かめた（2026-11-04）
 
 ## サービスの変数名と型
 
-`.local/.codedworkflows/CodedWorkflow.cs`（Studio が依存パッケージから生成する `CodedWorkflow` の部分クラス）に書かれている。プローブ プロジェクトでは：
+`.local/.codedworkflows/CodedWorkflow.cs`（Studio が依存パッケージから生成する `CodedWorkflow` の部分クラス）に書かれている。
+
+Studio は各パッケージの API DLL の登録クラスからこれを作る。DLL に `[assembly: CodedWorkflowsServiceRegistry(typeof(ExcelRegistry))]` があり、登録クラスの `AutoImportedTypes` が変数名と型の組（`"excel"` → `IExcelService`）、`AutoImportedNamespaces` が `CodedWorkflow.cs` の先頭の using になる。変数名は属性やシグネチャには無く、getter の IL の文字列にしかない。抽出器は IL を読んでカタログの `codedRegistries` に書き出す。System、UIAutomation、Excel、Mail、Testing の5つで、プローブで Studio が生成したファイルと変数名・型・using が一致した。
+
+`tools/coded/check.ts` の変数の決め方：
+
+1. `--project` のプロジェクトに `CodedWorkflow.cs` があれば、それを読む
+2. 無ければ、project.json の依存パッケージのカタログの `codedRegistries`。カタログの無い Mail と Testing は、上で確かめた変数名を足す（呼び出しは確かめられず、`NO_CATALOG` の警告だけ）
+3. `--project` が無ければ、プローブと同じ依存とみなす
+
+Mail の API の名前空間は `UiPath.Mail.Activities.Api`（`API` ではない）なので、今の抽出器ではサービスとして拾われない。Mail のカタログを作るときに直す。
+
+プローブ プロジェクトでは：
 
 | 変数 | 型 |
 | --- | --- |
@@ -42,7 +54,23 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 | `testing` | `UiPath.Testing.API.ITestingService` |
 | `workflows` | プロジェクトごとの `WorkflowRunnerService`（ワークフローを型付きで呼ぶ） |
 
-基底クラス `UiPath.CodedWorkflows.CodedWorkflowBase`（UiPath.CodedWorkflows 24.10.3）の `Log` / `RunWorkflow` / `Delay` / `BuildClient` などは、カタログ抽出器が `catalog/UiPath.CodedWorkflows/24.10.3.json` に書き出す。
+基底クラス `UiPath.CodedWorkflows.CodedWorkflowBase` の `Log` / `RunWorkflow` / `Delay` / `BuildClient` などは、カタログ抽出器が `catalog/UiPath.CodedWorkflows/<版>.json` に書き出す。
+
+## UiPath.CodedWorkflows の版
+
+project.json には書かれず、アクティビティのパッケージの依存として NuGet が決める（依存の下限のうち最も高い版）。プローブ（net8）の `.local/AllDependencies.json` では：
+
+| 依存元 | 求める版 |
+| --- | --- |
+| UiPath.UIAutomation.Activities.Runtime 26.10.6 | 24.10.3 |
+| UiPath.System.Activities 26.10.0（net8.0-windows7.0） | 24.10.1 |
+| UiPath.Excel.Activities 3.6.1 | 24.10.1 |
+| UiPath.Testing.Activities 25.10.1 | 24.10.1 |
+| UiPath.Mail.Activities 2.12.10 | 24.10.0 |
+
+なので UIAutomation を入れると 24.10.3、System と Excel だけなら 24.10.1 になる。System 26.10.0 の net6.0 系の依存は 24.10.3 で、net8 と違う。
+
+24.10.0〜24.10.3 の基底クラスのメソッドは12個で、シグネチャも同じ（4つの版のカタログを比べた）。なので `tools/ir/versions.ts` は、project.json に書かれていなければ 24.10.3 のカタログを使う。この扱いで困るのは、基底クラスの API が違う版（24.10 系の外）を引くプロジェクトだけ。
 
 ## XAML と C# で動きが違うもの（run で分かった）
 
