@@ -57,14 +57,30 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--out") opt.out = argv[++i];
   else if (a === "--pack") opt.pack = resolve(argv[++i]); // build-only の後に、作業用プロジェクトを <dir> に .nupkg にする（テナントで確かめるとき）
   else if (a === "--pack-version") opt.packVersion = argv[++i];
+  else if (a === "--create-template") opt.createTemplate = argv[++i]; // Studio の空のプロジェクトを <dir> に作る（テンプレート用）
+  else if (a === "--expression-language") opt.expressionLanguage = argv[++i];
   else if (a.startsWith("--")) die(`知らないオプション ${a}`);
   else inputs.push(a);
 }
 if (!/^[A-Za-z0-9_-]+$/.test(opt.name ?? "")) die("--name <作業名> が要る（英数字・-・_ だけ）");
 // SSH のセッションは管理者権限・セッション 0。ここで Helm を起動すると、空いた Helm が窓口の run にも割り当てられ、run が「アクセスが拒否されました」で落ちる
 if (process.env.SSH_CONNECTION) die("SSH のセッションから直接流さない。node tools/verify/queue-run.mjs で窓口に頼む（build も同じ。引数はそのまま渡せる）");
-if (!inputs.length && !opt.defaultXaml) die("検証するファイル（*.json / *.cs）かフォルダを渡す");
 if (!existsSync(uipJs)) die(`uip が見つからない: ${uipJs}（環境変数 UIP_CLI_JS で指定できる）`);
+
+// --create-template <dir> [--expression-language CSharp]：Studio の BlankTemplate でプロジェクトを作る（uip も Helm を使うので窓口を通す）。
+// 依存の版はテンプレートの既定のまま。作ったあと project.json の dependencies を既定の版にそろえる
+if (opt.createTemplate) {
+  const dir = resolve(opt.createTemplate);
+  if (existsSync(dir)) die(`もうある: ${dir}`);
+  const r = spawnSync(process.execPath, [uipJs, "rpa", "create-project", "--name", basename(dir), "--location", dirname(dir), "--template-id", "BlankTemplate",
+    "--expression-language", opt.expressionLanguage ?? "VisualBasic", "--target-framework", "Windows", "--dotnet-version", "net8.0", "--skip-solution-registration", "--output", "json"],
+    { cwd: dirname(dir), encoding: "utf8", maxBuffer: 64 << 20, timeout: opt.timeout * 1000 });
+  console.log((r.stdout ?? "").slice(0, 2000) + (r.stderr ?? ""));
+  if (!existsSync(join(dir, "project.json"))) die("create-project に失敗");
+  console.log(`OK ${dir}`);
+  process.exit(0);
+}
+if (!inputs.length && !opt.defaultXaml) die("検証するファイル（*.json / *.cs）かフォルダを渡す");
 
 const projDir = `${opt.template}-${opt.name}`;
 const reportDir = resolve(opt.report || join(root, "out", "verify", opt.name));
