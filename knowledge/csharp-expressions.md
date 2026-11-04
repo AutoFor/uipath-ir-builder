@@ -64,7 +64,7 @@ C# の XAML の式（CSharpValue）は**式ツリー**にコンパイルされ�
 | `samples/ir/` 直下（Main + Greet、Controls、PropForms） | 4 OK | | VbExpressions は CS_EXPR（名前付き引数）。`samples/ir-csharp/VbExpressionsCs.json` は OK |
 | `System.Activities/`（4） | 4 OK | | |
 | `UiPath.System.Activities/`（360） | 230 OK | noRun の 127 は OK | ModifyText.full / .min、ToUpperLowerTextModification.min は CS_NAME（変数名 `out`。下）。名前を変えた版 `samples/ir-csharp/*Cs.*.json` は OK |
-| `UiPath.Excel.Activities/`（199） | 142 OK | noRun の 14 は OK | 43 件は環境のせい：「指定したブックを開けません。同じ名前が付いた別のブックが開いていないことをご確認ください」。同じサンプルを VB のテンプレートで流しても同じく落ちた（`out/verify/vb-xlcheck-run/`）。画面のセッションに隠れた EXCEL.EXE（9:19 起動）が残っていて、同じ名前のブックを開けない。閉じてから流し直す |
+| `UiPath.Excel.Activities/`（199） | 185 OK | noRun の 14 は OK | 最初は 43 件が「指定したブックを開けません。同じ名前が付いた別のブックが開いていないことをご確認ください」で落ちた（VB のテンプレートでも同じ）。画面のセッションに窓の無い EXCEL.EXE（`/automation -Embedding`）が残っていたため。それが無くなってから流し直して 43 件とも OK（`out/verify/csxl6-run/`）。この形で落ちたら、まず残った EXCEL.EXE を見る |
 | `UiPath.Testing.Activities/`（16） | 16 OK | | |
 | `UiPath.UIAutomation.Activities/`（378） | | 378 OK | |
 
