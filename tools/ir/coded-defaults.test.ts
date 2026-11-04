@@ -97,11 +97,11 @@ test("生成器の組み込みの既定値は、既定 XAML と同じ", () => {
   assert.equal(retry.RetryInterval, undefined);
 });
 
-// C# の順番と書き方の違いを消す（初期化子の順番、object / Object、@"" / ""、Convert.ToString と .ToString）
+// C# の順番と書き方の違いを消す（初期化子の順番、object / Object、decimal / Decimal、@"" / ""、Convert.ToString と .ToString）
 function tokens(code: string): string[] {
   const t = code
     .replace(/@"((?:[^"]|"")*)"/g, (_, b: string) => `"${b.replace(/""/g, '\\"').replace(/\\(?!")/g, "\\\\")}"`)
-    .replace(/\bnew Object\b/g, "new object").replace(/\bString\./g, "string.").replace(/<String>/g, "<string>").replace(/\(String\)/g, "(string)").replace(/\bObject\b/g, "object")
+    .replace(/\bnew Object\b/g, "new object").replace(/\bString\./g, "string.").replace(/\bDecimal\./g, "decimal.").replace(/<String>/g, "<string>").replace(/\(String\)/g, "(string)").replace(/\bObject\b/g, "object")
     .replace(/Convert\.ToString\(/g, "(").replace(/\.ToString\(\)/g, "");
   const out: string[] = [];
   let cur = "", q = false;

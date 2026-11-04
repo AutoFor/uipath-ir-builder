@@ -228,7 +228,10 @@ type Ctx = {
 // 属性（または要素の中身）の文字列 → IR の値。undefined は「値なし」
 function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   if (raw === "{x:Null}") { c.drop(at, "値なし", p.name); return undefined; }
-  const t = /^\{(?!\})/.test(raw) ? raw : undefined;
+  // 表示名で読む TypeConverter の付いた enum は、生成器が {x:Static 接頭辞:型.値} で書く（knowledge/testing.md）
+  const st = p.enumConverter ? raw.match(/^\{x:Static\s+[\w.]+:(\w+)\.(\w+)\}$/) : null;
+  if (st && p.type.endsWith(`.${st[1]}`) && p.enum?.includes(st[2])) return st[2];
+  const t =/^\{(?!\})/.test(raw) ? raw : undefined;
   if (t) {
     c.err(at, "UNSUPPORTED_MARKUP", `"${p.name}" のマークアップ拡張 ${t} は IR に書けない`);
     return undefined;
