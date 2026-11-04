@@ -2,12 +2,13 @@
 
 import type { Catalog, Activity, Prop } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
-import type { Workflow, Node, Value, VariableDecl, InvokeArg } from "./types.ts";
+import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
-import { excelPrefixes } from "./excel.ts";
+import { excelPrefixes, excelVbForCs } from "./excel.ts";
 import { formLayoutLiteral } from "./persistence.ts";
+import { vbToCs, vbDefaultToCs, csKeywords } from "./vb2cs.ts";
 
 const ACTIVITIES_NS = "http://schemas.microsoft.com/netfx/2009/xaml/activities";
 const knownPrefixes: Record<string, string> = {
@@ -38,14 +39,42 @@ const baseRefs = [
   "UiPath.UiAutomation.Activities", "System.Data.DataSetExtensions", "System.Net.Mail",
 ];
 
-// rootImports：ルートの imports / AssemblyReference の元（対象プロジェクトの既存 XAML から読んだもの。versions.ts）。無ければ BlankTemplate の並び
-export type GenerateOptions = { rootImports?: { imports: string[]; refs: string[] } };
+// 式の言語が C# の BlankTemplate の Main.xaml と同じ並び（Studio 26.10 で作ったもの。System.Text と Microsoft.CSharp などが増える）。
+// 重複も Studio のまま（Set で1つになる）
+const baseImportsCs = [...baseImports.slice(0, baseImports.indexOf("System.Xml") + 1), "System.Text", ...baseImports.slice(baseImports.indexOf("System.Xml") + 1)];
+const baseRefsCs = [
+  "Microsoft.CSharp", "System", "System.Linq", "System.Core", "System.Activities", "System.Data", "System.Data.Common", "System.Runtime.Serialization",
+  "System.ServiceModel", "System.ServiceModel.Activities", "System.Xaml", ...baseRefs,
+];
+const MCA = "clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities";
 
+export type ExpressionLanguage = "VisualBasic" | "CSharp";
+
+// BlankTemplate のルートの imports / AssemblyReference（式の言語ごと）
+export function templateRootImports(language: ExpressionLanguage = "VisualBasic"): { imports: string[]; refs: string[] } {
+  return language === "CSharp" ? { imports: [...baseImportsCs], refs: [...new Set(baseRefsCs)] } : { imports: [...baseImports], refs: [...baseRefs] };
+}
+
+// rootImports：ルートの imports / AssemblyReference の元（対象プロジェクトの既存 XAML から読んだもの。versions.ts）。無ければ BlankTemplate の並び
+// language：式の言語（project.json の expressionLanguage）。既定は VisualBasic
+export type GenerateOptions = { rootImports?: { imports: string[]; refs: string[] }; language?: ExpressionLanguage };
+
+// C# の式に直せない値があれば Error にする（gen.ts は generateChecked の issues を検証エラーとして出す）
 export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {}): string {
+  const r = generateChecked(wf, cat, opts);
+  if (r.issues.length) throw new Error(r.issues.map((i) => `${i.code} ${i.path}: ${i.message}`).join("\n"));
+  return r.xaml;
+}
+
+// issues は C# の式に直せなかったもの（VB では常に空）
+export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOptions = {}): { xaml: string; issues: Issue[] } {
   resetGuids(wf.workflow);
+  const cs = opts.language === "CSharp";
+  const issues: Issue[] = [];
+  const paths = new WeakMap<Node, string>(); // ノードの IR の中の場所（エラーの表示用）
   const xmlns = new Map<string, string>(); // prefix -> uri
-  const imports = new Set(opts.rootImports?.imports ?? baseImports);
-  const refs = new Set(opts.rootImports?.refs ?? baseRefs);
+  const imports = new Set(opts.rootImports?.imports ?? (cs ? baseImportsCs : baseImports));
+  const refs = new Set(opts.rootImports?.refs ?? (cs ? baseRefsCs : baseRefs));
   const ids = new Map<string, number>();
   const lines: string[] = [];
   let extra = 0;
@@ -69,6 +98,42 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
   };
   const emit = (depth: number, s: string) => lines.push("  ".repeat(depth) + s);
 
+  // ---- 式 ----
+  // C# の式にする。{ vb, cs } は cs をそのまま、素の文字列（VB）は vb2cs.ts で直す。直せないときは issues に積む（推測で書かない）。
+  // type を渡すと変数の既定値として直す（{a, b} を配列にする）
+  const csText = (v: Value, scope: Map<string, string>, at: string, type?: string): string => {
+    if (typeof v === "number") return String(v);
+    if (typeof v === "boolean") return v ? "true" : "false";
+    if (typeof v === "object") return "lit" in v ? csLit(v.lit) : v.cs;
+    const vb = excelVbForCs(v, scope);
+    const r = type !== undefined ? vbDefaultToCs(vb, type, scope, { tree: true }) : vbToCs(vb, scope, { tree: true });
+    if (!("error" in r)) return r.cs;
+    issues.push({ path: at, code: "CS_EXPR", message: `式 ${JSON.stringify(v)} を C# に直せない: ${r.error}。{ "vb": "...", "cs": "..." } で両方を書く` });
+    return v;
+  };
+  // 引数の要素（<InArgument> など）の中身。VB は [式]、C# は <mca:CSharpValue> / <mca:CSharpReference>（t は XAML の型表記）
+  const argBody = (v: Value, t: string, ref: boolean, scope: Map<string, string>, at: string): string => {
+    if (!cs) return esc(`[${ref ? String(v) : exprText(v)}]`);
+    xmlns.set("mca", MCA);
+    const k = ref ? "CSharpReference" : "CSharpValue";
+    return `<mca:${k} x:TypeArguments="${t}">${esc(csText(v, scope, at))}</mca:${k}>`;
+  };
+  // C# で属性に書けない値（式）を、プロパティの型の要素にする。属性に書けるなら undefined。
+  // p はカタログのプロパティ（in / out / inout は T、child は Activity<T>）。型引数（T、TResult など）は typeArg に置き換える
+  const csElement = (v: Value, p: Prop, typeArg: string | undefined, scope: Map<string, string>, at: string): string | undefined => {
+    if (!cs || literalAttr(v, p) !== undefined) return undefined;
+    const inner = p.kind === "child" ? p.type.match(/^System\.Activities\.Activity<(.+)>$/)?.[1] ?? "System.Object" : p.type;
+    const t = typeText(inner.replace(/\bT(?:[A-Z]\w*)?\b/g, typeArg ?? "Object"));
+    if (p.kind === "child") return argBody(v, t, false, scope, at); // While.Condition などは CSharpValue をそのまま置く
+    const dir = p.kind === "out" ? "OutArgument" : p.kind === "inout" ? "InOutArgument" : "InArgument";
+    return `<${dir} x:TypeArguments="${t}">${argBody(v, t, p.kind !== "in", scope, at)}</${dir}>`;
+  };
+  // 子のノードの場所を覚える（もう決まっていれば変えない）
+  // C# の予約語の名前（out など）は C# の XAML で参照できない（@out も CS0103）
+  const csName = (name: string, path: string) => { if (cs && csKeywords.has(name)) issues.push({ path, code: "CS_NAME", message: `名前 ${name} は C# の予約語なので、C# の XAML では使えない。名前を変える` }); };
+  const at = (n: Node, path: string) => { if (!paths.has(n)) paths.set(n, path); return n; };
+  const sub = (base: string, k: string) => (base ? `${base}.${k}` : k);
+
   // ルートは Sequence 1つにまとめる（ワークフローの変数はそこに付ける）
   const root: Node =
     wf.body.length === 1 && wf.body[0].act === "Sequence"
@@ -76,17 +141,18 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       : { act: "Sequence", name: wf.workflow, variables: wf.variables, body: wf.body };
 
   const scope = new Map((wf.arguments ?? []).map((a) => [a.name, a.type] as [string, string]));
-  emitNode(prepareUia(root, cat), 1, scope);
+  emitNode(at(prepareUia(root, cat), wf.body.length === 1 && wf.body[0].act === "Sequence" ? "body[0]" : ""), 1, scope);
   const body = lines.splice(0);
 
   // ルート要素
+  (wf.arguments ?? []).forEach((a, i) => csName(a.name, `arguments[${i}]`));
   const members = (wf.arguments ?? []).map(
     (a) => `    <x:Property Name="${esc(a.name)}" Type="${a.dir}Argument(${typeText(a.type)})" />`,
   );
   const allNs: [string, string][] = [
     ["", ACTIVITIES_NS],
     ["mc", "http://schemas.openxmlformats.org/markup-compatibility/2006"],
-    ["mva", "clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"],
+    ...(cs ? [] : [["mva", "clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"] as [string, string]]),
     ["sap", "http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"],
     ["sap2010", "http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"],
     ["sco", "clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"],
@@ -94,7 +160,8 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     ["x", "http://schemas.microsoft.com/winfx/2006/xaml"],
   ];
   const out: string[] = [];
-  out.push(`<Activity mc:Ignorable="sap sap2010" x:Class="${esc(wf.workflow)}" mva:VisualBasic.Settings="{x:Null}"`);
+  // C# は Studio と同じく ExpressionActivityEditor="C#" を付け、VisualBasic.Settings は書かない
+  out.push(`<Activity mc:Ignorable="sap sap2010" x:Class="${esc(wf.workflow)}" ${cs ? 'sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#"' : 'mva:VisualBasic.Settings="{x:Null}"'}`);
   for (const [p, u] of allNs) out.push(`xmlns${p ? ":" + p : ""}="${u}"${p === "x" ? ">" : ""}`);
   if (members.length) out.push("  <x:Members>", ...members, "  </x:Members>");
   out.push("  <TextExpression.NamespacesForImplementation>", '    <sco:Collection x:TypeArguments="x:String">');
@@ -104,7 +171,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
   for (const r of refs) out.push(`      <AssemblyReference>${esc(r)}</AssemblyReference>`);
   out.push("    </sco:Collection>", "  </TextExpression.ReferencesForImplementation>");
   out.push(...body, "</Activity>", "");
-  return out.join("\r\n");
+  return { xaml: out.join("\r\n"), issues };
 
   function emitNode(n: Node, depth: number, scope: Map<string, string>, key?: string) {
     const r = resolve(cat, n.act, n.typeArg !== undefined);
@@ -115,6 +182,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     imports.add(ns);
     refs.add(a.assembly);
     for (const v of n.variables ?? []) scope.set(v.name, v.type);
+    const here = paths.get(n) ?? "";
 
     // 属性
     const attrs: [string, string][] = [];
@@ -122,6 +190,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     if (key !== undefined) attrs.push(["x:Key", key]);
     if (n.name) attrs.push(["DisplayName", n.name]);
     const elems: { prop: Prop; value: Value }[] = [];
+    const csElems: [string, string][] = []; // C# で要素にした式（プロパティ名、要素）
     for (const [k, v] of Object.entries(n.props ?? {})) {
       const p = a.props.find((p) => p.name === k)!;
       if (isUntypedArgument(p.type)) elems.push({ prop: p, value: v });
@@ -130,11 +199,20 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
         // 表示名で読む TypeConverter がある enum（Testing の VerificationType など）。名前を書くと読めず既定値になるので、値を直接渡す
         const dot = p.type.lastIndexOf(".");
         attrs.push([k, `{x:Static ${prefixFor(`clr-namespace:${p.type.slice(0, dot)};assembly=${p.enumAssembly}`)}${p.type.slice(dot + 1)}.${v}}`]);
-      } else attrs.push([k, attrValue(v, p)]);
+      } else {
+        const el = csElement(v, p, n.typeArg, scope, sub(here, `props.${k}`));
+        if (el !== undefined) csElems.push([k, el]);
+        else attrs.push([k, attrValue(v, p)]);
+      }
     }
     // get-default-xaml に出た既定値のうち、IR が書いていないもの（Version=V5 など）
     for (const [k, v] of Object.entries(cat.defaults.get(a.className) ?? {})) {
-      if (attrs.some(([x]) => x === k) || !a.props.some((p) => p.name === k)) continue;
+      if (attrs.some(([x]) => x === k) || csElems.some(([x]) => x === k) || !a.props.some((p) => p.name === k)) continue;
+      // 既定値が VB の式（[...]）のもの。C# では直して要素にする
+      if (cs && /^\[[\s\S]*\]$/.test(v)) {
+        const el = csElement(v.slice(1, -1), a.props.find((p) => p.name === k)!, n.typeArg, scope, `${sub(here, `props.${k}`)}（get-default-xaml の既定値）`);
+        if (el !== undefined) { csElems.push([k, el]); continue; }
+      }
       // FormLayoutGuid は、同じ値だとテナントが最初のレイアウトを使い続ける（AUT-1076）。リテラルのレイアウトは中身も混ぜて決める
       const layout = a.className === "CreateFormTask" && k === "FormLayoutGuid" ? formLayoutLiteral(n.props?.FormLayout) : undefined;
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-/.test(v)) attrs.push([k, v]);
@@ -148,13 +226,16 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     // 子
     const slots: [Prop, Node[]][] = [];
     const slotOf = (name: string) => a.props.find((p) => p.name === name)!;
-    if (n.body) slots.push([defaultSlot(a)!, n.body]);
-    if (n.then) slots.push([slotOf("Then"), n.then]);
-    if (n.else) slots.push([slotOf("Else"), n.else]);
-    for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), v]);
+    const mark = (nodes: Node[], path: string) => { nodes.forEach((c, i) => at(c, sub(here, `${path}[${i}]`))); return nodes; };
+    if (n.body) slots.push([defaultSlot(a)!, mark(n.body, "body")]);
+    if (n.then) slots.push([slotOf("Then"), mark(n.then, "then")]);
+    if (n.else) slots.push([slotOf("Else"), mark(n.else, "else")]);
+    for (const [k, v] of Object.entries(n.slots ?? {})) slots.push([slotOf(k), mark(v, `slots.${k}`)]);
+    n.catches?.forEach((c, i) => mark(c.body, `catches[${i}].body`));
+    for (const [k, v] of Object.entries(n.cases ?? {})) mark(v, `cases.${k}`);
 
     const hasContent =
-      elems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || csElems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -168,7 +249,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
         emit(depth + 2, `<${sg}Dictionary x:TypeArguments="x:String, ${mapValue === "String" ? "x:String" : "InArgument(x:String)"}">`);
         for (const x of list) {
           if (mapValue === "String") emit(depth + 3, `<x:String x:Key="${esc(x.name)}">${esc((x.value as { lit: string }).lit)}</x:String>`);
-          else emit(depth + 3, `<InArgument x:TypeArguments="x:String" x:Key="${esc(x.name)}">${esc(`[${exprText(x.value)}]`)}</InArgument>`);
+          else emit(depth + 3, `<InArgument x:TypeArguments="x:String" x:Key="${esc(x.name)}">${argBody(x.value, "x:String", false, scope, sub(here, `dicts.${prop}.${x.name}`))}</InArgument>`);
         }
         emit(depth + 2, `</${sg}Dictionary>`);
         emit(depth + 1, `</${tag}.${prop}>`);
@@ -183,8 +264,9 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       emit(depth + 1, `<${tag}.${prop}>`);
       if (wrap) emit(depth + 2, `<scg:Dictionary x:TypeArguments="x:String, ${valueType}">`);
       for (const x of list) {
-        const v = x.dir === "In" ? exprText(x.value) : String(x.value);
-        emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${typeText(x.type)}" x:Key="${esc(x.name)}">${esc(`[${v}]`)}</${x.dir}Argument>`);
+        const t = typeText(x.type);
+        const v = argBody(x.value, t, x.dir !== "In", scope, sub(here, `${n.args?.length && prop === "Arguments" ? "args" : `dicts.${prop}`}.${x.name}`));
+        emit(depth + (wrap ? 3 : 2), `<${x.dir}Argument x:TypeArguments="${t}" x:Key="${esc(x.name)}">${v}</${x.dir}Argument>`);
       }
       if (wrap) emit(depth + 2, `</scg:Dictionary>`);
       emit(depth + 1, `</${tag}.${prop}>`);
@@ -202,7 +284,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
         if (list.length === 0) emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="0" />`);
         else {
           emit(depth + 2, `<scg:List x:TypeArguments="InArgument(${t})" Capacity="${Math.max(4, list.length)}">`);
-          for (const v of list) emit(depth + 3, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(v as Value)}]`)}</InArgument>`);
+          list.forEach((v, i) => emit(depth + 3, `<InArgument x:TypeArguments="${t}">${argBody(v as Value, t, false, scope, sub(here, `lists.${prop}[${i}]`))}</InArgument>`));
           emit(depth + 2, `</scg:List>`);
         }
         emit(depth + 1, `</${tag}.${prop}>`);
@@ -230,11 +312,15 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       const t = objectTypes.get(el);
       const sg = prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
       // 数値・真偽値のリテラルは Int32 / Double / Boolean の InArgument、それ以外は String
-      const inArg = (v: Value) => `<InArgument x:TypeArguments="${typeof v === "number" ? (Number.isInteger(v) ? "x:Int32" : "x:Double") : typeof v === "boolean" ? "x:Boolean" : "x:String"}">${esc(`[${exprText(v)}]`)}</InArgument>`;
+      const inArg = (v: Value, at: string) => {
+        const it = typeof v === "number" ? (Number.isInteger(v) ? "x:Int32" : "x:Double") : typeof v === "boolean" ? "x:Boolean" : "x:String";
+        return `<InArgument x:TypeArguments="${it}">${argBody(v, it, false, scope, at)}</InArgument>`;
+      };
       emit(depth + 1, `<${tag}.${prop}>`);
       emit(depth + 2, `<${sg}List x:TypeArguments="${t ? prefixFor(t.xmlns) + t.className : "InArgument"}" Capacity="${Math.max(4, list.length)}">`);
-      for (const x of list) {
-        if (!t || isValueItem(x)) { emit(depth + 3, inArg(x as Value)); continue; }
+      for (const [i, x] of list.entries()) {
+        const xat = sub(here, `lists.${prop}[${i}]`);
+        if (!t || isValueItem(x)) { emit(depth + 3, inArg(x as Value, xat)); continue; }
         const etag = prefixFor(t.xmlns) + t.className;
         const props = Object.entries(x as Record<string, Value>).map(([k, v]) => [t.props.find((q) => q.name === k)!, v] as const);
         const attrsText = props.filter(([q]) => q.kind === "prop").map(([q, v]) => ` ${q.name}="${esc(attrValue(v, q))}"`).join("");
@@ -243,7 +329,7 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
         emit(depth + 3, `<${etag}${attrsText}>`);
         for (const [q, v] of kids) {
           emit(depth + 4, `<${etag}.${q.name}>`);
-          emit(depth + 5, inArg(v));
+          emit(depth + 5, inArg(v, `${xat}.${q.name}`));
           emit(depth + 4, `</${etag}.${q.name}>`);
         }
         emit(depth + 3, `</${etag}>`);
@@ -253,18 +339,23 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     }
     if (n.variables?.length) {
       emit(depth + 1, `<${tag}.Variables>`);
-      for (const v of n.variables) emit(depth + 2, variable(v));
+      n.variables.forEach((v, i) => variable(v, depth + 2, scope, sub(here, `variables[${i}]`)));
       emit(depth + 1, `</${tag}.Variables>`);
     }
     for (const { prop, value } of elems) {
       const dir = prop.kind === "out" ? "OutArgument" : "InArgument";
       const t = typeText(argumentType(n, a, scope)!);
-      const v = prop.kind === "out" ? String(value) : exprText(value);
       emit(depth + 1, `<${tag}.${prop.name}>`);
-      emit(depth + 2, `<${dir} x:TypeArguments="${t}">${esc(`[${v}]`)}</${dir}>`);
+      emit(depth + 2, `<${dir} x:TypeArguments="${t}">${argBody(value, t, prop.kind === "out", scope, sub(here, `props.${prop.name}`))}</${dir}>`);
       emit(depth + 1, `</${tag}.${prop.name}>`);
     }
-    emitObjs(n, a, tag, depth + 1, { prefixFor, attrValue, esc, emit, typeText });
+    for (const [k, el] of csElems) {
+      emit(depth + 1, `<${tag}.${k}>`);
+      emit(depth + 2, el);
+      emit(depth + 1, `</${tag}.${k}>`);
+    }
+    const csObj = cs ? { element: (v: Value, p: Prop, path: string, typeArg?: string) => csElement(v, p, typeArg, scope, sub(here, path)), content: (v: Value, t: string, path: string) => argBody(v, t, false, scope, sub(here, path)) } : undefined;
+    emitObjs(n, a, tag, depth + 1, { prefixFor, attrValue, esc, emit, typeText, cs: csObj });
     for (const [p, nodes] of slots) {
       if (p.kind === "children" && p.name === "Activities") {
         // Sequence.Activities はコンテンツプロパティなので、子をそのまま並べる
@@ -312,14 +403,14 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       emit(depth + 1, `<${tag}.AssignOperations>`);
       emit(depth + 2, `<scg:List x:TypeArguments="${op}" Capacity="${Math.max(4, n.assigns.length)}">`);
       xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
-      for (const x of n.assigns) {
+      for (const [i, x] of n.assigns.entries()) {
         const t = typeText(scope.get(x.to)!);
         emit(depth + 3, `<${op} sap2010:WorkflowViewState.IdRef="${idRef("AssignOperation")}">`);
         emit(depth + 4, `<${op}.To>`);
-        emit(depth + 5, `<OutArgument x:TypeArguments="${t}">${esc(`[${x.to}]`)}</OutArgument>`);
+        emit(depth + 5, `<OutArgument x:TypeArguments="${t}">${argBody(x.to, t, true, scope, sub(here, `assigns[${i}].to`))}</OutArgument>`);
         emit(depth + 4, `</${op}.To>`);
         emit(depth + 4, `<${op}.Value>`);
-        emit(depth + 5, `<InArgument x:TypeArguments="${t}">${esc(`[${exprText(x.value)}]`)}</InArgument>`);
+        emit(depth + 5, `<InArgument x:TypeArguments="${t}">${argBody(x.value, t, false, scope, sub(here, `assigns[${i}].value`))}</InArgument>`);
         emit(depth + 4, `</${op}.Value>`);
         emit(depth + 3, `</${op}>`);
       }
@@ -349,15 +440,31 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
     emit(depth, `</ActivityAction>`);
   }
 
-  function variable(v: VariableDecl) {
+  // C# の既定値は属性に書けないので <Variable.Default> の要素にする
+  function variable(v: VariableDecl, depth: number, scope: Map<string, string>, path: string) {
+    const t = typeText(v.type);
+    csName(v.name, path);
+    if (cs && v.default !== undefined) {
+      xmlns.set("mca", MCA);
+      emit(depth, `<Variable x:TypeArguments="${t}" Name="${esc(v.name)}">`);
+      emit(depth + 1, `<Variable.Default>`);
+      emit(depth + 2, `<mca:CSharpValue x:TypeArguments="${t}">${esc(csText(v.default, scope, `${path}.default`, v.type))}</mca:CSharpValue>`);
+      emit(depth + 1, `</Variable.Default>`);
+      emit(depth, `</Variable>`);
+      return;
+    }
     const d = v.default !== undefined ? ` Default="${esc(`[${v.default}]`)}"` : "";
-    return `<Variable x:TypeArguments="${typeText(v.type)}"${d} Name="${esc(v.name)}" />`;
+    emit(depth, `<Variable x:TypeArguments="${t}"${d} Name="${esc(v.name)}" />`);
   }
-}
 
-// 子が1つだけ入る場所に複数書かれたら Sequence で包む
-function single(nodes: Node[], name: string): Node {
-  return nodes.length === 1 ? nodes[0] : { act: "Sequence", name, body: nodes };
+  // 子が1つだけ入る場所に複数書かれたら Sequence で包む（包んだ Sequence の場所は、その場所の名前）
+  function single(nodes: Node[], name: string): Node {
+    if (nodes.length === 1) return nodes[0];
+    const seq: Node = { act: "Sequence", name, body: nodes };
+    const first = paths.get(nodes[0]);
+    if (first) paths.set(seq, first.replace(/\[0\]$/, ""));
+    return seq;
+  }
 }
 
 // 属性の値が { で始まると XAML は markup extension とみなす。リテラルの { は {} を前に付けて逃がす（JSON の文字列など）
@@ -366,6 +473,11 @@ function markupEscape(s: string): string {
 }
 
 function attrValue(v: Value, p: Prop): string {
+  return literalAttr(v, p) ?? `[${exprText(v)}]`;
+}
+
+// 属性にそのまま書ける値（リテラル）。式なら undefined（VB は [式]、C# は要素で書く）
+function literalAttr(v: Value, p: Prop): string | undefined {
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "True" : "False";
   if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
@@ -375,7 +487,12 @@ function attrValue(v: Value, p: Prop): string {
   // String の入力に文字列リテラルを渡すときは、Studio と同じく属性にそのまま書く（[...] だと設計時に評価できない扱いになる）。
   // "[" で始まる文字列は式と区別できないので式にする
   if (typeof v === "object" && "lit" in v && p.kind === "in" && p.type === "System.String" && !v.lit.startsWith("[")) return markupEscape(v.lit);
-  return `[${exprText(v)}]`;
+  return undefined;
+}
+
+// C# の文字列リテラル
+function csLit(s: string): string {
+  return '"' + s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/\t/g, "\\t") + '"';
 }
 
 // VB の式にする。{ lit } は文字列リテラル

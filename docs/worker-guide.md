@@ -532,7 +532,7 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 既存の XAML を読んで IR にする（そこから C# を作る）道具は `tools/ir/import-xaml.ts`、置き換えの見積もりは `tools/ir/migrate-report.ts`（使い方は README の「XAML → IR の取り込み」）。IR を変えるときは次に気をつける。
 新しい形を生成器に足したら、`tools/ir/import-xaml.ts` の逆も足す（`samples/generated/**/*.xaml` の全部について、`node --test` が往復を確かめる）。
 
-- **式の言語**：IR の文字列の式は VB 前提。取り込む XAML が C# のプロジェクト（`expressionLanguage: CSharp`）だと式も C# になる。IR に式の言語（ワークフロー単位の `language` か、値ごとの `{ cs }`）を持たせる余地を残しておく。`{ vb, cs }` の形はその足がかり
+- **式の言語**：IR の文字列の式は VB 前提。C# の XAML は生成できる（10）が、取り込む XAML が C# のプロジェクト（`expressionLanguage: CSharp`）だと式も C# になり、今は取り込めない。IR に式の言語（ワークフロー単位の `language` か、値ごとの `{ cs }`）を持たせる余地を残しておく。`{ vb, cs }` の形はその足がかり（`knowledge/csharp-expressions.md` の「C# → VB」）
 - **属性のリテラルと式の区別**：XAML では `Message="abc"`（リテラル）と `Message="[abc]"`（式）が別。IR では `{ lit }` と文字列で分けているので、取り込み時もこの区別を保つ
 - **既定値**：IR に無い props の意味は「既定 XAML の値」に決めた。`generate.ts` は XAML に足し、`generate-coded.ts` は C# に補う（`when` の形選びも同じ）。取り込みは既定値と同じ属性を IR から落とす。対応表の `{Prop:-既定}` と `defaults` は、既定 XAML に値が無いときだけ使われる。アクティビティの既定値と違うと `tools/ir/coded-defaults.test.ts` が落ちるので、直すか `knowledge/coded-default-allow.json` に理由を書く（一覧は `node tools/ir/coded-defaults.ts`）。詳しくは `knowledge/coded-workflow.md`
 - **表示用の情報**：`sap2010:WorkflowViewState.IdRef`、`sap:VirtualizedContainerService.HintSize`、注釈（`sap2010:Annotation.AnnotationText`）は IR に無い。往復で消えてよいか、IR に `annotation` などを足すかを決める
@@ -540,3 +540,25 @@ node tools/compare-default-xaml.mjs --generated samples/generated/UiPath.Excel.A
 - **名前空間と型**：IR の型名は短い名前（`String`、`DataTable`）で、`types-xaml.ts` の表にあるものだけ。取り込み時は XAML の `x:TypeArguments="scg:List(x:String)"` を IR の型名に戻す逆引きが要る。表を増やすときは両方向で使える形にしておく
 - **delegate の引数名**：ForEach の `item` などは IR では `item` で持つ。XAML の `DelegateInArgument Name` をそのまま入れれば往復できる
 - **Coded への変換で落ちる意味**：Switch は if / else if に、RetryScope は for + try / catch に、ContinueOnError は try / catch に直している。XAML → IR → C# の置き換えでは、これらの差（RetryScope の回数の数え方、ログの出方）が期待ログで分かるよう、`*.expected.log` を必ず置く
+
+## 10. 式の言語が C# のプロジェクト
+
+詳しくは `knowledge/csharp-expressions.md`。IR は変えない（素の文字列 = VB の式、`{ lit }`、`{ vb, cs }`）。生成器が VB の式を C# に直して、C# の XAML（`ExpressionActivityEditor="C#"`、式は `<mca:CSharpValue>` / `<mca:CSharpReference>` の要素）を書く。
+
+```bash
+# C# の XAML を作る（既定は VisualBasic）
+node tools/ir/gen.ts samples/ir/Main.json samples/ir/Greet.json --language CSharp --out <dir>
+# --project を渡すと、その project.json の expressionLanguage に従う（--language と食い違えばエラー）
+node tools/ir/gen.ts samples/ir/Main.json --project <C# のプロジェクト> --out <dir>
+# C# のテンプレートで build / run（--use-project で作業用プロジェクトの project.json に従う）
+node tools/verify/queue-run.mjs --name <作業名> --template 'C:\Users\Public\uipath-ir-probe-cs' --use-project --no-coded samples/ir/Main.json samples/ir/Greet.json
+# VB の XAML を C# の XAML にする（C# → VB はできない）
+node tools/ir/convert-xaml.ts <in.xaml>... --to CSharp --out <dir>
+# 変換した XAML もそのまま verify に渡せる（横に <名前>.expected.log を置く）
+node tools/verify/queue-run.mjs --name <作業名> --template 'C:\Users\Public\uipath-ir-probe-cs' --use-project --no-coded <dir>
+```
+
+- C# に直せない式は検証エラー `CS_EXPR`（パスつき）。その値を `{ "vb": "...", "cs": "..." }` にする。推測で直さない
+- C# の予約語の名前の変数・引数（`out` など）は `CS_NAME`。C# の XAML では `@out` でも参照できないので、名前を変える
+- C# の XAML の式は式ツリーなので、省略可能な引数・名前付き引数を書けない（CS0854 / CS0853）。VB の組み込み関数は既定値を書き足し、`x.Split(","c)` は `x.Split(new[] { ',' })` にする。`cs` に手で書くときも同じ
+- 生成器を変えたら、VB のスナップショット（`samples/generated/`）が変わらないことと、C# のスナップショット（`samples/generated-csharp/`）を確かめる。C# だけで試したいサンプル（名前付き引数を `{ vb, cs }` にしたものなど）は `samples/ir-csharp/` に置く

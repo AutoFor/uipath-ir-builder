@@ -18,8 +18,26 @@
 //   Not a = b → !(a == b)（VB の Not は比較より弱い）、整数どうしの a / b → (double)a / b（VB の / は小数を返す）
 // 直さないもの（エラー）: Sub のラムダ、AddressOf、Like、\（整数の割り算）、^（べき乗）、クエリ構文（From ... Select）、
 //   "a" & x + 1（& と + の優先順位が C# と逆）、数値どうしの &（C# では足し算になる）
+//
+// tree: true は C# の XAML の式（CSharpValue）。式ツリーにコンパイルされるので、省略可能な引数と名前付き引数を書けない（CS0854 / CS0853）。
+//   InStr(s, ",") などの VB の組み込み関数は省いた引数の既定値を書き足し、s.Split(","c) は s.Split(new[] { ',' }) にする。
+//   名前付き引数と、既定値を決められない呼び出し、C# の予約語の名前の変数（out など）はエラー
 
 export type Converted = { cs: string } | { error: string };
+export type ConvertOptions = { tree?: boolean };
+
+// tree: true で書き足す、VB の組み込み関数の省略可能な引数の既定値（引数の数 → 足すもの）。max は引数の最大数。表に無い数はエラー（InStr の3つは Start ありか Compare ありか決まらない）
+const CM = "Microsoft.VisualBasic.CompareMethod.Binary", FDW = "Microsoft.VisualBasic.FirstDayOfWeek.Sunday", FWY = "Microsoft.VisualBasic.FirstWeekOfYear.Jan1";
+const optionalArgs: Record<string, { max: number; fill: Record<number, string[]> }> = {
+  instr: { max: 4, fill: { 2: [CM] } },
+  instrrev: { max: 4, fill: { 2: ["-1", CM], 3: [CM] } },
+  replace: { max: 6, fill: { 3: ["1", "-1", CM], 4: ["-1", CM], 5: [CM] } },
+  split: { max: 4, fill: { 1: ['" "', "-1", CM], 2: ["-1", CM], 3: [CM] } },
+  join: { max: 2, fill: { 1: ['" "'] } },
+  format: { max: 2, fill: { 1: ['""'] } },
+  datediff: { max: 5, fill: { 3: [FDW, FWY], 4: [FWY] } },
+  weekday: { max: 2, fill: { 1: [FDW] } },
+};
 
 type Tok = { k: "str" | "chr" | "num" | "id" | "op" | "ws" | "date"; v: string };
 
@@ -49,6 +67,8 @@ for (const [mod, list] of Object.entries({
 })) for (const n of list.split(" ")) vbFunctions[n.toLowerCase()] = `Microsoft.VisualBasic.${mod}.${n}`;
 // VB は大文字小文字を区別しない。よく使うメンバーは C# の綴りに直す
 const memberCase = new Map([...parameterless, ...indexers, "Length", "Count", "Contains", "Replace", "Split", "Substring", "StartsWith", "EndsWith", "IndexOf", "Add", "Remove", "Now", "Today", "Join", "Format", "IsNullOrEmpty", "IsNullOrWhiteSpace", "Parse", "Where", "Select", "Value", "Name"].map((n) => [n.toLowerCase(), n]));
+// C# の予約語。C# の XAML では変数名に使えない
+export const csKeywords = new Set("abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual void volatile while".split(" "));
 const linqChain = new Set(["Where", "Select", "SelectMany", "OrderBy", "OrderByDescending", "ThenBy", "Distinct", "Skip", "Take", "Cast", "OfType", "GroupBy", "AsEnumerable", "Reverse", "Concat", "Union"]);
 const linqEnd = new Set(["Count", "Sum", "Max", "Min", "Average", "Single", "SingleOrDefault"]);
 const INT_TYPE = /^(System\.)?(Int16|Int32|Int64|Integer|Long|Short|Byte)$/;
@@ -96,7 +116,7 @@ const csChar = (v: string) => "'" + v.replace(/\\/g, "\\\\").replace(/'/g, "\\'"
 const csString = (v: string) => '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/\t/g, "\\t") + '"';
 
 // scope は宣言済みの名前 → 型（IR の型名）
-export function vbToCs(expr: string, scope: Map<string, string>): Converted {
+export function vbToCs(expr: string, scope: Map<string, string>, opts: ConvertOptions = {}): Converted {
   const lx = lex(expr);
   if ("error" in lx) return lx;
   const t = lx.filter((x) => x.k !== "ws");
@@ -180,7 +200,9 @@ export function vbToCs(expr: string, scope: Map<string, string>): Converted {
         // ) のすぐ後の ( は添字（Split(","c)(0)、Rows(0)("A")）
         if (isOp(t[i - 2], ")") && i - 1 !== noIndexAt) group("[", "]"); else group("(", ")");
         return;
-      case ":=": out.push(": "); return;
+      case ":=":
+        if (opts.tree) throw new Error("名前付き引数（a:=1）は C# の XAML の式（式ツリー）に書けない（CS0853）。引数を順番どおりに並べる");
+        out.push(": "); return;
       case ",": out.push(", "); return;
       case "+": case "-": {
         const before = t[i - 2];
@@ -237,7 +259,11 @@ export function vbToCs(expr: string, scope: Map<string, string>): Converted {
     if (!afterDot) {
       if (!names.has(lc)) {
         if (constants[lc] && !isOp(peek(1), "(")) { i++; out.push(constants[lc]); return; }
-        if (vbFunctions[lc] && isOp(peek(1), "(")) { i++; out.push(vbFunctions[lc]); return; }
+        if (vbFunctions[lc] && isOp(peek(1), "(")) {
+          i++; out.push(vbFunctions[lc]);
+          if (opts.tree && optionalArgs[lc]) out.push(withDefaults(x.v, lc));
+          return;
+        }
         if (moduleCase[lc] && isOp(peek(1), ".")) { i++; out.push(`Microsoft.VisualBasic.${moduleCase[lc]}`); return; }
         if (typeAlias[lc] && isOp(peek(1), ".")) { i++; out.push(typeAlias[lc]); return; }
         if ((lc === "if" || lc === "iif") && isOp(peek(1), "(")) return ternary(lc);
@@ -299,7 +325,15 @@ export function vbToCs(expr: string, scope: Map<string, string>): Converted {
       else out.push(name);
       i++; group("[", "]"); return;
     }
+    // 宣言済みの名前が C# の予約語（out、string など）。C# の XAML では使えない（@out も CS0103 で落ちる。knowledge/csharp-expressions.md）
+    if (opts.tree && declared && csKeywords.has(declared)) throw new Error(`変数名 ${declared} は C# の予約語なので、C# の XAML では参照できない（@${declared} も通らない）。名前を変える`);
     out.push(name);
+    if (opts.tree && afterDot && isOp(peek(), "(")) {
+      // Microsoft.VisualBasic.Strings.InStr(...) など、モジュール名つきの VB の組み込み関数
+      if (/^Microsoft\.VisualBasic\.\w+$/.test(out[out.length - 3] ?? "") && optionalArgs[lc]) { out.push(withDefaults(name, lc)); return; }
+      // String.Split(char) / Split(string) は .NET の省略可能な引数（options）を使う。params の配列の形にする
+      if (lc === "split") { splitOne(); return; }
+    }
     if (declared && isOp(peek(), "(")) { i++; group("[", "]"); return; } // 変数(0) → 変数[0]
     if (afterDot && parameterless.has(name) && !isOp(peek(), "(")) out.push("()");
     // .Where(...).Count のように、LINQ の続きの Count は引数なしのメソッド
@@ -313,6 +347,36 @@ export function vbToCs(expr: string, scope: Map<string, string>): Converted {
       // Cast(Of T) の引数のかっこは VB では省ける。続くかっこは引数で、添字ではない
       if (isOp(peek(), "(")) { i++; group("(", ")"); } else out.push("()");
     }
+  }
+
+  // ( の位置から ) までの引数を読む
+  function callArgs(): string[] {
+    i++;
+    const a: string[] = [];
+    if (isOp(t[i], ")")) { i++; return a; }
+    a.push(capture(argEnd));
+    while (isOp(t[i], ",")) { i++; a.push(capture(argEnd)); }
+    if (!isOp(t[i], ")")) throw new Error("かっこが閉じていない");
+    i++;
+    return a;
+  }
+  // VB の組み込み関数の呼び出しに、省いた引数の既定値を足す（tree: true）。"(引数...)" を返す
+  function withDefaults(name: string, lc: string): string {
+    const o = optionalArgs[lc];
+    const a = callArgs();
+    if (a.length !== o.max && !o.fill[a.length]) throw new Error(`${name} の引数 ${a.length} つの呼び出しは、省いた引数の既定値を決められない（C# の XAML の式は省略可能な引数を書けない。CS0854）。引数をすべて書く`);
+    return `(${[...a, ...(o.fill[a.length] ?? [])].join(", ")})`;
+  }
+  // x.Split(1つ) → x.Split(new[] { ',' }) / x.Split(new[] { "," }, StringSplitOptions.None)。引数が文字か文字列か分からなければエラー
+  function splitOne() {
+    const first = t[i + 1];
+    const one = isOp(t[i + 2], ")");
+    const a = callArgs();
+    if (a.length !== 1) { out.push(`(${a.join(", ")})`); return; }
+    const declared = first?.k === "id" && one ? scope.get(names.get(first.v.toLowerCase()) ?? "") : undefined;
+    const kind = one && first?.k === "chr" ? "char" : one && first?.k === "str" ? "string" : declared && /^(System\.)?Char$/i.test(declared) ? "char" : declared && /^(System\.)?String$/i.test(declared) ? "string" : undefined;
+    if (!kind) throw new Error(`Split(${a[0]}) は引数が文字か文字列か分からない（C# の XAML の式は省略可能な引数を書けない。CS0854）。{ "vb": ..., "cs": ... } で書く`);
+    out.push(kind === "char" ? `(new[] { ${a[0]} })` : `(new[] { ${a[0]} }, StringSplitOptions.None)`);
   }
 
   // k は "." の位置。その前がメソッド呼び出しで、名前が LINQ か
@@ -421,14 +485,14 @@ export function vbToCs(expr: string, scope: Map<string, string>): Converted {
 }
 
 // 変数の既定値。VB の配列リテラル {a, b} は、型が配列のときだけ new T[] { a, b } に直す
-export function vbDefaultToCs(expr: string, type: string, scope: Map<string, string>): Converted {
+export function vbDefaultToCs(expr: string, type: string, scope: Map<string, string>, opts: ConvertOptions = {}): Converted {
   const s = expr.trim();
   if (s.startsWith("{") && s.endsWith("}") && type.trim().endsWith("[]")) {
-    const inner = vbToCs(s.slice(1, -1), scope);
+    const inner = vbToCs(s.slice(1, -1), scope, opts);
     if ("error" in inner) return inner;
     return { cs: `new ${csType(type)} { ${inner.cs} }` };
   }
-  return vbToCs(s, scope);
+  return vbToCs(s, scope, opts);
 }
 
 // IR の型名を C# の型名にする（List(Of String) → List<String>、Integer → int）

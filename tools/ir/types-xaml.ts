@@ -92,6 +92,11 @@ const simple: Record<string, [string, Record<string, string>]> = {
   "Newtonsoft.Json.Linq.JArray": ["njl:JArray", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
   "Newtonsoft.Json.Linq.JToken": ["njl:JToken", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
   "UiPath.UIAutomationNext.Enums.NBrowserType": ["uix:NBrowserType", { uix: "http://schemas.uipath.com/workflow/activities/uix" }],
+  // C# の XAML で、カタログのプロパティの型（InArgument<T> の T）を書くときに要るもの
+  "System.Collections.IEnumerable": ["sc:IEnumerable", { sc: "clr-namespace:System.Collections;assembly=System.Private.CoreLib" }],
+  "UiPath.CV.CvDescriptor": ["uc:CvDescriptor", { uc: "clr-namespace:UiPath.CV;assembly=UiPath.CV" }],
+  "UiPath.CV.CvString": ["uc:CvString", { uc: "clr-namespace:UiPath.CV;assembly=UiPath.CV" }],
+  "UiPath.Core.EventInfo": ["uuia:EventInfo", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {
@@ -102,7 +107,23 @@ const generic: Record<string, [string, Record<string, string>]> = {
   KeyValuePair: ["scg:KeyValuePair", { scg: SCG }],
   IList: ["scg:IList", { scg: SCG }],
   ICollection: ["scg:ICollection", { scg: SCG }],
+  Nullable: ["s:Nullable", { s: S }],
 };
+
+// 完全名（"UiPath.Platform.ResourceHandling.ILocalResource"、"System.Collections.ObjectModel.Collection"）→ 表の項目。
+// 表の xmlns が clr-namespace のものから作る（カタログのプロパティの型は完全名で来る。C# の XAML で使う）
+let byFullName: Map<string, [string, Record<string, string>]> | undefined;
+function fullName(name: string): [string, Record<string, string>] | undefined {
+  if (!byFullName) {
+    byFullName = new Map();
+    for (const [, e] of [...Object.entries(simple), ...Object.entries(generic), ...Object.entries(excelXamlTypes)]) {
+      const [p, local] = e[0].includes(":") ? e[0].split(":") : ["", e[0]];
+      const ns = /^clr-namespace:([\w.]+);/.exec(e[1][p] ?? "")?.[1];
+      if (ns && !byFullName.has(`${ns}.${local}`)) byFullName.set(`${ns}.${local}`, e);
+    }
+  }
+  return byFullName.get(name);
+}
 
 // エイリアス（VB / C# の書き方も受ける）
 const alias: Record<string, string> = {
@@ -121,9 +142,9 @@ export function toXamlType(t: string): XamlType | { error: string } {
     const text = inner.text.startsWith("x:") ? `s:${inner.text.slice(2)}[]` : `${inner.text}[]`;
     return { text, xmlns: { ...inner.xmlns, s: S } };
   }
-  const g = s.match(/^(\w+)\s*(?:<(.+)>|\(Of (.+)\))$/);
+  const g = s.match(/^([\w.]+)\s*(?:<(.+)>|\(Of (.+)\))$/);
   if (g) {
-    const base = generic[g[1]];
+    const base = generic[g[1]] ?? fullName(g[1]);
     if (!base) return { error: `未知のジェネリック型 "${g[1]}"` };
     const args = splitArgs(g[2] ?? g[3]).map(toXamlType);
     const bad = args.find((a) => "error" in a);
@@ -131,7 +152,7 @@ export function toXamlType(t: string): XamlType | { error: string } {
     const ok = args as XamlType[];
     return { text: `${base[0]}(${ok.map((a) => a.text).join(", ")})`, xmlns: Object.assign({}, base[1], ...ok.map((a) => a.xmlns)) };
   }
-  const hit = simple[alias[s] ?? s] ?? excelXamlTypes[s];
+  const hit = simple[alias[s] ?? s] ?? excelXamlTypes[s] ?? fullName(t.trim());
   if (!hit) return { error: `未知の型 "${t}"（types-xaml.ts に足す）` };
   return { text: hit[0], xmlns: hit[1] };
 }

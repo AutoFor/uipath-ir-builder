@@ -1,0 +1,41 @@
+{
+  "workflow": "VbExpressionsCs",
+  "variables": [
+    { "name": "s", "type": "String", "default": "\"a,b\"" },
+    { "name": "n", "type": "Int32", "default": "3" },
+    { "name": "items", "type": "List<String>", "default": "New List(Of String) From {\"a\", \"bb\", \"ccc\"}" },
+    { "name": "o", "type": "Object", "default": "\"text\"" },
+    { "name": "dt", "type": "DataTable", "default": "New DataTable()" }
+  ],
+  "body": [
+    { "act": "Assign", "props": { "To": "dt.Columns.Add(\"A\").DefaultValue", "Value": "\"d\"" }, "typeArg": "Object" },
+    { "act": "Assign", "props": { "To": "dt.Rows.Add(\"x1\").RowError", "Value": "\"\"" }, "typeArg": "String" },
+    { "act": "LogMessage", "props": { "Message": "\"vbCr=\" & (\"a\" & vbCr & \"b\").Length.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"vbLf=\" & (\"a\" & vbLf & \"b\").IndexOf(vbLf).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"vbCrLf=\" & (\"a\" & vbCrLf).Length.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"vbTab=\" & (\"a\" & vbTab).Length.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"vbNewLine=\" & (vbNewLine = Environment.NewLine).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"ControlChars=\" & (\"a\" & ControlChars.Tab).Length.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Left=\" & Left(s, 1) & Mid(s, 3, 1) & Right(s, 1) & UCase(s) & Len(s).ToString & InStr(s, \",\").ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"IsNumeric=\" & IsNumeric(\"12\").ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Split=\" & s.Split(\",\"c)(1)" } },
+    { "act": "LogMessage", "props": { "Message": "\"If=\" & If(n > 1, \"big\", \"small\")" } },
+    { "act": "LogMessage", "props": { "Message": "\"IfNull=\" & If(CType(Nothing, String), \"dflt\")" } },
+    { "act": "LogMessage", "props": { "Message": "\"IIf=\" & IIf(n > 5, \"big\", \"small\").ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Not=\" & (Not s = \"x\").ToString & (Not o Is Nothing).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Div=\" & (7 / 2).ToString & \" \" & (n / 2).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Count=\" & items.Where(Function(x) x <> \"a\").Count.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Select=\" & String.Join(\"|\", items.Select(Function(x) x.ToUpper))" } },
+    { "act": "LogMessage", "props": { "Message": "\"Any=\" & items.Any(Function(x As String) x.Length = 3).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Cast=\" & String.Join(\"|\", dt.Rows.Cast(Of DataRow).Select(Function(r) r(\"A\").ToString))" } },
+    { "act": "LogMessage", "props": { "Message": "\"Index=\" & dt.Rows(0)(\"A\").ToString & dt.Rows(0).Item(\"A\").tostring & dt.Rows(0).Field(Of String)(\"A\")" } },
+    { "act": "LogMessage", "props": { "Message": "\"GetType=\" & New DataColumn(\"M\", GetType(String)).DataType.Name" } },
+    { "act": "LogMessage", "props": { "Message": "\"TypeOf=\" & (TypeOf o Is String).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"With=\" & (New System.Diagnostics.ProcessStartInfo(\"p\") With {.Arguments = \"q\", .CreateNoWindow = True}).Arguments" } },
+    { "act": "LogMessage", "props": { "Message": "\"Array=\" & {\"a\", \"b\"}.Length.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Date=\" & #1/2/2020#.Day.ToString & (Now.Year > 2000).ToString & (Today <= Now).ToString & Date.MaxValue.Year.ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Hex=\" & (&H10).ToString" } },
+    { "act": "LogMessage", "props": { "Message": "\"Parse=\" & (Integer.Parse(\"5\") * 2).ToString & CInt(\"5\").ToString & CStr(5)" } },
+    { "act": "LogMessage", "name": "名前付き引数は C# の XAML に書けないので両方を書く", "props": { "Message": { "vb": "\"Named=\" & s.Split({\",\"c}, count:=1)(0)", "cs": "\"Named=\" + s.Split(new[] { ',' }, 1)[0]" } } }
+  ]
+}

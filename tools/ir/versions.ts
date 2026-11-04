@@ -57,6 +57,13 @@ export function readProject(projectDir: string) {
   return readJson(f);
 }
 
+// project.json の式の言語（expressionLanguage）。書いていなければ VisualBasic（Studio の既定）。知らない値はエラー
+export function projectLanguage(projectDir: string): "VisualBasic" | "CSharp" {
+  const l = readProject(projectDir).expressionLanguage ?? "VisualBasic";
+  if (l !== "VisualBasic" && l !== "CSharp") throw new VersionError(`${join(projectDir, "project.json")} の expressionLanguage "${l}" は扱えない（VisualBasic か CSharp）`);
+  return l;
+}
+
 // 古い抽出器で作ったカタログ：services の項目が無く、readOnly のプロパティも1つも無い。
 // （services が無いだけなら Coded API の無いパッケージ。Persistence と System.Activities がそう）
 function isLegacy(c: { services?: unknown; activities: { props: { readOnly?: boolean }[] }[] }) {
@@ -114,7 +121,6 @@ export function selectCatalogs(root: string, projectDir?: string, opts: { coded?
   serviceFiles.push(codedBase);
   if (opts.coded && legacy.length)
     throw new VersionError(`C# を作れない。次のカタログには services（Coded API）が無く、呼び出しを確かめられない：${legacy.join(", ")}。その版の DLL から抽出器で作り直す（docs/version-upgrade.md の手順 2）`);
-  if (pj.expressionLanguage && pj.expressionLanguage !== "VisualBasic") warnings.push(`このプロジェクトの式の言語は ${pj.expressionLanguage}。生成する XAML の式は VB なので、build で落ちる`);
   if (pj.targetFramework && pj.targetFramework !== "Windows") warnings.push(`このプロジェクトの targetFramework は ${pj.targetFramework}。生成器は Windows（.NET）の XAML で確かめている`);
   return { versions, files, serviceFiles, legacy, warnings };
 }

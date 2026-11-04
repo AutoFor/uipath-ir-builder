@@ -5,6 +5,8 @@
 //
 // - samples/ir/**/*.json        … 検証が通ること。XAML を samples/generated/、C# を samples/generated-coded/ のスナップショットと比べる。
 //                                  生成した C# がチェッカーを通ること（対応表が「Coded API なし」のものは C# を作らない）
+// - samples/ir/**/*.json と samples/ir-csharp/*.json … 式の言語が C# の XAML も作れること（VB の式を C# に直せること、[...] が残らないこと）。
+//                                  一部（samples/ir/ 直下と samples/ir-csharp/）は samples/generated-csharp/ のスナップショットと比べる
 // - samples/ir-unbuildable/**/*.json … 検証が通り XAML を生成できること（build を通らないので build しない。スナップショットもなし。理由は横の verify.json）
 // - samples/ir-invalid/*.json   … 横の *.expected.json の codes と、検証のエラーコードが一致すること
 // - samples/ir-invalid-coded/*.json … 検証は通り、C# の生成で expected.json の codes が出ること
@@ -20,7 +22,7 @@ import { fileURLToPath } from "node:url";
 import { loadCatalog } from "./catalog.ts";
 import { validate } from "./validate.ts";
 import { hasSuspending } from "./persistence.ts";
-import { generate } from "./generate.ts";
+import { generate, generateChecked } from "./generate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
@@ -86,7 +88,7 @@ test("対応表が読めて、カタログにあるアクティビティを指�
     assert.ok(cat.activities.some((a) => a.className === m.activity && a.package === m.package), `${m.file}: ${m.package} に ${m.activity} が無い`);
 });
 
-for (const dir of ["samples/ir", "samples/ir-unbuildable", "samples/ir-invalid", "samples/ir-invalid-coded", "samples/coded-invalid"])
+for (const dir of ["samples/ir", "samples/ir-csharp", "samples/ir-unbuildable", "samples/ir-invalid", "samples/ir-invalid-coded", "samples/coded-invalid"])
   for (const f of sidecarJson(dir))
     test(`JSON ${rel(f)}`, () => { JSON.parse(read(f)); });
 
@@ -107,6 +109,29 @@ for (const f of files("samples/ir", ".json")) {
     snapshot(join(root, "samples", "generated-coded", sub, `${wf.workflow}.cs`), r.code);
     const chk = checkSource(r.code, `${wf.workflow}.cs`, ctx);
     assert.deepEqual(chk.issues.filter((i) => i.severity === "error"), [], "生成した C# がチェッカーを通らない");
+  });
+}
+
+// 式の言語が C# の XAML。直せない式（名前付き引数など）があるものは CS_EXPR、C# の予約語の変数名は CS_NAME になる。そのうち C# でも試すものは、両方を書いた版を samples/ir-csharp/ に置く
+const csExprErrors: Record<string, string[]> = {
+  "samples/ir/VbExpressions.json": ["CS_EXPR"], // 名前付き引数
+  // 変数名 out（C# の予約語）
+  "samples/ir/UiPath.System.Activities/ModifyText.full.json": ["CS_EXPR", "CS_NAME"],
+  "samples/ir/UiPath.System.Activities/ModifyText.min.json": ["CS_EXPR", "CS_NAME"],
+  "samples/ir/UiPath.System.Activities/ToUpperLowerTextModification.min.json": ["CS_EXPR", "CS_NAME"],
+};
+const csSnapshot = (f: string) => /^samples\/ir\/[^/]+$/.test(rel(f)) || rel(f).startsWith("samples/ir-csharp/");
+for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", ".json")]) {
+  test(`C# の XAML ${rel(f)}`, () => {
+    const wf: Workflow = JSON.parse(read(f));
+    if (rel(f).startsWith("samples/ir-csharp/")) assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
+    const r = generateChecked(wf, cat, { language: "CSharp" });
+    assert.deepEqual(r.issues.map((i) => i.code).sort(), csExprErrors[rel(f)] ?? [], "C# の式に直せない");
+    if (r.issues.length) return;
+    assert.match(r.xaml, /^<Activity mc:Ignorable="sap sap2010" x:Class="\w+" sap2010:ExpressionActivityEditor\.ExpressionActivityEditor="C#"\r\n/, "ルートに ExpressionActivityEditor=\"C#\" が無い");
+    assert.doesNotMatch(r.xaml, /mva:|VisualBasic\.Settings|VisualBasicValue|VisualBasicReference/, "VB の設定や式が残っている");
+    assert.doesNotMatch(r.xaml, /="\[[^"]*\]"|>\[[^<]*\]</, "[式]（VB の略記）が残っている");
+    if (csSnapshot(f)) snapshot(join(root, "samples", "generated-csharp", `${wf.workflow}.xaml`), r.xaml);
   });
 }
 

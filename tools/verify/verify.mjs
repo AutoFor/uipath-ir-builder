@@ -15,7 +15,8 @@
 //   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
 //
 // IR（*.json）1つにつき、XAML（<プロジェクト>/<workflow>.xaml）と C#（<プロジェクト>/coded/<workflow>.cs）の両方を作って試す。
-// 手書きの *.cs は <プロジェクト>/ にそのまま写して試す。
+// 手書きの *.cs は <プロジェクト>/ にそのまま写して試す。*.xaml も同じ（tools/ir/convert-xaml.ts で C# にした XAML など）。
+// 式の言語が C# のテンプレート（--template C:\Users\Public\uipath-ir-probe-cs）では --use-project を付ける。gen.ts が project.json の expressionLanguage に従って C# の XAML を作る。
 //
 // ファイルの横に置くもの（どれも任意）:
 //   <名前>.expected.log  期待するログ。1行1件、この順に出ること（間に別の行があってもよい）。
@@ -94,7 +95,7 @@ const files = [];
 for (const p of inputs) collect(resolve(p));
 const irFiles = files.filter((f) => extname(f) === ".json");
 const csFiles = files.filter((f) => extname(f) === ".cs");
-if (!irFiles.length && !csFiles.length && !opt.defaultXaml) die("*.json / *.cs が1つもない");
+if (!files.length && !opt.defaultXaml) die("*.json / *.cs / *.xaml が1つもない");
 
 // ---- 作業用プロジェクトを用意する ----
 const lock = join(projDir, ".verify.lock");
@@ -206,6 +207,17 @@ if (csFiles.length) {
   }
 }
 
+// ---- 手書き・変換した *.xaml：そのまま写す（tools/ir/convert-xaml.ts で作った C# の XAML を試すときなど）----
+for (const f of files.filter((x) => extname(x).toLowerCase() === ".xaml")) {
+  const r = newResult(f, "xaml-file");
+  const stem = basename(f, extname(f)).toLowerCase();
+  if (names.has(stem)) die(`${rel(f)} と IR ${rel(names.get(stem))} が同じ名前の XAML になる`);
+  r.workflow = basename(f, extname(f));
+  r.target = join(projDir, basename(f));
+  cpSync(f, r.target);
+  results.push(r);
+}
+
 // ---- build / run ----
 if (opt.buildOnly) {
   // "buildAlone": true のファイルは、プロジェクトに1つだけ置いて別に build する（Wait 系が別々のファイルにあると分析が落ちる。AUT-1074、knowledge/persistence.md）
@@ -302,7 +314,7 @@ function collect(p) {
   if (!existsSync(p)) die(`見つからない: ${p}`);
   if (statSync(p).isDirectory()) { for (const e of readdirSync(p).sort()) collect(join(p, e)); return; }
   if (/\.(verify|expected|args)\.json$/i.test(p)) return;
-  if ([".json", ".cs"].includes(extname(p)) && !files.includes(p)) files.push(p);
+  if ([".json", ".cs", ".xaml"].includes(extname(p).toLowerCase()) && !files.includes(p)) files.push(p);
 }
 
 // 期待するログ（<名前>.expected.log）。無ければ空

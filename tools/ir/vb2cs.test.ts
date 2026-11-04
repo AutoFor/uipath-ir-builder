@@ -83,4 +83,27 @@ for (const [vb, cs] of ok) test(`VB → C#: ${vb}`, () => assert.deepEqual(vbToC
 for (const vb of ["Sub(x) Foo(x)", "a \\ b", "2 ^ 3", "{}", "AddressOf Foo", 'a Like "b*"', "From x In y Select x", '"a" & count + 1', "count & i", "IIf(a, 1)", "#1/2/2020 10:00#"])
   test(`VB → C# できない: ${vb}`, () => assert.ok("error" in vbToCs(vb, scope)));
 
+// tree: true（C# の XAML の式。式ツリーなので省略可能な引数・名前付き引数を書けない）
+const treeScope = new Map([...scope, ["s", "String"], ["ch", "Char"], ["o", "Object"], ["out", "String"]]);
+const treeOk: [string, string][] = [
+  ['InStr(s, ",")', 'Microsoft.VisualBasic.Strings.InStr(s, ",", Microsoft.VisualBasic.CompareMethod.Binary)'],
+  ['Strings.InStr(s, ",")', 'Microsoft.VisualBasic.Strings.InStr(s, ",", Microsoft.VisualBasic.CompareMethod.Binary)'],
+  ['InStr(1, s, ",", CompareMethod.Text)', 'Microsoft.VisualBasic.Strings.InStr(1, s, ",", CompareMethod.Text)'],
+  ['Replace(s, "a", "b")', 'Microsoft.VisualBasic.Strings.Replace(s, "a", "b", 1, -1, Microsoft.VisualBasic.CompareMethod.Binary)'],
+  ["Split(s)", 'Microsoft.VisualBasic.Strings.Split(s, " ", -1, Microsoft.VisualBasic.CompareMethod.Binary)'],
+  ["Weekday(Now)", "Microsoft.VisualBasic.DateAndTime.Weekday(DateTime.Now, Microsoft.VisualBasic.FirstDayOfWeek.Sunday)"],
+  ['s.Split(","c)(1)', "s.Split(new[] { ',' })[1]"],
+  ['s.Split(",")', 's.Split(new[] { "," }, StringSplitOptions.None)'],
+  ["s.Split(ch)", "s.Split(new[] { ch })"],
+  ['s.Split(","c, StringSplitOptions.None)', "s.Split(',', StringSplitOptions.None)"],
+  ['Left(s, 1) & Mid(s, 2)', "Microsoft.VisualBasic.Strings.Left(s, 1) + Microsoft.VisualBasic.Strings.Mid(s, 2)"],
+];
+for (const [vb, cs] of treeOk) test(`VB → C#（式ツリー）: ${vb}`, () => assert.deepEqual(vbToCs(vb, treeScope, { tree: true }), { cs }));
+for (const vb of ['"[" & out & "]"', 'Foo(a:=1, b:="x")', 's.Split({","c}, count:=1)', "s.Split(o)", 'InStr(1, s, ",")'])
+  test(`VB → C#（式ツリー）できない: ${vb}`, () => assert.ok("error" in vbToCs(vb, treeScope, { tree: true })));
+test("式ツリーでなければ、省略可能な引数はそのまま（Coded は変えない）", () => {
+  assert.deepEqual(vbToCs('s.Split(","c)', treeScope), { cs: "s.Split(',')" });
+  assert.deepEqual(vbToCs('InStr(s, ",")', treeScope), { cs: 'Microsoft.VisualBasic.Strings.InStr(s, ",")' });
+});
+
 test("配列の既定値", () => assert.deepEqual(vbDefaultToCs('{"太郎", "花子"}', "String[]", scope), { cs: 'new String[] { "太郎", "花子" }' }));

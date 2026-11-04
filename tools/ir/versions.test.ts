@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import { loadCatalog } from "./catalog.ts";
 import { generate } from "./generate.ts";
 import { CATALOG_FILES } from "./import-xaml.ts";
-import { DEFAULT_CATALOG_FILES, DEFAULT_SERVICE_FILES, DEFAULT_VERSIONS, VersionError, loadSelected, parseDependencyVersion, projectRootImports, readRootImports, selectCatalogs } from "./versions.ts";
+import { DEFAULT_CATALOG_FILES, DEFAULT_SERVICE_FILES, DEFAULT_VERSIONS, VersionError, loadSelected, parseDependencyVersion, projectLanguage, projectRootImports, readRootImports, selectCatalogs } from "./versions.ts";
 import { loadContext } from "../coded/check.ts";
 import type { Workflow } from "./types.ts";
 
@@ -210,6 +210,38 @@ test("ルートの imports：--project は main の XAML から、無ければ�
   assert.match(bad.stderr, /--imports-from の XAML が無い/);
   writeFileSync(join(work, "empty.xaml"), "<Activity />");
   assert.equal(node(gen, greet, "--check", "--imports-from", join(work, "empty.xaml")).status, 2);
+});
+
+test("式の言語：--language、--project の expressionLanguage に従う。食い違いと知らない値はエラー", () => {
+  const out = join(work, "out-lang");
+  mkdirSync(out);
+  const isCs = () => /ExpressionActivityEditor\.ExpressionActivityEditor="C#"/.test(readFileSync(join(out, "Greet.xaml"), "utf8"));
+  assert.equal(node(gen, greet, "--out", out).status, 0);
+  assert.equal(isCs(), false, "既定は VB");
+  assert.equal(node(gen, greet, "--out", out, "--language", "CSharp").status, 0);
+  assert.equal(isCs(), true);
+
+  const cs = project(current, { expressionLanguage: "CSharp" });
+  const r = node(gen, greet, "--out", out, "--project", cs);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.equal(isCs(), true, "--project の expressionLanguage に従う");
+  assert.doesNotMatch(r.stderr, /式の言語/, "C# のプロジェクトでも注意を出さない");
+  assert.equal(projectLanguage(project(current)), "VisualBasic", "書いていなければ VB");
+
+  const conflict = node(gen, greet, "--check", "--project", cs, "--language", "VisualBasic");
+  assert.equal(conflict.status, 2);
+  assert.match(conflict.stderr, /expressionLanguage/);
+  assert.equal(node(gen, greet, "--check", "--project", project(current, { expressionLanguage: "Python" })).status, 2);
+  assert.equal(node(gen, greet, "--check", "--language", "Ruby").status, 2);
+});
+
+test("式の言語：C# に直せない式は検証エラー（CS_EXPR）。--check でも出る", () => {
+  const f = join(work, "Named.json");
+  writeFileSync(f, JSON.stringify({ workflow: "Named", variables: [{ name: "s", type: "String" }], body: [{ act: "LogMessage", props: { Message: 's.Split({","c}, count:=1)(0)' } }] }));
+  assert.equal(node(gen, f, "--check").status, 0, "VB なら通る");
+  const r = node(gen, f, "--check", "--language", "CSharp");
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /CS_EXPR\s+body\[0\]\.props\.Message: .*名前付き引数/);
 });
 
 test("gen-coded：--project のプロジェクト名が名前空間の既定になる", () => {

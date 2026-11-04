@@ -1,0 +1,77 @@
+{
+  "workflow": "ModifyTextCs_Full",
+  "variables": [
+    {
+      "name": "outText",
+      "type": "String"
+    }
+  ],
+  "body": [
+    {
+      "act": "ModifyText",
+      "name": "文字列を順に加工する",
+      "props": {
+        "SourceText": {
+          "lit": "  hello  "
+        },
+        "OutputText": "outText"
+      },
+      "body": [
+        {
+          "act": "Sequence",
+          "name": "実行",
+          "body": [
+            {
+              "act": "TrimTextModification",
+              "name": "前後の空白を取る",
+              "props": {
+                "TrimBefore": true,
+                "TrimAfter": true
+              }
+            },
+            {
+              "act": "CombineTextModification",
+              "name": "後ろに足す",
+              "props": {
+                "NewText": {
+                  "lit": "!"
+                },
+                "InsertionSide": "After"
+              }
+            },
+            {
+              "act": "ToUpperLowerTextModification",
+              "name": "大文字にする",
+              "props": {
+                "ModificationType": "Uppercase"
+              }
+            },
+            {
+              "act": "FindAndReplaceTextModification",
+              "name": "置き換える",
+              "props": {
+                "SearchText": {
+                  "lit": "HELLO"
+                },
+                "ReplaceText": {
+                  "lit": "BYE"
+                },
+                "MatchCase": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"[\" & outText & \"]\"",
+          "cs": "\"[\" + outText + \"]\""
+        }
+      }
+    }
+  ]
+}

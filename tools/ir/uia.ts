@@ -223,6 +223,8 @@ export type XamlCtx = {
   esc: (s: string) => string;
   emit: (depth: number, s: string) => void;
   typeText: (t: string) => string;
+  // 式の言語が C# のとき。element は属性に書けない式を要素にしたもの（書けるなら undefined。typeArg はジェネリックのオブジェクトの $typeArg）、content は <InArgument> の中身。path は objs からの場所
+  cs?: { element: (v: Value, p: Prop, path: string, typeArg?: string) => string | undefined; content: (v: Value, t: string, path: string) => string };
 };
 
 // <tag.Prop><uix:Type ... /></tag.Prop> を書く
@@ -230,19 +232,22 @@ export function emitObjs(n: Node, a: Activity, tag: string, depth: number, ctx: 
   for (const [k, v] of Object.entries(n.objs ?? {})) {
     const p = a.props.find((x) => x.name === k)!;
     ctx.emit(depth, `<${tag}.${k}>`);
-    emitObj(objTypeFor(p.type, v)!, v, depth + 1, ctx);
+    emitObj(objTypeFor(p.type, v)!, v, depth + 1, ctx, `objs.${k}`);
     ctx.emit(depth, `</${tag}.${k}>`);
   }
 }
 
-function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
+function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx, path: string) {
   const tag = ctx.prefixFor(t.xmlns) + t.className;
   const attrs: [string, string][] = [];
   const elems: [Prop, ObjValue | ObjValue[]][] = [];
+  const csElems: [string, string][] = []; // C# で要素にした式
   for (const [k, x] of Object.entries(v)) {
     if (k === "$type" || k === "$typeArg") continue;
     const p = t.props.find((q) => q.name === k)!;
-    if (isValue(x)) attrs.push([k, ctx.attrValue(x, p)]);
+    const el = isValue(x) ? ctx.cs?.element(x, p, `${path}.${k}`, t.genericArity ? String(v.$typeArg) : undefined) : undefined;
+    if (el !== undefined) csElems.push([k, el]);
+    else if (isValue(x)) attrs.push([k, ctx.attrValue(x, p)]);
     else elems.push([p, x as ObjValue | ObjValue[]]);
   }
   for (const [k, d] of Object.entries(objDefaults[t.clrType] ?? {}))
@@ -250,16 +255,22 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
   attrs.sort(([x], [y]) => x.localeCompare(y));
   if (t.genericArity) attrs.unshift(["x:TypeArguments", ctx.typeText(String(v.$typeArg))]);
   const attrText = attrs.map(([k, x]) => ` ${k}="${ctx.esc(x)}"`).join("");
-  if (!elems.length) { ctx.emit(depth, `<${tag}${attrText} />`); return; }
+  if (!elems.length && !csElems.length) { ctx.emit(depth, `<${tag}${attrText} />`); return; }
   ctx.emit(depth, `<${tag}${attrText}>`);
+  for (const [k, el] of csElems) {
+    ctx.emit(depth + 1, `<${tag}.${k}>`);
+    ctx.emit(depth + 2, el);
+    ctx.emit(depth + 1, `</${tag}.${k}>`);
+  }
   for (const [p, x] of elems) {
     ctx.emit(depth + 1, `<${tag}.${p.name}>`);
     if (Array.isArray(x) && (plainListElement(p.type) === "System.String" || isArgumentList(p.type))) {
       const sg = ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
       const arg = isArgumentList(p.type);
       ctx.emit(depth + 2, `<${sg}List x:TypeArguments="${arg ? "InArgument(x:String)" : "x:String"}" Capacity="${Math.max(4, x.length)}">`);
-      for (const e of x as unknown as Value[]) {
-        if (arg) ctx.emit(depth + 3, `<InArgument x:TypeArguments="x:String">${ctx.esc(ctx.attrValue(e, { kind: "in", type: "System.Object" } as Prop))}</InArgument>`);
+      for (const [i, e] of (x as unknown as Value[]).entries()) {
+        if (arg && ctx.cs) ctx.emit(depth + 3, `<InArgument x:TypeArguments="x:String">${ctx.cs.content(e, "x:String", `${path}.${p.name}[${i}]`)}</InArgument>`);
+        else if (arg) ctx.emit(depth + 3, `<InArgument x:TypeArguments="x:String">${ctx.esc(ctx.attrValue(e, { kind: "in", type: "System.Object" } as Prop))}</InArgument>`);
         else ctx.emit(depth + 3, `<x:String>${ctx.esc((e as { lit: string }).lit)}</x:String>`);
       }
       ctx.emit(depth + 2, `</${sg}List>`);
@@ -268,9 +279,9 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx) {
       const iface = p.type.match(/<(.+)>$/)![1];
       const ifaceTag = ctx.prefixFor(t.xmlns) + iface.slice(iface.lastIndexOf(".") + 1);
       ctx.emit(depth + 2, `<${ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib")}List x:TypeArguments="${ifaceTag}" Capacity="${Math.max(4, x.length)}">`);
-      for (const e of x) emitObj(item, e, depth + 3, ctx);
+      x.forEach((e, i) => emitObj(item, e, depth + 3, ctx, `${path}.${p.name}[${i}]`));
       ctx.emit(depth + 2, `</${ctx.prefixFor("clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib")}List>`);
-    } else emitObj(objTypeFor(p.type, x)!, x as ObjValue, depth + 2, ctx);
+    } else emitObj(objTypeFor(p.type, x)!, x as ObjValue, depth + 2, ctx, `${path}.${p.name}`);
     ctx.emit(depth + 1, `</${tag}.${p.name}>`);
   }
   ctx.emit(depth, `</${tag}>`);

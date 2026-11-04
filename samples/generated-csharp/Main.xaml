@@ -1,0 +1,136 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="Main" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib"
+xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Main" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="s:String[]" Name="names">
+        <Variable.Default>
+          <mca:CSharpValue x:TypeArguments="s:String[]">new String[] { &quot;太郎&quot;, &quot;花子&quot;, &quot;Al&quot;, &quot;A&quot; }</mca:CSharpValue>
+        </Variable.Default>
+      </Variable>
+      <Variable x:TypeArguments="x:Int32" Name="count">
+        <Variable.Default>
+          <mca:CSharpValue x:TypeArguments="x:Int32">0</mca:CSharpValue>
+        </Variable.Default>
+      </Variable>
+      <Variable x:TypeArguments="x:String" Name="message" />
+    </Sequence.Variables>
+    <ui:ForEach x:TypeArguments="x:String" DisplayName="名前ごとに" sap2010:WorkflowViewState.IdRef="ForEach_1">
+      <ui:ForEach.Values>
+        <InArgument x:TypeArguments="sc:IEnumerable"><mca:CSharpValue x:TypeArguments="sc:IEnumerable">names</mca:CSharpValue></InArgument>
+      </ui:ForEach.Values>
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="name" />
+          </ActivityAction.Argument>
+          <If DisplayName="2文字以上か" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Condition>
+              <InArgument x:TypeArguments="x:Boolean"><mca:CSharpValue x:TypeArguments="x:Boolean">name.Length &gt;= 2</mca:CSharpValue></InArgument>
+            </If.Condition>
+            <If.Then>
+              <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                <ui:InvokeWorkflowFile DisplayName="あいさつを作る" UnSafe="False" WorkflowFileName="Greet.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+                  <ui:InvokeWorkflowFile.Arguments>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Name"><mca:CSharpValue x:TypeArguments="x:String">name</mca:CSharpValue></InArgument>
+                    <OutArgument x:TypeArguments="x:String" x:Key="out_Message"><mca:CSharpReference x:TypeArguments="x:String">message</mca:CSharpReference></OutArgument>
+                  </ui:InvokeWorkflowFile.Arguments>
+                </ui:InvokeWorkflowFile>
+                <ui:LogMessage Level="Info" sap2010:WorkflowViewState.IdRef="LogMessage_1">
+                  <ui:LogMessage.Message>
+                    <InArgument x:TypeArguments="x:Object"><mca:CSharpValue x:TypeArguments="x:Object">message</mca:CSharpValue></InArgument>
+                  </ui:LogMessage.Message>
+                </ui:LogMessage>
+                <Assign DisplayName="数える" sap2010:WorkflowViewState.IdRef="Assign_1">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:Int32"><mca:CSharpReference x:TypeArguments="x:Int32">count</mca:CSharpReference></OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:Int32"><mca:CSharpValue x:TypeArguments="x:Int32">count + 1</mca:CSharpValue></InArgument>
+                  </Assign.Value>
+                </Assign>
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <ui:LogMessage Level="Warn" sap2010:WorkflowViewState.IdRef="LogMessage_2">
+                <ui:LogMessage.Message>
+                  <InArgument x:TypeArguments="x:Object"><mca:CSharpValue x:TypeArguments="x:Object">&quot;短すぎる名前: &quot; + name</mca:CSharpValue></InArgument>
+                </ui:LogMessage.Message>
+              </ui:LogMessage>
+            </If.Else>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:LogMessage DisplayName="件数" Level="Info" sap2010:WorkflowViewState.IdRef="LogMessage_3">
+      <ui:LogMessage.Message>
+        <InArgument x:TypeArguments="x:Object"><mca:CSharpValue x:TypeArguments="x:Object">&quot;あいさつした人数: &quot; + count.ToString()</mca:CSharpValue></InArgument>
+      </ui:LogMessage.Message>
+    </ui:LogMessage>
+  </Sequence>
+</Activity>
