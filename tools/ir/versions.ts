@@ -17,6 +17,7 @@ export const DEFAULT_VERSIONS: Record<string, string> = {
   "UiPath.UIAutomation.Activities": "26.10.6",
   "UiPath.Excel.Activities": "3.6.1",
   "UiPath.Persistence.Activities": "1.13.0",
+  "UiPath.Testing.Activities": "25.10.1",
 };
 const CODED_BASE = { pkg: "UiPath.CodedWorkflows", version: "24.10.3" };
 // project.json の dependencies に書かれないもの（.NET と Coded の基底クラス）。書かれていれば、そちらの版を使う
@@ -25,7 +26,7 @@ const IMPLICIT = new Set(["System.Activities", CODED_BASE.pkg]);
 export const catalogFile = (pkg: string, version: string) => `catalog/${pkg}/${version}.json`;
 export const DEFAULT_CATALOG_FILES = Object.entries(DEFAULT_VERSIONS).map(([p, v]) => catalogFile(p, v));
 export const DEFAULT_SERVICE_FILES = [
-  ...["UiPath.System.Activities", "UiPath.UIAutomation.Activities", "UiPath.Excel.Activities"].map((p) => catalogFile(p, DEFAULT_VERSIONS[p])),
+  ...["UiPath.System.Activities", "UiPath.UIAutomation.Activities", "UiPath.Excel.Activities", "UiPath.Testing.Activities"].map((p) => catalogFile(p, DEFAULT_VERSIONS[p])),
   catalogFile(CODED_BASE.pkg, CODED_BASE.version),
 ];
 

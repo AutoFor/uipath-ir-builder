@@ -983,6 +983,7 @@ export const CATALOG_FILES = [
   "catalog/UiPath.UIAutomation.Activities/26.10.6.json",
   "catalog/UiPath.Excel.Activities/3.6.1.json",
   "catalog/UiPath.Persistence.Activities/1.13.0.json",
+  "catalog/UiPath.Testing.Activities/25.10.1.json",
 ];
 
 export const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");

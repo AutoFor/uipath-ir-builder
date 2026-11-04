@@ -27,10 +27,9 @@ export const BASE = "UiPath.CodedWorkflows.CodedWorkflowBase";
 // 生成済みのプロジェクトを --project で渡したときは、そのファイルを読む（Studio が実際に作ったものが正）
 //
 // カタログの無いパッケージの変数。C:\Users\Public\uipath-ir-probe で Studio が生成したものと、登録クラスから読んだものが同じ
-// （Mail 2.12.10、Testing 25.10.1）。呼び出しはメソッドを確かめられず、NO_CATALOG の警告だけになる
+// （Mail 2.12.10）。呼び出しはメソッドを確かめられず、NO_CATALOG の警告だけになる
 export const uncatalogedVars: Record<string, Record<string, string>> = {
   "UiPath.Mail.Activities": { mail: "UiPath.Mail.Activities.Api.IMailService" },
-  "UiPath.Testing.Activities": { testing: "UiPath.Testing.API.ITestingService" },
 };
 export const defaultNamespace = "CatalogProbeNet8";
 

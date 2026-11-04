@@ -16,6 +16,11 @@ const knownPrefixes: Record<string, string> = {
   "http://schemas.uipath.com/workflow/activities/uix": "uix",
   "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib": "scg",
   ...excelPrefixes,
+  // Testing（Studio の既定 XAML と同じ接頭辞）
+  "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities": "uta",
+  "clr-namespace:UiPath.Testing.Activities.Coverage;assembly=UiPath.Testing.Activities": "utac",
+  "clr-namespace:UiPath.Testing.Activities.Mocks;assembly=UiPath.Testing.Activities": "utam",
+  "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities": "utat",
 };
 
 // Studio の BlankTemplate の Main.xaml と同じ並び

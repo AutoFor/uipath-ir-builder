@@ -1,0 +1,35 @@
+{
+  "workflow": "VerifyExpression_Full",
+  "variables": [
+    { "name": "ok", "type": "Boolean" },
+    { "name": "ng", "type": "Boolean" }
+  ],
+  "body": [
+    {
+      "act": "VerifyExpression",
+      "name": "成り立つ式",
+      "props": {
+        "Expression": { "vb": "\"abc\".Length = 3", "cs": "\"abc\".Length == 3" },
+        "AlternativeVerificationTitle": { "lit": "長さは3" },
+        "OutputMessageFormat": { "lit": "{Expression} の検証: {Result}" },
+        "ContinueOnFailure": true,
+        "TakeScreenshotInCaseOfFailingAssertion": false,
+        "TakeScreenshotInCaseOfSucceedingAssertion": false,
+        "Result": "ok"
+      }
+    },
+    {
+      "act": "VerifyExpression",
+      "name": "成り立たない式（続ける）",
+      "props": {
+        "Expression": { "vb": "1 > 2", "cs": "1 > 2" },
+        "AlternativeVerificationTitle": { "lit": "1は2より大きい" },
+        "ContinueOnFailure": true,
+        "TakeScreenshotInCaseOfFailingAssertion": false,
+        "Result": "ng"
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"ok=\" & ok.ToString", "cs": "\"ok=\" + ok" } } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"ng=\" & ng.ToString", "cs": "\"ng=\" + ng" } } }
+  ]
+}

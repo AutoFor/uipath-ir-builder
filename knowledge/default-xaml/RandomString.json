@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"RandomString\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:utat=\"clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <utat:RandomString Output=\"{x:Null}\" Case=\"LowerCase\" Length=\"10\" />\r\n</Activity>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"MockActivity\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:utam=\"clr-namespace:UiPath.Testing.Activities.Mocks;assembly=UiPath.Testing.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <utam:MockActivity MockedActivityIdRef=\"{x:Null}\">\r\n    <Sequence />\r\n  </utam:MockActivity>\r\n</Activity>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"VerifyControlAttribute\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uta=\"clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uta:VerifyControlAttribute AlternativeVerificationTitle=\"{x:Null}\" Expression=\"{x:Null}\" KeepScreenshots=\"{x:Null}\" OutputArgument=\"{x:Null}\" OutputMessageFormat=\"{x:Null}\" Result=\"{x:Null}\" ScreenshotsPath=\"{x:Null}\" ContinueOnFailure=\"True\" Operator=\"Equality\" TakeScreenshotInCaseOfFailingAssertion=\"True\" TakeScreenshotInCaseOfSucceedingAssertion=\"False\">\r\n    <uta:VerifyControlAttribute.ActivityToTest>\r\n      <ActivityAction />\r\n    </uta:VerifyControlAttribute.ActivityToTest>\r\n    <uta:VerifyControlAttribute.ArgumentsBridgeActivity>\r\n      <ActivityFunc x:TypeArguments=\"x:Object\">\r\n        <uta:ArgumentsBridge Input=\"{x:Null}\" />\r\n      </ActivityFunc>\r\n    </uta:VerifyControlAttribute.ArgumentsBridgeActivity>\r\n  </uta:VerifyControlAttribute>\r\n</Activity>"
+  }
+}

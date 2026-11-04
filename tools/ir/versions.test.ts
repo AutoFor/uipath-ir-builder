@@ -26,7 +26,7 @@ function project(dependencies: Record<string, string>, extra: Record<string, unk
   writeFileSync(join(d, "project.json"), JSON.stringify({ name: "My Proj", main: "Main.xaml", dependencies, ...extra }));
   return d;
 }
-const current = { "UiPath.System.Activities": "[26.10.0]", "UiPath.UIAutomation.Activities": "[26.10.6]", "UiPath.Excel.Activities": "[3.6.1]", "UiPath.Persistence.Activities": "[1.13.0]" };
+const current = { "UiPath.System.Activities": "[26.10.0]", "UiPath.UIAutomation.Activities": "[26.10.6]", "UiPath.Excel.Activities": "[3.6.1]", "UiPath.Persistence.Activities": "[1.13.0]", "UiPath.Testing.Activities": "[25.10.1]" };
 const greet = join(root, "samples", "ir", "Greet.json");
 const node = (...args: string[]) => spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
 const gen = join(root, "tools", "ir", "gen.ts");
@@ -108,7 +108,7 @@ test("Coded のサービス変数：生成コードが無ければ依存パッ�
   const sysOnly = loadContext(project({ "UiPath.System.Activities": "[26.10.0]" }));
   assert.deepEqual(sysOnly.vars, { system: "UiPath.Core.Activities.API.ISystemService" });
   const withMail = loadContext(project({ ...current, "UiPath.Mail.Activities": "[2.12.10]" }));
-  assert.deepEqual(Object.keys(withMail.vars).sort(), ["excel", "mail", "system", "uiAutomation"]);
+  assert.deepEqual(Object.keys(withMail.vars).sort(), ["excel", "mail", "system", "testing", "uiAutomation"]);
   // プローブで Studio が生成した CodedWorkflow.cs と同じ（System、UIAutomation、Excel、Mail、Testing）
   assert.deepEqual(loadContext().vars, {
     system: "UiPath.Core.Activities.API.ISystemService",
