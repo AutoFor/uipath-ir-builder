@@ -62,7 +62,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Sequence DisplayName="ExportUiTree_Min" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-c3-note.txt&quot;)]" Name="notePath" />
-      <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-c3-tree.xml&quot;)]" Name="treePath" />
+      <Variable x:TypeArguments="x:String" Default="[System.IO.Path.Combine(System.IO.Path.GetTempPath(), &quot;uia-c3-tree-&quot; &amp; Guid.NewGuid().ToString() &amp; &quot;.xml&quot;)]" Name="treePath" />
       <Variable x:TypeArguments="x:String" Name="treeText" />
     </Sequence.Variables>
     <ui:WriteTextFile DisplayName="メモ帳に開かせるファイルを書く" FileName="[notePath]" Text="uia-c3" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
