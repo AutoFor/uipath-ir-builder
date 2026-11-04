@@ -126,7 +126,11 @@ export function generate(wf: Workflow, cat: Catalog, opts: GenerateOptions = {})
       const p = a.props.find((p) => p.name === k)!;
       if (isUntypedArgument(p.type)) elems.push({ prop: p, value: v });
       else if (p.type === "System.Type") attrs.push([k, `{x:Type ${typeText(String(v))}}`]);
-      else attrs.push([k, attrValue(v, p)]);
+      else if (p.enumConverter && typeof v === "string" && p.enum?.includes(v)) {
+        // 表示名で読む TypeConverter がある enum（Testing の VerificationType など）。名前を書くと読めず既定値になるので、値を直接渡す
+        const dot = p.type.lastIndexOf(".");
+        attrs.push([k, `{x:Static ${prefixFor(`clr-namespace:${p.type.slice(0, dot)};assembly=${p.enumAssembly}`)}${p.type.slice(dot + 1)}.${v}}`]);
+      } else attrs.push([k, attrValue(v, p)]);
     }
     // get-default-xaml に出た既定値のうち、IR が書いていないもの（Version=V5 など）
     for (const [k, v] of Object.entries(cat.defaults.get(a.className) ?? {})) {

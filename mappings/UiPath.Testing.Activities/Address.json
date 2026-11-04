@@ -1,0 +1,1 @@
+{ "activity": "Address", "package": "UiPath.Testing.Activities", "coded": [ { "code": "{AddressResult:-_} = testing.Address({Country:-null}, {City:-null});" } ], "notes": "Address(country, city) は両方とも省略できないので、IR に無いときは null を渡す（XAML でも未指定は null）" }

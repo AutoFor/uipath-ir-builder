@@ -1,0 +1,10 @@
+{
+  "workflow": "RandomString_Full",
+  "variables": [ { "name": "lower", "type": "String" }, { "name": "mixed", "type": "String" } ],
+  "body": [
+    { "act": "RandomString", "name": "小文字 5 文字", "props": { "Case": "LowerCase", "Length": 5, "Output": "lower" } },
+    { "act": "RandomString", "name": "混在 12 文字", "props": { "Case": "Mixed", "Length": 12, "Output": "mixed" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"lower=\" & lower.Length.ToString & \" \" & (lower = lower.ToLower()).ToString", "cs": "\"lower=\" + lower.Length + \" \" + (lower == lower.ToLower())" } } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"mixed=\" & mixed.Length.ToString", "cs": "\"mixed=\" + mixed.Length" } } }
+  ]
+}

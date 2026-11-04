@@ -1,0 +1,1 @@
+{ "activity": "RandomDate", "package": "UiPath.Testing.Activities", "coded": [ { "call": "testing.RandomDate", "args": { "minDate": "{MinDate}", "maxDate": "{MaxDate}" }, "returns": "Output" } ] }

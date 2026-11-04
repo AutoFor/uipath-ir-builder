@@ -166,7 +166,10 @@ record PropInfo(
     List<string>? OverloadGroups,
     bool Obsolete,
     string DeclaredOn,
-    bool? ReadOnly = null);
+    bool? ReadOnly = null,
+    // enum に独自の TypeConverter がある（Testing の VerificationType など、表示名で読み書きする）。XAML には {x:Static} で書く
+    string? EnumConverter = null,
+    string? EnumAssembly = null);
 
 static class Activities
 {
@@ -230,6 +233,7 @@ static class Activities
         var a = Attrs.Of(p.GetCustomAttributesData());
         var valueType = inner ?? pt;
         var enumType = valueType.IsEnum ? valueType : Nullable.GetUnderlyingType(valueType) is { IsEnum: true } nu ? nu : null;
+        var converter = enumType == null ? null : Converter(p.GetCustomAttributesData()) ?? Converter(enumType.GetCustomAttributesData());
 
         return new PropInfo(
             Name: p.Name,
@@ -245,7 +249,17 @@ static class Activities
             Obsolete: a.Obsolete,
             DeclaredOn: TypeNames.StripArity(p.DeclaringType!.Name),
             // public の setter が無い。コレクションは XAML が既存のものに要素を足せるので、読み取り専用に数えない
-            ReadOnly: p.SetMethod is not { IsPublic: true } && !IsCollectionLike(pt) ? true : null);
+            ReadOnly: p.SetMethod is not { IsPublic: true } && !IsCollectionLike(pt) ? true : null,
+            EnumConverter: converter,
+            EnumAssembly: converter == null ? null : enumType!.Assembly.GetName().Name);
+    }
+
+    // [TypeConverter(typeof(X))] の X（System の標準のものは除く）
+    static string? Converter(IList<CustomAttributeData> attrs)
+    {
+        var a = attrs.FirstOrDefault(x => x.AttributeType.FullName == "System.ComponentModel.TypeConverterAttribute");
+        var t = a?.ConstructorArguments.FirstOrDefault().Value switch { Type ty => ty.FullName, string str => str.Split(',')[0], _ => null };
+        return t == null || t.StartsWith("System.") ? null : t;
     }
 
     static bool IsCollectionLike(Type t) =>

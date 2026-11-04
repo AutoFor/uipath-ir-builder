@@ -1,0 +1,1 @@
+{ "activity": "RandomValue", "package": "UiPath.Testing.Activities", "coded": [ { "call": "testing.RandomValue", "args": { "filePath": "{FilePath}" }, "returns": "Value" } ] }

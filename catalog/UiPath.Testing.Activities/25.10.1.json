@@ -1046,7 +1046,9 @@
           "displayName": "TestDataQueueItemStatus",
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "GetTestDataQueueItems"
+          "declaredOn": "GetTestDataQueueItems",
+          "enumConverter": "UiPath.Testing.Activities.Converters.TestDataQueueItemStatusEnumConverter",
+          "enumAssembly": "UiPath.Testing.Activities"
         },
         {
           "name": "TimeoutMs",
@@ -2145,7 +2147,9 @@
           "displayName": "Activity_VerifyRange_VerificationTypeName",
           "browsable": true,
           "obsolete": false,
-          "declaredOn": "VerifyRange"
+          "declaredOn": "VerifyRange",
+          "enumConverter": "UiPath.Testing.Activities.Converters.VerificationTypeEnumConverter",
+          "enumAssembly": "UiPath.Testing.Activities"
         }
       ]
     }

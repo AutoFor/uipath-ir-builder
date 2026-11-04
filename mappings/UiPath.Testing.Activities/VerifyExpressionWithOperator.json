@@ -1,0 +1,11 @@
+{
+  "activity": "VerifyExpressionWithOperator",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["KeepScreenshots"], "reason": "スクリーンショットを残すか（KeepScreenshots）を渡す引数が testing.VerifyExpressionWithOperator に無い" },
+    { "when": ["ScreenshotsPath"], "reason": "スクリーンショットの保存先（ScreenshotsPath）を渡す引数が testing.VerifyExpressionWithOperator に無い" },
+    { "code": "{Result:-_} = testing.VerifyExpressionWithOperator({FirstExpression}, {Operator|enum}, {SecondExpression}, {OutputMessageFormat:-null}, {ContinueOnFailure}, {AlternativeVerificationTitle:-null}, {TakeScreenshotInCaseOfFailingAssertion}, {TakeScreenshotInCaseOfSucceedingAssertion});",
+      "defaults": { "ContinueOnFailure": true, "TakeScreenshotInCaseOfFailingAssertion": false, "TakeScreenshotInCaseOfSucceedingAssertion": false } }
+  ],
+  "notes": "8 引数の形。省略できる引数が無いので、IR に無いものは既定 XAML と同じ値（ContinueOnFailure は True、スクリーンショットは False）、文字列は null を渡す。Operator は UiPath.Testing.Comparison"
+}

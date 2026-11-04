@@ -9,6 +9,8 @@ export type Prop = {
   type: string;
   required: boolean;
   enum?: string[];
+  enumConverter?: string; // enum に独自の TypeConverter がある（XAML には {x:Static} で書く）
+  enumAssembly?: string;
   overloadGroups?: string[];
   obsolete: boolean;
 };

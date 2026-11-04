@@ -1,0 +1,73 @@
+{
+  "workflow": "VerifyExpressionWithOperator_Full",
+  "variables": [
+    {
+      "name": "r1",
+      "type": "Boolean"
+    },
+    {
+      "name": "r2",
+      "type": "Boolean"
+    },
+    {
+      "name": "r3",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "VerifyExpressionWithOperator",
+      "name": "含むか",
+      "typeArg": "String",
+      "props": {
+        "FirstExpression": {
+          "lit": "hello world"
+        },
+        "Operator": "Contains",
+        "SecondExpression": {
+          "lit": "world"
+        },
+        "AlternativeVerificationTitle": {
+          "lit": "world を含む"
+        },
+        "ContinueOnFailure": true,
+        "TakeScreenshotInCaseOfFailingAssertion": false,
+        "TakeScreenshotInCaseOfSucceedingAssertion": false,
+        "Result": "r1"
+      }
+    },
+    {
+      "act": "VerifyExpressionWithOperator",
+      "name": "より大きいか",
+      "typeArg": "Int32",
+      "props": {
+        "FirstExpression": "5",
+        "Operator": "GreaterThan",
+        "SecondExpression": "3",
+        "Result": "r2"
+      }
+    },
+    {
+      "act": "VerifyExpressionWithOperator",
+      "name": "成り立たない（続ける）",
+      "typeArg": "Int32",
+      "props": {
+        "FirstExpression": "1",
+        "Operator": "GreaterThanOrEqual",
+        "SecondExpression": "2",
+        "ContinueOnFailure": true,
+        "Result": "r3"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"r1=\" & r1.ToString & \" r2=\" & r2.ToString & \" r3=\" & r3.ToString",
+          "cs": "\"r1=\" + r1 + \" r2=\" + r2 + \" r3=\" + r3"
+        }
+      }
+    }
+  ]
+}

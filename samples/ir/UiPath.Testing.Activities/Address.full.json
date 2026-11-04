@@ -1,0 +1,34 @@
+{
+  "workflow": "Address_Full",
+  "variables": [
+    {
+      "name": "addr",
+      "type": "Dictionary<String, String>"
+    }
+  ],
+  "body": [
+    {
+      "act": "Address",
+      "name": "国と都市を指定",
+      "props": {
+        "Country": {
+          "lit": "USA"
+        },
+        "City": {
+          "lit": "New York"
+        },
+        "AddressResult": "addr"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"country=\" & addr(\"Country\") & \" city=\" & addr(\"City\")",
+          "cs": "\"country=\" + addr[\"Country\"] + \" city=\" + addr[\"City\"]"
+        }
+      }
+    }
+  ]
+}

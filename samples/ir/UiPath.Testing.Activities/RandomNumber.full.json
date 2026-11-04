@@ -1,0 +1,9 @@
+{
+  "workflow": "RandomNumber_Full",
+  "variables": [ { "name": "n", "type": "Decimal" } ],
+  "body": [
+    { "act": "RandomNumber", "name": "1〜5、小数 2 桁", "props": { "Min": 1, "Max": 5, "Decimals": 2, "Output": "n" } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"inRange=\" & (n >= 1 AndAlso n <= 5).ToString", "cs": "\"inRange=\" + (n >= 1 && n <= 5)" } } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"decimals<=2=\" & (Decimal.Round(n, 2) = n).ToString", "cs": "\"decimals<=2=\" + (decimal.Round(n, 2) == n)" } } }
+  ]
+}

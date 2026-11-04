@@ -1,0 +1,11 @@
+{
+  "activity": "VerifyRange",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["KeepScreenshots"], "reason": "スクリーンショットを残すか（KeepScreenshots）を渡す引数が testing.VerifyRange に無い" },
+    { "when": ["ScreenshotsPath"], "reason": "スクリーンショットの保存先（ScreenshotsPath）を渡す引数が testing.VerifyRange に無い" },
+    { "code": "{Result:-_} = testing.VerifyRange({Expression}, {VerificationType|enum}, {LowerLimit}, {UpperLimit}, {OutputMessageFormat:-null}, {ContinueOnFailure}, {AlternativeVerificationTitle:-null}, {TakeScreenshotInCaseOfFailingAssertion}, {TakeScreenshotInCaseOfSucceedingAssertion});",
+      "defaults": { "ContinueOnFailure": true, "TakeScreenshotInCaseOfFailingAssertion": false, "TakeScreenshotInCaseOfSucceedingAssertion": false } }
+  ],
+  "notes": "9 引数の形。省略できる引数が無いので、IR に無いものは既定 XAML と同じ値を渡す。VerificationType は UiPath.Testing.Activities.VerificationType（既定 XAML の値は表示名の「次の範囲内:」なので IR では必ず書く。必須）"
+}

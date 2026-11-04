@@ -1,0 +1,1 @@
+{ "activity": "RandomNumber", "package": "UiPath.Testing.Activities", "coded": [ { "call": "testing.RandomNumber", "args": { "min": "{Min}", "max": "{Max}", "decimals": "{Decimals}" }, "returns": "Output" } ], "notes": "RandomNumber()、(min, max)、(min, max, decimals) の3つの形。IR に無い引数は省く" }

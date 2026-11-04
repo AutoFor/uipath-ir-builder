@@ -1,0 +1,1 @@
+{ "activity": "RandomString", "package": "UiPath.Testing.Activities", "coded": [ { "call": "testing.RandomString", "args": { "caseValue": "{Case|enum}", "length": "{Length}" }, "returns": "Output", "defaults": { "Case": "LowerCase", "Length": 10 } } ], "notes": "Case は UiPath.Testing.Enums.Case。IR に無いときは既定 XAML と同じ LowerCase、10 文字" }

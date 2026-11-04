@@ -1,0 +1,56 @@
+{
+  "workflow": "VerifyRange_Full",
+  "variables": [
+    {
+      "name": "inside",
+      "type": "Boolean"
+    },
+    {
+      "name": "outside",
+      "type": "Boolean"
+    }
+  ],
+  "body": [
+    {
+      "act": "VerifyRange",
+      "name": "範囲外か",
+      "typeArg": "Int32",
+      "props": {
+        "Expression": "15",
+        "VerificationType": "IsNotWithin",
+        "LowerLimit": "1",
+        "UpperLimit": "10",
+        "AlternativeVerificationTitle": {
+          "lit": "15 は 1〜10 の外"
+        },
+        "ContinueOnFailure": true,
+        "TakeScreenshotInCaseOfFailingAssertion": false,
+        "TakeScreenshotInCaseOfSucceedingAssertion": false,
+        "Result": "outside"
+      }
+    },
+    {
+      "act": "VerifyRange",
+      "name": "範囲内でない（続ける）",
+      "typeArg": "Double",
+      "props": {
+        "Expression": "0.5",
+        "VerificationType": "IsWithin",
+        "LowerLimit": "1.0",
+        "UpperLimit": "10.0",
+        "ContinueOnFailure": true,
+        "Result": "inside"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": {
+          "vb": "\"outside=\" & outside.ToString & \" inside=\" & inside.ToString",
+          "cs": "\"outside=\" + outside + \" inside=\" + inside"
+        }
+      }
+    }
+  ]
+}
