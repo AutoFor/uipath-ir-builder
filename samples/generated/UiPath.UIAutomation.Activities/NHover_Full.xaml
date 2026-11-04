@@ -78,9 +78,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NHover ContinueOnError="False" CursorMotionType="Instant" DelayAfter="0.3" DelayBefore="0.1" DisplayName="hoverbox に乗せる（全部入り）" HealingAgentBehavior="Disabled" HoverTime="0.5" InteractionMode="HardwareEvents" ScopeIdentifier="1c9f838e-0745-5980-9660-9ed5cefe43f5" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_1">
+            <uix:NHover DisplayName="先に見出しへカーソルを動かす" HealingAgentBehavior="SameAsCard" ScopeIdentifier="1c9f838e-0745-5980-9660-9ed5cefe43f5" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_1">
               <uix:NHover.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='hoverbox' tag='DIV' /&gt;" Guid="ba28c2fd-d296-56ae-8abf-c9a3035f1367" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='H1' /&gt;" Guid="ba28c2fd-d296-56ae-8abf-c9a3035f1367" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+              </uix:NHover.Target>
+            </uix:NHover>
+            <uix:NHover ContinueOnError="False" CursorMotionType="Instant" DelayAfter="0.3" DelayBefore="0.1" DisplayName="hoverbox に乗せる（全部入り）" HealingAgentBehavior="Disabled" HoverTime="0.5" InteractionMode="HardwareEvents" ScopeIdentifier="1c9f838e-0745-5980-9660-9ed5cefe43f5" Timeout="20" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_2">
+              <uix:NHover.Target>
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='hoverbox' tag='DIV' /&gt;" Guid="e1aa02cf-7b09-592b-9958-4342e2aac347" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NHover.Target>
               <uix:NHover.PointOffset>
                 <uix:PointOffset Position="Center" X="0" Y="0" />
@@ -88,14 +93,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
               <uix:NHover.VerifyOptions>
                 <uix:VerifyExecutionOptions Mode="Appears" Retry="False" Timeout="5">
                   <uix:VerifyExecutionOptions.Target>
-                    <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="e1aa02cf-7b09-592b-9958-4342e2aac347" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                    <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="7b89b02b-a0c6-5f54-b639-39b2f9c5d30c" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
                   </uix:VerifyExecutionOptions.Target>
                 </uix:VerifyExecutionOptions>
               </uix:NHover.VerifyOptions>
             </uix:NHover>
             <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="1c9f838e-0745-5980-9660-9ed5cefe43f5" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
               <uix:NGetText.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="7b89b02b-a0c6-5f54-b639-39b2f9c5d30c" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="491469ac-29b8-5072-b06f-8599c8e451d5" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NGetText.Target>
             </uix:NGetText>
           </Sequence>

@@ -78,14 +78,19 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NHover DisplayName="hoverbox に乗せる" HealingAgentBehavior="SameAsCard" ScopeIdentifier="04848df3-ae7c-5ab1-bb89-b696d423e197" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_1">
+            <uix:NHover DisplayName="先に見出しへカーソルを動かす" HealingAgentBehavior="SameAsCard" ScopeIdentifier="04848df3-ae7c-5ab1-bb89-b696d423e197" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_1">
               <uix:NHover.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='hoverbox' tag='DIV' /&gt;" Guid="9ab68655-50e7-51d4-ae16-b4ec9ed7e9c3" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl tag='H1' /&gt;" Guid="9ab68655-50e7-51d4-ae16-b4ec9ed7e9c3" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+              </uix:NHover.Target>
+            </uix:NHover>
+            <uix:NHover DisplayName="hoverbox に乗せる" HealingAgentBehavior="SameAsCard" ScopeIdentifier="04848df3-ae7c-5ab1-bb89-b696d423e197" Version="V5" sap2010:WorkflowViewState.IdRef="NHover_2">
+              <uix:NHover.Target>
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='hoverbox' tag='DIV' /&gt;" Guid="22402b69-f4ec-501f-806e-ff05f284df2e" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NHover.Target>
             </uix:NHover>
             <uix:NGetText DisplayName="結果を読む" HealingAgentBehavior="SameAsCard" ScopeIdentifier="04848df3-ae7c-5ab1-bb89-b696d423e197" TextString="[result]" Version="V5" sap2010:WorkflowViewState.IdRef="NGetText_1">
               <uix:NGetText.Target>
-                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="22402b69-f4ec-501f-806e-ff05f284df2e" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
+                <uix:TargetAnchorable FullSelectorArgument="&lt;webctrl id='result' tag='DIV' /&gt;" Guid="676c5585-4f83-5766-aaba-29eaceaf2575" ScopeSelectorArgument="&lt;html app='msedge.exe' title='UIA Test Form' /&gt;" SearchSteps="Selector" Version="V6" />
               </uix:NGetText.Target>
             </uix:NGetText>
           </Sequence>
