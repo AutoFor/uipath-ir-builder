@@ -173,6 +173,10 @@ node tools/ir/coverage.ts --activity WriteTextFile
 node tools/compare-default-xaml.mjs --generated samples/generated   # 生成した XAML と Studio の既定 XAML を比べる
 ```
 
+### AI に使わせるときの指示書
+
+この道具で業務のワークフローを作る AI 向けの手順（プロジェクトの置き場所、IR を書いて生成・検証する流れ、してはいけないこと）は [AGENTS.md](AGENTS.md)。Claude Code は `CLAUDE.md` から読む。
+
 ### ワーカー用の手順書
 
 Linear のイシュー（1アクティビティ1件）の進め方、ファイルの置き場所、完了の基準、Linear の更新の雛形は [docs/worker-guide.md](docs/worker-guide.md)。
