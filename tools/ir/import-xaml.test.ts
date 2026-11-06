@@ -8,7 +8,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { loadCatalog } from "./catalog.ts";
+import { loadCatalog, type Catalog } from "./catalog.ts";
+import { DEFAULT_CATALOG_FILES, sampleCatalogFiles } from "./versions.ts";
 import { generate } from "./generate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { CATALOG_FILES, canonLines, checkRoundTrip, importAndCheck, importXaml, irType, normalizeXaml, parseXml, repoRoot as root } from "./import-xaml.ts";
@@ -17,6 +18,7 @@ import { droppedPropsMarkdown, formatReport, loadBehaviorNotes, reportWorkflow }
 import { validate } from "./validate.ts";
 
 const cat = loadCatalog(root, CATALOG_FILES);
+const catDefault = cat;
 const { maps } = loadMappings(root);
 const notes = loadBehaviorNotes(root);
 const rel = (f: string) => relative(root, f).replaceAll("\\", "/");
@@ -34,8 +36,18 @@ function xamls(dir: string): string[] {
   return out;
 }
 
+// 既定の版に無いパッケージ（samples/generated/<pkg>/）は、既定の版にそのパッケージの最新のカタログを足したもの（samples.test.ts と同じ）。
+// loadCatalog は UI のターゲットの型を覚え直すので、最後に既定の版を読み直す
+const pkgCats = new Map<string, Catalog>();
+for (const d of readdirSync(join(root, "samples", "generated"))) {
+  const fs = sampleCatalogFiles(root, d);
+  if (fs !== DEFAULT_CATALOG_FILES) pkgCats.set(d, loadCatalog(root, fs));
+}
+loadCatalog(root, CATALOG_FILES);
+
 for (const f of xamls(join(root, "samples", "generated"))) {
   test(`往復 ${rel(f)}`, () => {
+    const cat = pkgCats.get(relative(join(root, "samples", "generated"), f).split(/[\\/]/)[0]) ?? catDefault;
     const xml = readFileSync(f, "utf8");
     const r = importXaml(xml, cat);
     assert.deepEqual(r.errors, [], "取り込めない");

@@ -83,7 +83,8 @@ export function loadContext(projectDir?: string): Context {
     if (ns) ctx.namespace = ns[1];
   } else if (existsSync(join(projectDir, "project.json"))) {
     const pj = JSON.parse(readFileSync(join(projectDir, "project.json"), "utf8").replace(/^\uFEFF/, ""));
-    ctx.namespace = String(pj.name).replace(/[^\w]/g, "_").replace(/^(\d)/, "_$1");
+    // Studio は名前に使えない文字を消す（"uipath-ir-probe-v24" → uipathirprobev24。.local/.codedworkflows/CodedWorkflow.cs で確かめた）
+    ctx.namespace = String(pj.name).replace(/[^\w]/g, "").replace(/^(\d)/, "_$1");
   }
   return ctx;
 }

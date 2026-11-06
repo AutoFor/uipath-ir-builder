@@ -17,7 +17,8 @@ import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs, requiredRefs, scopeRefs, usingScope, UIA_APP_TYPE } from "./mapping.ts";
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
-import { itemNames } from "./validate.ts";
+import { itemNames, validate } from "./validate.ts";
+import { viaXamlArgs, viaXamlWorkflow } from "./coded-via-xaml.ts";
 import { objToCs } from "./uia.ts";
 import { xamlDefaultProps } from "./import-xaml.ts";
 
@@ -25,7 +26,14 @@ export type CodedOptions = {
   namespace: string;
   // InvokeWorkflowFile の WorkflowFileName（文字列リテラル）を書き換える。Coded 同士で呼ぶときに "Greet.xaml" → "coded/Greet.cs" にする
   invokePath?: (path: string) => string;
+  // 対応表の無いアクティビティ（と、Coded API の無いパッケージの、対応表が API を呼ぶもの）を、部分木だけの XAML にして RunWorkflow で呼ぶ
+  // （knowledge/coded-via-xaml.md）。dir はその XAML を置くフォルダ（プロジェクトからの相対パス。例 "coded/_xaml"）、
+  // noApi は選んだ版のカタログに services（Coded API）の無いパッケージ。viaXaml が無ければ、これまでどおり NO_MAPPING のエラー
+  viaXaml?: { dir: string; noApi?: Iterable<string> };
 };
+
+// XAML 経由で呼ぶワークフロー（path はプロジェクトからの相対パス。XAML は呼ぶ側が generate.ts で作る）
+export type ViaXamlFile = { path: string; wf: Workflow; at: string };
 
 const baseUsings = ["System", "System.Collections.Generic", "System.Data", "System.IO", "System.Linq", "UiPath.CodedWorkflows", "UiPath.Platform.ResourceHandling"];
 
@@ -42,8 +50,11 @@ const builtin = new Set([
 ]);
 export const isBuiltin = (clrType: string) => builtin.has(clrType);
 
-export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapping>, opt: CodedOptions): { code: string; issues: Issue[] } {
+export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapping>, opt: CodedOptions): { code: string; issues: Issue[]; warnings: Issue[]; xamls: ViaXamlFile[] } {
   const issues: Issue[] = [];
+  const warnings: Issue[] = [];
+  const xamls: ViaXamlFile[] = [];
+  const noApi = new Set(opt.viaXaml?.noApi ?? []);
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
@@ -84,7 +95,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     "}",
     "",
   ];
-  return { code: out.join("\r\n"), issues };
+  return { code: out.join("\r\n"), issues, warnings, xamls };
 
   // ---- 式 ----
   function expr(v: Value, at: string, sc: Map<string, string>): string {
@@ -333,6 +344,9 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   // ---- 対応表 ----
   function mapped(n: Node, className: string, pkg: string, depth: number, at: string, sc: Map<string, string>) {
     const m = maps.get(`${pkg}/${className}`);
+    // 対応表が無い、または Coded API の無いパッケージ（対応表の API を呼べない）なら、XAML 経由。
+    // 対応表が「Coded API なし」（coded: null）としているものは、これまでどおり NO_CODED_API（意図して外しているので変えない）
+    if (opt.viaXaml && (!m || (noApi.has(pkg) && m.coded !== null))) return viaXaml(n, className, pkg, m ? "このパッケージの版に Coded API が無い" : "対応表が無い", depth, at, sc);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];
@@ -535,6 +549,28 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     };
     nodes.forEach((c, i) => walk(c, `${at}.body[${i}]`));
     return out;
+  }
+
+  // 部分木だけを置いた XAML を作り、RunWorkflow で呼ぶ。書き込まれる変数（InOut）は戻りの辞書から戻す
+  function viaXaml(n: Node, className: string, pkg: string, why: string, depth: number, at: string, sc: Map<string, string>) {
+    const name = `${wf.workflow}_${xamls.length + 1}`;
+    const dir = opt.viaXaml!.dir.replace(/\\/g, "/").replace(/^\/+|\/+$/g, "");
+    const path = dir ? `${dir}/${name}.xaml` : `${name}.xaml`;
+    const r = viaXamlArgs(n, cat, sc);
+    for (const i of r.issues) add(at, i.code, i.message);
+    const sub = viaXamlWorkflow(n, name, r.args);
+    // その位置から外したことで足りなくなるもの（UI のスコープの外、Excel のスコープの外など）は、ここで分かる
+    for (const i of validate(sub, cat)) add(at, "CODED_VIA_XAML_INVALID", `XAML 経由（${path}）にすると検証を通らない: ${i.code} ${i.path}: ${i.message}`);
+    xamls.push({ path, wf: sub, at });
+    warnings.push({ path: at, code: "CODED_VIA_XAML", message: `${className}（${pkg}）は${why}ので、XAML（${path}）にして RunWorkflow で呼ぶ` });
+    emit(depth, `// ${className} は${why}ので XAML 経由（${path}）`);
+    const items = r.args.map((x) => `[${csLit(x.name)}] = ${x.name}`);
+    const dict = items.length ? `new Dictionary<string, object> { ${items.join(", ")} }` : "null";
+    const back = r.args.filter((x) => x.dir === "InOut");
+    if (!back.length) { emit(depth, `RunWorkflow(${csLit(path)}, ${dict});`); return; }
+    const v = `__xaml${++tmp}`;
+    emit(depth, `var ${v} = RunWorkflow(${csLit(path)}, ${dict});`);
+    for (const x of back) emit(depth, `${x.name} = (${csType(x.type)})${v}[${csLit(x.name)}];`);
   }
 
   function invoke(n: Node, _v: Variant, m: Mapping, depth: number, at: string, sc: Map<string, string>) {

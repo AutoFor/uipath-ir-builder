@@ -119,10 +119,29 @@ export function selectCatalogs(root: string, projectDir?: string, opts: { coded?
       warnings.push(`${p} ${wanted.get(p)} に .objects.json が無い。objs に書くオブジェクト（UI のターゲットなど）は書けない`);
   }
   serviceFiles.push(codedBase);
-  if (opts.coded && legacy.length)
-    throw new VersionError(`C# を作れない。次のカタログには services（Coded API）が無く、呼び出しを確かめられない：${legacy.join(", ")}。その版の DLL から抽出器で作り直す（docs/version-upgrade.md の手順 2）`);
+  // 古い形式に見えるカタログでも、対応表（mappings/<pkg>/）の無いパッケージは、C# から API を呼ばない（アクティビティは XAML 経由で呼ぶ。
+  // knowledge/coded-via-xaml.md）。readOnly のプロパティがたまたま無い、Coded API の無い新しいカタログ（WebAPI 1.20.1 など）もここに入る
+  const mapped = (l: string) => existsSync(join(root, "mappings", l.slice(0, l.lastIndexOf(" "))));
+  if (opts.coded && legacy.some(mapped))
+    throw new VersionError(`C# を作れない。次のカタログには services（Coded API）が無く、呼び出しを確かめられない：${legacy.filter(mapped).join(", ")}。その版の DLL から抽出器で作り直す（docs/version-upgrade.md の手順 2）`);
+  if (opts.coded) for (const l of legacy.filter((x) => !mapped(x))) warnings.push(`${l} には services（Coded API）も対応表も無い。C# では、このパッケージのアクティビティを XAML 経由（RunWorkflow）で呼ぶ`);
   if (pj.targetFramework && pj.targetFramework !== "Windows") warnings.push(`このプロジェクトの targetFramework は ${pj.targetFramework}。生成器は Windows（.NET）の XAML で確かめている`);
   return { versions, files, serviceFiles, legacy, warnings };
+}
+
+// services（Coded API）の無いパッケージ（.NET の System.Activities と Coded の基底クラスは除く）。
+// C# の生成器は、このパッケージのアクティビティを XAML 経由で呼ぶ（coded-via-xaml.ts）
+export function noCodedApiPackages(root: string, files: string[]): string[] {
+  return files.map((f) => readJson(join(root, f))).filter((c) => !IMPLICIT.has(c.package) && !("services" in c)).map((c) => c.package as string);
+}
+
+// サンプルのフォルダ（samples/ir/<pkg>/ など）のパッケージが既定の版に無ければ、既定のカタログにそのパッケージの最新の版を足したもの。
+// 既定の版にあるか、カタログが無ければ既定のまま
+export function sampleCatalogFiles(root: string, pkg: string | undefined): string[] {
+  if (!pkg || pkg in DEFAULT_VERSIONS || !existsSync(join(root, "catalog", pkg))) return DEFAULT_CATALOG_FILES;
+  const cmp = (a: string, b: string) => { const x = a.split(".").map(Number), y = b.split(".").map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) - (y[i] ?? 0); return 0; };
+  const vs = readdirSync(join(root, "catalog", pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json")).map((f) => f.replace(/\.json$/, "")).sort(cmp);
+  return vs.length ? [...DEFAULT_CATALOG_FILES, catalogFile(pkg, vs[vs.length - 1])] : DEFAULT_CATALOG_FILES;
 }
 
 // カタログを読み、既定 XAML が揃っていない版の注意も warnings に足す

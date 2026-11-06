@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { loadCatalog } from "./catalog.ts";
+import { DEFAULT_CATALOG_FILES, sampleCatalogFiles } from "./versions.ts";
 import { compareAll, compareMapping, loadAllow, rowKey } from "./coded-defaults.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { CATALOG_FILES, importXaml, repoRoot as root, xamlDefaultProps } from "./import-xaml.ts";
@@ -126,6 +127,8 @@ test("元の IR の C# と、取り込んだ IR の C# は、順番と書き方�
     if (!wf.workflow) continue;
     const xaml = join(root, "samples", "generated", dirname(relative(dir, f)), `${wf.workflow}.xaml`);
     if (!existsSync(xaml)) continue;
+    // 既定の版に無いパッケージのサンプル（WebAPI など）は、このカタログでは読めない。往復は import-xaml.test.ts、C# は samples.test.ts が見る
+    if (sampleCatalogFiles(root, relative(dir, f).split(/[\\/]/)[0]) !== DEFAULT_CATALOG_FILES) continue;
     const a = coded(wf);
     const r = importXaml(readFileSync(xaml, "utf8"), cat);
     if (!r.wf) continue;

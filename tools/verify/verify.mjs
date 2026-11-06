@@ -15,6 +15,7 @@
 //   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
 //
 // IR（*.json）1つにつき、XAML（<プロジェクト>/<workflow>.xaml）と C#（<プロジェクト>/coded/<workflow>.cs）の両方を作って試す。
+// C# で対応表の無いアクティビティは、gen-coded.ts が <プロジェクト>/coded/_xaml/ に XAML を書き、RunWorkflow で呼ぶ（knowledge/coded-via-xaml.md）。
 // 手書きの *.cs は <プロジェクト>/ にそのまま写して試す。*.xaml も同じ（tools/ir/convert-xaml.ts で C# にした XAML など）。
 // 式の言語が C# のテンプレート（--template C:\Users\Public\uipath-ir-probe-cs）では --use-project を付ける。gen.ts が project.json の expressionLanguage に従って C# の XAML を作る。
 //
@@ -173,8 +174,12 @@ if (irFiles.length && !opt.noCoded) {
     r.target = join(projDir, "coded", `${wf.workflow}.cs`);
     const i = lines.findIndex((l) => l.startsWith(`OK ${file} ->`) || l === `NG ${file}` || l.startsWith(`NG ${file}（`) || l === `SKIP ${file}`);
     if (i < 0) r.gen = { ok: false, issues: [`gen-coded.ts の出力に結果が無い: ${(cg.stdout + cg.stderr).trim().slice(0, 300)}`] };
-    else if (lines[i].startsWith("OK")) r.gen = { ok: true };
-    else {
+    else if (lines[i].startsWith("OK")) {
+      // OK の下の行は注意（CODED_VIA_XAML：対応表の無いアクティビティを XAML 経由で呼ぶ。XAML は coded/_xaml/ に gen-coded.ts が書く）
+      const notes = [];
+      for (let j = i + 1; j < lines.length && lines[j].startsWith("  "); j++) notes.push(lines[j].trim());
+      r.gen = { ok: true, notes };
+    } else {
       const issues = [];
       for (let j = i + 1; j < lines.length && lines[j].startsWith("  "); j++) issues.push(lines[j].trim());
       if (lines[i].startsWith("SKIP")) { r.gen = { ok: true }; r.skipped = issues.join("; "); r.target = undefined; }
@@ -471,12 +476,14 @@ function markdown(s) {
   out.push("| 状態 | ファイル | 種類 | 秒 | 備考 |", "| --- | --- | --- | --- | --- |");
   for (const r of s.files) {
     const sec = r.run?.seconds ?? r.build?.seconds ?? "";
-    const note = r.status === "NG" ? reason(r) : r.skipped ? `Coded にしない: ${r.skipped}` : r.run?.skipped ? `run しない: ${r.run.skipped}` : r.check?.warnings?.length ? `警告 ${r.check.warnings.length} 件` : "";
+    const via = r.gen?.notes?.filter((x) => x.startsWith("CODED_VIA_XAML")).length;
+    const note = r.status === "NG" ? reason(r) : r.skipped ? `Coded にしない: ${r.skipped}` : r.run?.skipped ? `run しない: ${r.run.skipped}` : r.check?.warnings?.length ? `警告 ${r.check.warnings.length} 件` : via ? `XAML 経由 ${via} 件` : "";
     out.push(`| ${r.status} | ${r.file} | ${r.kind} | ${sec} | ${note.replaceAll("|", "\\|").replace(/\r?\n/g, " ")} |`);
   }
   for (const r of s.files) {
     out.push("", `## ${r.file}`, "");
     if (r.gen && !r.gen.ok) out.push("生成で弾かれた:", "", ...r.gen.issues.map((i) => `- ${i}`));
+    if (r.gen?.notes?.length) out.push(...r.gen.notes.map((i) => `- 注意: ${i}`), "");
     if (r.check) {
       for (const e of r.check.errors) out.push(`- エラー: ${e}`);
       for (const w of r.check.warnings) out.push(`- 警告: ${w}`);

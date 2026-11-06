@@ -72,9 +72,10 @@ test("カタログに無い版はエラーで、近い版を使わない", () =>
 });
 
 test("カタログの無いパッケージは注意、project.json が無ければエラー", () => {
-  const s = selectCatalogs(root, project({ ...current, "UiPath.Mail.Activities": "[2.12.10]" }));
+  // Mail は 1.21.1 のカタログができたので、カタログの無いパッケージの例は Word にする
+  const s = selectCatalogs(root, project({ ...current, "UiPath.Word.Activities": "[2.5.0]" }));
   assert.equal(s.warnings.length, 1);
-  assert.match(s.warnings[0], /UiPath\.Mail\.Activities のカタログが無い/);
+  assert.match(s.warnings[0], /UiPath\.Word\.Activities のカタログが無い/);
   assert.throws(() => selectCatalogs(root, join(work, "none")), VersionError);
 });
 
@@ -107,7 +108,8 @@ test("古い版の UI：objs のターゲットは検証で弾かれ、例外で
 test("Coded のサービス変数：生成コードが無ければ依存パッケージの登録クラスから決める", () => {
   const sysOnly = loadContext(project({ "UiPath.System.Activities": "[26.10.0]" }));
   assert.deepEqual(sysOnly.vars, { system: "UiPath.Core.Activities.API.ISystemService" });
-  const withMail = loadContext(project({ ...current, "UiPath.Mail.Activities": "[2.12.10]" }));
+  // Mail 1.21.1 のカタログには登録クラスが無い（Coded API なし）。mail の変数は既知の名前（uncatalogedVars）から足す
+  const withMail = loadContext(project({ ...current, "UiPath.Mail.Activities": "[1.21.1]" }));
   assert.deepEqual(Object.keys(withMail.vars).sort(), ["excel", "mail", "system", "testing", "uiAutomation"]);
   // プローブで Studio が生成した CodedWorkflow.cs と同じ（System、UIAutomation、Excel、Mail、Testing）
   assert.deepEqual(loadContext().vars, {
@@ -248,7 +250,8 @@ test("gen-coded：--project のプロジェクト名が名前空間の既定に�
   const p = project(current);
   const r = node(genCoded, greet, "--check", "--print", "--project", p);
   assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.match(r.stdout, /namespace My_Proj/);
+  // Studio は名前に使えない文字を消す（"uipath-ir-probe-v24" → uipathirprobev24。生成された CodedWorkflow.cs で確かめた）
+  assert.match(r.stdout, /namespace MyProj/);
   assert.match(node(genCoded, greet, "--check", "--print").stdout, /namespace CatalogProbeNet8/);
 });
 
