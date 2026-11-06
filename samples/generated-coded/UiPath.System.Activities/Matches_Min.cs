@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             IEnumerable<Match> ms = default;
-            // Matches はCoded API が無い（Coded API なし（ISystemService に Matches が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/Matches_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/Matches_Min_1.xaml", new Dictionary<string, object> { ["ms"] = ms });
-            ms = (IEnumerable<Match>)__xaml1["ms"];
+            // Matches はCoded API が無い（Coded API なし（ISystemService に Matches が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/Matches_116f58.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/Matches_116f58.xaml", new Dictionary<string, object> { ["in_Input"] = "a1b22c333", ["in_Pattern"] = "\\d+" });
+            ms = (System.Collections.Generic.IEnumerable<System.Text.RegularExpressions.Match>)__xaml1["out_Result"];
             Log(message: Convert.ToString(ms.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

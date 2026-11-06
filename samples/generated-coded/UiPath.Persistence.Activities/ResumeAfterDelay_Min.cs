@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // ResumeAfterDelay はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/ResumeAfterDelay_Min_1.xaml）
-            RunWorkflow("coded/_xaml/ResumeAfterDelay_Min_1.xaml", null);
+            // ResumeAfterDelay はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/ResumeAfterDelay_0e61ef.xaml）
+            RunWorkflow("coded/_activities/ResumeAfterDelay_0e61ef.xaml", new Dictionary<string, object> { ["in_ResumeTime"] = DateTime.Now.AddHours(1), ["in_StatusMessage"] = "1時間待つ" });
             Log(message: "再開した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

@@ -15,8 +15,8 @@ namespace CatalogProbeNet8
         public void Execute(Int64 in_TaskId)
         {
             // 転送する
-            // ForwardTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/ForwardTask_Full_1.xaml）
-            RunWorkflow("coded/_xaml/ForwardTask_Full_1.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId });
+            // ForwardTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/ForwardTask_bffc5b.xaml）
+            RunWorkflow("coded/_activities/ForwardTask_bffc5b.xaml", new Dictionary<string, object> { ["in_Comments"] = "お願いします", ["in_ContinueOnError"] = false, ["in_FolderPath"] = "Shared", ["in_TaskId"] = in_TaskId, ["in_TimeoutMs"] = 30000, ["in_UserNameOrEmail"] = "user@example.com" });
         }
     }
 }

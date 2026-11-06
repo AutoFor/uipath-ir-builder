@@ -15,19 +15,19 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Timer t = default;
-            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_xaml/ResetTimer_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/ResetTimer_Full_1.xaml", new Dictionary<string, object> { ["t"] = t });
-            t = (Timer)__xaml1["t"];
+            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_activities/StartTimer.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/StartTimer.xaml", null);
+            t = (UiPath.Core.Timer)__xaml1["out_Timer"];
             Delay(time: TimeSpan.FromMilliseconds(200));
             // 動いている途中でリセット
-            // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_xaml/ResetTimer_Full_2.xaml）
-            RunWorkflow("coded/_xaml/ResetTimer_Full_2.xaml", new Dictionary<string, object> { ["t"] = t });
+            // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_activities/ResetTimer.xaml）
+            RunWorkflow("coded/_activities/ResetTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
             Log(message: "動作中にリセットした", level: UiPath.CodedWorkflows.LogLevel.Info);
-            // StopTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を止める API が無い））ので XAML 経由（coded/_xaml/ResetTimer_Full_3.xaml）
-            RunWorkflow("coded/_xaml/ResetTimer_Full_3.xaml", new Dictionary<string, object> { ["t"] = t });
+            // StopTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を止める API が無い））ので XAML 経由（coded/_activities/StopTimer.xaml）
+            RunWorkflow("coded/_activities/StopTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
             // 止めた後でリセット
-            // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_xaml/ResetTimer_Full_4.xaml）
-            RunWorkflow("coded/_xaml/ResetTimer_Full_4.xaml", new Dictionary<string, object> { ["t"] = t });
+            // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_activities/ResetTimer.xaml）
+            RunWorkflow("coded/_activities/ResetTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
             Log(message: "停止後にリセットした", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

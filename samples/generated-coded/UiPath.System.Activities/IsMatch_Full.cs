@@ -17,13 +17,13 @@ namespace CatalogProbeNet8
             Boolean a = default;
             Boolean b = default;
             // 大文字小文字を区別しない
-            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/IsMatch_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/IsMatch_Full_1.xaml", new Dictionary<string, object> { ["a"] = a });
-            a = (Boolean)__xaml1["a"];
+            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch_cbb0b7.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/IsMatch_cbb0b7.xaml", new Dictionary<string, object> { ["in_Input"] = "ABC123", ["in_Pattern"] = "^[a-z]+\\d+$", ["in_TimeoutMS"] = 5000 });
+            a = (System.Boolean)__xaml1["out_Result"];
             // 大文字小文字を区別する
-            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/IsMatch_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/IsMatch_Full_2.xaml", new Dictionary<string, object> { ["b"] = b });
-            b = (Boolean)__xaml2["b"];
+            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch_f36fae.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/IsMatch_f36fae.xaml", new Dictionary<string, object> { ["in_Input"] = "ABC123", ["in_Pattern"] = "^[a-z]+\\d+$" });
+            b = (System.Boolean)__xaml2["out_Result"];
             Log(message: a.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

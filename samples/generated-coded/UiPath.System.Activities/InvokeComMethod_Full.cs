@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             Object res = default;
             // CLSID で呼ぶ
-            // InvokeComMethod はCoded API が無い（Coded API なし（ISystemService にも基底クラスにも無い。Type.GetTypeFromProgID と InvokeMember を直接使って書く））ので XAML 経由（coded/_xaml/InvokeComMethod_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/InvokeComMethod_Full_1.xaml", new Dictionary<string, object> { ["res"] = res });
-            res = (Object)__xaml1["res"];
+            // InvokeComMethod はCoded API が無い（Coded API なし（ISystemService にも基底クラスにも無い。Type.GetTypeFromProgID と InvokeMember を直接使って書く））ので XAML 経由（coded/_activities/InvokeComMethod_36bfb5.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/InvokeComMethod_36bfb5.xaml", new Dictionary<string, object> { ["in_CLSID"] = "{0D43FE01-F093-11CF-8940-00A0C9054228}", ["in_ContinueOnError"] = false, ["in_MethodName"] = "GetExtensionName", ["in_Arguments_path"] = "C:/dir/sample.txt" });
+            res = (System.Object)__xaml1["out_Result"];
             Log(message: Convert.ToString(res.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

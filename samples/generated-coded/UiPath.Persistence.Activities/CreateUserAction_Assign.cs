@@ -16,12 +16,12 @@ namespace CatalogProbeNet8
         {
             UserActionData task1 = default;
             UserActionData task2 = default;
-            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateUserAction_Assign_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/CreateUserAction_Assign_1.xaml", new Dictionary<string, object> { ["task1"] = task1 });
-            task1 = (UserActionData)__xaml1["task1"];
-            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateUserAction_Assign_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/CreateUserAction_Assign_2.xaml", new Dictionary<string, object> { ["task2"] = task2 });
-            task2 = (UserActionData)__xaml2["task2"];
+            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateUserAction_e75d86.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateUserAction_e75d86.xaml", new Dictionary<string, object> { ["in_SolutionApp"] = "uipath-ir-test-approval", ["in_TaskTitle"] = "アプリをユーザーに割り当てる", ["in_UserNameOrEmail"] = "user@example.com" });
+            task1 = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml1["out_TaskOutput"];
+            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateUserAction_fc4047.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/CreateUserAction_fc4047.xaml", new Dictionary<string, object> { ["in_Group"] = "Reviewers", ["in_SolutionApp"] = "uipath-ir-test-approval", ["in_TaskTitle"] = "アプリをグループに割り当てる" });
+            task2 = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml2["out_TaskOutput"];
         }
     }
 }

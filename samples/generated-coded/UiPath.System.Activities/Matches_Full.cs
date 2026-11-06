@@ -17,10 +17,10 @@ namespace CatalogProbeNet8
             IEnumerable<Match> ms = default;
             String first = default;
             // 文字と数字の組を全部探す
-            // Matches はCoded API が無い（Coded API なし（ISystemService に Matches が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/Matches_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/Matches_Full_1.xaml", new Dictionary<string, object> { ["first"] = first, ["ms"] = ms });
-            first = (String)__xaml1["first"];
-            ms = (IEnumerable<Match>)__xaml1["ms"];
+            // Matches はCoded API が無い（Coded API なし（ISystemService に Matches が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/Matches_1d1fed.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/Matches_1d1fed.xaml", new Dictionary<string, object> { ["in_Input"] = "A1b22C333", ["in_Pattern"] = "[a-z]\\d+", ["in_TimeoutMS"] = 5000 });
+            first = (System.String)__xaml1["out_FirstMatch"];
+            ms = (System.Collections.Generic.IEnumerable<System.Text.RegularExpressions.Match>)__xaml1["out_Result"];
             Log(message: Convert.ToString(ms.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: first, level: UiPath.CodedWorkflows.LogLevel.Info);
         }

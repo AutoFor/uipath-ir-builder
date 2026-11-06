@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             QueueItemData item = default;
             // キューに足す
-            // AddQueueItemAndGetReference はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/AddQueueItemAndGetReference_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/AddQueueItemAndGetReference_Full_1.xaml", new Dictionary<string, object> { ["item"] = item });
-            item = (QueueItemData)__xaml1["item"];
+            // AddQueueItemAndGetReference はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AddQueueItemAndGetReference_7dafe0.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/AddQueueItemAndGetReference_7dafe0.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_DeferDate"] = DateTime.Now.AddHours(1), ["in_DueDate"] = DateTime.Now.AddDays(1), ["in_FolderPath"] = "Shared", ["in_QueueName"] = "Invoices", ["in_Reference"] = "INV-1", ["in_TimeoutMs"] = 30000, ["in_ItemInformation_No"] = "INV-1" });
+            item = (UiPath.Persistence.Activities.Queue.QueueItemData)__xaml1["out_QueueItemOutput"];
         }
     }
 }

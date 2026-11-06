@@ -61,12 +61,12 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="RemoveLogFields_Min_1" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:AddLogFields sap2010:WorkflowViewState.IdRef="AddLogFields_1">
-      <ui:AddLogFields.Fields>
-        <scg:Dictionary x:TypeArguments="x:String, InArgument">
-          <InArgument x:TypeArguments="x:String" x:Key="case_id">[&quot;A-001&quot;]</InArgument>
-        </scg:Dictionary>
-      </ui:AddLogFields.Fields>
-    </ui:AddLogFields>
+    <ui:RemoveLogFields sap2010:WorkflowViewState.IdRef="RemoveLogFields_1">
+      <ui:RemoveLogFields.Fields>
+        <scg:List x:TypeArguments="InArgument(x:String)" Capacity="4">
+          <InArgument x:TypeArguments="x:String">[&quot;case_id&quot;]</InArgument>
+        </scg:List>
+      </ui:RemoveLogFields.Fields>
+    </ui:RemoveLogFields>
   </Sequence>
 </Activity>

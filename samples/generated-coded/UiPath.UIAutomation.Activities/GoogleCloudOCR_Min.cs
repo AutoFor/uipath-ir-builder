@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             Image img = default;
             // GoogleCloudOCR（最小）
-            // GoogleCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_xaml/GoogleCloudOCR_Min_1.xaml）
-            RunWorkflow("coded/_xaml/GoogleCloudOCR_Min_1.xaml", new Dictionary<string, object> { ["img"] = img });
+            // GoogleCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/GoogleCloudOCR_f33195.xaml）
+            RunWorkflow("coded/_activities/GoogleCloudOCR_f33195.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Image"] = img });
         }
     }
 }

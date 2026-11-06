@@ -15,8 +15,8 @@ namespace CatalogProbeNet8
         public void Execute(Int64 in_TaskId)
         {
             // タイマーを設定する
-            // ConfigureTaskTimer はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/ConfigureTaskTimer_Full_1.xaml）
-            RunWorkflow("coded/_xaml/ConfigureTaskTimer_Full_1.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId });
+            // ConfigureTaskTimer はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/ConfigureTaskTimer_e0f478.xaml）
+            RunWorkflow("coded/_activities/ConfigureTaskTimer_e0f478.xaml", new Dictionary<string, object> { ["in_AutoCompleteOutcome"] = "Approve", ["in_ContinueOnError"] = false, ["in_FolderPath"] = "Shared", ["in_ReassignGroup"] = "Reviewers", ["in_ReassignUser"] = "user@example.com", ["in_TaskId"] = in_TaskId, ["in_TimeoutMs"] = 30000, ["in_TimerDuration"] = TimeSpan.FromHours(4) });
         }
     }
 }

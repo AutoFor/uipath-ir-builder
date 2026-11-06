@@ -18,7 +18,7 @@ import { refs, requiredRefs, scopeRefs, usingScope, UIA_APP_TYPE } from "./mappi
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames, validate } from "./validate.ts";
-import { viaXamlArgs, viaXamlWorkflow } from "./coded-via-xaml.ts";
+import { genericActivity, viaXamlArgs, viaXamlWorkflow, type GenericActivity } from "./coded-via-xaml.ts";
 import { objToCs } from "./uia.ts";
 import { xamlDefaultProps } from "./import-xaml.ts";
 
@@ -35,7 +35,8 @@ export type CodedOptions = {
 };
 
 // XAML 経由で呼ぶワークフロー（path はプロジェクトからの相対パス。XAML は呼ぶ側が generate.ts で作る）
-export type ViaXamlFile = { path: string; wf: Workflow; at: string };
+// kind は "activity"（1つのアクティビティだけの汎用の XAML。_activities/）か "subtree"（その場の部分木。_xaml/）
+export type ViaXamlFile = { path: string; wf: Workflow; at: string; kind: "activity" | "subtree" };
 
 const baseUsings = ["System", "System.Collections.Generic", "System.Data", "System.IO", "System.Linq", "UiPath.CodedWorkflows", "UiPath.Platform.ResourceHandling"];
 
@@ -60,6 +61,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  let subtrees = 0; // 部分木の XAML（_xaml/<ワークフロー名>_<連番>）の数
   // ラムダ（"scope": "lambda"）の本体に直接ある Break / Continue。C# では return にする
   const lambdaExits = new Set<Node>();
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
@@ -347,19 +349,19 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   // 対応表で書いた C# が、選んだ版の API に無いメソッド・オーバーロードを呼ぶなら（apiCheck が理由を返す）、書いた分を捨てて XAML 経由にする
   function mapped(n: Node, className: string, pkg: string, depth: number, at: string, sc: Map<string, string>) {
     const check = opt.viaXaml?.apiCheck;
-    const l0 = lines.length, i0 = issues.length, w0 = warnings.length, x0 = xamls.length;
+    const l0 = lines.length, i0 = issues.length, w0 = warnings.length, x0 = xamls.length, s0 = subtrees;
     mappedCode(n, className, pkg, depth, at, sc);
     // 子を XAML 経由にしたいが、親のスコープ（Excel、Use Application など）の外に出すと検証を通らない、
     // またはスコープの変数（ブックのハンドルなど）が XAML の引数にできない。親ごと XAML 経由にする
     const added = issues.slice(i0);
     if (opt.viaXaml && added.length && added.every((i) => /^CODED_VIA_XAML_(INVALID|TYPE)$/.test(i.code) && i.path.startsWith(`${at}.`))) {
-      lines.length = l0; issues.length = i0; warnings.length = w0; xamls.length = x0;
+      lines.length = l0; issues.length = i0; warnings.length = w0; xamls.length = x0; subtrees = s0;
       return viaXaml(n, className, pkg, "中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せない", depth, at, sc);
     }
     if (!check || issues.length > i0) return;
     const why = check(lines.slice(l0).join("\n"));
     if (!why) return;
-    lines.length = l0; warnings.length = w0; xamls.length = x0;
+    lines.length = l0; warnings.length = w0; xamls.length = x0; subtrees = s0;
     viaXaml(n, className, pkg, why, depth, at, sc);
   }
 
@@ -574,15 +576,18 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
 
   // 部分木だけを置いた XAML を作り、RunWorkflow で呼ぶ。書き込まれる変数（InOut）は戻りの辞書から戻す
   function viaXaml(n: Node, className: string, pkg: string, why: string, depth: number, at: string, sc: Map<string, string>) {
-    const name = `${wf.workflow}_${xamls.length + 1}`;
     const dir = opt.viaXaml!.dir.replace(/\\/g, "/").replace(/^\/+|\/+$/g, "");
+    // 子の無いノードは、1つのアクティビティだけの汎用の XAML（_activities/）。値は C# から引数で渡す
+    const g = genericActivity(n, cat, sc);
+    if (g && !validate(g.wf, cat).length) return viaActivity(n, g, className, pkg, why, depth, at, sc, dir);
+    const name = `${wf.workflow}_${subtrees++ + 1}`;
     const path = dir ? `${dir}/${name}.xaml` : `${name}.xaml`;
     const r = viaXamlArgs(n, cat, sc);
     for (const i of r.issues) add(at, i.code, i.message);
     const sub = viaXamlWorkflow(n, name, r.args);
     // その位置から外したことで足りなくなるもの（UI のスコープの外、Excel のスコープの外など）は、ここで分かる
     for (const i of validate(sub, cat)) add(at, "CODED_VIA_XAML_INVALID", `XAML 経由（${path}）にすると検証を通らない: ${i.code} ${i.path}: ${i.message}`);
-    xamls.push({ path, wf: sub, at });
+    xamls.push({ path, wf: sub, at, kind: "subtree" });
     warnings.push({ path: at, code: "CODED_VIA_XAML", message: `${className}（${pkg}）は${why}ので、XAML（${path}）にして RunWorkflow で呼ぶ` });
     emit(depth, `// ${className} は${why}ので XAML 経由（${path}）`);
     const items = r.args.map((x) => `[${csLit(x.name)}] = ${x.name}`);
@@ -592,6 +597,22 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const v = `__xaml${++tmp}`;
     emit(depth, `var ${v} = RunWorkflow(${csLit(path)}, ${dict});`);
     for (const x of back) emit(depth, `${x.name} = (${csType(x.type)})${v}[${csLit(x.name)}];`);
+  }
+
+  // _activities/<名前>.xaml を RunWorkflow で呼ぶ。IR の値は引数の辞書で渡し、出力は戻りの辞書から受ける
+  function viaActivity(_n: Node, g: GenericActivity, className: string, pkg: string, why: string, depth: number, at: string, sc: Map<string, string>, dir: string) {
+    const actDir = dir.replace(/(^|\/)_xaml$/, "$1_activities");
+    const path = actDir === dir ? `${dir}/_activities/${g.name}.xaml`.replace(/^\//, "") : `${actDir}/${g.name}.xaml`;
+    if (!xamls.some((x) => x.path === path)) xamls.push({ path, wf: g.wf, at, kind: "activity" });
+    warnings.push({ path: at, code: "CODED_VIA_XAML", message: `${className}（${pkg}）は${why}ので、1つのアクティビティだけの XAML（${path}）を RunWorkflow で呼ぶ` });
+    emit(depth, `// ${className} は${why}ので XAML 経由（${path}）`);
+    const items = g.args.filter((x) => x.dir !== "Out").map((x) => `[${csLit(x.name)}] = ${/^(System\.)?String$/.test(x.type) ? str(x.value, at, sc) : expr(x.value, at, sc)}`);
+    const dict = items.length ? `new Dictionary<string, object> { ${items.join(", ")} }` : "null";
+    const back = g.args.filter((x) => x.dir !== "In");
+    if (!back.length) { emit(depth, `RunWorkflow(${csLit(path)}, ${dict});`); return; }
+    const v = `__xaml${++tmp}`;
+    emit(depth, `var ${v} = RunWorkflow(${csLit(path)}, ${dict});`);
+    for (const x of back) emit(depth, `${lvalue(x.value, at, sc)} = (${csType(x.type)})${v}[${csLit(x.name)}];`);
   }
 
   function invoke(n: Node, _v: Variant, m: Mapping, depth: number, at: string, sc: Map<string, string>) {

@@ -16,12 +16,12 @@ namespace CatalogProbeNet8
         {
             Object got = default;
             // クリップボードに入れる（全部入り）
-            // SetToClipboard はCoded API が無い（Coded API なし（Classic のクリップボード操作。Coded の uiAutomation.SetClipboard は Modern（NSetClipboard）のオプションで、Classic とは対応しない））ので XAML 経由（coded/_xaml/SetToClipboard_Full_1.xaml）
-            RunWorkflow("coded/_xaml/SetToClipboard_Full_1.xaml", null);
+            // SetToClipboard はCoded API が無い（Coded API なし（Classic のクリップボード操作。Coded の uiAutomation.SetClipboard は Modern（NSetClipboard）のオプションで、Classic とは対応しない））ので XAML 経由（coded/_activities/SetToClipboard_78a2b8.xaml）
+            RunWorkflow("coded/_activities/SetToClipboard_78a2b8.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_Text"] = "uia-c5 clipboard full" });
             // クリップボードから読み戻す
-            // GetFromClipboard はCoded API が無い（Coded API なし（Classic のクリップボード操作。Coded の uiAutomation.GetClipboard は Modern（NGetClipboard）のオプションで、Classic の Result（Object）・TimeoutMS とは対応しない））ので XAML 経由（coded/_xaml/SetToClipboard_Full_2.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/SetToClipboard_Full_2.xaml", new Dictionary<string, object> { ["got"] = got });
-            got = (Object)__xaml1["got"];
+            // GetFromClipboard はCoded API が無い（Coded API なし（Classic のクリップボード操作。Coded の uiAutomation.GetClipboard は Modern（NGetClipboard）のオプションで、Classic の Result（Object）・TimeoutMS とは対応しない））ので XAML 経由（coded/_activities/GetFromClipboard_bdb3ee.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GetFromClipboard_bdb3ee.xaml", null);
+            got = (Object)__xaml1["out_Result"];
             Log(message: "クリップボード: " + Convert.ToString(got), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

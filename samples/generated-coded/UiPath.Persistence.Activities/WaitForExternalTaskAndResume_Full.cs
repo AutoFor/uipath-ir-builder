@@ -16,14 +16,15 @@ namespace CatalogProbeNet8
         {
             ExternalTaskData task = default;
             String action = default;
-            // CreateExternalTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/WaitForExternalTaskAndResume_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/WaitForExternalTaskAndResume_Full_1.xaml", new Dictionary<string, object> { ["task"] = task });
-            task = (ExternalTaskData)__xaml1["task"];
+            // CreateExternalTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateExternalTask_c1e53b.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateExternalTask_c1e53b.xaml", new Dictionary<string, object> { ["in_TaskTitle"] = "確認" });
+            task = (UiPath.Persistence.Activities.ExternalTask.ExternalTaskData)__xaml1["out_TaskOutput"];
             // 外部の処理を待つ
-            // WaitForExternalTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/WaitForExternalTaskAndResume_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/WaitForExternalTaskAndResume_Full_2.xaml", new Dictionary<string, object> { ["task"] = task, ["action"] = action });
-            task = (ExternalTaskData)__xaml2["task"];
-            action = (String)__xaml2["action"];
+            // WaitForExternalTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForExternalTaskAndResume_92277f.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/WaitForExternalTaskAndResume_92277f.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_StatusMessage"] = "処理待ち", ["in_TaskInput"] = task, ["in_TimeoutMs"] = 30000, ["io_WaitItemDataObject"] = task });
+            action = (System.String)__xaml2["out_TaskAction"];
+            task = (UiPath.Persistence.Activities.ExternalTask.ExternalTaskData)__xaml2["out_TaskOutput"];
+            task = (UiPath.Persistence.Activities.ExternalTask.ExternalTaskData)__xaml2["io_WaitItemDataObject"];
         }
     }
 }

@@ -16,12 +16,12 @@ namespace CatalogProbeNet8
         {
             Boolean ok = default;
             Boolean ng = default;
-            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/IsMatch_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/IsMatch_Min_1.xaml", new Dictionary<string, object> { ["ok"] = ok });
-            ok = (Boolean)__xaml1["ok"];
-            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_xaml/IsMatch_Min_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/IsMatch_Min_2.xaml", new Dictionary<string, object> { ["ng"] = ng });
-            ng = (Boolean)__xaml2["ng"];
+            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch_147cd1.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/IsMatch_147cd1.xaml", new Dictionary<string, object> { ["in_Input"] = "abc123", ["in_Pattern"] = "\\d+" });
+            ok = (System.Boolean)__xaml1["out_Result"];
+            // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch_147cd1.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/IsMatch_147cd1.xaml", new Dictionary<string, object> { ["in_Input"] = "abc", ["in_Pattern"] = "\\d+" });
+            ng = (System.Boolean)__xaml2["out_Result"];
             Log(message: ok.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: ng.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
                 // ContinueOnError: Delete の例外を無視する
             }
             system.WriteTextFile(text: "rename me", file: LocalResource.FromPath("output\\RenameFileX_Min.txt"));
-            // RenameFileX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_xaml/RenameFileX_Min_1.xaml）
-            RunWorkflow("coded/_xaml/RenameFileX_Min_1.xaml", null);
+            // RenameFileX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_activities/RenameFileX.xaml）
+            RunWorkflow("coded/_activities/RenameFileX.xaml", new Dictionary<string, object> { ["in_FilePath"] = "output\\RenameFileX_Min.txt", ["in_NewName"] = "RenameFileX_Min.new" });
             ex = system.PathExists(path: "output\\RenameFileX_Min.new.txt", pathType: UiPath.Core.Activities.PathType.File);
             Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
             ex = system.PathExists(path: "output\\RenameFileX_Min.txt", pathType: UiPath.Core.Activities.PathType.File);

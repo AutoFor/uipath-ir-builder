@@ -17,9 +17,9 @@ namespace CatalogProbeNet8
             FileInfo fi = default;
             system.WriteTextFile(text: "a,b", file: LocalResource.FromPath("output\\GetFileInfoX_Full.csv"));
             // ファイル情報
-            // GetFileInfoX はCoded API が無い（Coded API なし（FileInfo は System.IO の型。サービスにメソッドが無い））ので XAML 経由（coded/_xaml/GetFileInfoX_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GetFileInfoX_Full_1.xaml", new Dictionary<string, object> { ["fi"] = fi });
-            fi = (FileInfo)__xaml1["fi"];
+            // GetFileInfoX はCoded API が無い（Coded API なし（FileInfo は System.IO の型。サービスにメソッドが無い））ので XAML 経由（coded/_activities/GetFileInfoX_79eba2.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GetFileInfoX_79eba2.xaml", new Dictionary<string, object> { ["in_FilePath"] = "output\\GetFileInfoX_Full.csv" });
+            fi = (System.IO.FileInfo)__xaml1["out_Output"];
             Log(message: Convert.ToString(fi.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString(fi.Extension), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: fi.Length.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             UiElement el = default;
-            // IndicateOnScreen はCoded API が無い（Coded API なし（Classic の画面上の指示（人の操作を待つ）。Coded の API なし））ので XAML 経由（coded/_xaml/IndicateOnScreen_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/IndicateOnScreen_Min_1.xaml", new Dictionary<string, object> { ["el"] = el });
-            el = (UiElement)__xaml1["el"];
+            // IndicateOnScreen はCoded API が無い（Coded API なし（Classic の画面上の指示（人の操作を待つ）。Coded の API なし））ので XAML 経由（coded/_activities/IndicateOnScreen_7dcd10.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/IndicateOnScreen_7dcd10.xaml", null);
+            el = (UiPath.Core.UiElement)__xaml1["out_SelectedUiElement"];
         }
     }
 }

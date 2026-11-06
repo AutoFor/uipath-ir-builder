@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             Object o = default;
             // ルールを評価
-            // EvaluateBusinessRule はCoded API が無い（Coded API なし（ビジネスルールの評価 API が ISystemService に無い））ので XAML 経由（coded/_xaml/EvaluateBusinessRule_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/EvaluateBusinessRule_Full_1.xaml", new Dictionary<string, object> { ["o"] = o });
-            o = (Object)__xaml1["o"];
+            // EvaluateBusinessRule はCoded API が無い（Coded API なし（ビジネスルールの評価 API が ISystemService に無い））ので XAML 経由（coded/_activities/EvaluateBusinessRule_95ff73.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/EvaluateBusinessRule_95ff73.xaml", new Dictionary<string, object> { ["in_BusinessRule"] = "IrRule", ["in_ContinueOnError"] = true, ["in_FolderPath"] = "Shared", ["in_TimeoutMS"] = 10000, ["in_Arguments_in_Name"] = "太郎" });
+            o = (Object)__xaml1["out_Output"];
             Log(message: "評価した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Newtonsoft.Json.Linq.JArray arr = default;
-            // DeserializeJsonArray は対応表が無いので XAML 経由（coded/_xaml/DeserializeJsonArray_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/DeserializeJsonArray_Min_1.xaml", new Dictionary<string, object> { ["arr"] = arr });
-            arr = (Newtonsoft.Json.Linq.JArray)__xaml1["arr"];
+            // DeserializeJsonArray は対応表が無いので XAML 経由（coded/_activities/DeserializeJsonArray_e0b73d.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/DeserializeJsonArray_e0b73d.xaml", new Dictionary<string, object> { ["in_JsonString"] = "[10, 20, 30]" });
+            arr = (Newtonsoft.Json.Linq.JArray)__xaml1["out_JsonArray"];
             Log(message: "count=" + arr.Count.ToString() + ", last=" + arr[2].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

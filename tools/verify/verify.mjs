@@ -15,7 +15,7 @@
 //   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
 //
 // IR（*.json）1つにつき、XAML（<プロジェクト>/<workflow>.xaml）と C#（<プロジェクト>/coded/<workflow>.cs）の両方を作って試す。
-// C# で対応表の無いアクティビティは、gen-coded.ts が <プロジェクト>/coded/_xaml/ に XAML を書き、RunWorkflow で呼ぶ（knowledge/coded-via-xaml.md）。
+// C# で対応表の無いアクティビティは、gen-coded.ts が <プロジェクト>/coded/_activities/（1つのアクティビティだけ）と coded/_xaml/（部分木）に XAML を書き、RunWorkflow で呼ぶ（knowledge/coded-via-xaml.md）。
 // 手書きの *.cs は <プロジェクト>/ にそのまま写して試す。*.xaml も同じ（tools/ir/convert-xaml.ts で C# にした XAML など）。
 // 式の言語が C# のテンプレート（--template C:\Users\Public\uipath-ir-probe-cs）では --use-project を付ける。gen.ts が project.json の expressionLanguage に従って C# の XAML を作る。
 //
@@ -175,7 +175,7 @@ if (irFiles.length && !opt.noCoded) {
     const i = lines.findIndex((l) => l.startsWith(`OK ${file} ->`) || l === `NG ${file}` || l.startsWith(`NG ${file}（`) || l === `SKIP ${file}`);
     if (i < 0) r.gen = { ok: false, issues: [`gen-coded.ts の出力に結果が無い: ${(cg.stdout + cg.stderr).trim().slice(0, 300)}`] };
     else if (lines[i].startsWith("OK")) {
-      // OK の下の行は注意（CODED_VIA_XAML：対応表の無いアクティビティを XAML 経由で呼ぶ。XAML は coded/_xaml/ に gen-coded.ts が書く）
+      // OK の下の行は注意（CODED_VIA_XAML：対応表の無いアクティビティを XAML 経由で呼ぶ。XAML は coded/_activities/ と coded/_xaml/ に gen-coded.ts が書く）
       const notes = [];
       for (let j = i + 1; j < lines.length && lines[j].startsWith("  "); j++) notes.push(lines[j].trim());
       r.gen = { ok: true, notes };

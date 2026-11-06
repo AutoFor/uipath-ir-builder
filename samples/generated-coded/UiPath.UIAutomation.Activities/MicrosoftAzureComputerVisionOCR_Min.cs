@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             Image img = default;
             // MicrosoftAzureComputerVisionOCR（最小）
-            // MicrosoftAzureComputerVisionOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_xaml/MicrosoftAzureComputerVisionOCR_Min_1.xaml）
-            RunWorkflow("coded/_xaml/MicrosoftAzureComputerVisionOCR_Min_1.xaml", new Dictionary<string, object> { ["img"] = img });
+            // MicrosoftAzureComputerVisionOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/MicrosoftAzureComputerVisionOCR_efa6c5.xaml）
+            RunWorkflow("coded/_activities/MicrosoftAzureComputerVisionOCR_efa6c5.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Endpoint"] = "https://example.invalid/", ["in_Image"] = img });
         }
     }
 }

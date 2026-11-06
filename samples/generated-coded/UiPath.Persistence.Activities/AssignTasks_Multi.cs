@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute(List<TaskUserAssignment> in_Assignments)
         {
             List<TaskAssignmentResponse> failed = default;
-            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/AssignTasks_Multi_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/AssignTasks_Multi_1.xaml", new Dictionary<string, object> { ["in_Assignments"] = in_Assignments, ["failed"] = failed });
-            failed = (List<TaskAssignmentResponse>)__xaml1["failed"];
+            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AssignTasks_8bc8d1.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/AssignTasks_8bc8d1.xaml", new Dictionary<string, object> { ["in_TaskUserAssignments"] = in_Assignments });
+            failed = (System.Collections.Generic.List<UiPath.Persistence.Activities.Tasks.TaskAssignmentResponse>)__xaml1["out_FailedTaskAssignments"];
         }
     }
 }

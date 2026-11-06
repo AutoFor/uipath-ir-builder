@@ -16,12 +16,12 @@ namespace CatalogProbeNet8
         {
             ExternalTaskData task = default;
             String action = default;
-            // CreateExternalTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateExternalTask_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/CreateExternalTask_Min_1.xaml", new Dictionary<string, object> { ["task"] = task });
-            task = (ExternalTaskData)__xaml1["task"];
-            // WaitForExternalTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateExternalTask_Min_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/CreateExternalTask_Min_2.xaml", new Dictionary<string, object> { ["task"] = task, ["action"] = action });
-            action = (String)__xaml2["action"];
+            // CreateExternalTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateExternalTask_8a42e3.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateExternalTask_8a42e3.xaml", new Dictionary<string, object> { ["in_TaskTitle"] = "外部システムで処理" });
+            task = (UiPath.Persistence.Activities.ExternalTask.ExternalTaskData)__xaml1["out_TaskOutput"];
+            // WaitForExternalTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForExternalTaskAndResume_6bfa14.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/WaitForExternalTaskAndResume_6bfa14.xaml", new Dictionary<string, object> { ["in_TaskInput"] = task });
+            action = (System.String)__xaml2["out_TaskAction"];
             Log(message: "結果: " + action, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

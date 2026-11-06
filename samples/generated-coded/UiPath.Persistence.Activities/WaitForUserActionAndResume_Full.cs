@@ -16,14 +16,15 @@ namespace CatalogProbeNet8
         {
             UserActionData task = default;
             String action = default;
-            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/WaitForUserActionAndResume_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/WaitForUserActionAndResume_Full_1.xaml", new Dictionary<string, object> { ["task"] = task });
-            task = (UserActionData)__xaml1["task"];
+            // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateUserAction_78ba75.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateUserAction_78ba75.xaml", new Dictionary<string, object> { ["in_SolutionApp"] = "uipath-ir-test-approval", ["in_TaskTitle"] = "アプリで確認" });
+            task = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml1["out_TaskOutput"];
             // 人の判断を待つ
-            // WaitForUserActionAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/WaitForUserActionAndResume_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/WaitForUserActionAndResume_Full_2.xaml", new Dictionary<string, object> { ["task"] = task, ["action"] = action });
-            task = (UserActionData)__xaml2["task"];
-            action = (String)__xaml2["action"];
+            // WaitForUserActionAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForUserActionAndResume_94f3ee.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/WaitForUserActionAndResume_94f3ee.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_StatusMessage"] = "承認待ち", ["in_TaskInput"] = task, ["in_TimeoutMs"] = 30000, ["io_WaitItemDataObject"] = task });
+            action = (System.String)__xaml2["out_TaskAction"];
+            task = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml2["out_TaskOutput"];
+            task = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml2["io_WaitItemDataObject"];
             Log(message: "結果: " + action, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

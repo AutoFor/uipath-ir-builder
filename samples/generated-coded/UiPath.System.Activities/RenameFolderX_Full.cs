@@ -35,8 +35,8 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\RenameFolderX_Full.old");
             system.WriteTextFile(text: "in folder", file: LocalResource.FromPath("output\\RenameFolderX_Full.old\\a.txt"));
             // フォルダー名を変える
-            // RenameFolderX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_xaml/RenameFolderX_Full_1.xaml）
-            RunWorkflow("coded/_xaml/RenameFolderX_Full_1.xaml", null);
+            // RenameFolderX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_activities/RenameFolderX.xaml）
+            RunWorkflow("coded/_activities/RenameFolderX.xaml", new Dictionary<string, object> { ["in_FolderPath"] = "output\\RenameFolderX_Full.old", ["in_NewName"] = "RenameFolderX_Full.new" });
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\RenameFolderX_Full.new\\a.txt"));
             Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
             ex = system.PathExists(path: "output\\RenameFolderX_Full.old", pathType: UiPath.Core.Activities.PathType.Folder);

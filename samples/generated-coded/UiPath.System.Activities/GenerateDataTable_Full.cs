@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             DataTable dt = default;
             // 文字列から表を作る
-            // GenerateDataTable はCoded API が無い（Coded API なし（ISystemService に GenerateDataTable が無い））ので XAML 経由（coded/_xaml/GenerateDataTable_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GenerateDataTable_Full_1.xaml", new Dictionary<string, object> { ["dt"] = dt });
-            dt = (DataTable)__xaml1["dt"];
+            // GenerateDataTable はCoded API が無い（Coded API なし（ISystemService に GenerateDataTable が無い））ので XAML 経由（coded/_activities/GenerateDataTable_3f6a1c.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GenerateDataTable_3f6a1c.xaml", new Dictionary<string, object> { ["in_CSVParsing"] = true, ["in_ColumnSeparators"] = ";", ["in_ContinueOnError"] = false, ["in_Input"] = "Name;Age;Note\nAlice;30;\"x;y\"\nBob;25", ["in_NewLineSeparator"] = "\n" });
+            dt = (System.Data.DataTable)__xaml1["out_DataTable"];
             Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("note0=" + dt.Rows[0]["Note"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);

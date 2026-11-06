@@ -15,6 +15,7 @@ import type { Catalog, Prop } from "./catalog.ts";
 import { resolve, defaultSlot, funcInfo, funcArgName } from "./catalog.ts";
 import type { Node, Value, Workflow, ArgumentDecl, Issue } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
+import { argumentType, isUntypedArgument } from "./validate.ts";
 
 export type ViaXamlArg = { name: string; type: string; dir: "In" | "InOut" };
 
@@ -166,4 +167,80 @@ export function viaXamlArgs(root: Node, cat: Catalog, sc: Map<string, string>): 
 export function viaXamlWorkflow(n: Node, name: string, args: ViaXamlArg[]): Workflow {
   const decl: ArgumentDecl[] = args.map((a) => ({ name: a.name, dir: a.dir, type: a.type }));
   return { workflow: name, ...(decl.length ? { arguments: decl } : {}), body: [n] };
+}
+
+// ---- 1つのアクティビティだけの汎用の XAML（_activities/）----
+//
+// 子を持たないノードは、そのアクティビティだけを置き、IR に書いた入出力のプロパティを全部 XAML の引数にした XAML にする。
+// 値は C# から渡すので、同じ形（使うプロパティ、引数にできない値、辞書の項目）ならどこから呼んでも同じファイル。
+//   - 引数の名前：in_<Prop> / out_<Prop> / io_<Prop>。辞書の項目は in_<Prop>_<項目名> など
+//   - IR に書いていないプロパティは引数にしない（渡さないと 0 や null になり、アクティビティの既定値が効かなくなるため）
+//   - 引数にできないもの（属性の値、enum の名前、System.Type）は XAML に書く。その値は形に入る
+//   - ファイル名：必須のプロパティだけで、引数にできない値も辞書も無いなら <ClassName>.xaml、ほかは <ClassName>_<形のハッシュ>.xaml
+// 子のあるもの（body、slots など）、objs・lists・args・assigns のあるものは対象外（undefined）。呼ぶ側は部分木の XAML（_xaml/）にする
+
+export type GenericArg = { name: string; dir: "In" | "Out" | "InOut"; type: string; value: Value };
+export type GenericActivity = { name: string; wf: Workflow; args: GenericArg[] };
+
+export function genericActivity(n: Node, cat: Catalog, sc: Map<string, string>): GenericActivity | undefined {
+  if (n.body || n.then || n.else || n.slots || n.cases || n.catches || n.assigns || n.args || n.lists || n.variables || n.item !== undefined) return undefined;
+  // objs（要素で書くオブジェクト）は、中が全部リテラルなら引数にできない値として XAML に書く。式があれば対象外
+  // 文字列は、その位置で見えている変数・引数を参照していなければよい（"$type" や enum の名前、定数の式）
+  const names = new Set([...sc.keys()].map((k) => k.toLowerCase()));
+  const literal = (v: unknown): boolean => Array.isArray(v) ? v.every(literal) : v && typeof v === "object" ? "lit" in v || (!("vb" in v) && Object.values(v).every(literal)) : typeof v !== "string" || !exprNames(v).some((x) => names.has(x.toLowerCase()));
+  if (n.objs && !Object.values(n.objs).every(literal)) return undefined;
+  const r = resolve(cat, n.act, n.typeArg !== undefined);
+  if (!("activity" in r)) return undefined;
+  const a = r.activity;
+  const typeArg = n.typeArg ?? argumentType(n, a, sc);
+  const args: GenericArg[] = [];
+  const props: Record<string, Value> = {};
+  const fixed: Record<string, Value> = {};
+  const literalOnly = (p: Prop, v: Value) => p.kind === "prop" || p.type === "System.Type" || (typeof v === "string" && !!p.enum && v.split(",").every((x) => p.enum!.includes(x.trim())));
+  const prefix = { in: "in", out: "out", inout: "io" } as const;
+  for (const [k, v] of Object.entries(n.props ?? {}).sort(([x], [y]) => (x < y ? -1 : x > y ? 1 : 0))) { // 書いた順によらず同じ XAML にする
+    if (k === "DisplayName") continue;
+    const p = a.props.find((x) => x.name === k);
+    if (!p) return undefined;
+    if (literalOnly(p, v) || !(p.kind === "in" || p.kind === "out" || p.kind === "inout")) { fixed[k] = v; continue; }
+    const type = isUntypedArgument(p.type) ? typeArg : p.type;
+    if (!type || "error" in toXamlType(type)) return undefined;
+    const name = `${prefix[p.kind]}_${k}`;
+    args.push({ name, dir: p.kind === "in" ? "In" : p.kind === "out" ? "Out" : "InOut", type, value: v });
+    props[k] = name;
+  }
+  const dicts: NonNullable<Node["dicts"]> = {};
+  for (const [k, list] of Object.entries(n.dicts ?? {}).sort(([x], [y]) => (x < y ? -1 : x > y ? 1 : 0))) {
+    // 型の無い項目（値をそのまま書く辞書）は、引数にせず XAML に書く。変数を参照していれば対象外
+    if (list.some((x) => !x.type)) {
+      if (!list.every((x) => literal(x.value))) return undefined;
+      dicts[k] = list;
+      fixed[`dicts.${k}`] = list as unknown as Value;
+      continue;
+    }
+    dicts[k] = [...list].sort((x, y) => (x.name < y.name ? -1 : x.name > y.name ? 1 : 0)).map((x) => {
+      const dir = x.dir ?? "In";
+      const name = `${dir === "In" ? "in" : dir === "Out" ? "out" : "io"}_${k}_${x.name}`;
+      args.push({ name, dir, type: x.type, value: x.value });
+      return { ...x, value: name };
+    });
+  }
+  if (args.some((x) => "error" in toXamlType(x.type))) return undefined;
+  // 形：これが同じなら XAML も同じ
+  const shape = JSON.stringify({ act: a.clrType, typeArg: typeArg ?? null, args: args.map((x) => [x.name, x.dir, x.type]).sort(), fixed: Object.entries(fixed).sort(), objs: n.objs ?? null, dicts: Object.keys(dicts).sort() });
+  const required = new Set(a.props.filter((p) => p.required).map((p) => p.name));
+  const plain = !Object.keys(fixed).length && !Object.keys(dicts).length && !n.objs && Object.keys(props).every((k) => required.has(k)) && !n.typeArg;
+  const name = plain ? a.className : `${a.className}_${hash(shape)}`;
+  const node: Node = { act: n.act, ...(typeArg && (n.typeArg || isUntypedArgumentUsed(a, props)) ? { typeArg } : {}), props: { ...Object.fromEntries(Object.entries(fixed).filter(([k]) => !k.startsWith("dicts."))), ...props }, ...(n.objs ? { objs: n.objs } : {}), ...(Object.keys(dicts).length ? { dicts } : {}) };
+  const decl: ArgumentDecl[] = args.map((x) => ({ name: x.name, dir: x.dir, type: x.type }));
+  return { name, args, wf: { workflow: name, ...(decl.length ? { arguments: decl } : {}), body: [node] } };
+}
+
+const isUntypedArgumentUsed = (a: { props: Prop[] }, props: Record<string, Value>) => a.props.some((p) => p.name in props && isUntypedArgument(p.type));
+
+// 形の短いハッシュ（FNV-1a 32 ビットの 16 進 6 桁）
+function hash(s: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, "0").slice(0, 6);
 }

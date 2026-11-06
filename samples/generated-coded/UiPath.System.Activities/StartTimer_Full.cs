@@ -17,13 +17,13 @@ namespace CatalogProbeNet8
             Timer t1 = default;
             Timer t2 = default;
             // 1つ目
-            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_xaml/StartTimer_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/StartTimer_Full_1.xaml", new Dictionary<string, object> { ["t1"] = t1 });
-            t1 = (Timer)__xaml1["t1"];
+            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_activities/StartTimer.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/StartTimer.xaml", null);
+            t1 = (UiPath.Core.Timer)__xaml1["out_Timer"];
             // 2つ目
-            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_xaml/StartTimer_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/StartTimer_Full_2.xaml", new Dictionary<string, object> { ["t2"] = t2 });
-            t2 = (Timer)__xaml2["t2"];
+            // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_activities/StartTimer.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/StartTimer.xaml", null);
+            t2 = (UiPath.Core.Timer)__xaml2["out_Timer"];
             Log(message: "別のタイマー: " + (!Object.ReferenceEquals(t1, t2)).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

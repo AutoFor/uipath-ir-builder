@@ -8,7 +8,7 @@ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property Name="notePath" Type="InArgument(x:String)" />
+    <x:Property Name="win" Type="InOutArgument(ui:Window)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -63,6 +63,30 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="WindowScope_Full_1" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:StartProcess Arguments="[notePath]" DisplayName="メモ帳を起動する" FileName="notepad.exe" sap2010:WorkflowViewState.IdRef="StartProcess_1" />
+    <ui:WindowScope ApplicationWindow="[win]" ContinueOnError="False" DisplayName="メモ帳のウィンドウに入る" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" TimeoutMS="15000" sap2010:WorkflowViewState.IdRef="WindowScope_1">
+      <ui:WindowScope.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <ui:LogMessage Level="Info" Message="[&quot;in scope:&quot; &amp; Convert.ToString(win IsNot Nothing)]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+            <ui:WindowScope DisplayName="取得した Window で入り直す" Window="[win]" sap2010:WorkflowViewState.IdRef="WindowScope_2">
+              <ui:WindowScope.Body>
+                <ActivityAction x:TypeArguments="x:Object">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                  </ActivityAction.Argument>
+                  <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                    <ui:LogMessage Level="Info" Message="[&quot;in window scope&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+                    <ui:CloseWindow DisplayName="メモ帳を閉じる" Selector="&lt;wnd app='notepad.exe' title='uia-c3-note.txt*' /&gt;" WaitForReady="INTERACTIVE" sap2010:WorkflowViewState.IdRef="CloseWindow_1" />
+                  </Sequence>
+                </ActivityAction>
+              </ui:WindowScope.Body>
+            </ui:WindowScope>
+          </Sequence>
+        </ActivityAction>
+      </ui:WindowScope.Body>
+    </ui:WindowScope>
   </Sequence>
 </Activity>

@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // ReportStatus はCoded API が無い（Coded API なし（ISystemService に ReportStatus が無い））ので XAML 経由（coded/_xaml/ReportStatus_Min_1.xaml）
-            RunWorkflow("coded/_xaml/ReportStatus_Min_1.xaml", null);
+            // ReportStatus はCoded API が無い（Coded API なし（ISystemService に ReportStatus が無い））ので XAML 経由（coded/_activities/ReportStatus.xaml）
+            RunWorkflow("coded/_activities/ReportStatus.xaml", new Dictionary<string, object> { ["in_StatusText"] = "処理中" });
             Log(message: "状態を報告した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

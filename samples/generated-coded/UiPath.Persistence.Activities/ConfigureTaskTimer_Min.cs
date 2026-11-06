@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute(Int64 in_TaskId)
         {
-            // ConfigureTaskTimer はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/ConfigureTaskTimer_Min_1.xaml）
-            RunWorkflow("coded/_xaml/ConfigureTaskTimer_Min_1.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId });
+            // ConfigureTaskTimer はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/ConfigureTaskTimer_f24444.xaml）
+            RunWorkflow("coded/_activities/ConfigureTaskTimer_f24444.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId });
         }
     }
 }

@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             IEnumerable<System.Xml.Linq.XNode> nodes = default;
-            // GetXMLNodes は対応表が無いので XAML 経由（coded/_xaml/GetXMLNodes_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GetXMLNodes_Min_1.xaml", new Dictionary<string, object> { ["nodes"] = nodes });
-            nodes = (IEnumerable<System.Xml.Linq.XNode>)__xaml1["nodes"];
+            // GetXMLNodes は対応表が無いので XAML 経由（coded/_activities/GetXMLNodes_4c2987.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GetXMLNodes_4c2987.xaml", new Dictionary<string, object> { ["in_XMLString"] = "<root><item id=\"1\" kind=\"a\">A</item><item id=\"2\">B</item></root>" });
+            nodes = (System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>)__xaml1["out_XMLNodes"];
             Log(message: "nodes=" + nodes.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

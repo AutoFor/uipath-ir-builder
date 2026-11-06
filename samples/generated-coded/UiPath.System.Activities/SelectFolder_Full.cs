@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             String d = default;
             // フォルダーを選ぶ
-            // SelectFolder はCoded API が無い（Coded API なし（フォルダー選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_xaml/SelectFolder_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/SelectFolder_Full_1.xaml", new Dictionary<string, object> { ["d"] = d });
-            d = (String)__xaml1["d"];
+            // SelectFolder はCoded API が無い（Coded API なし（フォルダー選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/SelectFolder_8b4d6b.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/SelectFolder_8b4d6b.xaml", null);
+            d = (System.String)__xaml1["out_SelectedFolder"];
             Log(message: "選んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

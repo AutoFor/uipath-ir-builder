@@ -17,8 +17,8 @@ namespace CatalogProbeNet8
             List<String> toList = new List<String>() { "ir-to@example.com" };
             List<String> ccList = new List<String>() { "ir-cc@example.com" };
             // 通知メールを送る
-            // SendEmailNotification はCoded API が無い（Coded API なし（ISystemService に SendEmailNotification が無い））ので XAML 経由（coded/_xaml/SendEmailNotification_Full_1.xaml）
-            RunWorkflow("coded/_xaml/SendEmailNotification_Full_1.xaml", new Dictionary<string, object> { ["toList"] = toList, ["ccList"] = ccList });
+            // SendEmailNotification はCoded API が無い（Coded API なし（ISystemService に SendEmailNotification が無い））ので XAML 経由（coded/_activities/SendEmailNotification_fde92b.xaml）
+            RunWorkflow("coded/_activities/SendEmailNotification_fde92b.xaml", new Dictionary<string, object> { ["in_Body"] = "本文です\n二行目", ["in_Cc"] = ccList, ["in_ContinueOnError"] = false, ["in_Recipients"] = toList, ["in_Subject"] = "IR テスト（全部入り）", ["in_TimeoutMS"] = 30000 });
             Log(message: "通知メールを送った", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

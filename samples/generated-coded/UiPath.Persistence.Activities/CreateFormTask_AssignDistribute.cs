@@ -18,14 +18,14 @@ namespace CatalogProbeNet8
             String comment1 = default;
             FormTaskData task2 = default;
             String comment2 = default;
-            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateFormTask_AssignDistribute_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/CreateFormTask_AssignDistribute_1.xaml", new Dictionary<string, object> { ["task1"] = task1, ["comment1"] = comment1 });
-            task1 = (FormTaskData)__xaml1["task1"];
-            comment1 = (String)__xaml1["comment1"];
-            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/CreateFormTask_AssignDistribute_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/CreateFormTask_AssignDistribute_2.xaml", new Dictionary<string, object> { ["task2"] = task2, ["comment2"] = comment2 });
-            task2 = (FormTaskData)__xaml2["task2"];
-            comment2 = (String)__xaml2["comment2"];
+            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateFormTask_e3c3db.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateFormTask_e3c3db.xaml", new Dictionary<string, object> { ["in_FormLayout"] = "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]", ["in_Group"] = "Reviewers", ["in_TaskTitle"] = "順番に割り当てるフォーム" });
+            task1 = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml1["out_TaskOutput"];
+            comment1 = (String)__xaml1["out_FormData_Comment"];
+            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateFormTask_c735e8.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/CreateFormTask_c735e8.xaml", new Dictionary<string, object> { ["in_FormLayout"] = "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]", ["in_Group"] = "Reviewers", ["in_TaskTitle"] = "作業負荷で割り当てるフォーム" });
+            task2 = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml2["out_TaskOutput"];
+            comment2 = (String)__xaml2["out_FormData_Comment"];
         }
     }
 }

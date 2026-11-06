@@ -22,13 +22,44 @@ Coded API の無いパッケージは `versions.ts` の `noCodedApiPackages`（�
 
 ## 作るもの
 
-IR のノード（子があれば子も含めた部分木）1つにつき、XAML のワークフローを1つ作る。
+XAML は 2 種類。子の無いノードは「1つのアクティビティだけの汎用の XAML」（`_activities/`）、それ以外は「その場の部分木の XAML」（`_xaml/`）。
 
-- 置き場所：`<--out>/_xaml/<ワークフロー名>_<連番>.xaml`。連番は C# のワークフローの中で XAML 経由にしたものの順（1 から）。x:Class もファイル名と同じ
+### 1つのアクティビティだけの汎用の XAML（`_activities/`）
+
+子（body、slots など）・`lists`・`args`・`assigns`・変数を持たないノードは、こちらにする（`coded-via-xaml.ts` の `genericActivity`）。
+
+- 中身はアクティビティ 1 つだけ。IR に書いた入出力のプロパティ（`in` / `out` / `inout`）を全部 XAML の引数にし、値は書かない。値は C# から引数の辞書で渡し、出力は戻りの辞書から受ける
+  - 引数の名前：`in_<Prop>`、`out_<Prop>`、`io_<Prop>`。型の付いた辞書の項目は `in_<Prop>_<項目名>` など
+  - IR に書いていないプロパティは引数にしない。全部を引数にすると、渡さなかったものに 0 や null が入り、アクティビティの既定値（TimeoutMs の 30000 など）が効かなくなるため
+- 引数にできない値は XAML に書く。値ごとに別のファイルになる。
+  - 属性（`kind: prop`）、enum の名前、`System.Type`
+  - 中が全部リテラルの `objs`
+  - 型の無い辞書の項目
+- ファイル名
+  - 必須のプロパティだけで、引数にできない値も辞書も `typeArg` も無いもの：`<ClassName>.xaml`（例 `_activities/AttachDocument.xaml`）
+  - それ以外：`<ClassName>_<形のハッシュ 6 桁>.xaml`
+  - 形は次のもので決まる。同じ形なら、どこから呼んでも、どのワークフローからでも同じファイルになる
+    - 使うプロパティと引数の型
+    - 引数にできない値
+    - objs
+    - 辞書
+  - ハッシュは FNV-1a。props と辞書の項目は名前順に並べるので、IR に書いた順には左右されない
+- その位置から外すと検証を通らないもの（UI のスコープの中でしか動かないものなど）は、汎用の XAML にせず、次の部分木の XAML にする
+
+```csharp
+// AttachDocument はこのパッケージの版に Coded API が無いので XAML 経由（coded/_activities/AttachDocument.xaml）
+RunWorkflow("coded/_activities/AttachDocument.xaml", new Dictionary<string, object> { ["in_FilePath"] = path });
+```
+
+### その場の部分木の XAML（`_xaml/`）
+
+子のあるノード（スコープ、If など）、式を含む `objs` や `lists` のあるノード、汎用の XAML が検証を通らないノードは、子も含めた部分木を 1 つの XAML にする。その場の値はそのまま中に書かれる。
+
+- 置き場所：`<--out>/_xaml/<ワークフロー名>_<連番>.xaml`。連番は C# のワークフローの中で部分木にしたものの順（1 から）。x:Class もファイル名と同じ
 - `RunWorkflow` に渡すパスは、プロジェクトからの相対パス。`--project` があり `--out` がその中なら `relative(project, out)/_xaml/...`、無ければ `--invoke-dir`（verify.mjs は `coded`）、どちらも無ければ `--out` をプロジェクトのフォルダとみなして `_xaml/...`
 - XAML は `generate.ts` で作る。式の言語は `--project` の `expressionLanguage`（gen.ts の `--project` と同じ。C# のプロジェクトなら C# の XAML）、ルートの imports もプロジェクトの XAML から取る
 - verify.mjs は gen-coded.ts に `--out <作業用>/coded --invoke-dir coded` を渡すので、XAML は `coded/_xaml/` に置かれ、build / run にそのまま入る。注意は report.md に「XAML 経由 n 件」と出る
-- スナップショットは `samples/generated-coded/<pkg>/_xaml/<ワークフロー名>_<連番>.xaml`
+- スナップショットは `samples/generated-coded/<pkg>/_activities/` と `samples/generated-coded/<pkg>/_xaml/`
 
 C# はこうなる（`samples/generated-coded/UiPath.System.Activities/IfElseIfV2_Min.cs`）：
 
@@ -38,7 +69,7 @@ var __xaml1 = RunWorkflow("coded/_xaml/IfElseIfV2_Min_1.xaml", new Dictionary<st
 label = (String)__xaml1["label"];
 ```
 
-## 引数の決め方
+## 部分木の XAML の引数の決め方
 
 アクティビティ名では分岐しない。部分木の式を読んで決める（`viaXamlArgs`）。
 
@@ -95,3 +126,16 @@ XAML 経由の C#（`CODED_VIA_XAML`）：
 - **1つのファイルの build エラーで全部 NG**：verify.mjs の build はプロジェクト全体なので、OCR / CV（CoreIPC が要る）のような build できないものを混ぜると、ほかのファイルも全部 NG に見える。除いて流し直す
 - **一度に渡すファイルが多すぎる**と（UIAutomation の 369 件）、verify.mjs が gen.ts を起動できず「gen.ts の出力に結果が無い」になる（Windows のコマンドラインの長さ）。120 件ほどに分ける
 - **WebAPI 1.20.1 のカタログ**は readOnly のプロパティがたまたま無いので、`versions.ts` の判定では古い形式に見える。対応表（`mappings/<pkg>/`）の無いパッケージは C# でも API を呼ばないので、`--project` での C# の生成をエラーにせず、注意を出して XAML 経由にする（対応表のある古いカタログ、例 System 26.2.6 は今までどおりエラー）
+
+## 汎用の XAML（_activities/）にしてからの確認
+
+2026-11-07、v24 のテンプレートで確かめた（`out/verify/act-v24-run/`）。対象は次の 47 件で、XAML と C# の両方を流した。
+
+- WebAPI 7 件
+- Testing 23.4.1 の 28 件（VerifyControlAttribute は除いた）
+- System 11 件（FormatValue、FilterDataTable、DownloadFileFromUrl など）
+- NBlockUserInput
+
+結果は 70 件 OK、24 件 SKIP（Orchestrator が要るなどの noRun）、NG 0。プロジェクトの `coded/_activities/` には、同じ形のものが 1 つにまとまって置かれた（例 `AttachDocument.xaml`、`GetTestDataQueueItems_5765ff.xaml`）。
+
+出力のプロパティ（`Result` など）は、必須でないことが多い。そのため出力を受けるものは、ほとんどが `<ClassName>_<ハッシュ>.xaml` になる。

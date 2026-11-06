@@ -16,10 +16,10 @@ namespace CatalogProbeNet8
         {
             String body = default;
             Int32 code = default;
-            // HttpClient は対応表が無いので XAML 経由（coded/_xaml/HttpClient_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/HttpClient_Min_1.xaml", new Dictionary<string, object> { ["body"] = body, ["code"] = code });
-            body = (String)__xaml1["body"];
-            code = (Int32)__xaml1["code"];
+            // HttpClient は対応表が無いので XAML 経由（coded/_activities/HttpClient_71df71.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/HttpClient_71df71.xaml", new Dictionary<string, object> { ["in_EndPoint"] = "https://example.com/" });
+            body = (System.String)__xaml1["out_Result"];
+            code = (System.Int32)__xaml1["out_StatusCode"];
             Log(message: "status=" + code.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

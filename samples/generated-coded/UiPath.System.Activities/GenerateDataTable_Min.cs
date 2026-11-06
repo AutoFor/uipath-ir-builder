@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             DataTable dt = default;
-            // GenerateDataTable はCoded API が無い（Coded API なし（ISystemService に GenerateDataTable が無い））ので XAML 経由（coded/_xaml/GenerateDataTable_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GenerateDataTable_Min_1.xaml", new Dictionary<string, object> { ["dt"] = dt });
-            dt = (DataTable)__xaml1["dt"];
+            // GenerateDataTable はCoded API が無い（Coded API なし（ISystemService に GenerateDataTable が無い））ので XAML 経由（coded/_activities/GenerateDataTable_fde01b.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GenerateDataTable_fde01b.xaml", new Dictionary<string, object> { ["in_ColumnSeparators"] = ",", ["in_Input"] = "Name,Age\nAlice,30\nBob,25" });
+            dt = (System.Data.DataTable)__xaml1["out_DataTable"];
             Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("columns=" + string.Join(",", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName))), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("name=" + dt.Rows[1]["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);

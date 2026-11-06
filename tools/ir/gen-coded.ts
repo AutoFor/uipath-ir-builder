@@ -11,7 +11,8 @@
 //                          カタログに無い版、services の無い古いカタログ（対応表のあるパッケージ）はエラー
 //     --no-via-xaml        対応表の無いアクティビティを XAML 経由にしない（NO_MAPPING のエラーにする）
 //
-//   対応表の無いアクティビティ（と、Coded API の無いパッケージ、対応表が「Coded API なし」、対応表の API がその版に無いアクティビティ）は、その部分木だけの XAML を <--out>/_xaml/<ワークフロー名>_<連番>.xaml に
+//   対応表の無いアクティビティ（と、Coded API の無いパッケージ、対応表が「Coded API なし」、対応表の API がその版に無いアクティビティ）は、XAML にして C# から RunWorkflow で呼ぶ。
+//   子の無いものは 1つのアクティビティだけの汎用の XAML を <--out>/_activities/<ClassName>[_<形のハッシュ>].xaml に、子のあるものは部分木の XAML を <--out>/_xaml/<ワークフロー名>_<連番>.xaml に
 //   書き出し、C# からは RunWorkflow で呼ぶ（注意 CODED_VIA_XAML を出す。knowledge/coded-via-xaml.md）。XAML の式の言語は --project の expressionLanguage
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -113,7 +114,7 @@ for (const f of files) {
   const path = join(outDir!, `${wf.workflow}.cs`);
   writeFileSync(path, code, "utf8");
   for (const s of subs) {
-    const xp = join(outDir!, "_xaml", s.file.path.slice(s.file.path.lastIndexOf("/") + 1));
+    const xp = join(outDir!, s.file.kind === "activity" ? "_activities" : "_xaml", s.file.path.slice(s.file.path.lastIndexOf("/") + 1));
     mkdirSync(dirname(xp), { recursive: true });
     writeFileSync(xp, "﻿" + s.xaml, "utf8");
   }

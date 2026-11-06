@@ -150,3 +150,38 @@ test("スコープの外に出すと検証を通らない子は、親のスコ�
   assert.equal(r.xamls.length, 1);
   assert.equal(r.xamls[0].wf.body[0].act, "NApplicationCard");
 });
+
+test("子の無いノードは、1つのアクティビティだけの汎用の XAML（_activities/）。値は引数で渡し、同じ形なら同じファイル", () => {
+  const noApi = { ...via, noApi: ["UiPath.Testing.Activities"] };
+  const wf: Workflow = {
+    workflow: "Att", variables: [{ name: "p", type: "String" }, { name: "q", type: "String" }],
+    body: [
+      { act: "AttachDocument", props: { FilePath: "p" } },
+      { act: "AttachDocument", props: { FilePath: "q" } },
+      { act: "AttachDocument", props: { FilePath: "p", Tags: { vb: "New String() {\"a\"}", cs: "new string[] { \"a\" }" } } },
+    ],
+  };
+  const r = generateCoded(wf, cat, maps, { namespace: "N", viaXaml: noApi });
+  assert.deepEqual(r.issues, []);
+  // 必須のプロパティだけなら <ClassName>.xaml、ほかは <ClassName>_<形のハッシュ>.xaml。1つ目と2つ目は同じファイル
+  assert.deepEqual(r.xamls.map((x) => [x.kind, x.path.replace(/_[0-9a-f]{6}\.xaml$/, "_<hash>.xaml")]), [["activity", "coded/_activities/AttachDocument.xaml"], ["activity", "coded/_activities/AttachDocument_<hash>.xaml"]]);
+  assert.match(r.code, /RunWorkflow\("coded\/_activities\/AttachDocument\.xaml", new Dictionary<string, object> \{ \["in_FilePath"\] = p \}\);/);
+  assert.match(r.code, /RunWorkflow\("coded\/_activities\/AttachDocument\.xaml", new Dictionary<string, object> \{ \["in_FilePath"\] = q \}\);/);
+  assert.deepEqual(r.xamls[0].wf.arguments, [{ name: "in_FilePath", dir: "In", type: "System.String" }]);
+  assert.deepEqual(r.xamls[0].wf.body[0].props, { FilePath: "in_FilePath" });
+  assert.equal(r.warnings.filter((w) => w.code === "CODED_VIA_XAML").length, 3, "注意は呼ぶところごと");
+});
+
+test("汎用の XAML：出力は戻りの辞書から受け、引数にできない値（属性）は XAML に書いて形に入れる", () => {
+  const noApi = { ...via, noApi: ["UiPath.Testing.Activities"] };
+  const wf = (status: string): Workflow => ({
+    workflow: "G", variables: [{ name: "items", type: "List<UiPath.Testing.Core.TestDataQueueItem>" }],
+    body: [{ act: "GetTestDataQueueItems", props: { QueueName: { lit: "Q" }, TestDataQueueItemStatus: status, TestDataQueueItems: "items" } }],
+  });
+  const a = generateCoded(wf("OnlyConsumed"), cat, maps, { namespace: "N", viaXaml: noApi });
+  const b = generateCoded(wf("OnlyNotConsumed"), cat, maps, { namespace: "N", viaXaml: noApi });
+  assert.deepEqual([...a.issues, ...b.issues], []);
+  assert.notEqual(a.xamls[0].path, b.xamls[0].path, "属性の値が違えば別のファイル");
+  assert.equal(a.xamls[0].wf.body[0].props!.TestDataQueueItemStatus, "OnlyConsumed");
+  assert.match(a.code, /var __xaml1 = RunWorkflow\("coded\/_activities\/GetTestDataQueueItems_[0-9a-f]{6}\.xaml", new Dictionary<string, object> \{ \["in_QueueName"\] = "Q" \}\);\s+items = \((System\.Collections\.Generic\.)?List<UiPath\.Testing\.Core\.TestDataQueueItem>\)__xaml1\["out_TestDataQueueItems"\];/);
+});

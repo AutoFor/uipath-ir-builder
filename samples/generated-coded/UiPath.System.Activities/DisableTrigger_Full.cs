@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             // TriggerScope はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_xaml/DisableTrigger_Full_1.xaml）
             RunWorkflow("coded/_xaml/DisableTrigger_Full_1.xaml", null);
             // DisableTrigger(全部入り)
-            // DisableTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_xaml/DisableTrigger_Full_2.xaml）
-            RunWorkflow("coded/_xaml/DisableTrigger_Full_2.xaml", null);
+            // DisableTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/DisableTrigger_2d8e90.xaml）
+            RunWorkflow("coded/_activities/DisableTrigger_2d8e90.xaml", null);
             Log(message: "切り替えた", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

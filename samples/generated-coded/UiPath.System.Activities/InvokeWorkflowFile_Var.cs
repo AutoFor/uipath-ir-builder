@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             Dictionary<String, Object> argDict = new Dictionary<String, Object>() { { "in_Name", "三郎" }, { "in_Count", 3 } };
             // 引数を辞書の変数で渡す
-            // InvokeWorkflowFile はこの形の Coded API が無い（RunWorkflow の引数の辞書を実行時の変数で渡し、Out も同じ辞書へ書き戻す動きは、機械的に C# へ直していない）ので XAML 経由（coded/_xaml/InvokeWorkflowFile_Var_1.xaml）
-            RunWorkflow("coded/_xaml/InvokeWorkflowFile_Var_1.xaml", new Dictionary<string, object> { ["argDict"] = argDict });
+            // InvokeWorkflowFile はこの形の Coded API が無い（RunWorkflow の引数の辞書を実行時の変数で渡し、Out も同じ辞書へ書き戻す動きは、機械的に C# へ直していない）ので XAML 経由（coded/_activities/InvokeWorkflowFile_0451bd.xaml）
+            RunWorkflow("coded/_activities/InvokeWorkflowFile_0451bd.xaml", new Dictionary<string, object> { ["in_ArgumentsVariable"] = argDict, ["in_WorkflowFileName"] = "InvokeWorkflowFile_Callee.xaml" });
             Log(message: "辞書の戻り値: " + Convert.ToString(argDict["out_Message"]), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

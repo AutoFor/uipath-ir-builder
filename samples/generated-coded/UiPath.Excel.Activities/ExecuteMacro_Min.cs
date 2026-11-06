@@ -20,8 +20,8 @@ namespace CatalogProbeNet8
             Object res = default;
             using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "data\\excel\\Sample.xlsx", CreateNew = true }))
             {
-                // ExecuteMacro はCoded API が無い（Coded API なし（ExecuteMacro は IWorkbookQuickHandle 用で、クラシックの IWorkHandle（UseWorkBook は Excel を起動しない）からは呼べない。モダンは ExecuteMacroX））ので XAML 経由（coded/_xaml/ExecuteMacro_Min_1.xaml）
-                RunWorkflow("coded/_xaml/ExecuteMacro_Min_1.xaml", null);
+                // ExecuteMacro はCoded API が無い（Coded API なし（ExecuteMacro は IWorkbookQuickHandle 用で、クラシックの IWorkHandle（UseWorkBook は Excel を起動しない）からは呼べない。モダンは ExecuteMacroX））ので XAML 経由（coded/_activities/ExecuteMacro.xaml）
+                RunWorkflow("coded/_activities/ExecuteMacro.xaml", new Dictionary<string, object> { ["in_MacroName"] = "Module1.ExcelD_Hello" });
             }
         }
     }

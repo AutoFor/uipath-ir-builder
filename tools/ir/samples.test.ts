@@ -119,10 +119,10 @@ for (const f of files("samples/ir", ".json")) {
     const r = generateCoded(wf, cat, maps, { namespace: "CatalogProbeNet8", invokePath: (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, "coded/$2.cs"), viaXaml: viaXaml(noApi) });
     if (r.issues.length && r.issues.every((i) => i.code === "NO_CODED_API")) return; // 「Coded API なし」
     assert.deepEqual(r.issues, [], "C# を生成できない");
-    assert.equal(r.warnings.filter((w) => w.code === "CODED_VIA_XAML").length, r.xamls.length, "XAML 経由のものは、1つずつ注意を出す");
+    assert.ok(r.warnings.filter((w) => w.code === "CODED_VIA_XAML").length >= r.xamls.length, "XAML 経由のものは、呼ぶところごとに注意を出す（同じ形の _activities/ は1つ）");
     snapshot(join(root, "samples", "generated-coded", sub, `${wf.workflow}.cs`), r.code);
-    // XAML 経由の XAML も、C# の横の _xaml/ にスナップショットを置く
-    for (const x of r.xamls) snapshot(join(root, "samples", "generated-coded", sub, "_xaml", `${x.wf.workflow}.xaml`), generate(x.wf, cat));
+    // XAML 経由の XAML も、C# の横の _activities/（1つのアクティビティだけ）と _xaml/（部分木）にスナップショットを置く
+    for (const x of r.xamls) snapshot(join(root, "samples", "generated-coded", sub, x.kind === "activity" ? "_activities" : "_xaml", `${x.wf.workflow}.xaml`), generate(x.wf, cat));
     const chk = checkSource(r.code, `${wf.workflow}.cs`, ctx);
     assert.deepEqual(chk.issues.filter((i) => i.severity === "error"), [], "生成した C# がチェッカーを通らない");
   });

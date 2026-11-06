@@ -40,8 +40,8 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src");
             system.WriteTextFile(text: "old", file: LocalResource.FromPath("output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\a.txt"));
             // 上書きで移動
-            // MoveFolderX はCoded API が無い（Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い））ので XAML 経由（coded/_xaml/MoveFolderX_Full_1.xaml）
-            RunWorkflow("coded/_xaml/MoveFolderX_Full_1.xaml", null);
+            // MoveFolderX はCoded API が無い（Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い））ので XAML 経由（coded/_activities/MoveFolderX_77c654.xaml）
+            RunWorkflow("coded/_activities/MoveFolderX_77c654.xaml", new Dictionary<string, object> { ["in_From"] = "output\\MoveFolderX_Full.src", ["in_To"] = "output\\MoveFolderX_Full.dst" });
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\a.txt"));
             Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
             ex = system.PathExists(path: "output\\MoveFolderX_Full.dst\\MoveFolderX_Full.src\\sub\\b.txt", pathType: UiPath.Core.Activities.PathType.File);

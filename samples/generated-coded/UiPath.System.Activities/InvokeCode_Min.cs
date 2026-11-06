@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Int32 y = default;
-            // InvokeCode はCoded API が無い（Coded では C# をそのまま書くので InvokeCode は要らない）ので XAML 経由（coded/_xaml/InvokeCode_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/InvokeCode_Min_1.xaml", new Dictionary<string, object> { ["y"] = y });
-            y = (Int32)__xaml1["y"];
+            // InvokeCode はCoded API が無い（Coded では C# をそのまま書くので InvokeCode は要らない）ので XAML 経由（coded/_activities/InvokeCode_947c6a.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/InvokeCode_947c6a.xaml", new Dictionary<string, object> { ["in_Arguments_in_x"] = 21 });
+            y = (Int32)__xaml1["out_Arguments_out_y"];
             Log(message: "y=" + y.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

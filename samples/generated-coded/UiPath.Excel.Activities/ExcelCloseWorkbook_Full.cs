@@ -20,8 +20,15 @@ namespace CatalogProbeNet8
             Object v = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\ExcelCloseWorkbook_Full.xlsx", overwrite: true);
-            // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelCloseWorkbook_Full_1.xaml）
-            RunWorkflow("coded/_xaml/ExcelCloseWorkbook_Full_1.xaml", null);
+            using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "output\\ExcelCloseWorkbook_Full.xlsx", CreateNew = true }))
+            {
+                ExcelWorkbookScope.WriteCell(sheetName: "Sheet1", cell: "E1", text: "閉じた");
+                // ExcelSaveWorkbook はCoded API が無い（Coded API なし（IWorkHandle に保存のメソッドは無い。SaveExcelFile は IWorkbookQuickHandle 用でモダンの SaveExcelFileX））ので XAML 経由（coded/_activities/ExcelSaveWorkbook.xaml）
+                RunWorkflow("coded/_activities/ExcelSaveWorkbook.xaml", null);
+                // ブックを閉じる
+                // ExcelCloseWorkbook はCoded API が無い（Coded API なし（ブックは using の Dispose で閉じる。IWorkHandle に閉じるメソッドは無い））ので XAML 経由（coded/_activities/ExcelCloseWorkbook.xaml）
+                RunWorkflow("coded/_activities/ExcelCloseWorkbook.xaml", new Dictionary<string, object> { ["in_Workbook"] = ExcelWorkbookScope });
+            }
             using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "output\\ExcelCloseWorkbook_Full.xlsx", CreateNew = true }))
             {
                 v = (Object)Convert.ChangeType(ExcelWorkbookScope.ReadCell(sheetName: "Sheet1", cell: "E1", preserveFormat: false), typeof(Object));

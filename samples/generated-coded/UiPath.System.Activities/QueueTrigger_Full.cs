@@ -17,10 +17,10 @@ namespace CatalogProbeNet8
             QueueItem qi = default;
             QueueItem eq = default;
             // キュートリガー
-            // QueueTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_xaml/QueueTrigger_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/QueueTrigger_Full_1.xaml", new Dictionary<string, object> { ["qi"] = qi, ["eq"] = eq });
-            qi = (QueueItem)__xaml1["qi"];
-            eq = (QueueItem)__xaml1["eq"];
+            // QueueTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/QueueTrigger_966a11.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/QueueTrigger_966a11.xaml", null);
+            eq = (QueueItem)__xaml1["out_ExtractedQueueItem"];
+            qi = (UiPath.Core.QueueItem)__xaml1["out_TransactionItem"];
             Log(message: "キューで開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

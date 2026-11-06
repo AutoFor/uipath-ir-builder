@@ -35,8 +35,8 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\MoveFolderX_Min.src");
             system.WriteTextFile(text: "move folder", file: LocalResource.FromPath("output\\MoveFolderX_Min.src\\a.txt"));
             system.CreateFolder(path: "output\\MoveFolderX_Min.dst");
-            // MoveFolderX はCoded API が無い（Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い））ので XAML 経由（coded/_xaml/MoveFolderX_Min_1.xaml）
-            RunWorkflow("coded/_xaml/MoveFolderX_Min_1.xaml", null);
+            // MoveFolderX はCoded API が無い（Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い））ので XAML 経由（coded/_activities/MoveFolderX.xaml）
+            RunWorkflow("coded/_activities/MoveFolderX.xaml", new Dictionary<string, object> { ["in_From"] = "output\\MoveFolderX_Min.src", ["in_To"] = "output\\MoveFolderX_Min.dst" });
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFolderX_Min.dst\\MoveFolderX_Min.src\\a.txt"));
             Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
             ex = system.PathExists(path: "output\\MoveFolderX_Min.src", pathType: UiPath.Core.Activities.PathType.Folder);

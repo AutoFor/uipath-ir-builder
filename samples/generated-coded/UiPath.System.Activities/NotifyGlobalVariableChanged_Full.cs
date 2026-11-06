@@ -15,8 +15,8 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             // 変更を通知
-            // NotifyGlobalVariableChanged はCoded API が無い（Coded API なし（グローバル変数の通知 API が無い））ので XAML 経由（coded/_xaml/NotifyGlobalVariableChanged_Full_1.xaml）
-            RunWorkflow("coded/_xaml/NotifyGlobalVariableChanged_Full_1.xaml", null);
+            // NotifyGlobalVariableChanged はCoded API が無い（Coded API なし（グローバル変数の通知 API が無い））ので XAML 経由（coded/_activities/NotifyGlobalVariableChanged.xaml）
+            RunWorkflow("coded/_activities/NotifyGlobalVariableChanged.xaml", new Dictionary<string, object> { ["in_VariableName"] = "IrVar" });
             Log(message: "通知した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

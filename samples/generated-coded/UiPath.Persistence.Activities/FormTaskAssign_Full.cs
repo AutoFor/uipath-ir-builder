@@ -17,15 +17,15 @@ namespace CatalogProbeNet8
             FormTaskData task = default;
             String comment = default;
             String action = default;
-            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/FormTaskAssign_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/FormTaskAssign_Full_1.xaml", new Dictionary<string, object> { ["in_Assignee"] = in_Assignee, ["task"] = task, ["comment"] = comment });
-            task = (FormTaskData)__xaml1["task"];
-            comment = (String)__xaml1["comment"];
+            // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateFormTask_eb56f0.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/CreateFormTask_eb56f0.xaml", new Dictionary<string, object> { ["in_FormLayout"] = "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]", ["in_TaskTitle"] = "割り当ての確認", ["in_UserNameOrEmail"] = in_Assignee });
+            task = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml1["out_TaskOutput"];
+            comment = (String)__xaml1["out_FormData_Comment"];
             Log(message: "created id=" + Convert.ToString(task.Id) + " assignee=" + in_Assignee, level: UiPath.CodedWorkflows.LogLevel.Info);
-            // WaitForFormTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/FormTaskAssign_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/FormTaskAssign_Full_2.xaml", new Dictionary<string, object> { ["task"] = task, ["action"] = action });
-            task = (FormTaskData)__xaml2["task"];
-            action = (String)__xaml2["action"];
+            // WaitForFormTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForFormTaskAndResume_047385.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/WaitForFormTaskAndResume_047385.xaml", new Dictionary<string, object> { ["in_TaskInput"] = task });
+            action = (System.String)__xaml2["out_TaskAction"];
+            task = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml2["out_TaskOutput"];
             Log(message: "resume action=" + action + " comment=" + comment, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

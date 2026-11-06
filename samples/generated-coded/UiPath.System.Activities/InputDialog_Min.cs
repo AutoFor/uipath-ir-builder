@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String r = default;
-            // InputDialog はCoded API が無い（Coded API なし（入力ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_xaml/InputDialog_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/InputDialog_Min_1.xaml", new Dictionary<string, object> { ["r"] = r });
-            r = (String)__xaml1["r"];
+            // InputDialog はCoded API が無い（Coded API なし（入力ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/InputDialog_15b01c.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/InputDialog_15b01c.xaml", null);
+            r = (String)__xaml1["out_Result"];
             Log(message: "入力した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

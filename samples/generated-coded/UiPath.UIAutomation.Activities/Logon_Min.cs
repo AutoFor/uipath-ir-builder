@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // Logon はCoded API が無い（Coded API なし（Classic の SAP（非表示の旧アクティビティ）。Coded の uiAutomation が扱うのは Modern のターゲットだけ））ので XAML 経由（coded/_xaml/Logon_Min_1.xaml）
-            RunWorkflow("coded/_xaml/Logon_Min_1.xaml", null);
+            // Logon はCoded API が無い（Coded API なし（Classic の SAP（非表示の旧アクティビティ）。Coded の uiAutomation が扱うのは Modern のターゲットだけ））ので XAML 経由（coded/_activities/Logon.xaml）
+            RunWorkflow("coded/_activities/Logon.xaml", new Dictionary<string, object> { ["in_ConnectionName"] = "SAP-DEV", ["in_SAPLogonPath"] = "C:Program Files (x86)SAPFrontEndSAPguisaplogon.exe" });
         }
     }
 }

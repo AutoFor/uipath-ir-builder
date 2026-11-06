@@ -17,10 +17,10 @@ namespace CatalogProbeNet8
             String f = default;
             IEnumerable<String> fs = default;
             // ファイルを選ぶ
-            // SelectFile はCoded API が無い（Coded API なし（ファイル選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_xaml/SelectFile_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/SelectFile_Full_1.xaml", new Dictionary<string, object> { ["f"] = f, ["fs"] = fs });
-            f = (String)__xaml1["f"];
-            fs = (IEnumerable<String>)__xaml1["fs"];
+            // SelectFile はCoded API が無い（Coded API なし（ファイル選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/SelectFile_fbde82.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/SelectFile_fbde82.xaml", new Dictionary<string, object> { ["in_InitialDirectory"] = "C:\\Users\\Public", ["in_Multiselect"] = true });
+            f = (System.String)__xaml1["out_SelectedFile"];
+            fs = (System.Collections.Generic.IEnumerable<System.String>)__xaml1["out_SelectedFiles"];
             Log(message: "選んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

@@ -15,8 +15,8 @@ namespace CatalogProbeNet8
         public void Execute(Int64 in_TaskId)
         {
             // ラベルを変える
-            // UpdateTaskLabels はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/UpdateTaskLabels_Full_1.xaml）
-            RunWorkflow("coded/_xaml/UpdateTaskLabels_Full_1.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId });
+            // UpdateTaskLabels はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/UpdateTaskLabels_2fa4ef.xaml）
+            RunWorkflow("coded/_activities/UpdateTaskLabels_2fa4ef.xaml", new Dictionary<string, object> { ["in_AddLabels"] = "invoice", ["in_ContinueOnError"] = false, ["in_DeleteLabels"] = "draft", ["in_FolderPath"] = "Shared", ["in_TaskId"] = in_TaskId, ["in_TimeoutMs"] = 30000 });
         }
     }
 }

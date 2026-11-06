@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             List<TaskAssignmentResponse> failed = default;
             // グループの全員に割り当てる
-            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_xaml/AssignTasks_Group_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/AssignTasks_Group_1.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId, ["failed"] = failed });
-            failed = (List<TaskAssignmentResponse>)__xaml1["failed"];
+            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AssignTasks_5aef90.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/AssignTasks_5aef90.xaml", new Dictionary<string, object> { ["in_Group"] = "Reviewers", ["in_TaskId"] = in_TaskId });
+            failed = (System.Collections.Generic.List<UiPath.Persistence.Activities.Tasks.TaskAssignmentResponse>)__xaml1["out_FailedTaskAssignments"];
         }
     }
 }

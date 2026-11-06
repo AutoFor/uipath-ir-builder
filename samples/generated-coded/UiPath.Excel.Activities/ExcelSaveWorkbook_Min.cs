@@ -23,8 +23,8 @@ namespace CatalogProbeNet8
             using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "output\\ExcelSaveWorkbook_Min.xlsx", CreateNew = true }))
             {
                 ExcelWorkbookScope.WriteCell(sheetName: "Sheet1", cell: "E1", text: "保存した");
-                // ExcelSaveWorkbook はCoded API が無い（Coded API なし（IWorkHandle に保存のメソッドは無い。SaveExcelFile は IWorkbookQuickHandle 用でモダンの SaveExcelFileX））ので XAML 経由（coded/_xaml/ExcelSaveWorkbook_Min_1.xaml）
-                RunWorkflow("coded/_xaml/ExcelSaveWorkbook_Min_1.xaml", null);
+                // ExcelSaveWorkbook はCoded API が無い（Coded API なし（IWorkHandle に保存のメソッドは無い。SaveExcelFile は IWorkbookQuickHandle 用でモダンの SaveExcelFileX））ので XAML 経由（coded/_activities/ExcelSaveWorkbook.xaml）
+                RunWorkflow("coded/_activities/ExcelSaveWorkbook.xaml", null);
             }
             using (var ExcelWorkbookScope = excel.UseWorkBook(options: new WorkbookOptions { Path = "output\\ExcelSaveWorkbook_Min.xlsx", CreateNew = true }))
             {

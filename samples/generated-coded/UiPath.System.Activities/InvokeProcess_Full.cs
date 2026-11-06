@@ -18,10 +18,10 @@ namespace CatalogProbeNet8
             Dictionary<String, Object> inArgs = new Dictionary<String, Object>();
             String resultText = default;
             // プロセスを呼ぶ
-            // InvokeProcess はこの形の Coded API が無い（引数（Arguments / OutputArguments）を渡す形は、InvokeProcessAsync が辞書で受け渡すので対応表にできない（Out の引数を変数に戻す仕組みが生成器に無い））ので XAML 経由（coded/_xaml/InvokeProcess_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/InvokeProcess_Full_1.xaml", new Dictionary<string, object> { ["outArgs"] = outArgs, ["resultText"] = resultText });
-            outArgs = (Dictionary<String, Object>)__xaml1["outArgs"];
-            resultText = (String)__xaml1["resultText"];
+            // InvokeProcess はこの形の Coded API が無い（引数（Arguments / OutputArguments）を渡す形は、InvokeProcessAsync が辞書で受け渡すので対応表にできない（Out の引数を変数に戻す仕組みが生成器に無い））ので XAML 経由（coded/_activities/InvokeProcess_4c9ec9.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/InvokeProcess_4c9ec9.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_EntryPointPath"] = "Main.xaml", ["in_FolderPath"] = "Shared", ["in_ProcessName"] = "IrbSampleProcess", ["in_Timeout"] = TimeSpan.FromMinutes(5), ["in_Arguments_in_Name"] = "world" });
+            outArgs = (System.Collections.Generic.Dictionary<System.String, System.Object>)__xaml1["out_OutputArguments"];
+            resultText = (String)__xaml1["out_Arguments_out_Result"];
         }
     }
 }

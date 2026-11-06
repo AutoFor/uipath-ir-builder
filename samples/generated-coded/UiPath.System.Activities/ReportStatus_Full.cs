@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             Int32 pct = 50;
             // 進み具合を知らせる
-            // ReportStatus はCoded API が無い（Coded API なし（ISystemService に ReportStatus が無い））ので XAML 経由（coded/_xaml/ReportStatus_Full_1.xaml）
-            RunWorkflow("coded/_xaml/ReportStatus_Full_1.xaml", new Dictionary<string, object> { ["pct"] = pct });
+            // ReportStatus はCoded API が無い（Coded API なし（ISystemService に ReportStatus が無い））ので XAML 経由（coded/_activities/ReportStatus.xaml）
+            RunWorkflow("coded/_activities/ReportStatus.xaml", new Dictionary<string, object> { ["in_StatusText"] = "進捗: " + pct.ToString() + "%" });
             Log(message: "状態を報告した: " + pct.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

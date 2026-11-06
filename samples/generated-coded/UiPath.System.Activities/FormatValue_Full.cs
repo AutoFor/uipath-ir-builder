@@ -19,19 +19,19 @@ namespace CatalogProbeNet8
             UiPath.Core.GenericValue c = default;
             a = 1234567.891;
             // 桁区切りを入れ替える
-            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_xaml/FormatValue_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/FormatValue_Full_1.xaml", new Dictionary<string, object> { ["a"] = a });
-            a = (UiPath.Core.GenericValue)__xaml1["a"];
+            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/FormatValue_78cf99.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/FormatValue_78cf99.xaml", new Dictionary<string, object> { ["io_Value"] = a });
+            a = (UiPath.Core.GenericValue)__xaml1["io_Value"];
             b = new DateTime(2024, 1, 31);
             // 日付の書式
-            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_xaml/FormatValue_Full_2.xaml）
-            var __xaml2 = RunWorkflow("coded/_xaml/FormatValue_Full_2.xaml", new Dictionary<string, object> { ["b"] = b });
-            b = (UiPath.Core.GenericValue)__xaml2["b"];
+            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/FormatValue_2926d1.xaml）
+            var __xaml2 = RunWorkflow("coded/_activities/FormatValue_2926d1.xaml", new Dictionary<string, object> { ["io_Value"] = b });
+            b = (UiPath.Core.GenericValue)__xaml2["io_Value"];
             c = 0.256;
             // パーセント
-            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_xaml/FormatValue_Full_3.xaml）
-            var __xaml3 = RunWorkflow("coded/_xaml/FormatValue_Full_3.xaml", new Dictionary<string, object> { ["c"] = c });
-            c = (UiPath.Core.GenericValue)__xaml3["c"];
+            // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/FormatValue_a4a042.xaml）
+            var __xaml3 = RunWorkflow("coded/_activities/FormatValue_a4a042.xaml", new Dictionary<string, object> { ["io_Value"] = c });
+            c = (UiPath.Core.GenericValue)__xaml3["io_Value"];
             Log(message: a.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: c.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

@@ -16,9 +16,9 @@ namespace CatalogProbeNet8
         {
             PasswordCredentials cred = default;
             // ユーザー名とパスワードを取得
-            // GetUsernamePasswordX はCoded API が無い（Coded API なし（ISystemService に対応するメソッドが無い。認証情報の入力ダイアログを開く XAML 専用のアクティビティ））ので XAML 経由（coded/_xaml/GetUsernamePasswordX_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GetUsernamePasswordX_Full_1.xaml", new Dictionary<string, object> { ["cred"] = cred });
-            cred = (PasswordCredentials)__xaml1["cred"];
+            // GetUsernamePasswordX はCoded API が無い（Coded API なし（ISystemService に対応するメソッドが無い。認証情報の入力ダイアログを開く XAML 専用のアクティビティ））ので XAML 経由（coded/_activities/GetUsernamePasswordX_ab198b.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GetUsernamePasswordX_ab198b.xaml", new Dictionary<string, object> { ["in_CredentialName"] = "IRCredential", ["in_OrchestratorCredentialName"] = "IRCredential", ["in_OrchestratorFolderPath"] = "Shared", ["in_TimeoutInSeconds"] = 30 });
+            cred = (UiPath.Core.Activities.PasswordCredentials)__xaml1["out_Credential"];
             Log(message: "ユーザー: " + cred.Username, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

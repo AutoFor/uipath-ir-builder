@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // StartTriggers はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_xaml/StartTriggers_Min_1.xaml）
-            RunWorkflow("coded/_xaml/StartTriggers_Min_1.xaml", null);
+            // StartTriggers はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/StartTriggers.xaml）
+            RunWorkflow("coded/_activities/StartTriggers.xaml", new Dictionary<string, object> { ["in_WorkflowFileName"] = "Triggers.xaml" });
             Log(message: "開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // AddLogFields はCoded API が無い（Coded API なし（基底クラスの Log の additionalLogFields で、ログ1件ごとに渡す））ので XAML 経由（coded/_xaml/AddLogFields_Min_1.xaml）
-            RunWorkflow("coded/_xaml/AddLogFields_Min_1.xaml", null);
+            // AddLogFields はCoded API が無い（Coded API なし（基底クラスの Log の additionalLogFields で、ログ1件ごとに渡す））ので XAML 経由（coded/_activities/AddLogFields_2c868e.xaml）
+            RunWorkflow("coded/_activities/AddLogFields_2c868e.xaml", new Dictionary<string, object> { ["in_Fields_case_id"] = "A-001" });
             Log(message: "項目を足した後のログ", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

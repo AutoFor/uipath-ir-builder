@@ -19,11 +19,11 @@ namespace CatalogProbeNet8
             IEnumerable<KeyValuePair<Rectangle,String>> words = default;
             OcrActivityResult ocrOut = default;
             // GoogleCloudOCR（全部入り）
-            // GoogleCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_xaml/GoogleCloudOCR_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/GoogleCloudOCR_Full_1.xaml", new Dictionary<string, object> { ["img"] = img, ["txt"] = txt, ["words"] = words, ["ocrOut"] = ocrOut });
-            txt = (String)__xaml1["txt"];
-            words = (IEnumerable<KeyValuePair<Rectangle,String>>)__xaml1["words"];
-            ocrOut = (OcrActivityResult)__xaml1["ocrOut"];
+            // GoogleCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/GoogleCloudOCR_08a7f2.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GoogleCloudOCR_08a7f2.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Image"] = img, ["in_Language"] = "ja", ["in_PredictionId"] = "uia-c5", ["in_Scale"] = 1.5 });
+            ocrOut = (UiPath.OCR.Contracts.OcrActivityResult)__xaml1["out_Output"];
+            words = (System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>)__xaml1["out_Result"];
+            txt = (System.String)__xaml1["out_Text"];
             Log(message: "OCR: " + txt, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

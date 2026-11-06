@@ -36,9 +36,9 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Bob", 25});
             dt.Rows.Add(new object[] {"Carol", 35});
             dt.Rows.Add(new object[] {"Bob", 25});
-            // FilterDataTable はCoded API が無い（Coded API なし（ISystemService に FilterDataTable が無い。条件の List は DataView.RowFilter などで書き直すことになり、同じ挙動の保証がない））ので XAML 経由（coded/_xaml/FilterDataTable_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/FilterDataTable_Min_1.xaml", new Dictionary<string, object> { ["dt"] = dt, ["res"] = res });
-            res = (DataTable)__xaml1["res"];
+            // FilterDataTable はCoded API が無い（Coded API なし（ISystemService に FilterDataTable が無い。条件の List は DataView.RowFilter などで書き直すことになり、同じ挙動の保証がない））ので XAML 経由（coded/_activities/FilterDataTable_295232.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/FilterDataTable_295232.xaml", new Dictionary<string, object> { ["in_DataTable"] = dt });
+            res = (System.Data.DataTable)__xaml1["out_OutputDataTable"];
             Log(message: Convert.ToString("rows=" + res.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
             Log(message: Convert.ToString("columns=" + res.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

@@ -15,9 +15,9 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String f = default;
-            // SelectFile はCoded API が無い（Coded API なし（ファイル選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_xaml/SelectFile_Min_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/SelectFile_Min_1.xaml", new Dictionary<string, object> { ["f"] = f });
-            f = (String)__xaml1["f"];
+            // SelectFile はCoded API が無い（Coded API なし（ファイル選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/SelectFile_1ef439.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/SelectFile_1ef439.xaml", null);
+            f = (System.String)__xaml1["out_SelectedFile"];
             Log(message: "選んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

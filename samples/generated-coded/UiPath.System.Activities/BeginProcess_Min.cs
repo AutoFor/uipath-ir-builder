@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // BeginProcess はCoded API が無い（Coded API なし（待たずに呼ぶ API は無い。InvokeProcessAsync を await せずに書くことはできるが、引数の受け渡しが InvokeProcess と同じ理由で対応表にできない））ので XAML 経由（coded/_xaml/BeginProcess_Min_1.xaml）
-            RunWorkflow("coded/_xaml/BeginProcess_Min_1.xaml", null);
+            // BeginProcess はCoded API が無い（Coded API なし（待たずに呼ぶ API は無い。InvokeProcessAsync を await せずに書くことはできるが、引数の受け渡しが InvokeProcess と同じ理由で対応表にできない））ので XAML 経由（coded/_activities/BeginProcess.xaml）
+            RunWorkflow("coded/_activities/BeginProcess.xaml", new Dictionary<string, object> { ["in_ProcessName"] = "IrbSampleProcess" });
         }
     }
 }
