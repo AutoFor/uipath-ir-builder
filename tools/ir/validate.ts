@@ -200,7 +200,9 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     const required = a.props.filter((p) => p.required);
     const groups = new Map<string, string[]>();
     for (const p of a.props) for (const g of p.overloadGroups ?? []) groups.set(g, [...(groups.get(g) ?? []), p.name]);
-    const groupOk = [...groups.values()].some((names) => names.every((x) => given.has(x)));
+    // グループがそろう：そのグループの必須のものが全部あること。必須の無いグループ（SAP BAPI の SapApplicationScope の Connection など）は、どれか1つあること
+    const isReq = new Set(required.map((p) => p.name));
+    const groupOk = [...groups.values()].some((names) => names.filter((x) => isReq.has(x)).every((x) => given.has(x)) && (names.some((x) => isReq.has(x)) || names.some((x) => given.has(x))));
     for (const p of required.filter((p) => !given.has(p.name) && !(p.overloadGroups?.length && groupOk)))
       add(path, "REQUIRED_MISSING", `${a.className} の必須プロパティ "${p.name}" が無い`);
   }

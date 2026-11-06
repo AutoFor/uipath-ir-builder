@@ -31,6 +31,7 @@ const simple: Record<string, [string, Record<string, string>]> = {
   Object: ["x:Object", {}],
   TimeSpan: ["x:TimeSpan", {}],
   DateTime: ["s:DateTime", { s: S }],
+  Guid: ["s:Guid", { s: S }],
   Exception: ["s:Exception", { s: S }],
   ArgumentException: ["s:ArgumentException", { s: S }],
   InvalidOperationException: ["s:InvalidOperationException", { s: S }],
@@ -91,6 +92,15 @@ const simple: Record<string, [string, Record<string, string>]> = {
   "Newtonsoft.Json.Linq.JObject": ["njl:JObject", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
   "Newtonsoft.Json.Linq.JArray": ["njl:JArray", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
   "Newtonsoft.Json.Linq.JToken": ["njl:JToken", { njl: "clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" }],
+  // UiPath.WebAPI.Activities（XML）と UiPath.Mail.Activities の型
+  XDocument: ["sxl:XDocument", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
+  XElement: ["sxl:XElement", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
+  XNode: ["sxl:XNode", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
+  XAttribute: ["sxl:XAttribute", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
+  MailMessage: ["snm:MailMessage", { snm: "clr-namespace:System.Net.Mail;assembly=System.Net.Mail" }],
+  // スコープの delegate の引数の型（SAP BAPI の SapApplicationScope、Office 365 の Office365ApplicationScope）
+  "UiPath.SAP.BAPI.ConnectionService.IConnectionService": ["usbc:IConnectionService", { usbc: "clr-namespace:UiPath.SAP.BAPI.ConnectionService;assembly=UiPath.SAP.BAPI" }],
+  "Microsoft.Graph.GraphServiceClient": ["mg:GraphServiceClient", { mg: "clr-namespace:Microsoft.Graph;assembly=Microsoft.Graph" }],
   "UiPath.UIAutomationNext.Enums.NBrowserType": ["uix:NBrowserType", { uix: "http://schemas.uipath.com/workflow/activities/uix" }],
   // C# の XAML で、カタログのプロパティの型（InArgument<T> の T）を書くときに要るもの
   "System.Collections.IEnumerable": ["sc:IEnumerable", { sc: "clr-namespace:System.Collections;assembly=System.Private.CoreLib" }],
