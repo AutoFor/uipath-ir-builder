@@ -69,6 +69,8 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 
 - 引数は `"arguments": [{ "name": "in_Name", "dir": "In", "type": "String" }]`
 - `props` の文字列は **VB の式**（C# のプロジェクトでも VB で書く。生成器が C# に直す）。文字列リテラルは `{ "lit": "..." }`、enum はメンバー名
+- VB の予約語（`to`、`step`、`next`、`end` など）を変数名にしない（build が `BC30198: ')' expected` で落ちる）
+- Coded（C#）も作るなら、`System`・`System.Data` など既定の using に無い名前空間の型は完全名で書く（`System.Xml.Linq.XDocument`、`Newtonsoft.Json.Linq.JObject` など）
 - 子は `body`、`then` / `else`、それ以外は `slots`。`Switch` は `cases`、`TryCatch` は `catches`、`MultipleAssign` は `assigns`
 - 書き方の詳細は [README.md](README.md) の「IR → XAML 生成器」
 - C# のプロジェクトで C# に直せない式（名前付き引数 `f(x:=1)` など）は、`{ "vb": "...", "cs": "..." }` で両方書く。C# の予約語（`out`、`class`、`string` など）を変数名にしない
@@ -84,7 +86,10 @@ node tools/ir/gen.ts <P>/ir/Main.json <P>/ir/Greet.json --project <P> --out <P> 
 - IR は1つずつ並べて渡す（gen.ts はフォルダも `*.json` も受け取らない）
 - 「〜のカタログが無い」という注意は、そのパッケージのアクティビティを使わなければ気にしなくてよい
 - エラーが出たら、メッセージを読んで IR を直し、通るまで繰り返す。エラーを避けるために XAML を手で書かない。IR が正しいのに通らないなら、道具を直す（下の「道具を育てる」）
-- Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る。対応表の無いアクティビティはエラー）
+- Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）
+  - 対応表（`mappings/`）の無いアクティビティと、Coded API の無いパッケージ（Mail、Office 365、WebAPI、SAP BAPI、Data Service、Testing 23.4.1 など）のアクティビティは、そのノード（子も含めて）だけの XAML を `<--out>/_xaml/<ワークフロー名>_<連番>.xaml` に書き出し、C# からは `RunWorkflow` で呼ぶ。注意 `CODED_VIA_XAML` が出る。仕組みと落とし穴は [knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)
+  - 対応表が「Coded API なし」（`NO_CODED_API`）としているものは、これまでどおり C# にしない（SKIP）
+  - `--out` はプロジェクトの中にする（`RunWorkflow` のパスはプロジェクトからの相対パス）。`_xaml/` も消さずにプロジェクトに残す
 
 ### 5. 動かして確かめる
 

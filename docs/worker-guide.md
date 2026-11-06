@@ -71,7 +71,8 @@ node tools/compare-default-xaml.mjs --generated samples/generated/<pkg> --activi
 `mappings/<pkg>/<ClassName>.json` を1つ作る。書き方は `tools/ir/mapping.ts` の先頭のコメント。例は `mappings/UiPath.System.Activities/WriteTextFile.json`。
 
 - サービスの API：カタログの `services`（`catalog/<pkg>/<version>.json`）で探す。`system` は `ISystemService`、`uiAutomation` は `IUiAutomationAppService`、`Log` / `RunWorkflow` / `Delay` は基底クラス（`catalog/UiPath.CodedWorkflows/24.10.3.json`）
-- API に無いものは `"coded": null, "reason": "Coded API なし（…）"`
+- API に無いものは `"coded": null, "reason": "Coded API なし（…）"`（この対応表があると C# にしない＝SKIP。対応表を作らなければ、gen-coded.ts はそのノードを XAML 経由で呼ぶ。次の項目）
+- 対応表が無いアクティビティ、Coded API の無いパッケージ（選んだ版のカタログに `services` が無い）のアクティビティは、gen-coded.ts がそのノード（子も含めた部分木）だけの XAML を作り、C# からは `RunWorkflow("<相対パス>.xaml", 引数の辞書)` で呼ぶ（注意 `CODED_VIA_XAML`。[knowledge/coded-via-xaml.md](../knowledge/coded-via-xaml.md)）。対応表を書いて API で書けるなら、そちらが優先される。XAML 経由で済ませるときは、対応表を作らない（`"coded": null` にすると SKIP になる）
 - 制御フロー（Sequence / If / ForEach / While / DoWhile / Switch / TryCatch / Assign / MultipleAssign / Break / Continue / Throw / Rethrow / RetryScope）は生成器が C# の構文にするので、対応表は作らない（「C# の構文で書くので対象外」）
 - IR にあるのに対応表が扱っていないプロパティは、生成時にエラー（`MAPPING_UNUSED_PROP`）になる。意味がないものだけ `ignore` に書く。`ContinueOnError` は生成器が try / catch で包む
 
@@ -114,7 +115,7 @@ git commit
 | IR のサンプル | `samples/ir/<pkg>/<ClassName>.min.json`、`.full.json` | 1アクティビティで2つ以上 |
 | 期待ログ・実行条件 | `samples/ir/<pkg>/<ClassName>.min.expected.log`、`.min.verify.json` | IR の横 |
 | XAML のスナップショット | `samples/generated/<pkg>/<workflow>.xaml` | テストが作る。手で書かない |
-| C# のスナップショット | `samples/generated-coded/<pkg>/<workflow>.cs` | テストが作る。手で書かない |
+| C# のスナップショット | `samples/generated-coded/<pkg>/<workflow>.cs` | テストが作る。手で書かない。XAML 経由の XAML は横の `_xaml/<workflow>_<連番>.xaml` |
 | 対応表 | `mappings/<pkg>/<ClassName>.json` | 1アクティビティ1ファイル |
 | 既定 XAML | `knowledge/default-xaml/<ClassName>.json` | get-default-xaml の出力そのまま。既定と違う版のものは `knowledge/default-xaml/<PackageId>/<version>/`（`docs/version-upgrade.md`） |
 | 手書きの Coded（必要なときだけ） | `samples/coded/<pkg>/<ClassName>.cs` | namespace は `CatalogProbeNet8`、クラス名＝ファイル名 |
@@ -139,7 +140,7 @@ git commit
 4. **既定 XAML**：`knowledge/default-xaml/<ClassName>.json` を保存し、`compare-default-xaml --generated` で食い違いがない
 5. **Coded**：
    - サービス API にあるもの：対応表を書き、`gen-coded.ts` とチェッカーと build を通し、run できるものは XAML と同じ `*.expected.log` で一致させる
-   - API に無いもの：対応表を `"coded": null` と理由で置き、「Coded API なし」と記録する
+   - API に無いもの：対応表を `"coded": null` と理由で置き、「Coded API なし」と記録する。C# から XAML 経由で呼べば足りるもの（Coded API の無いパッケージ全体など）は対応表を作らず、`CODED_VIA_XAML` の C# を build / run で確かめる（knowledge/coded-via-xaml.md）
    - 制御フロー：「C# の構文で書くので対象外」（生成器が直す。対応表は作らない）
 6. **run できないもの**（Orchestrator、メール、SAP、外部アプリなど）：「build まで、理由：…」でよい。`*.verify.json` に `noRun` で理由を書く
 7. **どうしても書けないもの**（カタログに無い、ドキュメントにしか無いなど）：理由を書いて Linear で Canceled にする

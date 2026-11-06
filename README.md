@@ -42,12 +42,23 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 
 | パッケージ | バージョン | アクティビティ数 |
 | --- | --- | --- |
+| UiPath.System.Activities | 24.10.7 | 181（`.objects.json` も） |
 | UiPath.System.Activities | 26.2.6 | 185 |
 | UiPath.System.Activities | 26.10.0 | 186 |
 | UiPath.UIAutomation.Activities | 25.10.33 | 202 |
+| UiPath.UIAutomation.Activities | 26.10.3 | 208（`.objects.json` も） |
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
 | UiPath.CodedWorkflows | 24.10.0〜24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ。4つの版で同じ） |
 | UiPath.Excel.Activities | 3.6.1 | 128（Coded の `IExcelService` と、`--follow-returns` で取った handles / extensions / enums も） |
+| UiPath.Testing.Activities | 23.4.1 | 22（Coded API なし） |
+| UiPath.Testing.Activities | 25.10.1 | 25 |
+| UiPath.Mail.Activities | 1.21.1 | 46（Coded API なし） |
+| UiPath.MicrosoftOffice365.Activities | 2.2.7 | 135（Coded API なし） |
+| UiPath.WebAPI.Activities | 1.20.1 | 8（Coded API なし） |
+| UiPath.SAP.BAPI.Activities | 3.0.1 | 5（Coded API なし） |
+| UiPath.DataService.Activities | 26.10.1 | 12（Coded API なし） |
+
+Coded API の無いパッケージのアクティビティは、Coded（C#）では XAML 経由で呼ぶ（[knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)）。
 
 既定の版の一覧は `tools/ir/versions.ts` にある。`gen.ts` / `gen-coded.ts` / `coverage.ts` / `tools/coded/check.ts` に `--project <dir>` を渡すと、そのプロジェクトの `project.json` の `dependencies` の版を使う（無い版はエラー。[docs/version-upgrade.md](docs/version-upgrade.md)）。
 
@@ -134,7 +145,7 @@ XAML と同じ処理を C# の Coded Workflow でも書き、`uip rpa run` で�
 
 ### IR → Coded（C#）生成器（`tools/ir/gen-coded.ts`）
 
-XAML と同じ IR から Coded Workflow の `.cs` を作る。制御フローは C# の構文に、アクティビティは対応表（`mappings/<pkg>/<ClassName>.json`、1アクティビティ1ファイル）でサービスのメソッド呼び出しにする。対応表が無いアクティビティはエラーになる。VB の式は `tools/ir/vb2cs.ts` が C# に直し、直せない式は IR に `{ "vb": "...", "cs": "..." }` で書く。
+XAML と同じ IR から Coded Workflow の `.cs` を作る。制御フローは C# の構文に、アクティビティは対応表（`mappings/<pkg>/<ClassName>.json`、1アクティビティ1ファイル）でサービスのメソッド呼び出しにする。対応表が無いアクティビティ（と Coded API の無いパッケージのアクティビティ）は、そのノードだけの XAML を `<--out>/_xaml/` に作り、`RunWorkflow` で呼ぶ（注意 `CODED_VIA_XAML`。`--no-via-xaml` ならエラー。[knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)）。VB の式は `tools/ir/vb2cs.ts` が C# に直し、直せない式は IR に `{ "vb": "...", "cs": "..." }` で書く。
 
 ```bash
 node tools/ir/gen-coded.ts samples/ir/Main.json --check --print     # 生成して表示（書き出さない）

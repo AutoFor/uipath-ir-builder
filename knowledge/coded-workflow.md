@@ -26,7 +26,7 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 
 - In 引数：`Execute` の引数（名前もそのまま）
 - Out 引数：戻り値。1つなら `public string Execute(...)` で、引数名は `Output` になる。2つ以上なら名前付きタプル `public (string out_Message, int out_Length) Execute(...)` で、要素名が引数名になる
-- `ref` / `out` の引数は使えない（生成コードが `out` / `ref` を付けずに呼ぶので CS1620 でコンパイルが落ちる）。InOut は Coded では書けない
+- `ref` / `out` の引数は使えない（生成コードが `out` / `ref` を付けずに呼ぶので CS1620 でコンパイルが落ちる）。InOut は Coded では書けない（ただし Coded から XAML を `RunWorkflow` で呼ぶときの XAML の InOut は、戻りの辞書に返ってくる。knowledge/coded-via-xaml.md）
 - `RunWorkflow("coded/Greet.cs", 引数の辞書)` で別の Coded ワークフローを呼べる。戻り値の辞書のキーは上の引数名（Out が1つなら `"Output"`）。生成した `Main.cs` が `Greet.cs` を呼び、期待ログ（`samples/ir/Main.expected.log`）どおりに動くことを run で確かめた（2026-11-04）
 
 ## サービスの変数名と型
@@ -41,7 +41,7 @@ Studio は各パッケージの API DLL の登録クラスからこれを作る�
 2. 無ければ、project.json の依存パッケージのカタログの `codedRegistries`。カタログの無い Mail と Testing は、上で確かめた変数名を足す（呼び出しは確かめられず、`NO_CATALOG` の警告だけ）
 3. `--project` が無ければ、プローブと同じ依存とみなす
 
-Mail の API の名前空間は `UiPath.Mail.Activities.Api`（`API` ではない）なので、今の抽出器ではサービスとして拾われない。Mail のカタログを作るときに直す。
+Mail の API の名前空間は `UiPath.Mail.Activities.Api`（`API` ではない）なので、今の抽出器ではサービスとして拾われない。Mail のカタログを作るときに直す。Mail 1.21.1 のカタログ（v24 のテンプレート用）には `services` も登録クラスも無く、C# では Mail のアクティビティを XAML 経由で呼ぶ（knowledge/coded-via-xaml.md）。
 
 プローブ プロジェクトでは：
 
