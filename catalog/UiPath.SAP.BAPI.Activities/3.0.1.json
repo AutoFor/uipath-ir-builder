@@ -1,0 +1,782 @@
+{
+  "package": "UiPath.SAP.BAPI.Activities",
+  "version": "3.0.1",
+  "assemblies": [
+    "UiPath.SAP.BAPI.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "InvokeBAPI",
+      "clrType": "UiPath.SAP.BAPI.Activities.InvokeBAPI",
+      "assembly": "UiPath.SAP.BAPI.Activities",
+      "xmlns": "clr-namespace:UiPath.SAP.BAPI.Activities;assembly=UiPath.SAP.BAPI.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ApiName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "ApiNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "BapiNameToFriendlyNameMapping",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Collections.Generic.Dictionary<System.String, System.String>>",
+          "required": true,
+          "category": "Input",
+          "displayName": "BapiFriendlyMappingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "InputArgumentData",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<System.Data.DataTable>",
+          "required": true,
+          "category": "Input",
+          "displayName": "InputArgumentDataDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "InputList",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": true,
+          "category": "Input",
+          "displayName": "InputListDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "InputOutputList",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": true,
+          "category": "Input",
+          "displayName": "InputOutputListDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "OutputList",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": true,
+          "category": "Input",
+          "displayName": "OutputListDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<System.Data.DataTable>",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "SapBapiReturn",
+          "kind": "out",
+          "type": "System.Object",
+          "required": false,
+          "category": "Output",
+          "displayName": "SapBapiReturnDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        },
+        {
+          "name": "SapConnectionService",
+          "kind": "in",
+          "type": "UiPath.SAP.BAPI.ConnectionService.IConnectionService",
+          "required": true,
+          "category": "Input",
+          "displayName": "SapConnectionServiceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeBAPI"
+        }
+      ]
+    },
+    {
+      "className": "InvokeSapBapi",
+      "clrType": "UiPath.SAP.BAPI.Activities.InvokeSapBapi",
+      "assembly": "UiPath.SAP.BAPI.Activities",
+      "xmlns": "clr-namespace:UiPath.SAP.BAPI.Activities;assembly=UiPath.SAP.BAPI.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AllArguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IDictionary<System.String, UiPath.SAP.BAPI.Activities.Model.BapiArgumentUiModel>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        },
+        {
+          "name": "BapiDescription",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        },
+        {
+          "name": "BapiName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": true,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        },
+        {
+          "name": "BapiSelected",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "OptionalArguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<UiPath.SAP.BAPI.Activities.Model.BapiArgumentUiModel>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        },
+        {
+          "name": "SelectedArgumentList",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<UiPath.SAP.BAPI.Activities.Model.BapiArgumentUiModel>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InvokeSapBapi"
+        }
+      ]
+    },
+    {
+      "className": "SapApplicationScope",
+      "clrType": "UiPath.SAP.BAPI.Activities.SapApplicationScope",
+      "assembly": "UiPath.SAP.BAPI.Activities",
+      "xmlns": "clr-namespace:UiPath.SAP.BAPI.Activities;assembly=UiPath.SAP.BAPI.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AdvancedParameters",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "AdvancedParametersDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "AppServer",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "AppServerHostDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction<UiPath.SAP.BAPI.ConnectionService.IConnectionService>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "Client",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "ClientDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignAdvancedParameters",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignAppServer",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignClient",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignLanguage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignLogonGroup",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignMessageServer",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignPassword",
+          "kind": "prop",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSapRouterString",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSncLibraryPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSncMode",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSncPartnerName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSncQOP",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSncSso",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSystemId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignSystemNumber",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DesignUser",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExistingConnectionService",
+          "kind": "in",
+          "type": "UiPath.SAP.BAPI.ConnectionService.IConnectionService",
+          "required": true,
+          "category": "UseExisitingConnection",
+          "displayName": "ExistingConnectionServiceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "UseExisitingConnection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "Language",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "LanguageDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "LogonGroup",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "LogonGroupDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "MessageServer",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "MessageServerDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SapConnectionService",
+          "kind": "out",
+          "type": "UiPath.SAP.BAPI.ConnectionService.IConnectionService",
+          "required": false,
+          "category": "Output",
+          "displayName": "SapConnectionServiceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SapRouterString",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "SapRouterStringDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SncLibraryPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "SncLibraryPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SncMode",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "SncModeDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SncPartnerName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "SncPartnerNameDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SncQop",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "SncQopDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SncSso",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "SncSsoDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "StatefulConnection",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "StatefulConnectionDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SystemId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "SystemIDDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "SystemNumber",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ConnectionCategory",
+          "displayName": "SystemNumberDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        },
+        {
+          "name": "TelemetryService",
+          "kind": "prop",
+          "type": "UiPath.SAP.BAPI.Telemetry.ITelemetryService",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope",
+          "readOnly": true
+        },
+        {
+          "name": "User",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "AuthenticationCategory",
+          "displayName": "UserNameDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Connection"
+          ],
+          "obsolete": false,
+          "declaredOn": "SapApplicationScope"
+        }
+      ]
+    },
+    {
+      "className": "SapCloseConnection",
+      "clrType": "UiPath.SAP.BAPI.Activities.SapCloseConnection",
+      "assembly": "UiPath.SAP.BAPI.Activities",
+      "xmlns": "clr-namespace:UiPath.SAP.BAPI.Activities;assembly=UiPath.SAP.BAPI.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "SapConnectionService",
+          "kind": "in",
+          "type": "UiPath.SAP.BAPI.ConnectionService.IConnectionService",
+          "required": true,
+          "category": "Input",
+          "displayName": "SapConnectionServiceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapCloseConnection"
+        }
+      ]
+    },
+    {
+      "className": "SapOpenConnection",
+      "clrType": "UiPath.SAP.BAPI.Activities.SapOpenConnection",
+      "assembly": "UiPath.SAP.BAPI.Activities",
+      "xmlns": "clr-namespace:UiPath.SAP.BAPI.Activities;assembly=UiPath.SAP.BAPI.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "AppServer",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "AppServerHostDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "Client",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "ClientDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Language",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "LanguageDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": true,
+          "category": "Input",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "SapConnectionService",
+          "kind": "out",
+          "type": "UiPath.SAP.BAPI.ConnectionService.IConnectionService",
+          "required": false,
+          "category": "Output",
+          "displayName": "SapConnectionServiceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "SystemNumber",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SystemNumberDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        },
+        {
+          "name": "User",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "UserNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SapOpenConnection"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

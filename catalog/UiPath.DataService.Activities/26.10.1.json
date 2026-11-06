@@ -1,0 +1,2055 @@
+{
+  "package": "UiPath.DataService.Activities",
+  "version": "26.10.1",
+  "assemblies": [
+    "UiPath.DataService.Activities.Core.dll"
+  ],
+  "activities": [
+    {
+      "className": "CreateEntityRecord",
+      "clrType": "UiPath.DataService.Activities.CreateEntityRecord",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "AddEntityDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "InputEntity",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "CreateEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "InputEntityInFieldView",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "CreateEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "IsInRecordView",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "OutputEntity",
+          "kind": "out",
+          "type": "TEntity",
+          "required": false,
+          "category": "Output",
+          "displayName": "CreateEntityResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "State",
+          "kind": "prop",
+          "type": "UiPath.DataService.Activities.Models.RecordState",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "VisibleDynamicPropertiesInfo",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateEntityRecord"
+        }
+      ]
+    },
+    {
+      "className": "CreateMultipleEntityRecords",
+      "clrType": "UiPath.DataService.Activities.CreateMultipleEntityRecords",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseUpsertMultipleEntityRecords<TEntity>",
+      "displayName": "CreateMultipleEntityRecordsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueBatchOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "ContinueBatchOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseUpsertMultipleEntityRecords"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseUpsertMultipleEntityRecords"
+        },
+        {
+          "name": "FailedRecords",
+          "kind": "out",
+          "type": "IList<Tuple<System.String, TEntity>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateMultipleEntityRecords"
+        },
+        {
+          "name": "InputRecords",
+          "kind": "in",
+          "type": "ICollection<TEntity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateMultipleEntityRecords"
+        },
+        {
+          "name": "OutputRecords",
+          "kind": "out",
+          "type": "IList<TEntity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateMultipleEntityRecords"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "DeleteEntityRecord",
+      "clrType": "UiPath.DataService.Activities.DeleteEntityRecord",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "DeleteEntityDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": true,
+          "category": "Input",
+          "displayName": "DeleteEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteEntityRecord"
+        },
+        {
+          "name": "InputEntity",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "DeleteEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteEntityRecord"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteEntityRecord"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Version",
+          "kind": "in",
+          "type": "System.Nullable<System.Int64>",
+          "required": false,
+          "category": "Input",
+          "displayName": "EntityRecordVersionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteEntityRecord"
+        }
+      ]
+    },
+    {
+      "className": "DeleteFileFromRecordField",
+      "clrType": "UiPath.DataService.Activities.DeleteFileFromRecordField",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "DeleteFileFromRecordFieldDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteFileFromRecordField"
+        },
+        {
+          "name": "Field",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "DeleteFileFieldDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "DeleteFileFromRecordField"
+        },
+        {
+          "name": "InputEntity",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "DeleteFileRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteFileFromRecordField"
+        },
+        {
+          "name": "OutputEntity",
+          "kind": "out",
+          "type": "TEntity",
+          "required": false,
+          "category": "Output",
+          "displayName": "DeleteFileFromRecordFieldResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteFileFromRecordField"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": true,
+          "category": "Input",
+          "displayName": "DeleteFileRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteFileFromRecordField"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "DeleteMultipleEntityRecords",
+      "clrType": "UiPath.DataService.Activities.DeleteMultipleEntityRecords",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "DeleteMultipleEntityRecordsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueBatchOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "ContinueBatchOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteMultipleEntityRecords"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "FailedRecords",
+          "kind": "out",
+          "type": "System.Collections.Generic.IList<System.Guid>",
+          "required": false,
+          "category": "Output",
+          "displayName": "MultipleEntityRecordsFailedResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteMultipleEntityRecords"
+        },
+        {
+          "name": "InputRecords",
+          "kind": "in",
+          "type": "System.Collections.Generic.ICollection<System.Guid>",
+          "required": true,
+          "category": "Input",
+          "displayName": "DeleteMultipleEntityRecordsInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteMultipleEntityRecords"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "DownloadFileFromRecordField",
+      "clrType": "UiPath.DataService.Activities.DownloadFileFromRecordField",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "DownloadFileFromRecordFieldDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DownloadedFileResource",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "category": "Output",
+          "displayName": "DownloadFileFromRecordFieldDownloadedFileResourceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DownloadFileFromRecordField"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Field",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "DownloadFileFieldDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "DownloadFileFromRecordField"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "To",
+          "displayName": "DownloadFileFromRecordFieldFilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DownloadFileFromRecordField"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": true,
+          "category": "Input",
+          "displayName": "DownloadFileRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DownloadFileFromRecordField"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "GetEntityRecordById",
+      "clrType": "UiPath.DataService.Activities.GetEntityRecordById",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "GetEntityByIdDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEntityRecordById"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEntityRecordById"
+        },
+        {
+          "name": "OutputEntity",
+          "kind": "out",
+          "type": "TEntity",
+          "required": false,
+          "category": "Output",
+          "displayName": "GetEntityResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEntityRecordById"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "category": "Input",
+          "displayName": "GetEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEntityRecordById"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "QueryEntityRecords",
+      "clrType": "UiPath.DataService.Activities.QueryEntityRecords",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "QueryEntitiesDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "FilterArguments",
+          "kind": "prop",
+          "type": "UiPath.DataService.Activities.FilterArgument",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "FilterValues",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<System.Activities.InArgument>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "OutputRecords",
+          "kind": "out",
+          "type": "IList<TEntity>",
+          "required": false,
+          "category": "Output",
+          "displayName": "QueryEntityRecordsResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "QueriedEntityId",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "RequiredForReadFieldNames",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "RequiredForReadInput",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Skip",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "default": "0",
+          "category": "Pagination",
+          "displayName": "QueryEntitySkipDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SortAscending",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "QueryEntitySortAscendingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "SortByField",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "QueryEntitySortByFieldDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "100",
+          "category": "Pagination",
+          "displayName": "QueryEntityTopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "TotalRecords",
+          "kind": "out",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Pagination",
+          "displayName": "QueryEntityTotalRecordsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        }
+      ]
+    },
+    {
+      "className": "QueryEntityRecordsBuilder",
+      "clrType": "UiPath.DataService.Activities.QueryEntityRecordsBuilder",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "QueryEntityRecords<TEntity>",
+      "displayName": "QueryEntitiesBuilderDisplayName",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "FilterArguments",
+          "kind": "prop",
+          "type": "UiPath.DataService.Activities.FilterArgument",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "FilterValues",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<System.Activities.InArgument>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "OutputRecords",
+          "kind": "out",
+          "type": "IList<TEntity>",
+          "required": false,
+          "category": "Output",
+          "displayName": "QueryEntityRecordsResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "QueriedEntityId",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "RequiredForReadFieldNames",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "RequiredForReadInput",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SearchColumn",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "QueryEntitySearchColumnDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecordsBuilder"
+        },
+        {
+          "name": "SearchTerm",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "QueryEntitySearchTermDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecordsBuilder"
+        },
+        {
+          "name": "Skip",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "default": "0",
+          "category": "Pagination",
+          "displayName": "QueryEntitySkipDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SortAscending",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "QueryEntitySortAscendingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "SortByField",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "QueryEntitySortByFieldDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "100",
+          "category": "Pagination",
+          "displayName": "QueryEntityTopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        },
+        {
+          "name": "TotalRecords",
+          "kind": "out",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Pagination",
+          "displayName": "QueryEntityTotalRecordsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntityRecords"
+        }
+      ]
+    },
+    {
+      "className": "UpdateEntityRecord",
+      "clrType": "UiPath.DataService.Activities.UpdateEntityRecord",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "UpdateEntityDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "InputEntity",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "UpdateEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "InputEntityInFieldView",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "UpdateEntityInputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "IsInRecordView",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "OutputEntity",
+          "kind": "out",
+          "type": "TEntity",
+          "required": false,
+          "category": "Output",
+          "displayName": "UpdateEntityResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "category": "Input",
+          "displayName": "UpdateEntityRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "State",
+          "kind": "prop",
+          "type": "UiPath.DataService.Activities.Models.RecordState",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "Version",
+          "kind": "in",
+          "type": "System.Nullable<System.Int64>",
+          "required": false,
+          "category": "Input",
+          "displayName": "EntityRecordVersionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        },
+        {
+          "name": "VisibleDynamicPropertiesInfo",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateEntityRecord"
+        }
+      ]
+    },
+    {
+      "className": "UpdateMultipleEntityRecords",
+      "clrType": "UiPath.DataService.Activities.UpdateMultipleEntityRecords",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseUpsertMultipleEntityRecords<TEntity>",
+      "displayName": "UpdateMultipleEntityRecordsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueBatchOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "ContinueBatchOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseUpsertMultipleEntityRecords"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseUpsertMultipleEntityRecords"
+        },
+        {
+          "name": "FailedRecords",
+          "kind": "out",
+          "type": "IList<Tuple<System.String, TEntity>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateMultipleEntityRecords"
+        },
+        {
+          "name": "InputRecords",
+          "kind": "in",
+          "type": "ICollection<TEntity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateMultipleEntityRecords"
+        },
+        {
+          "name": "OutputRecords",
+          "kind": "out",
+          "type": "IList<TEntity>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateMultipleEntityRecords"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    },
+    {
+      "className": "UploadFileToRecordField",
+      "clrType": "UiPath.DataService.Activities.UploadFileToRecordField",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 1,
+      "baseType": "BaseEntityActivity<TEntity>",
+      "displayName": "UploadFileToRecordFieldDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "2",
+          "category": "Options",
+          "displayName": "QueryEntityExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "Field",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "UploadFileFieldDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "UploadFileToRecordFieldFilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "FileResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "category": "Input",
+          "displayName": "UploadFileToRecordFieldFileResourceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "InputEntity",
+          "kind": "in",
+          "type": "TEntity",
+          "required": false,
+          "category": "Input",
+          "displayName": "UploadFileRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "OutputEntity",
+          "kind": "out",
+          "type": "TEntity",
+          "required": false,
+          "category": "Output",
+          "displayName": "UploadFileToRecordFieldResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "RecordId",
+          "kind": "in",
+          "type": "System.Guid",
+          "required": true,
+          "category": "Input",
+          "displayName": "UploadFileRecordIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UploadFileToRecordField"
+        },
+        {
+          "name": "ScopeKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ScopeValue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "SolutionEntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        },
+        {
+          "name": "TimeoutInMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "default": "30000",
+          "category": "Common",
+          "displayName": "Timeout",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseEntityActivity"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
