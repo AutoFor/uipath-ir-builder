@@ -1,0 +1,105 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="SetClippingRegion_Browser_1" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:uuia="clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="htmlPath" Type="InArgument(x:String)" />
+    <x:Property Name="el" Type="InOutArgument(uuia:UiElement)" />
+    <x:Property Name="result" Type="InOutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="SetClippingRegion_Browser_1" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <ui:OpenBrowser BrowserType="Edge" DisplayName="UIA Test Form を開く（Classic）" Url="[New Uri(htmlPath).AbsoluteUri]" sap2010:WorkflowViewState.IdRef="OpenBrowser_1">
+      <ui:OpenBrowser.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <ui:WaitUiElementAppear DisplayName="box の要素を得る" FoundElement="[el]" sap2010:WorkflowViewState.IdRef="WaitUiElementAppear_1">
+              <ui:WaitUiElementAppear.Target>
+                <ui:Target Id="94220d10-0933-567d-bc18-c35480dd264d" Selector="&lt;webctrl id='box' tag='DIV' /&gt;" />
+              </ui:WaitUiElementAppear.Target>
+            </ui:WaitUiElementAppear>
+            <ui:SetClippingRegion Direction="RECTANGLE" DisplayName="左上 30x30 だけに切る" Element="[el]" Region="[New UiPath.Core.Region(New System.Drawing.Rectangle(0, 0, 30, 30))]" sap2010:WorkflowViewState.IdRef="SetClippingRegion_1" />
+            <ui:Click AlterIfDisabled="True" ClickType="CLICK_SINGLE" DisplayName="切ったあとの中央を押す" KeyModifiers="None" MouseButton="BTN_LEFT" sap2010:WorkflowViewState.IdRef="Click_1">
+              <ui:Click.Target>
+                <ui:Target Element="[el]" Id="f75faf1d-cd1d-58fd-a464-927bfa33e6b3" />
+              </ui:Click.Target>
+              <ui:Click.CursorPosition>
+                <ui:CursorPosition OffsetX="0" OffsetY="0" Position="Center" />
+              </ui:Click.CursorPosition>
+            </ui:Click>
+            <ui:GetValue DisplayName="結果を読む" sap2010:WorkflowViewState.IdRef="GetValue_1">
+              <ui:GetValue.Value>
+                <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
+              </ui:GetValue.Value>
+              <ui:GetValue.Target>
+                <ui:Target Id="14f9bcdf-7743-5e65-bf62-5da6a4c4f061" Selector="&lt;webctrl id='result' tag='DIV' /&gt;" />
+              </ui:GetValue.Target>
+            </ui:GetValue>
+            <ui:LogMessage Level="Info" Message="[&quot;押した位置: &quot; &amp; result]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+            <ui:CloseTab DisplayName="タブを閉じる" sap2010:WorkflowViewState.IdRef="CloseTab_1" />
+          </Sequence>
+        </ActivityAction>
+      </ui:OpenBrowser.Body>
+    </ui:OpenBrowser>
+  </Sequence>
+</Activity>

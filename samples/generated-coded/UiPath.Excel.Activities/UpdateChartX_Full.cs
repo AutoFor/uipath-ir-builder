@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using UiPath.CodedWorkflows;
+using UiPath.Platform.ResourceHandling;
+using UiPath.Excel;
+using UiPath.Excel.Activities.API;
+using UiPath.Excel.Activities.API.Models;
+
+namespace CatalogProbeNet8
+{
+    // tools/ir/gen-coded.ts で IR（UpdateChartX_Full）から生成。手で直さず IR を直す
+    public class UpdateChartX_Full : CodedWorkflow
+    {
+        [Workflow]
+        public void Execute()
+        {
+            IChartRef ch = default;
+            // 元のブックを output に写す
+            system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\UpdateChartX_Full.xlsx", overwrite: true);
+            using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\UpdateChartX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
+            {
+                ch = Excel.Sheet["Sheet1"].Range["A1:B4"].InsertExcelChart(sheet: Excel.Sheet["Sheet1"], chartCategory: UiPath.Excel.ExcelChartCategory.Column, chartType: UiPath.Excel.ExcelChartType.xlColumnClustered, left: 300, top: 10, width: 400, height: 300);
+                // 全部の変更
+                // UpdateChartX はCoded API が無い（Coded API なし（UpdateChart はクラシックの IWorkHandle にしか無く、モダンの IChartRef を渡す形が無い。1回に1種類の変更しか渡せず、複数の子も表せない））ので XAML 経由（coded/_xaml/UpdateChartX_Full_1.xaml）
+                RunWorkflow("coded/_xaml/UpdateChartX_Full_1.xaml", new Dictionary<string, object> { ["ch"] = ch, ["Excel"] = Excel });
+                Log(message: "題名: " + ch.ChartInfo.Title, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "凡例: " + ch.ChartInfo.HasLegend.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "ラベル: " + ch.ChartInfo.HasDataLabels.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            }
+        }
+    }
+}

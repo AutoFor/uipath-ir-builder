@@ -9,10 +9,14 @@ Coded（C#）の生成器（`tools/ir/gen-coded.ts`、`tools/ir/generate-coded.t
 | 対応表がある（API で書ける） | これまでどおり API を呼ぶ（対応表を優先） |
 | 対応表が無い | XAML 経由（注意 `CODED_VIA_XAML`） |
 | 選んだ版のカタログに `services`（Coded API）が無いパッケージで、対応表が API を呼ぶ（例 Testing 23.4.1 の `VerifyExpression`） | XAML 経由（その版では API が無いので、対応表は使えない） |
-| 対応表が `"coded": null`、または形ごとの `reason`（`InvokeWorkflowFile` の `Level` など）で「Coded API なし」 | これまでどおり `NO_CODED_API`（SKIP）。意図して外しているので変えない |
+| 対応表が `"coded": null`、または形ごとの `reason`（`InvokeWorkflowFile` の `Level` など）で「Coded API なし」（Classic の UI 操作、Persistence など） | XAML 経由 |
+| 対応表で書いた C# が、選んだ版の API に無いメソッド・合わないオーバーロードを呼ぶ（例 System 24.10.7 の `DeleteQueueItems` に `timeoutMS` が無い、UIAutomation 26.10.3 に `BlockUserInput` が無い） | XAML 経由。gen-coded.ts がノードごとに `tools/coded/check.ts` にかけ、`UNKNOWN_METHOD` / `NO_OVERLOAD` なら書いた C# を捨てる（`viaXaml.apiCheck`） |
+| XAML 経由にする子が、スコープ（`ExcelApplicationCard`、`NApplicationCard` など）の外では検証を通らない、またはスコープの変数（ブックのハンドル `IWorkHandle` など）を XAML の引数にできない | そのスコープごと XAML 経由（外側へ、通るところまで上がる） |
 | 制御フロー（Sequence、If、ForEach など、生成器の組み込み） | これまでどおり C# の構文 |
 
-`--no-via-xaml` を付けると XAML 経由にせず、`NO_MAPPING` のエラーにする。`generateCoded` は `viaXaml` を渡したときだけ XAML 経由にする（渡さなければ以前と同じ）。
+版の違いで API が実行時だけ違うもの（System 24.10.7 の `WriteTextFile` が無いファイルに書けない、など）は、生成時には分からないので切り替わらない。
+
+`--no-via-xaml` を付けると XAML 経由にせず、`NO_MAPPING` / `NO_CODED_API` のエラーにする。`generateCoded` は `viaXaml` を渡したときだけ XAML 経由にする（渡さなければ以前と同じ）。
 
 Coded API の無いパッケージは `versions.ts` の `noCodedApiPackages`（選んだカタログに `services` が無いもの。`System.Activities` と Coded の基底クラスは除く）。2026-11 の時点では Mail 1.21.1、Office 365 2.2.7、WebAPI 1.20.1、SAP BAPI 3.0.1、Data Service 26.10.1、Testing 23.4.1、Persistence 1.13.0。
 
@@ -70,6 +74,13 @@ XAML 経由の C#（`CODED_VIA_XAML`）：
 - UIAutomation（build だけ。369 件のうち 24 件は除いた：OCR / CV の 23 件は「UiPath.CoreIPC 2.0.1 以上を入れる」で build が落ちる（テンプレートの依存の問題）、CellScope_Full は「Value is not in list or the entered selector is invalid」（未調査。26.10.3 の既定 XAML を取っていない））
   - XAML：345 件 build OK
   - C#：64 件 build OK、277 件 SKIP（Classic など `NO_CODED_API`）、NG 4（`BlockUserInput` / `UnblockUserInput` が 26.10.3 の API に無い）
+
+「Coded API なし」と版の API の違いも XAML 経由にしてから（2026-11-06、`out/verify/via3-run/`、同じ v24 のテンプレート）：
+
+- 版の API に合わなかった 9 件（DeleteQueueItems、DownloadFileFromUrl、PostponeTransactionItem、SetTransactionProgress、SetTransactionStatus、NBlockUserInput / NUnblockUserInput の min・full）は、すべて XAML 経由になって build が通った。run したのは DownloadFileFromUrl で、期待ログと一致。残りは Orchestrator や入力のブロックが要るので run していない
+- 以前 SKIP だった System の 9 件（FilterDataTable の min・full、FormatValue の min・full、CollectionToDataTable、GenerateDataTable、GetFileInfoX、AddLogFields、ForEachFileX）：8 件は C# が run で期待ログと一致。ForEachFileX は前からある 24.10.7 の `WriteTextFile` の件で NG
+- Activate.min（Classic。StartProcess と WindowScope を XAML 経由）：画面がロックされていて「前面に移動できません」で NG。XAML でも同じなので、生成器のせいではない
+- C# の型 `GenericValue` は既定の using に無いので、`csType` で `UiPath.Core.GenericValue` に直す（FormatValue が C# になって分かった）
 
 ## 分かった落とし穴
 

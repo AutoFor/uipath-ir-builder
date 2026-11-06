@@ -88,7 +88,8 @@ node tools/ir/gen.ts <P>/ir/Main.json <P>/ir/Greet.json --project <P> --out <P> 
 - エラーが出たら、メッセージを読んで IR を直し、通るまで繰り返す。エラーを避けるために XAML を手で書かない。IR が正しいのに通らないなら、道具を直す（下の「道具を育てる」）
 - Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）
   - 対応表（`mappings/`）の無いアクティビティと、Coded API の無いパッケージ（Mail、Office 365、WebAPI、SAP BAPI、Data Service、Testing 23.4.1 など）のアクティビティは、そのノード（子も含めて）だけの XAML を `<--out>/_xaml/<ワークフロー名>_<連番>.xaml` に書き出し、C# からは `RunWorkflow` で呼ぶ。注意 `CODED_VIA_XAML` が出る。仕組みと落とし穴は [knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)
-  - 対応表が「Coded API なし」（`NO_CODED_API`）としているものは、これまでどおり C# にしない（SKIP）
+  - 対応表が「Coded API なし」としているもの（Classic の UI 操作など）と、対応表の API がプロジェクトの版に無いもの（メソッドや引数が無い）も XAML 経由になる
+  - XAML 経由の子だけをスコープ（Excel、Use Application など）の外に出せないときは、そのスコープごと XAML 経由になる
   - `--out` はプロジェクトの中にする（`RunWorkflow` のパスはプロジェクトからの相対パス）。`_xaml/` も消さずにプロジェクトに残す
 
 ### 5. 動かして確かめる

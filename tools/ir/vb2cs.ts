@@ -499,5 +499,7 @@ export function vbDefaultToCs(expr: string, type: string, scope: Map<string, str
 export function csType(t: string): string {
   return t.trim()
     .replace(/\(Of\s+/g, "<").replace(/\)/g, ">")
-    .replace(/\b(Integer|Long|Short|Date|Single|Char)\b/g, (m) => typeAlias[m.toLowerCase()]);
+    .replace(/\b(Integer|Long|Short|Date|Single|Char)\b/g, (m) => typeAlias[m.toLowerCase()])
+    // XAML では短い名前で書ける型（types-xaml.ts）のうち、C# の既定の using に無い名前空間のもの
+    .replace(/(?<![\w.])GenericValue\b/g, "UiPath.Core.GenericValue");
 }

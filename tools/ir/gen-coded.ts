@@ -11,7 +11,7 @@
 //                          カタログに無い版、services の無い古いカタログ（対応表のあるパッケージ）はエラー
 //     --no-via-xaml        対応表の無いアクティビティを XAML 経由にしない（NO_MAPPING のエラーにする）
 //
-//   対応表の無いアクティビティ（と、Coded API の無いパッケージのアクティビティ）は、その部分木だけの XAML を <--out>/_xaml/<ワークフロー名>_<連番>.xaml に
+//   対応表の無いアクティビティ（と、Coded API の無いパッケージ、対応表が「Coded API なし」、対応表の API がその版に無いアクティビティ）は、その部分木だけの XAML を <--out>/_xaml/<ワークフロー名>_<連番>.xaml に
 //   書き出し、C# からは RunWorkflow で呼ぶ（注意 CODED_VIA_XAML を出す。knowledge/coded-via-xaml.md）。XAML の式の言語は --project の expressionLanguage
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -59,6 +59,12 @@ if (mapErrors.length) { for (const e of mapErrors) console.log(`対応表のエ�
 const ns = val("--namespace") ?? ctx.namespace;
 ctx.namespace = ns;
 
+// 対応表で書いた C# が、選んだ版の API に無いメソッド・合わないオーバーロードを呼ぶなら、そのノードを XAML 経由にする（版で API が違う）
+const apiCheck = (code: string) => {
+  const errs = checkSource(code, "node.cs", ctx).issues.filter((i) => i.code === "UNKNOWN_METHOD" || i.code === "NO_OVERLOAD");
+  return errs.length ? `この版の Coded API に合うメソッドが無い（${errs.map((e) => e.message).join(" / ").slice(0, 200)}）` : undefined;
+};
+
 let failed = false;
 for (const f of files) {
   const wf: Workflow = JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, ""));
@@ -67,7 +73,7 @@ for (const f of files) {
   let warns: { path: string; code: string; message: string }[] = [];
   const subs: { file: ViaXamlFile; xaml: string }[] = [];
   if (!issues.length) {
-    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi } });
+    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck } });
     issues.push(...r.issues);
     code = r.code;
     warns = r.warnings;

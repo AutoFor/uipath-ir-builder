@@ -113,7 +113,7 @@ test("連番はワークフローの中で XAML 経由のものごと。読む�
   assert.match(r.code, /^\s+RunWorkflow\("_xaml\/Two_2\.xaml", null\);$/m);
 });
 
-test("Coded API の無いパッケージ（noApi）は、対応表があっても XAML 経由。coded: null の対応表は NO_CODED_API のまま", () => {
+test("Coded API の無いパッケージ（noApi）は、対応表があっても XAML 経由。coded: null の対応表も XAML 経由", () => {
   const wf = read("samples/ir/UiPath.Testing.Activities/VerifyExpression.min.json");
   const withApi = generateCoded(wf, cat, maps, { namespace: "N", viaXaml: via });
   assert.match(withApi.code, /testing\.VerifyExpression/); // 対応表を優先
@@ -125,14 +125,28 @@ test("Coded API の無いパッケージ（noApi）は、対応表があって�
   // Persistence は既定の版でも services が無く、対応表は coded: null
   assert.ok(noCodedApiPackages(root, DEFAULT_CATALOG_FILES).includes("UiPath.Persistence.Activities"));
   const p = generateCoded(read("samples/ir/UiPath.Persistence.Activities/GetFormTasks.min.json"), cat, maps, { namespace: "N", viaXaml: { ...via, noApi: noCodedApiPackages(root, DEFAULT_CATALOG_FILES) } });
-  assert.ok(p.issues.length && p.issues.every((i) => i.code === "NO_CODED_API"));
-  assert.deepEqual(p.xamls, []);
+  assert.deepEqual(p.issues, []);
+  assert.ok(p.xamls.length > 0);
+  // viaXaml が無ければ、これまでどおり NO_CODED_API
+  const q = generateCoded(read("samples/ir/UiPath.Persistence.Activities/GetFormTasks.min.json"), cat, maps, { namespace: "N" });
+  assert.ok(q.issues.length && q.issues.every((i) => i.code === "NO_CODED_API"));
 });
 
-test("その位置から外すと検証を通らないもの（UI のスコープの外など）は CODED_VIA_XAML_INVALID", () => {
-  // NClick の対応表が無いとみなす。NApplicationCard は C# の using になり、NClick だけの XAML はスコープの外になる
+test("対応表の C# が選んだ版の API に合わない（apiCheck が理由を返す）なら、そのノードを XAML 経由にする", () => {
+  const wf = read("samples/ir/UiPath.Testing.Activities/VerifyExpression.min.json");
+  const r = generateCoded(wf, cat, maps, { namespace: "N", viaXaml: { ...via, apiCheck: (c) => (/testing\.VerifyExpression/.test(c) ? "この版に無い" : undefined) } });
+  assert.deepEqual(r.issues, []);
+  assert.doesNotMatch(r.code, /testing\./);
+  assert.equal(r.xamls.length, 1);
+  assert.match(r.warnings[0].message, /この版に無い/);
+});
+
+test("スコープの外に出すと検証を通らない子は、親のスコープごと XAML 経由にする", () => {
+  // NClick の対応表が無いとみなす。NClick だけの XAML は UI のスコープの外になるので、NApplicationCard ごと XAML にする
   const m = new Map(maps);
   m.delete("UiPath.UIAutomation.Activities/NClick");
   const r = generateCoded(read("samples/ir/UiPath.UIAutomation.Activities/NClick.min.json"), cat, m, { namespace: "N", viaXaml: via });
-  assert.ok(r.issues.some((i) => i.code === "CODED_VIA_XAML_INVALID" && /UIA_NO_SCOPE/.test(i.message)), JSON.stringify(r.issues));
+  assert.deepEqual(r.issues, []);
+  assert.equal(r.xamls.length, 1);
+  assert.equal(r.xamls[0].wf.body[0].act, "NApplicationCard");
 });

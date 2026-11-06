@@ -28,8 +28,10 @@ export type CodedOptions = {
   invokePath?: (path: string) => string;
   // 対応表の無いアクティビティ（と、Coded API の無いパッケージの、対応表が API を呼ぶもの）を、部分木だけの XAML にして RunWorkflow で呼ぶ
   // （knowledge/coded-via-xaml.md）。dir はその XAML を置くフォルダ（プロジェクトからの相対パス。例 "coded/_xaml"）、
-  // noApi は選んだ版のカタログに services（Coded API）の無いパッケージ。viaXaml が無ければ、これまでどおり NO_MAPPING のエラー
-  viaXaml?: { dir: string; noApi?: Iterable<string> };
+  // noApi は選んだ版のカタログに services（Coded API）の無いパッケージ。対応表が「Coded API なし」としているものも XAML 経由。
+  // apiCheck は対応表で書いた C# を選んだ版の API で確かめ、合わなければ理由を返す（gen-coded.ts は tools/coded/check.ts の UNKNOWN_METHOD / NO_OVERLOAD）。
+  // viaXaml が無ければ、これまでどおり NO_MAPPING / NO_CODED_API のエラー
+  viaXaml?: { dir: string; noApi?: Iterable<string>; apiCheck?: (code: string) => string | undefined };
 };
 
 // XAML 経由で呼ぶワークフロー（path はプロジェクトからの相対パス。XAML は呼ぶ側が generate.ts で作る）
@@ -342,11 +344,29 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   }
 
   // ---- 対応表 ----
+  // 対応表で書いた C# が、選んだ版の API に無いメソッド・オーバーロードを呼ぶなら（apiCheck が理由を返す）、書いた分を捨てて XAML 経由にする
   function mapped(n: Node, className: string, pkg: string, depth: number, at: string, sc: Map<string, string>) {
+    const check = opt.viaXaml?.apiCheck;
+    const l0 = lines.length, i0 = issues.length, w0 = warnings.length, x0 = xamls.length;
+    mappedCode(n, className, pkg, depth, at, sc);
+    // 子を XAML 経由にしたいが、親のスコープ（Excel、Use Application など）の外に出すと検証を通らない、
+    // またはスコープの変数（ブックのハンドルなど）が XAML の引数にできない。親ごと XAML 経由にする
+    const added = issues.slice(i0);
+    if (opt.viaXaml && added.length && added.every((i) => /^CODED_VIA_XAML_(INVALID|TYPE)$/.test(i.code) && i.path.startsWith(`${at}.`))) {
+      lines.length = l0; issues.length = i0; warnings.length = w0; xamls.length = x0;
+      return viaXaml(n, className, pkg, "中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せない", depth, at, sc);
+    }
+    if (!check || issues.length > i0) return;
+    const why = check(lines.slice(l0).join("\n"));
+    if (!why) return;
+    lines.length = l0; warnings.length = w0; xamls.length = x0;
+    viaXaml(n, className, pkg, why, depth, at, sc);
+  }
+
+  function mappedCode(n: Node, className: string, pkg: string, depth: number, at: string, sc: Map<string, string>) {
     const m = maps.get(`${pkg}/${className}`);
-    // 対応表が無い、または Coded API の無いパッケージ（対応表の API を呼べない）なら、XAML 経由。
-    // 対応表が「Coded API なし」（coded: null）としているものは、これまでどおり NO_CODED_API（意図して外しているので変えない）
-    if (opt.viaXaml && (!m || (noApi.has(pkg) && m.coded !== null))) return viaXaml(n, className, pkg, m ? "このパッケージの版に Coded API が無い" : "対応表が無い", depth, at, sc);
+    // 対応表が無い、対応表が「Coded API なし」（coded: null）、または Coded API の無いパッケージ（対応表の API を呼べない）なら、XAML 経由
+    if (opt.viaXaml && (!m || m.coded === null || noApi.has(pkg))) return viaXaml(n, className, pkg, !m ? "対応表が無い" : m.coded === null ? `Coded API が無い（${m.reason}）` : "このパッケージの版に Coded API が無い", depth, at, sc);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];
@@ -371,6 +391,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const v = m.coded.find((x) => (isReason(x) ? (x.when ?? []).every(whenOk) : (x.when ?? []).every(whenWithDefaults) && handlesGiven(x))) ?? m.coded.find((x) => (x.when ?? []).every(whenOk));
     if (!v) { add(at, "NO_MAPPING", `${className} の対応表に、この props（${given.join(", ")}）に合う形が無い（${m.file}）`); return; }
     // この形だけ Coded API が無い（{ "when": ["ExistingWorkbook"], "reason": "..." }）
+    if (v.reason && !v.call && !v.code && !v.special && !v.scope && opt.viaXaml) return viaXaml(n, className, pkg, `この形の Coded API が無い（${v.reason}）`, depth, at, sc);
     if (v.reason && !v.call && !v.code && !v.special && !v.scope) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${v.reason}（${m.file}）`); return; }
     // 引数の辞書（dicts）は、対応表が {Arguments|dict} で受けるか、ignore に書いたものだけ許す
     const tplRefs = new Set([...(v.code ? refs(v.code) : []), ...(v.call ? refs(v.call) : []), ...Object.values(v.init?.props ?? {}).flat().flatMap(refs), ...Object.values(v.args ?? {}).flatMap((t) => (typeof t === "string" ? refs(t) : Object.values(t.set).flatMap(refs)))]);
