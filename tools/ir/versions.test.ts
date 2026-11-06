@@ -121,6 +121,33 @@ test("Coded のサービス変数：生成コードが無ければ依存パッ�
   });
 });
 
+test("Coded API の無いパッケージ（WebAPI）：対応表が無ければ C# はエラーにせず、XAML 経由で書き出す", () => {
+  const p = project({ "UiPath.System.Activities": "[26.10.0]", "UiPath.WebAPI.Activities": "[1.20.1]" });
+  // WebAPI 1.20.1 は readOnly のプロパティがたまたま無く、古い形式に見える。対応表が無いので C# では API を呼ばない
+  assert.deepEqual(selectCatalogs(root, p).legacy, ["UiPath.WebAPI.Activities 1.20.1"]);
+  const s = selectCatalogs(root, p, { coded: true });
+  assert.ok(s.warnings.some((w) => /WebAPI.*XAML 経由/.test(w)), s.warnings.join("\n"));
+  const out = join(p, "coded");
+  const c = node(genCoded, join(root, "samples", "ir", "UiPath.WebAPI.Activities", "DeserializeJson.min.json"), "--project", p, "--out", out);
+  assert.equal(c.status, 0, c.stdout + c.stderr);
+  assert.match(c.stdout, /CODED_VIA_XAML/);
+  // --out がプロジェクトの中なら、RunWorkflow のパスはプロジェクトからの相対パス（coded/_xaml/...）
+  assert.match(readFileSync(join(out, "DeserializeJson_Min.cs"), "utf8"), /RunWorkflow\("coded\/_xaml\/DeserializeJson_Min_1\.xaml"/);
+  assert.match(readFileSync(join(out, "_xaml", "DeserializeJson_Min_1.xaml"), "utf8"), /x:Class="DeserializeJson_Min_1"/);
+  // --no-via-xaml なら、これまでどおり NO_MAPPING
+  const d = node(genCoded, join(root, "samples", "ir", "UiPath.WebAPI.Activities", "DeserializeJson.min.json"), "--project", p, "--check", "--no-via-xaml");
+  assert.equal(d.status, 1);
+  assert.match(d.stdout, /NO_MAPPING/);
+});
+
+test("XAML 経由の XAML は project.json の式の言語に従う", () => {
+  const p = project({ "UiPath.System.Activities": "[26.10.0]", "UiPath.WebAPI.Activities": "[1.20.1]" }, { expressionLanguage: "CSharp" });
+  const c = node(genCoded, join(root, "samples", "ir", "UiPath.WebAPI.Activities", "DeserializeJson.min.json"), "--project", p, "--out", p);
+  assert.equal(c.status, 0, c.stdout + c.stderr);
+  assert.match(readFileSync(join(p, "_xaml", "DeserializeJson_Min_1.xaml"), "utf8"), /ExpressionActivityEditor="C#"/);
+  assert.match(readFileSync(join(p, "DeserializeJson_Min.cs"), "utf8"), /RunWorkflow\("_xaml\/DeserializeJson_Min_1\.xaml"/);
+});
+
 test("services が無くても readOnly があれば古い形式にしない（Persistence は API の無いパッケージ）", () => {
   assert.deepEqual(selectCatalogs(root, project(current)).legacy, []);
 });

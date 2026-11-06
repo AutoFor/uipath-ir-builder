@@ -1,0 +1,4 @@
+{
+  "unbuildable": "Data Service のアクティビティは型引数 TEntity にテナントのエンティティの型（Studio が .entities から作るクラス）が要る。Object を入れると build が「GenericArguments[0], 'System.Object', on 'UiPath.DataService.Activities.DeleteEntityRecord`1[TEntity]' violates the constraint of type 'TEntity'」で落ちる（v24 のテンプレート、2026-11-06）。エンティティの無いプロジェクトでは build できないので、samples/ir には置かない",
+  "noRun": "Data Service（Orchestrator のテナントのエンティティ）が要るため"
+}
