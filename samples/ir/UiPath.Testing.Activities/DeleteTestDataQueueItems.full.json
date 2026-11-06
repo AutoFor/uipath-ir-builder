@@ -1,0 +1,21 @@
+{
+  "workflow": "DeleteTestDataQueueItems_Full",
+  "variables": [ { "name": "items", "type": "List<UiPath.Testing.Core.TestDataQueueItem>" } ],
+  "body": [
+    {
+      "act": "GetTestDataQueueItems",
+      "props": { "QueueName": { "lit": "IRTestDataQueue" }, "FolderPath": { "lit": "Shared" }, "TestDataQueueItems": "items" }
+    },
+    {
+      "act": "DeleteTestDataQueueItems",
+      "name": "テストデータを削除",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": { "lit": "Shared" },
+        "TestDataQueueItems": "items",
+        "TimeoutMs": 30000
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"削除した\"" } }
+  ]
+}

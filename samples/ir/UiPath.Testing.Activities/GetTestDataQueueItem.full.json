@@ -1,0 +1,19 @@
+{
+  "workflow": "GetTestDataQueueItem_Full",
+  "variables": [ { "name": "item", "type": "Dictionary<String, Object>" } ],
+  "body": [
+    {
+      "act": "GetTestDataQueueItem",
+      "name": "テストデータを1件取る",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": { "lit": "Shared" },
+        "MarkConsumed": true,
+        "QueueName": { "lit": "IRTestDataQueue" },
+        "Output": "item",
+        "TimeoutMs": 30000
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"件数=\" & item.Count.ToString", "cs": "\"件数=\" + item.Count.ToString()" } } }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "activity": "GetTestDataQueueItems",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["TimeoutMs"], "call": "testing.GetTestDataQueueItems", "args": { "queueName": "{QueueName}", "folderPath": "{FolderPath:-null}", "idFilter": "{IdFilter:-null}", "testDataQueueItemStatus": "UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus.{TestDataQueueItemStatus}", "skip": "{Skip:-null}", "top": "{Top:-null}", "timeoutMs": "{TimeoutMs}" }, "returns": "TestDataQueueItems" },
+    { "when": ["FolderPath"], "call": "testing.GetTestDataQueueItems", "args": { "queueName": "{QueueName}", "folderPath": "{FolderPath}" }, "returns": "TestDataQueueItems" },
+    { "call": "testing.GetTestDataQueueItems", "args": { "queueName": "{QueueName}" }, "returns": "TestDataQueueItems" }
+  ],
+  "notes": "TestDataQueueItems（List<TestDataQueueItem>）は戻り値で受ける。IdFilter・TestDataQueueItemStatus・Skip・Top を渡す形は timeoutMs も要るので、TimeoutMs を書いたときだけ（無いと MAPPING_UNUSED_PROP）"
+}

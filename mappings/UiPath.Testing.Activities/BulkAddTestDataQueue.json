@@ -1,0 +1,11 @@
+{
+  "activity": "BulkAddTestDataQueue",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["FolderPath", "TimeoutMs"], "call": "testing.BulkAddTestDataQueueItems", "args": { "queueName": "{QueueName}", "queueItemsDataTable": "{QueueItemsDataTable}", "folderPath": "{FolderPath}", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["TimeoutMs"], "call": "testing.BulkAddTestDataQueueItems", "args": { "queueName": "{QueueName}", "queueItemsDataTable": "{QueueItemsDataTable}", "folderPath": "null", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["FolderPath"], "call": "testing.BulkAddTestDataQueueItems", "args": { "queueName": "{QueueName}", "queueItemsDataTable": "{QueueItemsDataTable}", "folderPath": "{FolderPath}" } },
+    { "call": "testing.BulkAddTestDataQueueItems", "args": { "queueName": "{QueueName}", "queueItemsDataTable": "{QueueItemsDataTable}" } }
+  ],
+  "notes": "Coded では BulkAddTestDataQueueItems(queueName, queueItemsDataTable[, folderPath[, timeoutMs]])。TimeoutMs だけのときは folderPath に null を渡す"
+}

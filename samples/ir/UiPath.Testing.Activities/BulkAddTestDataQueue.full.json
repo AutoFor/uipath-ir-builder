@@ -1,0 +1,18 @@
+{
+  "workflow": "BulkAddTestDataQueue_Full",
+  "variables": [ { "name": "dt", "type": "DataTable", "default": "New DataTable()" } ],
+  "body": [
+    {
+      "act": "BulkAddTestDataQueue",
+      "name": "まとめて追加",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": { "lit": "Shared" },
+        "QueueName": { "lit": "IRTestDataQueue" },
+        "QueueItemsDataTable": "dt",
+        "TimeoutMs": 30000
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"まとめて追加した\"" } }
+  ]
+}

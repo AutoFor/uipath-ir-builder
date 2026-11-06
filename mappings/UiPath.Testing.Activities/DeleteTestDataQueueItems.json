@@ -1,0 +1,11 @@
+{
+  "activity": "DeleteTestDataQueueItems",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["FolderPath", "TimeoutMs"], "call": "testing.DeleteTestDataQueueItems", "args": { "testDataQueueItems": "{TestDataQueueItems}", "folderPath": "{FolderPath}", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["TimeoutMs"], "call": "testing.DeleteTestDataQueueItems", "args": { "testDataQueueItems": "{TestDataQueueItems}", "folderPath": "null", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["FolderPath"], "call": "testing.DeleteTestDataQueueItems", "args": { "testDataQueueItems": "{TestDataQueueItems}", "folderPath": "{FolderPath}" } },
+    { "call": "testing.DeleteTestDataQueueItems", "args": { "testDataQueueItems": "{TestDataQueueItems}" } }
+  ],
+  "notes": "Coded では DeleteTestDataQueueItems(testDataQueueItems[, folderPath[, timeoutMs]])。TimeoutMs だけのときは folderPath に null を渡す"
+}

@@ -1,0 +1,8 @@
+{
+  "activity": "AttachDocument",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["Tags"], "call": "testing.AttachDocument", "args": { "filePath": "{FilePath}", "tags": "{Tags}" } },
+    { "call": "testing.AttachDocument", "args": { "filePath": "{FilePath}" } }
+  ]
+}

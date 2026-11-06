@@ -1,0 +1,10 @@
+{
+  "activity": "GetTestDataQueueItem",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["MarkConsumed", "TimeoutMs"], "call": "testing.GetTestDataQueueItem", "args": { "queueName": "{QueueName}", "folderPath": "{FolderPath:-null}", "markConsumed": "{MarkConsumed}", "timeoutMs": "{TimeoutMs}" }, "returns": "Output" },
+    { "when": ["FolderPath"], "call": "testing.GetTestDataQueueItem", "args": { "queueName": "{QueueName}", "folderPath": "{FolderPath}" }, "returns": "Output" },
+    { "call": "testing.GetTestDataQueueItem", "args": { "queueName": "{QueueName}" }, "returns": "Output" }
+  ],
+  "notes": "Output（Dictionary<string, object>）は戻り値で受ける。MarkConsumed を渡す形は timeoutMs も要るので、MarkConsumed と TimeoutMs がそろうときだけ"
+}

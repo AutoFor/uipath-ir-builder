@@ -98,6 +98,8 @@ const simple: Record<string, [string, Record<string, string>]> = {
   XNode: ["sxl:XNode", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
   XAttribute: ["sxl:XAttribute", { sxl: "clr-namespace:System.Xml.Linq;assembly=System.Private.Xml.Linq" }],
   MailMessage: ["snm:MailMessage", { snm: "clr-namespace:System.Net.Mail;assembly=System.Net.Mail" }],
+  // UiPath.Testing.Activities のテストデータキュー（型は UiPath.Testing.dll にある。23.4.1・25.10.1 とも）
+  "UiPath.Testing.Core.TestDataQueueItem": ["utc:TestDataQueueItem", { utc: "clr-namespace:UiPath.Testing.Core;assembly=UiPath.Testing" }],
   // スコープの delegate の引数の型（SAP BAPI の SapApplicationScope、Office 365 の Office365ApplicationScope）
   "UiPath.SAP.BAPI.ConnectionService.IConnectionService": ["usbc:IConnectionService", { usbc: "clr-namespace:UiPath.SAP.BAPI.ConnectionService;assembly=UiPath.SAP.BAPI" }],
   "Microsoft.Graph.GraphServiceClient": ["mg:GraphServiceClient", { mg: "clr-namespace:Microsoft.Graph;assembly=Microsoft.Graph" }],

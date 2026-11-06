@@ -1,0 +1,22 @@
+{
+  "workflow": "GetTestDataQueueItems_Full",
+  "variables": [ { "name": "items", "type": "List<UiPath.Testing.Core.TestDataQueueItem>" } ],
+  "body": [
+    {
+      "act": "GetTestDataQueueItems",
+      "name": "テストデータの一覧を取る",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": { "lit": "Shared" },
+        "IdFilter": { "lit": "" },
+        "QueueName": { "lit": "IRTestDataQueue" },
+        "Skip": 0,
+        "Top": 10,
+        "TestDataQueueItemStatus": "OnlyNotConsumed",
+        "TestDataQueueItems": "items",
+        "TimeoutMs": 30000
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"件数=\" & items.Count.ToString", "cs": "\"件数=\" + items.Count.ToString()" } } }
+  ]
+}

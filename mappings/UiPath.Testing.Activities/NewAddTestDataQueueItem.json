@@ -1,0 +1,11 @@
+{
+  "activity": "NewAddTestDataQueueItem",
+  "package": "UiPath.Testing.Activities",
+  "coded": [
+    { "when": ["FolderPath", "TimeoutMs"], "call": "testing.AddTestDataQueueItem", "args": { "queueName": "{QueueName}", "itemInformation": "{ItemInformation|dict}", "folderPath": "{FolderPath}", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["TimeoutMs"], "call": "testing.AddTestDataQueueItem", "args": { "queueName": "{QueueName}", "itemInformation": "{ItemInformation|dict}", "folderPath": "null", "timeoutMs": "{TimeoutMs}" } },
+    { "when": ["FolderPath"], "call": "testing.AddTestDataQueueItem", "args": { "queueName": "{QueueName}", "itemInformation": "{ItemInformation|dict}", "folderPath": "{FolderPath}" } },
+    { "call": "testing.AddTestDataQueueItem", "args": { "queueName": "{QueueName}", "itemInformation": "{ItemInformation|dict}" } }
+  ],
+  "notes": "Coded の AddTestDataQueueItem は (queueName, itemInformation[, folderPath[, timeoutMs]])。ItemInformation（辞書）は new Dictionary<string, object> にする。TimeoutMs だけのときは folderPath に null を渡す（XAML でも未指定は null）"
+}

@@ -9,7 +9,8 @@
 | System.Activities | 123 | 662 | 628 | 34 | 39 | 2 / 13 / 0 / 108 |
 | UiPath.Excel.Activities | 121 | 682 | 682 | 0 | 487 | 71 / 0 / 29 / 21 |
 | UiPath.Persistence.Activities | 20 | 235 | 232 | 3 | 226 | 0 / 0 / 20 / 0 |
-| UiPath.System.Activities | 171 | 1032 | 1032 | 0 | 962 | 81 / 16 / 67 / 7 |
+| UiPath.System.Activities | 171 | 1032 | 1032 | 0 | 966 | 81 / 16 / 67 / 7 |
+| UiPath.Testing.Activities | 20 | 146 | 146 | 0 | 51 | 10 / 0 / 0 / 10 |
 | UiPath.UIAutomation.Activities | 108 | 1576 | 1575 | 1 | 907 | 36 / 0 / 70 / 2 |
 
 読み取り専用（public の setter が無い）のプロパティ 48 件は、そもそも XAML に書けないので上の数に入れていない（読み取り専用。`--activity` では「書けない」と出る）。
@@ -394,7 +395,7 @@
 | GetTransactionItem | 7/7 | - | - | 未作成 |
 | GetUsernamePasswordX | 8/8 | - | AutosubmitTimeoutSeconds, Credential, CredentialName, CredentialsSource, DisplayName, OrchestratorCredentialName, OrchestratorFolderPath, TimeoutInSeconds | なし（Coded API なし（ISystemService に対応するメソッドが無い。認証情報の入力ダイアログを開く XAML 専用のアクティビティ）） |
 | GlobalVariableChangedTrigger | 5/5 | - | DisplayName, Enabled, SchedulingMode, TriggerId, VariableName | なし（Coded API なし（トリガーは ISystemService に無い）） |
-| IfElseIfV2 | 5/5 | - | - | 未作成 |
+| IfElseIfV2 | 5/5 | - | Condition, DisplayName, Else, Then | 未作成 |
 | InputDialog | 8/8 | - | DisplayName, IsPassword, Label, Options, Result, Title, TopMost | なし（Coded API なし（入力ダイアログの API が ISystemService に無い）） |
 | InterruptibleDoWhile | 5/5 | - | Body, Condition, CurrentIndex, DisplayName, MaxIterations | C# の構文 |
 | InterruptibleWhile | 5/5 | - | Body, Condition, CurrentIndex, DisplayName, MaxIterations | C# の構文 |
@@ -482,6 +483,31 @@
 | WaitQueueItem | 10/10 | - | ContinueOnError, ConvertDatesToLocalTime, DisplayName, FilterStrategy, FolderPath, PollTimeMS, QueueName, Reference, Result, TimeoutMS | あり |
 | WriteStorageText | 8/8 | - | ContinueOnError, DisplayName, Encoding, FolderPath, Path, StorageBucketName, Text, TimeoutMS | あり |
 | WriteTextFile | 7/7 | - | ContinueOnError, DisplayName, Encoding, File, FileName, Output, Text | あり |
+
+### UiPath.Testing.Activities
+
+| アクティビティ | 書ける | 書けない | サンプルで使用 | Coded |
+| --- | --- | --- | --- | --- |
+| Address | 4/4 | - | AddressResult, City, Country, DisplayName | あり |
+| AttachDocument | 4/4 | - | - | 未作成 |
+| BulkAddTestDataQueue | 6/6 | - | - | 未作成 |
+| ComparePdfDocuments | 15/15 | - | - | 未作成 |
+| CompareText | 13/13 | - | - | 未作成 |
+| CreateComparisonRule | 7/7 | - | - | 未作成 |
+| DeleteTestDataQueueItems | 5/5 | - | - | 未作成 |
+| GetTestDataQueueItem | 7/7 | - | - | 未作成 |
+| GetTestDataQueueItems | 10/10 | - | - | 未作成 |
+| GivenName | 2/2 | - | DisplayName, GivenNameResult | あり |
+| LastName | 2/2 | - | DisplayName, LastNameResult | あり |
+| NewAddTestDataQueueItem | 6/6 | - | - | 未作成 |
+| RandomDate | 4/4 | - | DisplayName, MaxDate, MinDate, Output | あり |
+| RandomNumber | 5/5 | - | Decimals, DisplayName, Max, Min, Output | あり |
+| RandomString | 4/4 | - | Case, DisplayName, Length, Output | あり |
+| RandomValue | 3/3 | - | DisplayName, FilePath, Value | あり |
+| VerifyControlAttribute | 14/14 | - | - | 未作成 |
+| VerifyExpression | 10/10 | - | AlternativeVerificationTitle, ContinueOnFailure, DisplayName, Expression, OutputMessageFormat, Result, TakeScreenshotInCaseOfFailingAssertion, TakeScreenshotInCaseOfSucceedingAssertion | あり |
+| VerifyExpressionWithOperator | 12/12 | - | AlternativeVerificationTitle, ContinueOnFailure, DisplayName, FirstExpression, Operator, Result, SecondExpression, TakeScreenshotInCaseOfFailingAssertion, TakeScreenshotInCaseOfSucceedingAssertion | あり |
+| VerifyRange | 13/13 | - | AlternativeVerificationTitle, ContinueOnFailure, DisplayName, Expression, LowerLimit, Result, TakeScreenshotInCaseOfFailingAssertion, TakeScreenshotInCaseOfSucceedingAssertion, UpperLimit, VerificationType | あり |
 
 ### UiPath.UIAutomation.Activities
 

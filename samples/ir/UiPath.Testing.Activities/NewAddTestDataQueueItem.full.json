@@ -1,0 +1,22 @@
+{
+  "workflow": "NewAddTestDataQueueItem_Full",
+  "body": [
+    {
+      "act": "NewAddTestDataQueueItem",
+      "name": "テストデータキューに追加",
+      "props": {
+        "ContinueOnError": false,
+        "FolderPath": { "lit": "Shared" },
+        "QueueName": { "lit": "IRTestDataQueue" },
+        "TimeoutMs": 30000
+      },
+      "dicts": {
+        "ItemInformation": [
+          { "name": "customer", "dir": "In", "type": "String", "value": { "lit": "A-001" } },
+          { "name": "count", "dir": "In", "type": "Int32", "value": "3" }
+        ]
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"追加した\"" } }
+  ]
+}
