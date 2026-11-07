@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            ExternalTaskData task = default;
+            UiPath.Persistence.Activities.ExternalTask.ExternalTaskData task = default;
             String action = default;
             // CreateExternalTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateExternalTask_c1e53b.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/CreateExternalTask_c1e53b.xaml", new Dictionary<string, object> { ["in_TaskTitle"] = "確認" });

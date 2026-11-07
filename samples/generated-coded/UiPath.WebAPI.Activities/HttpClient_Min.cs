@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             String body = default;
             Int32 code = default;
-            // HttpClient は対応表が無いので XAML 経由（coded/_activities/HttpClient_71df71.xaml）
-            var __xaml1 = RunWorkflow("coded/_activities/HttpClient_71df71.xaml", new Dictionary<string, object> { ["in_EndPoint"] = "https://example.com/" });
+            // HttpClient は対応表が無いので XAML 経由（coded/_activities/HttpClient_3fbf1d.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/HttpClient_3fbf1d.xaml", new Dictionary<string, object> { ["in_EndPoint"] = "https://example.com/" });
             body = (System.String)__xaml1["out_Result"];
             code = (System.Int32)__xaml1["out_StatusCode"];
             Log(message: "status=" + code.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

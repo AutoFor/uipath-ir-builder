@@ -10,6 +10,7 @@ xmlns:upaj="clr-namespace:UiPath.Persistence.Activities.Job;assembly=UiPath.Pers
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_JobInput" Type="InArgument(upaj:JobData)" />
+    <x:Property Name="out_JobOutput" Type="OutArgument(upaj:JobData)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -66,6 +67,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="WaitForJobAndResume" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ns0:WaitForJobAndResume JobInput="[in_JobInput]" sap2010:WorkflowViewState.IdRef="WaitForJobAndResume_1" />
+    <ns0:WaitForJobAndResume JobInput="[in_JobInput]" JobOutput="[out_JobOutput]" sap2010:WorkflowViewState.IdRef="WaitForJobAndResume_1" />
   </Sequence>
 </Activity>

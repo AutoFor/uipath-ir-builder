@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Timer t = default;
+            UiPath.Core.Timer t = default;
             // 開始
             // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_activities/StartTimer.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/StartTimer.xaml", null);

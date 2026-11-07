@@ -14,10 +14,10 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Image img = default;
+            System.Drawing.Image img = default;
             String txt = default;
-            IEnumerable<KeyValuePair<Rectangle,String>> words = default;
-            OcrActivityResult ocrOut = default;
+            IEnumerable<KeyValuePair<System.Drawing.Rectangle,String>> words = default;
+            UiPath.OCR.Contracts.OcrActivityResult ocrOut = default;
             // MicrosoftCloudOCR（全部入り）
             // MicrosoftCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/MicrosoftCloudOCR_4abb0f.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/MicrosoftCloudOCR_4abb0f.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Image"] = img, ["in_Language"] = "ja", ["in_PredictionId"] = "uia-c5", ["in_Scale"] = 1.5 });

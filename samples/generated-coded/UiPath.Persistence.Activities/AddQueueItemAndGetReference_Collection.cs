@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute(Dictionary<String, Object> in_Info)
         {
-            QueueItemData item = default;
+            UiPath.Persistence.Activities.Queue.QueueItemData item = default;
             // AddQueueItemAndGetReference はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AddQueueItemAndGetReference_5b2511.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/AddQueueItemAndGetReference_5b2511.xaml", new Dictionary<string, object> { ["in_ItemInformationCollection"] = in_Info, ["in_QueueName"] = "Invoices" });
             item = (UiPath.Persistence.Activities.Queue.QueueItemData)__xaml1["out_QueueItemOutput"];

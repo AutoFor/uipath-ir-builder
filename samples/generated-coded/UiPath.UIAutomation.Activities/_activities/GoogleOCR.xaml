@@ -5,11 +5,15 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
 xmlns:sdc="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
+xmlns:sdp="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_Image" Type="InArgument(sdc:Image)" />
+    <x:Property Name="out_Result" Type="OutArgument(scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String)))" />
+    <x:Property Name="out_Text" Type="OutArgument(x:String)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -64,6 +68,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="GoogleOCR" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:GoogleOCR ComputeSkewAngle="False" ExtractWords="False" Image="[in_Image]" NoopExecution="False" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" />
+    <ui:GoogleOCR ComputeSkewAngle="False" ExtractWords="False" Image="[in_Image]" NoopExecution="False" Result="[out_Result]" Text="[out_Text]" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" />
   </Sequence>
 </Activity>

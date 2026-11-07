@@ -14,9 +14,9 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            FormTaskData task1 = default;
+            UiPath.Persistence.Activities.FormTask.FormTaskData task1 = default;
             String comment1 = default;
-            FormTaskData task2 = default;
+            UiPath.Persistence.Activities.FormTask.FormTaskData task2 = default;
             String comment2 = default;
             // CreateFormTask はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateFormTask_e3c3db.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/CreateFormTask_e3c3db.xaml", new Dictionary<string, object> { ["in_FormLayout"] = "[{\"type\":\"textfield\",\"key\":\"Comment\",\"label\":\"コメント\",\"input\":true},{\"type\":\"button\",\"label\":\"Approve\",\"key\":\"approve\",\"theme\":\"primary\",\"input\":true,\"tableView\":false},{\"type\":\"button\",\"label\":\"Reject\",\"key\":\"reject\",\"theme\":\"danger\",\"input\":true,\"tableView\":false}]", ["in_Group"] = "Reviewers", ["in_TaskTitle"] = "順番に割り当てるフォーム" });

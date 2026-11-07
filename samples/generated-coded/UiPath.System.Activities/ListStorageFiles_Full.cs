@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IEnumerable<StorageFileInfo> files = default;
+            IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo> files = default;
             // ストレージの一覧
             files = system.ListStorageFiles(directory: "reports", storageBucketName: "ir-bucket", folderPath: "Shared", recursive: true, filter: "*.csv", timeoutMS: 30000);
             Log(message: "ファイル数: " + files.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);

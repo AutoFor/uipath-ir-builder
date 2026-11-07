@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             item = system.AddTransactionItem(queueType: "IRQueue");
             Log(message: "追加した: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);
         }

@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IChartRef ch = default;
+            UiPath.Excel.IChartRef ch = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertExcelChartX_Line.xlsx", overwrite: true);
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertExcelChartX_Line.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))

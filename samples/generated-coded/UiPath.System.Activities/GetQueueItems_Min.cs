@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IEnumerable<QueueItem> items = default;
+            IEnumerable<UiPath.Core.QueueItem> items = default;
             items = system.GetQueueItems(queueName: "IRQueue");
             Log(message: Convert.ToString("取得した件数: " + items.Count()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

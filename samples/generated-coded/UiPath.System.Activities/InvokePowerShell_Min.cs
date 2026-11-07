@@ -14,10 +14,10 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Collection<String> res = default;
+            System.Collections.ObjectModel.Collection<String> res = default;
             // InvokePowerShell はCoded API が無い（Coded API なし（ISystemService にも基底クラスにも無い。System.Management.Automation を直接使って書く））ので XAML 経由（coded/_xaml/InvokePowerShell_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/InvokePowerShell_Min_1.xaml", new Dictionary<string, object> { ["res"] = res });
-            res = (Collection<String>)__xaml1["res"];
+            res = (System.Collections.ObjectModel.Collection<String>)__xaml1["res"];
             Log(message: res.Count.ToString() + ":" + res[0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

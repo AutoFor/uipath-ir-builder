@@ -14,11 +14,11 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            CurrentJobInfo ji = default;
+            UiPath.Core.Activities.CurrentJobInfo ji = default;
             // 時刻トリガー
             // TimeTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_xaml/TimeTrigger_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/TimeTrigger_Full_1.xaml", new Dictionary<string, object> { ["ji"] = ji });
-            ji = (CurrentJobInfo)__xaml1["ji"];
+            ji = (UiPath.Core.Activities.CurrentJobInfo)__xaml1["ji"];
             Log(message: "時刻で開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

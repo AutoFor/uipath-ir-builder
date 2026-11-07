@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Image img = default;
+            System.Drawing.Image img = default;
             // MicrosoftCloudOCR（最小）
             // MicrosoftCloudOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/MicrosoftCloudOCR.xaml）
             RunWorkflow("coded/_activities/MicrosoftCloudOCR.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Image"] = img });

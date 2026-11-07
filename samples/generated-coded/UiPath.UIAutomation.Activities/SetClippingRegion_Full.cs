@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String notePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "uia-c3-note.txt");
-            UiElement el = default;
+            UiPath.Core.UiElement el = default;
             // メモ帳に開かせるファイルを書く
             system.WriteTextFile(text: "uia-c3", file: LocalResource.FromPath(notePath));
             // メモ帳を起動して入る

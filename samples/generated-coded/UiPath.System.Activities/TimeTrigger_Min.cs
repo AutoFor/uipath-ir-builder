@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            // TimeTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/TimeTrigger_7f4349.xaml）
-            RunWorkflow("coded/_activities/TimeTrigger_7f4349.xaml", null);
+            // TimeTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/TimeTrigger_816c09.xaml）
+            RunWorkflow("coded/_activities/TimeTrigger_816c09.xaml", null);
             Log(message: "時刻で開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

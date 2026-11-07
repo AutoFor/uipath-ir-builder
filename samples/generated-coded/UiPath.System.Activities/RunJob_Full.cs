@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            OrchestratorJob job = default;
+            UiPath.Core.Activities.OrchestratorJob job = default;
             // 子のプロセスを実行
             (job, _) = system.RunJob(processName: "IrChildProcess", orchestratorFolderPath: "Shared", inputArguments: new Dictionary<string, object> { ["in_Name"] = "太郎" }, doNotWait: false, runJobOptionalParameters: new UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters { TimeoutMS = 600000, FailWhenJobFails = false, Priority = UiPath.Activities.System.Jobs.JobPriorityV2.High, EntryPointPath = "Main.xaml", RuntimeType = UiPath.Activities.System.Jobs.JobRuntimeType.Unattended, Machine = "ir-machine", Account = "ir-robot-unattended" });
             Log(message: "ジョブを実行した", level: UiPath.CodedWorkflows.LogLevel.Info);

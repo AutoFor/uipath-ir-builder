@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute(String in_InvoiceNo)
         {
-            FormTaskData task = default;
+            UiPath.Persistence.Activities.FormTask.FormTaskData task = default;
             String action = default;
             String comment = default;
             // 配列の形

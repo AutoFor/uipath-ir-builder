@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String user = default;
-            SecureString pass = default;
+            System.Security.SecureString pass = default;
             // 資格情報を取得
             (user, pass) = system.GetCredential(assetName: "IRCredential", folderPath: "Shared", timeoutMS: 30000, cacheStrategy: UiPath.Core.Activities.CacheStrategyEnum.Execution);
             Log(message: "ユーザー: " + user, level: UiPath.CodedWorkflows.LogLevel.Info);

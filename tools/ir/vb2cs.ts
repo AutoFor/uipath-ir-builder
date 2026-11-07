@@ -23,6 +23,8 @@
 //   InStr(s, ",") などの VB の組み込み関数は省いた引数の既定値を書き足し、s.Split(","c) は s.Split(new[] { ',' }) にする。
 //   名前付き引数と、既定値を決められない呼び出し、C# の予約語の名前の変数（out など）はエラー
 
+import { xamlTypeEntries } from "./types-xaml.ts";
+
 export type Converted = { cs: string } | { error: string };
 export type ConvertOptions = { tree?: boolean };
 
@@ -500,6 +502,22 @@ export function csType(t: string): string {
   return t.trim()
     .replace(/\(Of\s+/g, "<").replace(/\)/g, ">")
     .replace(/\b(Integer|Long|Short|Date|Single|Char)\b/g, (m) => typeAlias[m.toLowerCase()])
-    // XAML では短い名前で書ける型（types-xaml.ts）のうち、C# の既定の using に無い名前空間のもの
-    .replace(/(?<![\w.])GenericValue\b/g, "UiPath.Core.GenericValue");
+    // XAML では短い名前で書ける型（types-xaml.ts）のうち、C# の既定の using に無い名前空間のもの（CurrentJobInfo、Match など）は完全名にする
+    .replace(/(?<![\w.])[A-Z]\w*\b(?!\s*\.)/g, (m) => qualified().get(m) ?? m);
+}
+
+// 生成する C# にいつも付ける using（generate-coded.ts の baseUsings と同じ）
+const defaultUsings = new Set(["System", "System.Collections.Generic", "System.Data", "System.IO", "System.Linq", "UiPath.CodedWorkflows", "UiPath.Platform.ResourceHandling"]);
+let qualifiedNames: Map<string, string> | undefined;
+function qualified(): Map<string, string> {
+  if (!qualifiedNames) {
+    qualifiedNames = new Map();
+    for (const e of xamlTypeEntries()) {
+      if (!/^\w+$/.test(e.ir)) continue;
+      const [p, local] = e.text.includes(":") ? e.text.split(":") : ["", e.text];
+      const ns = /^clr-namespace:([\w.]+);/.exec(e.xmlns[p] ?? "")?.[1];
+      if (ns && !defaultUsings.has(ns) && local.replace(/\(.*$/, "") === e.ir) qualifiedNames.set(e.ir, `${ns}.${e.ir}`);
+    }
+  }
+  return qualifiedNames;
 }

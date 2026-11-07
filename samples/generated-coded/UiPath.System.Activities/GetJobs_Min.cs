@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IEnumerable<OrchestratorJob> jobs = default;
+            IEnumerable<UiPath.Core.Activities.OrchestratorJob> jobs = default;
             jobs = system.GetJobs();
             Log(message: "ジョブ数: " + jobs.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

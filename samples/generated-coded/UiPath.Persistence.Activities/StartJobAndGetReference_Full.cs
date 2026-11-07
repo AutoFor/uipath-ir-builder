@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            JobData job = default;
+            UiPath.Persistence.Activities.Job.JobData job = default;
             // ジョブを始める
             // StartJobAndGetReference はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/StartJobAndGetReference_4baf6a.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/StartJobAndGetReference_4baf6a.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_FolderPath"] = "Shared", ["in_ProcessName"] = "ChildProcess", ["in_TimeoutMs"] = 30000, ["in_JobArguments_in_No"] = "INV-1" });

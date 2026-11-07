@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             // キュー項目を待つ
             item = system.WaitQueueItem(queueName: "IRQueue", folderPath: "Shared", pollTimeMS: 5000, filterStrategy: UiPath.Core.Activities.ReferenceFilterStrategy.Equals, reference: "IR-REF-001", timeoutMS: 30000);
             Log(message: "待ち終わった: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);

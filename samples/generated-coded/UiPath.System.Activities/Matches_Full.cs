@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IEnumerable<Match> ms = default;
+            IEnumerable<System.Text.RegularExpressions.Match> ms = default;
             String first = default;
             // 文字と数字の組を全部探す
             // Matches はCoded API が無い（Coded API なし（ISystemService に Matches が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/Matches_1d1fed.xaml）

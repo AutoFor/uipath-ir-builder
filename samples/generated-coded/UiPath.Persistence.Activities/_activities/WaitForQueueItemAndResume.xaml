@@ -10,6 +10,7 @@ xmlns:upaq="clr-namespace:UiPath.Persistence.Activities.Queue;assembly=UiPath.Pe
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_QueueItemInput" Type="InArgument(upaq:QueueItemData)" />
+    <x:Property Name="out_QueueItemOutput" Type="OutArgument(upaq:QueueItemData)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -66,6 +67,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="WaitForQueueItemAndResume" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ns0:WaitForQueueItemAndResume QueueItemInput="[in_QueueItemInput]" sap2010:WorkflowViewState.IdRef="WaitForQueueItemAndResume_1" />
+    <ns0:WaitForQueueItemAndResume QueueItemInput="[in_QueueItemInput]" QueueItemOutput="[out_QueueItemOutput]" sap2010:WorkflowViewState.IdRef="WaitForQueueItemAndResume_1" />
   </Sequence>
 </Activity>

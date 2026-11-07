@@ -6,10 +6,12 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ns0="clr-namespace:UiPath.Core.Activities.SAP;assembly=UiPath.UiAutomation.Activities"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_ConnectionName" Type="InArgument(x:String)" />
     <x:Property Name="in_SAPLogonPath" Type="InArgument(x:String)" />
+    <x:Property Name="out_Window" Type="OutArgument(ui:Window)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -65,6 +67,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Logon" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ns0:Logon ConnectionName="[in_ConnectionName]" DelayBetweenRetries="500" Retries="5" SAPLogonPath="[in_SAPLogonPath]" sap2010:WorkflowViewState.IdRef="Logon_1" />
+    <ns0:Logon ConnectionName="[in_ConnectionName]" DelayBetweenRetries="500" Retries="5" SAPLogonPath="[in_SAPLogonPath]" Window="[out_Window]" sap2010:WorkflowViewState.IdRef="Logon_1" />
   </Sequence>
 </Activity>

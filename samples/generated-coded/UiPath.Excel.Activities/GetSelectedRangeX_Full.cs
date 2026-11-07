@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IReadRangeRef rng = default;
+            UiPath.Excel.IReadRangeRef rng = default;
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 Excel.Sheet["Sheet1"].Range["A1:B4"].SelectRange();

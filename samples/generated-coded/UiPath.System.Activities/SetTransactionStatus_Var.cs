@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             Dictionary<String, Object> ana = new Dictionary<String, Object>();
             Dictionary<String, Object> outd = new Dictionary<String, Object>();
             // キューから1件取る

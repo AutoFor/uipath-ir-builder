@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "extract me", file: LocalResource.FromPath("output\\ExtractFiles_Extra.a.txt"));
             system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { "output\\ExtractFiles_Extra.a.txt" }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: "output\\ExtractFiles_Extra.zip", password: null, compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.Normal, codePage: UiPath.Activities.System.Encode.CodePages.Default, overrideExistingFile: true);
             // 展開（Coded に無い設定）
-            // ExtractFiles はこの形の Coded API が無い（Coded API なし（ConflictResolution: ExtractUnzipFiles に引数が無い））ので XAML 経由（coded/_activities/ExtractFiles_25fbbb.xaml）
-            var __xaml1 = RunWorkflow("coded/_activities/ExtractFiles_25fbbb.xaml", new Dictionary<string, object> { ["in_DestinationFolder"] = "output\\ExtractFiles_Extra", ["in_FileToExtract"] = "output\\ExtractFiles_Extra.zip" });
+            // ExtractFiles はこの形の Coded API が無い（Coded API なし（ConflictResolution: ExtractUnzipFiles に引数が無い））ので XAML 経由（coded/_activities/ExtractFiles_fcf37b.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/ExtractFiles_fcf37b.xaml", new Dictionary<string, object> { ["in_DestinationFolder"] = "output\\ExtractFiles_Extra", ["in_FileToExtract"] = "output\\ExtractFiles_Extra.zip" });
             destInfo = (System.IO.DirectoryInfo)__xaml1["out_DestinationFolderInfo"];
             Log(message: Convert.ToString(System.IO.File.Exists(System.IO.Path.Combine(destInfo.FullName, "ExtractFiles_Extra.a.txt")).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

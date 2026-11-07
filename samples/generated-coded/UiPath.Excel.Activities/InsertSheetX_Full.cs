@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             Object a1 = default;
-            ISheetRef newSheet = default;
+            UiPath.Excel.ISheetRef newSheet = default;
             // 元のブックを output に写す
             system.CopyFile(path: "data\\excel\\Sample.xlsx", destination: "output\\InsertSheetX_Full.xlsx", overwrite: true);
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\InsertSheetX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))

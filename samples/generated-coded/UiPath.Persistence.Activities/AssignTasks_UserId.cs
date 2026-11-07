@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute(Int64 in_TaskId, Int64 in_UserId)
         {
-            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AssignTasks_8043a9.xaml）
-            RunWorkflow("coded/_activities/AssignTasks_8043a9.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId, ["in_UserId"] = in_UserId });
+            // AssignTasks はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/AssignTasks_4c42be.xaml）
+            RunWorkflow("coded/_activities/AssignTasks_4c42be.xaml", new Dictionary<string, object> { ["in_TaskId"] = in_TaskId, ["in_UserId"] = in_UserId });
         }
     }
 }

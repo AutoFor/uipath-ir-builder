@@ -16,8 +16,8 @@ namespace CatalogProbeNet8
         {
             String l = default;
             String r = default;
-            // TextToLeftRight はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/TextToLeftRight_3140ba.xaml）
-            var __xaml1 = RunWorkflow("coded/_activities/TextToLeftRight_3140ba.xaml", new Dictionary<string, object> { ["in_FullText"] = "key=value", ["in_Separator"] = "=" });
+            // TextToLeftRight はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/TextToLeftRight.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/TextToLeftRight.xaml", new Dictionary<string, object> { ["in_FullText"] = "key=value", ["in_Separator"] = "=" });
             l = (System.String)__xaml1["out_TextToLeft"];
             r = (System.String)__xaml1["out_TextToRight"];
             Log(message: l, level: UiPath.CodedWorkflows.LogLevel.Info);

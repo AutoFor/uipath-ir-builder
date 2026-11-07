@@ -185,3 +185,32 @@ test("汎用の XAML：出力は戻りの辞書から受け、引数にできな
   assert.equal(a.xamls[0].wf.body[0].props!.TestDataQueueItemStatus, "OnlyConsumed");
   assert.match(a.code, /var __xaml1 = RunWorkflow\("coded\/_activities\/GetTestDataQueueItems_[0-9a-f]{6}\.xaml", new Dictionary<string, object> \{ \["in_QueueName"\] = "Q" \}\);\s+items = \((System\.Collections\.Generic\.)?List<UiPath\.Testing\.Core\.TestDataQueueItem>\)__xaml1\["out_TestDataQueueItems"\];/);
 });
+
+test("汎用の XAML：出力・入出力は IR に無くてもいつも引数。受けても受けなくても同じファイル", () => {
+  const noApi = { ...via, noApi: ["UiPath.System.Activities"] };
+  const wf: Workflow = {
+    workflow: "J", variables: [{ name: "j", type: "UiPath.Core.Activities.CurrentJobInfo" }],
+    body: [{ act: "GetCurrentJobInfo" }, { act: "GetCurrentJobInfo", props: { Result: "j" } }],
+  };
+  const r = generateCoded(wf, cat, maps, { namespace: "N", viaXaml: noApi });
+  assert.deepEqual(r.issues, []);
+  assert.deepEqual(r.xamls.map((x) => x.path), ["coded/_activities/GetCurrentJobInfo.xaml"]);
+  assert.deepEqual(r.xamls[0].wf.arguments, [{ name: "out_Result", dir: "Out", type: "UiPath.Core.Activities.CurrentJobInfo" }]);
+  // 受けないときは戻りを読まない
+  assert.match(r.code, /^\s*RunWorkflow\("coded\/_activities\/GetCurrentJobInfo\.xaml", null\);/m);
+  assert.match(r.code, /var __xaml1 = RunWorkflow\("coded\/_activities\/GetCurrentJobInfo\.xaml", null\);\s+j = \(UiPath\.Core\.Activities\.CurrentJobInfo\)__xaml1\["out_Result"\];/);
+});
+
+test("汎用の XAML：必須の入力がオーバーロードの組で分かれるものは、カタログで最初の組の形だけハッシュの無い名前", () => {
+  const noApi = { ...via, noApi: ["UiPath.System.Activities"] };
+  const wf: Workflow = {
+    workflow: "R", variables: [{ name: "f", type: "UiPath.Platform.ResourceHandling.IResource" }],
+    body: [
+      { act: "RenameFileX", props: { FilePath: { lit: "a.txt" }, NewName: { lit: "b" } } },
+      { act: "RenameFileX", props: { FileResource: "f", NewName: { lit: "b" } } },
+    ],
+  };
+  const r = generateCoded(wf, cat, maps, { namespace: "N", viaXaml: noApi });
+  assert.deepEqual(r.issues, []);
+  assert.deepEqual(r.xamls.map((x) => x.path.replace(/_[0-9a-f]{6}\.xaml$/, "_<hash>.xaml")), ["coded/_activities/RenameFileX.xaml", "coded/_activities/RenameFileX_<hash>.xaml"]);
+});

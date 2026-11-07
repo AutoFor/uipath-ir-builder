@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            UiElement el = default;
+            UiPath.Core.UiElement el = default;
             // 画面で指す（全部入り）
             // IndicateOnScreen はCoded API が無い（Coded API なし（Classic の画面上の指示（人の操作を待つ）。Coded の API なし））ので XAML 経由（coded/_activities/IndicateOnScreen_c51c4c.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/IndicateOnScreen_c51c4c.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = true, ["in_HidePreview"] = true, ["in_SelectScreenRegion"] = false });

@@ -14,10 +14,10 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Image img = default;
+            System.Drawing.Image img = default;
             String txt = default;
-            IEnumerable<KeyValuePair<Rectangle,String>> words = default;
-            OcrActivityResult ocrOut = default;
+            IEnumerable<KeyValuePair<System.Drawing.Rectangle,String>> words = default;
+            UiPath.OCR.Contracts.OcrActivityResult ocrOut = default;
             // MicrosoftAzureComputerVisionOCR（全部入り）
             // MicrosoftAzureComputerVisionOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/MicrosoftAzureComputerVisionOCR_b6e588.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/MicrosoftAzureComputerVisionOCR_b6e588.xaml", new Dictionary<string, object> { ["in_ApiKey"] = "DUMMY-KEY-NOT-USED", ["in_Endpoint"] = "https://example.invalid/", ["in_Image"] = img, ["in_Language"] = "ja", ["in_PredictionId"] = "uia-c5", ["in_Scale"] = 1.5 });

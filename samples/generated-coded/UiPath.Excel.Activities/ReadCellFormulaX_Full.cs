@@ -22,12 +22,12 @@ namespace CatalogProbeNet8
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "data\\excel\\Sample.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 // C3 の式
-                // ReadCellFormulaX はCoded API が無い（Coded API なし（ReadCellFormula は IWorkHandle＝クラシックの UseWorkBook 用。モダンの UseExcelFile が返す IReadCellRef に対する式の読み取りは無い））ので XAML 経由（coded/_activities/ReadCellFormulaX_44914e.xaml）
-                var __xaml1 = RunWorkflow("coded/_activities/ReadCellFormulaX_44914e.xaml", new Dictionary<string, object> { ["in_Cell"] = Excel.Sheet["Sheet1"].Cell["C3"] });
+                // ReadCellFormulaX はCoded API が無い（Coded API なし（ReadCellFormula は IWorkHandle＝クラシックの UseWorkBook 用。モダンの UseExcelFile が返す IReadCellRef に対する式の読み取りは無い））ので XAML 経由（coded/_activities/ReadCellFormulaX.xaml）
+                var __xaml1 = RunWorkflow("coded/_activities/ReadCellFormulaX.xaml", new Dictionary<string, object> { ["in_Cell"] = Excel.Sheet["Sheet1"].Cell["C3"] });
                 f = (System.String)__xaml1["out_SaveTo"];
                 // 値のセルの式
-                // ReadCellFormulaX はCoded API が無い（Coded API なし（ReadCellFormula は IWorkHandle＝クラシックの UseWorkBook 用。モダンの UseExcelFile が返す IReadCellRef に対する式の読み取りは無い））ので XAML 経由（coded/_activities/ReadCellFormulaX_44914e.xaml）
-                var __xaml2 = RunWorkflow("coded/_activities/ReadCellFormulaX_44914e.xaml", new Dictionary<string, object> { ["in_Cell"] = Excel.Sheet["Sheet1"].Cell["B3"] });
+                // ReadCellFormulaX はCoded API が無い（Coded API なし（ReadCellFormula は IWorkHandle＝クラシックの UseWorkBook 用。モダンの UseExcelFile が返す IReadCellRef に対する式の読み取りは無い））ので XAML 経由（coded/_activities/ReadCellFormulaX.xaml）
+                var __xaml2 = RunWorkflow("coded/_activities/ReadCellFormulaX.xaml", new Dictionary<string, object> { ["in_Cell"] = Excel.Sheet["Sheet1"].Cell["B3"] });
                 g = (System.String)__xaml2["out_SaveTo"];
             }
             Log(message: "C3 の式: " + f, level: UiPath.CodedWorkflows.LogLevel.Info);

@@ -15,8 +15,8 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             String mailTo = "someone@example.com";
-            // SendMail は対応表が無いので XAML 経由（coded/_activities/SendMail_e9226b.xaml）
-            RunWorkflow("coded/_activities/SendMail_e9226b.xaml", new Dictionary<string, object> { ["in_Body"] = "本文 " + mailTo, ["in_Email"] = "robot@example.com", ["in_Password"] = "dummy", ["in_Port"] = 587, ["in_Server"] = "smtp.example.com", ["in_Subject"] = "件名", ["in_To"] = mailTo });
+            // SendMail は対応表が無いので XAML 経由（coded/_activities/SendMail_d9fbba.xaml）
+            RunWorkflow("coded/_activities/SendMail_d9fbba.xaml", new Dictionary<string, object> { ["in_Body"] = "本文 " + mailTo, ["in_Email"] = "robot@example.com", ["in_Password"] = "dummy", ["in_Port"] = 587, ["in_Server"] = "smtp.example.com", ["in_Subject"] = "件名", ["in_To"] = mailTo });
             Log(message: "送った: " + mailTo, level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }

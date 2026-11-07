@@ -14,10 +14,10 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            CurrentJobInfo ji = default;
+            UiPath.Core.Activities.CurrentJobInfo ji = default;
             // 手動トリガー
-            // ManualTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/ManualTrigger_d96020.xaml）
-            var __xaml1 = RunWorkflow("coded/_activities/ManualTrigger_d96020.xaml", null);
+            // ManualTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/ManualTrigger.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/ManualTrigger.xaml", null);
             ji = (UiPath.Core.Activities.CurrentJobInfo)__xaml1["out_Result"];
             Log(message: "手動で開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }

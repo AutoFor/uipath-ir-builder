@@ -9,6 +9,7 @@ xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_Text" Type="InArgument(x:Object)" />
+    <x:Property Name="out_ChosenButton" Type="OutArgument(x:String)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -63,6 +64,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="MessageBox" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:MessageBox AutoCloseAfter="00:00:00" Text="[in_Text]" sap2010:WorkflowViewState.IdRef="MessageBox_1" />
+    <ui:MessageBox AutoCloseAfter="00:00:00" ChosenButton="[out_ChosenButton]" Text="[in_Text]" sap2010:WorkflowViewState.IdRef="MessageBox_1" />
   </Sequence>
 </Activity>

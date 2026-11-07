@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             FileInfo copy = default;
-            Process sleeper = default;
+            System.Diagnostics.Process sleeper = default;
             // ping を別名でコピー
             copy = new System.IO.FileInfo("C:/Windows/System32/PING.EXE").CopyTo(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "irb_sleeper.exe"), true);
             // コピーを起動

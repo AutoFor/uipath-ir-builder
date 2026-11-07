@@ -16,13 +16,13 @@ namespace CatalogProbeNet8
         {
             String htmlPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "uia-test-form.html");
             String text = default;
-            UiElement scopeEl = default;
+            UiPath.Core.UiElement scopeEl = default;
             // テスト用の HTML を書く
             system.WriteTextFile(text: "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div><div id='outer'><div id='inner'><span id='leaf'>leaf</span></div></div></body></html>", file: LocalResource.FromPath(htmlPath));
             // UIA Test Form を開く（Classic）
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/ElementScope_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ElementScope_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["scopeEl"] = scopeEl, ["text"] = text });
-            scopeEl = (UiElement)__xaml1["scopeEl"];
+            scopeEl = (UiPath.Core.UiElement)__xaml1["scopeEl"];
             text = (String)__xaml1["text"];
             Log(message: "スコープ内: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
         }

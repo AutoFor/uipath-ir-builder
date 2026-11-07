@@ -6,10 +6,12 @@ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_FilePath" Type="InArgument(x:String)" />
     <x:Property Name="in_NewName" Type="InArgument(x:String)" />
+    <x:Property Name="out_OutputFileResource" Type="OutArgument(upr:IResource)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -64,6 +66,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="RenameFileX" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:RenameFileX FilePath="[in_FilePath]" KeepExtension="True" NewName="[in_NewName]" sap2010:WorkflowViewState.IdRef="RenameFileX_1" />
+    <ui:RenameFileX FilePath="[in_FilePath]" KeepExtension="True" NewName="[in_NewName]" OutputFileResource="[out_OutputFileResource]" sap2010:WorkflowViewState.IdRef="RenameFileX_1" />
   </Sequence>
 </Activity>

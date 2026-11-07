@@ -606,9 +606,10 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if (!xamls.some((x) => x.path === path)) xamls.push({ path, wf: g.wf, at, kind: "activity" });
     warnings.push({ path: at, code: "CODED_VIA_XAML", message: `${className}（${pkg}）は${why}ので、1つのアクティビティだけの XAML（${path}）を RunWorkflow で呼ぶ` });
     emit(depth, `// ${className} は${why}ので XAML 経由（${path}）`);
-    const items = g.args.filter((x) => x.dir !== "Out").map((x) => `[${csLit(x.name)}] = ${/^(System\.)?String$/.test(x.type) ? str(x.value, at, sc) : expr(x.value, at, sc)}`);
+    const given = g.args.filter((x): x is typeof x & { value: Value } => x.value !== undefined); // IR に無い出力・入出力は渡さず、受け取らない
+    const items = given.filter((x) => x.dir !== "Out").map((x) => `[${csLit(x.name)}] = ${/^(System\.)?String$/.test(x.type) ? str(x.value, at, sc) : expr(x.value, at, sc)}`);
     const dict = items.length ? `new Dictionary<string, object> { ${items.join(", ")} }` : "null";
-    const back = g.args.filter((x) => x.dir !== "In");
+    const back = given.filter((x) => x.dir !== "In");
     if (!back.length) { emit(depth, `RunWorkflow(${csLit(path)}, ${dict});`); return; }
     const v = `__xaml${++tmp}`;
     emit(depth, `var ${v} = RunWorkflow(${csLit(path)}, ${dict});`);

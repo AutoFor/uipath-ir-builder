@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             Dictionary<String, Object> tinfo = new Dictionary<String, Object>();
             item = system.AddTransactionItem(queueType: "IRQueue", folderPath: "Shared", reference: "IR-REF-002", transactionInformation: tinfo, timeoutMS: 30000);
             Log(message: "追加した: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);

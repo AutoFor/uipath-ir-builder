@@ -15,11 +15,11 @@ namespace CatalogProbeNet8
         public void Execute(String in_InvoiceNo)
         {
             String marker = default;
-            FormTaskData task = default;
+            UiPath.Persistence.Activities.FormTask.FormTaskData task = default;
             String action = default;
             String comment = default;
             String note = default;
-            FormTaskData layoutTask = default;
+            UiPath.Persistence.Activities.FormTask.FormTaskData layoutTask = default;
             String layoutAction = default;
             String layoutComment = default;
             marker = "wait-before";
@@ -44,8 +44,8 @@ namespace CatalogProbeNet8
             layoutTask = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml3["out_TaskOutput"];
             layoutComment = (String)__xaml3["out_FormData_Comment"];
             // 2つ目を待つ
-            // WaitForFormTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForFormTaskAndResume_047385.xaml）
-            var __xaml4 = RunWorkflow("coded/_activities/WaitForFormTaskAndResume_047385.xaml", new Dictionary<string, object> { ["in_TaskInput"] = layoutTask });
+            // WaitForFormTaskAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForFormTaskAndResume.xaml）
+            var __xaml4 = RunWorkflow("coded/_activities/WaitForFormTaskAndResume.xaml", new Dictionary<string, object> { ["in_TaskInput"] = layoutTask });
             layoutAction = (System.String)__xaml4["out_TaskAction"];
             layoutTask = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml4["out_TaskOutput"];
             Log(message: "resume2 action=" + layoutAction + " comment=" + layoutComment + " marker=" + marker + " data=" + Convert.ToString(layoutTask.Data), level: UiPath.CodedWorkflows.LogLevel.Info);

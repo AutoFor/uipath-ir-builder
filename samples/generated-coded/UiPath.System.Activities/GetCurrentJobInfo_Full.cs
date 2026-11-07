@@ -14,10 +14,10 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            CurrentJobInfo info = default;
+            UiPath.Core.Activities.CurrentJobInfo info = default;
             // 今のジョブの情報
-            // GetCurrentJobInfo はCoded API が無い（Coded API なし（ISystemService に GetCurrentJobInfo が無い。docs の Notes には「Coded 対応」とあるが、26.10.0 のサービス API には出ていない））ので XAML 経由（coded/_activities/GetCurrentJobInfo_87628c.xaml）
-            var __xaml1 = RunWorkflow("coded/_activities/GetCurrentJobInfo_87628c.xaml", null);
+            // GetCurrentJobInfo はCoded API が無い（Coded API なし（ISystemService に GetCurrentJobInfo が無い。docs の Notes には「Coded 対応」とあるが、26.10.0 のサービス API には出ていない））ので XAML 経由（coded/_activities/GetCurrentJobInfo.xaml）
+            var __xaml1 = RunWorkflow("coded/_activities/GetCurrentJobInfo.xaml", null);
             info = (UiPath.Core.Activities.CurrentJobInfo)__xaml1["out_Result"];
             Log(message: "ジョブ情報あり: " + (info != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
         }

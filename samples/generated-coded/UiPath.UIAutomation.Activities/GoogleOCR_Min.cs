@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Image img = default;
+            System.Drawing.Image img = default;
             // GoogleOCR（最小）
             // GoogleOCR はCoded API が無い（Coded API なし（OCR エンジン（クラウド）。Coded の API に OCR のエンジンのアクティビティは無い））ので XAML 経由（coded/_activities/GoogleOCR.xaml）
             RunWorkflow("coded/_activities/GoogleOCR.xaml", new Dictionary<string, object> { ["in_Image"] = img });

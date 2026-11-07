@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            IEnumerable<QueueItem> items = default;
+            IEnumerable<UiPath.Core.QueueItem> items = default;
             items = system.GetQueueItems(queueName: "IRQueue");
             system.DeleteQueueItems(queueItems: items);
             Log(message: "削除した", level: UiPath.CodedWorkflows.LogLevel.Info);

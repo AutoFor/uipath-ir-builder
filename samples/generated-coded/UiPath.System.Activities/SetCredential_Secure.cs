@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            SecureString spw = new System.Net.NetworkCredential("", "pw").SecurePassword;
+            System.Security.SecureString spw = new System.Net.NetworkCredential("", "pw").SecurePassword;
             system.SetCredential(userName: "user1", password: new NetworkCredential(string.Empty, spw).Password, credentialName: "IRCredential", folderPath: "Shared", timeoutMS: 30000);
             Log(message: "資格情報を設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
         }

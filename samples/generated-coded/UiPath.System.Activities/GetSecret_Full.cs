@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            SecureString secret = default;
+            System.Security.SecureString secret = default;
             // シークレットを取得
             // GetSecret はCoded API が無い（Coded API なし（ISystemService に GetSecret が無い））ので XAML 経由（coded/_activities/GetSecret_25267f.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetSecret_25267f.xaml", new Dictionary<string, object> { ["in_AssetName"] = "IRSecret", ["in_FolderPath"] = "Shared", ["in_TimeoutMS"] = 30000 });

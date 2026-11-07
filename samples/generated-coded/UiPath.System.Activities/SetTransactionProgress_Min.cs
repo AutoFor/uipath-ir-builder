@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             // キューから1件取る
             item = system.GetQueueItem(queueType: "IRQueue");
             system.SetTransactionProgress(transactionItem: item, progress: "処理中");

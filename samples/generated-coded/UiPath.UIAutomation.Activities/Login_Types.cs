@@ -17,12 +17,12 @@ namespace CatalogProbeNet8
             Window win = default;
             Window appWin = default;
             Browser browser = default;
-            UiElement element = default;
+            UiPath.Core.UiElement element = default;
             UiPath.Core.Image image = default;
-            Image drawingImage = default;
+            System.Drawing.Image drawingImage = default;
             Region region = default;
-            Rectangle rect = new Rectangle(10, 20, 300, 200);
-            Point pt = new Point(10, 20);
+            System.Drawing.Rectangle rect = new Rectangle(10, 20, 300, 200);
+            System.Drawing.Point pt = new Point(10, 20);
             // SAP Logon を開く（Classic）
             // OpenApplication はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/Login_Types_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/Login_Types_1.xaml", new Dictionary<string, object> { ["appWin"] = appWin, ["win"] = win, ["browser"] = browser });

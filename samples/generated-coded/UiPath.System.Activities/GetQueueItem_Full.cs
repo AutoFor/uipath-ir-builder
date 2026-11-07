@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            QueueItem item = default;
+            UiPath.Core.QueueItem item = default;
             Object sd = default;
             // キューから取得
             item = system.GetQueueItem(queueType: "IRQueue", folderPath: "Shared", filterStrategy: UiPath.Core.Activities.ReferenceFilterStrategy.Equals, reference: "IR-REF-001", timeoutMS: 30000);

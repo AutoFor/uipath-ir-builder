@@ -5,8 +5,12 @@ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activi
 xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
 xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
 xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:uca="clr-namespace:UiPath.Core.Activities;assembly=UiPath.System.Activities"
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="out_Result" Type="OutArgument(uca:CurrentJobInfo)" />
+  </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>System.Activities</x:String>
@@ -60,6 +64,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ManualTrigger" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:ManualTrigger sap2010:WorkflowViewState.IdRef="ManualTrigger_1" />
+    <ui:ManualTrigger Result="[out_Result]" sap2010:WorkflowViewState.IdRef="ManualTrigger_1" />
   </Sequence>
 </Activity>

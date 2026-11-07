@@ -27,8 +27,8 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "rename me", file: LocalResource.FromPath("output\\RenameFileX_Resource.txt"));
             src = system.PathExists("output\\RenameFileX_Resource.txt", UiPath.Core.Activities.PathType.File) ? LocalResource.FromPath("output\\RenameFileX_Resource.txt") : null;
             // リソースで名前を変える
-            // RenameFileX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_activities/RenameFileX_dbe892.xaml）
-            RunWorkflow("coded/_activities/RenameFileX_dbe892.xaml", new Dictionary<string, object> { ["in_FileResource"] = src, ["in_NewName"] = "RenameFileX_Resource.new" });
+            // RenameFileX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_activities/RenameFileX_c465ef.xaml）
+            RunWorkflow("coded/_activities/RenameFileX_c465ef.xaml", new Dictionary<string, object> { ["in_FileResource"] = src, ["in_NewName"] = "RenameFileX_Resource.new" });
             ex = system.PathExists(path: "output\\RenameFileX_Resource.new.txt", pathType: UiPath.Core.Activities.PathType.File);
             Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
             ex = system.PathExists(path: "output\\RenameFileX_Resource.txt", pathType: UiPath.Core.Activities.PathType.File);

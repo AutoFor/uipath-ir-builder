@@ -14,8 +14,8 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            UserActionData task1 = default;
-            UserActionData task2 = default;
+            UiPath.Persistence.Activities.UserAction.UserActionData task1 = default;
+            UiPath.Persistence.Activities.UserAction.UserActionData task2 = default;
             // CreateUserAction はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/CreateUserAction_e75d86.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/CreateUserAction_e75d86.xaml", new Dictionary<string, object> { ["in_SolutionApp"] = "uipath-ir-test-approval", ["in_TaskTitle"] = "アプリをユーザーに割り当てる", ["in_UserNameOrEmail"] = "user@example.com" });
             task1 = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml1["out_TaskOutput"];

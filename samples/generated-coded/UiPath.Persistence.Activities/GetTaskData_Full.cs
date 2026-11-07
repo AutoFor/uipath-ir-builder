@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute(Int64 in_TaskId)
         {
-            TaskData data = default;
+            UiPath.Persistence.Activities.Model.Task.TaskData data = default;
             // タスクを読む
             // GetTaskData はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/GetTaskData_b03bfb.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetTaskData_b03bfb.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_FolderPath"] = "Shared", ["in_TaskId"] = in_TaskId, ["in_TimeoutMs"] = 30000 });

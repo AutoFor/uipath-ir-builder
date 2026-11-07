@@ -171,15 +171,17 @@ export function viaXamlWorkflow(n: Node, name: string, args: ViaXamlArg[]): Work
 
 // ---- 1つのアクティビティだけの汎用の XAML（_activities/）----
 //
-// 子を持たないノードは、そのアクティビティだけを置き、IR に書いた入出力のプロパティを全部 XAML の引数にした XAML にする。
-// 値は C# から渡すので、同じ形（使うプロパティ、引数にできない値、辞書の項目）ならどこから呼んでも同じファイル。
+// 子を持たないノードは、そのアクティビティだけを置き、IR に書いた入力と、出力・入出力を XAML の引数にした XAML にする。
+// 値は C# から渡すので、同じ形（使う入力、引数にできない値、辞書の項目）ならどこから呼んでも同じファイル。
 //   - 引数の名前：in_<Prop> / out_<Prop> / io_<Prop>。辞書の項目は in_<Prop>_<項目名> など
-//   - IR に書いていないプロパティは引数にしない（渡さないと 0 や null になり、アクティビティの既定値が効かなくなるため）
+//   - IR に書いていない入力は引数にしない（渡さないと 0 や null になり、アクティビティの既定値が効かなくなるため）
+//   - 出力・入出力は IR に無くてもいつも引数にする（型の決まらないもの、オーバーロードの組のあるものを除く）
 //   - 引数にできないもの（属性の値、enum の名前、System.Type）は XAML に書く。その値は形に入る
-//   - ファイル名：必須のプロパティだけで、引数にできない値も辞書も無いなら <ClassName>.xaml、ほかは <ClassName>_<形のハッシュ>.xaml
+//   - ファイル名：必須の入力と出力・入出力だけで、引数にできない値も辞書も無いなら <ClassName>.xaml、ほかは <ClassName>_<形のハッシュ>.xaml
 // 子のあるもの（body、slots など）、objs・lists・args・assigns のあるものは対象外（undefined）。呼ぶ側は部分木の XAML（_xaml/）にする
 
-export type GenericArg = { name: string; dir: "In" | "Out" | "InOut"; type: string; value: Value };
+// value が無いのは、IR に無い出力・入出力（渡さず、受け取らない）
+export type GenericArg = { name: string; dir: "In" | "Out" | "InOut"; type: string; value?: Value };
 export type GenericActivity = { name: string; wf: Workflow; args: GenericArg[] };
 
 export function genericActivity(n: Node, cat: Catalog, sc: Map<string, string>): GenericActivity | undefined {
@@ -226,10 +228,25 @@ export function genericActivity(n: Node, cat: Catalog, sc: Map<string, string>):
     });
   }
   if (args.some((x) => "error" in toXamlType(x.type))) return undefined;
+  // 出力・入出力は、IR に無くてもいつも引数にする（受け取らなければ捨てるだけ。入出力に既定値のあるものは無い）
+  // 型の決まらないもの、オーバーロードの組のあるもの（組の違うものを一緒に書けない）、古いもの・隠れたものは IR にあるときだけ
+  const always = new Set<string>();
+  for (const p of a.props) {
+    if (!(p.kind === "out" || p.kind === "inout") || p.obsolete || p.browsable === false || p.overloadGroups?.length || isUntypedArgument(p.type) || "error" in toXamlType(p.type)) continue;
+    always.add(p.name);
+    if (p.name in props) continue;
+    const name = `${prefix[p.kind]}_${p.name}`;
+    args.push({ name, dir: p.kind === "out" ? "Out" : "InOut", type: p.type });
+    props[p.name] = name;
+  }
   // 形：これが同じなら XAML も同じ
   const shape = JSON.stringify({ act: a.clrType, typeArg: typeArg ?? null, args: args.map((x) => [x.name, x.dir, x.type]).sort(), fixed: Object.entries(fixed).sort(), objs: n.objs ?? null, dicts: Object.keys(dicts).sort() });
-  const required = new Set(a.props.filter((p) => p.required).map((p) => p.name));
-  const plain = !Object.keys(fixed).length && !Object.keys(dicts).length && !n.objs && Object.keys(props).every((k) => required.has(k)) && !n.typeArg;
+  // ハッシュの無い名前は、必須の入力と「いつも引数」の出力・入出力だけの形（この形はアクティビティごとに 1つ）
+  // 必須の入力がオーバーロードの組で分かれるもの（FilePath か FileResource か）は、カタログで最初の組の形だけ
+  const first = a.props.find((p) => p.required && p.overloadGroups?.length)?.overloadGroups?.[0];
+  const base = new Set([...a.props.filter((p) => p.required && (!p.overloadGroups?.length || p.overloadGroups.includes(first!))).map((p) => p.name), ...always]);
+  const keys = Object.keys(props);
+  const plain = !Object.keys(fixed).length && !Object.keys(dicts).length && !n.objs && !n.typeArg && keys.length === base.size && keys.every((k) => base.has(k));
   const name = plain ? a.className : `${a.className}_${hash(shape)}`;
   const node: Node = { act: n.act, ...(typeArg && (n.typeArg || isUntypedArgumentUsed(a, props)) ? { typeArg } : {}), props: { ...Object.fromEntries(Object.entries(fixed).filter(([k]) => !k.startsWith("dicts."))), ...props }, ...(n.objs ? { objs: n.objs } : {}), ...(Object.keys(dicts).length ? { dicts } : {}) };
   const decl: ArgumentDecl[] = args.map((x) => ({ name: x.name, dir: x.dir, type: x.type }));

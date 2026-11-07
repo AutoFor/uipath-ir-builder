@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            OrchestratorJob job = default;
+            UiPath.Core.Activities.OrchestratorJob job = default;
             system.StopJob(job: job, strategy: UiPath.Core.Activities.StopStrategy.Stop);
             Log(message: "ジョブを止めた", level: UiPath.CodedWorkflows.LogLevel.Info);
         }
