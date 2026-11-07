@@ -101,8 +101,17 @@ export type Mapping = {
   reason?: string;
   ignore?: string[];
   notes?: string;
+  // この版より前のパッケージでは XAML 経由にする（API の形は同じで、実行したときだけ動きが違うもの。apiCheck では分からない）
+  viaXamlBefore?: { version: string; reason: string };
   file: string;
 };
+
+// 版を比べる（"24.10.7" < "26.10.0"）。数字でない部分（-preview など）は無視する
+export function versionLess(a: string, b: string): boolean {
+  const x = a.split(/[.-]/).map((s) => parseInt(s, 10) || 0), y = b.split(/[.-]/).map((s) => parseInt(s, 10) || 0);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) < (y[i] ?? 0);
+  return false;
+}
 
 export function loadMappings(root: string): { maps: Map<string, Mapping>; errors: string[] } {
   const maps = new Map<string, Mapping>();
@@ -120,6 +129,7 @@ export function loadMappings(root: string): { maps: Map<string, Mapping>; errors
         if (!m.activity || !m.package) { errors.push(`${rel}: activity と package が要る`); continue; }
         if (`${m.activity}.json` !== e) errors.push(`${rel}: ファイル名は ${m.activity}.json にする`);
         if (m.coded === null && !m.reason) errors.push(`${rel}: coded が null なら reason を書く`);
+        if (m.viaXamlBefore && (!/^\d+\.\d+/.test(m.viaXamlBefore.version ?? "") || !m.viaXamlBefore.reason)) errors.push(`${rel}: viaXamlBefore には version（"26.10.0" など）と reason が要る`);
         const key = `${m.package}/${m.activity}`;
         if (maps.has(key)) errors.push(`${rel}: ${key} の対応表が2つある`);
         maps.set(key, { ...m, file: rel });

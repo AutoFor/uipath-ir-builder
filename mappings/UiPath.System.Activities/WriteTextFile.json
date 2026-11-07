@@ -67,5 +67,9 @@
       }
     }
   ],
+  "viaXamlBefore": {
+    "version": "26.10.0",
+    "reason": "24.10.7 の system.WriteTextFile は、まだ無いファイルに書けない（「... doesn't exist」で落ちる）。26.10.0 では書ける。間の版は確かめていない"
+  },
   "notes": "file は ILocalResource。パスの文字列は LocalResource.FromPath で包む（GetResourceForLocalPath を渡すと run で落ちる）。Output（書いたファイル）は Coded の戻り値が void なので、書いたあとに file をそのまま Output に入れる（Encoding が無いときは 3 引数形に utf-8 を渡す）"
 }

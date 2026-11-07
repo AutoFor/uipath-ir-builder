@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { loadCatalog } from "./catalog.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { generateChecked } from "./generate.ts";
-import { loadMappings } from "./mapping.ts";
+import { loadMappings, versionLess } from "./mapping.ts";
 import { exprNames, viaXamlArgs } from "./coded-via-xaml.ts";
 import { DEFAULT_CATALOG_FILES, noCodedApiPackages } from "./versions.ts";
 import type { Node, Workflow } from "./types.ts";
@@ -199,6 +199,19 @@ test("汎用の XAML：出力・入出力は IR に無くてもいつも引数�
   // 受けないときは戻りを読まない
   assert.match(r.code, /^\s*RunWorkflow\("coded\/_activities\/GetCurrentJobInfo\.xaml", null\);/m);
   assert.match(r.code, /var __xaml1 = RunWorkflow\("coded\/_activities\/GetCurrentJobInfo\.xaml", null\);\s+j = \(UiPath\.Core\.Activities\.CurrentJobInfo\)__xaml1\["out_Result"\];/);
+});
+
+test("対応表の viaXamlBefore より前の版は XAML 経由。その版以降は対応表の C#", () => {
+  const wf: Workflow = { workflow: "W", body: [{ act: "WriteTextFile", props: { FileName: { lit: "output\\a.txt" }, Text: { lit: "x" } } }] };
+  const old = { ...cat, versions: { ...cat.versions, "UiPath.System.Activities": "24.10.7" } };
+  const a = generateCoded(wf, old, maps, { namespace: "N", viaXaml: via });
+  assert.deepEqual(a.issues, []);
+  assert.match(a.code, /RunWorkflow\("coded\/_activities\/WriteTextFile(_[0-9a-f]{6})?\.xaml"/);
+  assert.match(a.warnings.find((w) => w.code === "CODED_VIA_XAML")!.message, /24\.10\.7 の Coded API では動かない/);
+  const b = generateCoded(wf, { ...cat, versions: { ...cat.versions, "UiPath.System.Activities": "26.10.0" } }, maps, { namespace: "N", viaXaml: via });
+  assert.match(b.code, /system\.WriteTextFile\(/);
+  assert.equal(b.xamls.length, 0);
+  assert.ok(versionLess("24.10.7", "26.10.0") && versionLess("26.2.6", "26.10.0") && !versionLess("26.10.0", "26.10.0") && !versionLess("26.10.1", "26.10.0"));
 });
 
 test("汎用の XAML：必須の入力がオーバーロードの組で分かれるものは、カタログで最初の組の形だけハッシュの無い名前", () => {

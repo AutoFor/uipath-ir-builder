@@ -14,7 +14,7 @@ import type { Catalog } from "./catalog.ts";
 import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
 import type { Workflow, Node, Value, Issue } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
-import { refs, requiredRefs, scopeRefs, usingScope, UIA_APP_TYPE } from "./mapping.ts";
+import { refs, requiredRefs, scopeRefs, usingScope, versionLess, UIA_APP_TYPE } from "./mapping.ts";
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
 import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
 import { itemNames, validate } from "./validate.ts";
@@ -369,6 +369,9 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     const m = maps.get(`${pkg}/${className}`);
     // 対応表が無い、対応表が「Coded API なし」（coded: null）、または Coded API の無いパッケージ（対応表の API を呼べない）なら、XAML 経由
     if (opt.viaXaml && (!m || m.coded === null || noApi.has(pkg))) return viaXaml(n, className, pkg, !m ? "対応表が無い" : m.coded === null ? `Coded API が無い（${m.reason}）` : "このパッケージの版に Coded API が無い", depth, at, sc);
+    // 選んだ版が対応表の viaXamlBefore より前なら、XAML 経由（同じ API でも、その版では実行したときに落ちる）
+    const ver = cat.versions[pkg];
+    if (opt.viaXaml && m?.viaXamlBefore && ver && versionLess(ver, m.viaXamlBefore.version)) return viaXaml(n, className, pkg, `${pkg} ${ver} の Coded API では動かない（${m.viaXamlBefore.reason}）`, depth, at, sc);
     if (!m) { add(at, "NO_MAPPING", `${className} の対応表が無い（mappings/${pkg}/${className}.json を作る）`); return; }
     if (m.coded === null) { add(at, "NO_CODED_API", `${className} は Coded で書けない: ${m.reason}（${m.file}）`); return; }
     const given = [...Object.keys(n.props ?? {}), ...Object.keys(n.objs ?? {}), ...Object.keys(n.lists ?? {}), ...Object.keys(n.dicts ?? {})];

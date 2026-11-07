@@ -476,11 +476,12 @@ node -e "const c=require('./catalog/UiPath.Excel.Activities/3.6.1.json');for(con
 | object を返す API の結果を変数に入れる | `"code": "{SaveTo} = ({SaveTo|type})Convert.ChangeType(..., typeof({SaveTo|type}));"` | `ReadCellValueX.json` |
 | クラシック：スコープの変数を使う | `{@IWorkHandle}`（外側の `scopeType` の末尾の名前） | `ExcelReadCell.json` → `ExcelWorkbookScope.ReadCell(sheetName: ..., ...)` |
 | ある形だけ Coded API が無い | `{ "when": ["ExistingWorkbook"], "reason": "..." }`（NO_CODED_API になり C# を作らない） | `ExcelApplicationScope.json` |
+| 古い版では、API が同じでも実行すると落ちる | 対応表に `"viaXamlBefore": { "version": "26.10.0", "reason": "..." }`（その版より前は XAML 経由。knowledge/coded-via-xaml.md） | `mappings/UiPath.System.Activities/WriteTextFile.json` |
 | static のメソッド（CSV） | `"call": "ExcelOperations.WriteCsvFile"`（`AppendCsvFile` / `ReadCsvFile` / `WriteCsvFile` は拡張メソッドではない） | （未作成） |
 
 - `usings` に、拡張メソッドを使うなら `UiPath.Excel.Activities.API`、オプションのクラスなら `UiPath.Excel.Activities.API.Models`、`UiPath.Excel` の型を使うなら `UiPath.Excel` を書く（スコープの対応表には全部入れてある）
 - モダンのスコープ（`UseExcelFile`）は Excel を起動する。クラシックの `UseWorkBook` は Excel を起動せずにブックを読み書きする（Visible / MacroSetting など Excel の起動に関するプロパティは Coded では捨てている）
-- IR の変数の型で、C# の既定の using に無いもの（`SecureString` など）は完全名で書く（`"type": "System.Security.SecureString"`）。`types-xaml.ts` に無い Excel の型は `tools/ir/excel.ts` の `excelXamlTypes` に足す
+- IR の変数の型で、C# の既定の using に無いもの（`SecureString` など）は完全名で書く（`"type": "System.Security.SecureString"`）。`types-xaml.ts` に短い名前で載っている型（`CurrentJobInfo`、`Match` など）は、生成器が C# で完全名にする（`vb2cs.ts` の `csType`）。`types-xaml.ts` に無い Excel の型は `tools/ir/excel.ts` の `excelXamlTypes` に足す
 - 繰り返し（`ExcelForEachRowX` / `ForEachSheetX`）は `"scope": "lambda"`（`tools/ir/mapping.ts` の先頭）。body に Break / Continue が直接あれば `Func` の方にして `return false` / `return true` にする。`CurrentIndex` は XAML も C# も **1 始まり**（run で確かめた）。ForEachSheet のラムダの引数は `ISheetRef` なので、`CurrentSheet.Range(...)` は C# で build が落ちる
 - 子の設定用アクティビティを持つもの（`SortX` など）は `"scope": "collect"`。親は変数（記述子）を作って body を実行し、それを引数に渡す。子の対応表は `{@型名}` に足す。`UpdateChartX` は API がクラシックの `IWorkHandle` にしか無いので `"coded": null`
 - 親（`SortX` / `CreatePivotTableXv2` / `UpdateChartX` / `InvokeVBAX` / `ExecuteMacroX`）の body は、子が1つでも、引数が無くても **`Sequence` で包む**（包まないと検証で `Constraint<BaseParentActivityWithDescriptor...>` のエラー）

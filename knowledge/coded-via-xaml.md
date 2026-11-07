@@ -11,10 +11,12 @@ Coded（C#）の生成器（`tools/ir/gen-coded.ts`、`tools/ir/generate-coded.t
 | 選んだ版のカタログに `services`（Coded API）が無いパッケージで、対応表が API を呼ぶ（例 Testing 23.4.1 の `VerifyExpression`） | XAML 経由（その版では API が無いので、対応表は使えない） |
 | 対応表が `"coded": null`、または形ごとの `reason`（`InvokeWorkflowFile` の `Level` など）で「Coded API なし」（Classic の UI 操作、Persistence など） | XAML 経由 |
 | 対応表で書いた C# が、選んだ版の API に無いメソッド・合わないオーバーロードを呼ぶ（例 System 24.10.7 の `DeleteQueueItems` に `timeoutMS` が無い、UIAutomation 26.10.3 に `BlockUserInput` が無い） | XAML 経由。gen-coded.ts がノードごとに `tools/coded/check.ts` にかけ、`UNKNOWN_METHOD` / `NO_OVERLOAD` なら書いた C# を捨てる（`viaXaml.apiCheck`） |
+| 選んだ版が、対応表の `viaXamlBefore.version` より前（API の形は同じで、実行したときだけ落ちるもの。例 System 24.10.7 の `WriteTextFile` は、まだ無いファイルに書けない） | XAML 経由。理由は `viaXamlBefore.reason` |
 | XAML 経由にする子が、スコープ（`ExcelApplicationCard`、`NApplicationCard` など）の外では検証を通らない、またはスコープの変数（ブックのハンドル `IWorkHandle` など）を XAML の引数にできない | そのスコープごと XAML 経由（外側へ、通るところまで上がる） |
 | 制御フロー（Sequence、If、ForEach など、生成器の組み込み） | これまでどおり C# の構文 |
 
-版の違いで API が実行時だけ違うもの（System 24.10.7 の `WriteTextFile` が無いファイルに書けない、など）は、生成時には分からないので切り替わらない。
+版の違いで API が実行時だけ違うものは、生成時のチェック（apiCheck）では分からない。run で見つけたら、対応表に `"viaXamlBefore": { "version": "<動くと確かめた版>", "reason": "..." }` を書く。版の境目が分からないときは、動くと確かめた版を書く（間の版も XAML 経由になるが、動く側に倒す）。
+- `WriteTextFile`：24.10.7 は、まだ無いファイルを `LocalResource.FromPath` で渡すと「... doesn't exist」で落ちる。26.10.0 では書ける（2026-11-07、`out/exp/WriteNew.json` に毎回別の名前のファイルを書かせて確かめた）。`viaXamlBefore` は 26.10.0。v24 で WriteTextFile を使う System の 46 件：80 件 OK、SKIP 2、NG 10（NG は全部、24.10.7 に無いプロパティ（`Output`、`FileResource` など）を使うサンプルの生成エラー）。前に落ちていた Copy・Delete・Move 系、ForEachFileX、RenameFileX の C# は OK になった
 
 `--no-via-xaml` を付けると XAML 経由にせず、`NO_MAPPING` / `NO_CODED_API` のエラーにする。`generateCoded` は `viaXaml` を渡したときだけ XAML 経由にする（渡さなければ以前と同じ）。
 
