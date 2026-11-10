@@ -75,7 +75,7 @@ export function loadCatalog(root: string, catalogFiles: string[]): Catalog {
       const props = a.props.map((p: Prop) => (p.kind === "prop" && p.type === "System.Activities.ActivityDelegate" ? { ...p, kind: "delegate" } : p));
       activities.push({ ...a, props, package: c.package });
     }
-    const objFile = join(root, f.replace(/\.json$/, ".objects.json"));
+    const objFile = join(root, f.replace(/(\.portable)?\.json$/, ".objects.json")); // Portable も Windows の .objects.json を使う
     if (existsSync(objFile)) for (const o of JSON.parse(readFileSync(objFile, "utf8")).objects) objectTypes.set(o.clrType, o);
   }
 

@@ -1,0 +1,3590 @@
+{
+  "package": "UiPath.Excel.Activities",
+  "version": "3.6.1",
+  "assemblies": [
+    "UiPath.Excel.Activities.dll",
+    "UiPath.Excel.Activities.API.dll"
+  ],
+  "activities": [
+    {
+      "className": "AppendCsvFile",
+      "clrType": "UiPath.CSV.Activities.AppendCsvFile",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.CSV.Activities.BaseCsvActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendCsvFile"
+        },
+        {
+          "name": "Delimitator",
+          "kind": "prop",
+          "type": "UiPath.CSV.DelimitatorOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Input",
+          "displayName": "DelimiterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendCsvFile"
+        },
+        {
+          "name": "DelimitatorForViewModel",
+          "kind": "prop",
+          "type": "UiPath.CSV.Activities.DelimiterOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Options",
+          "displayName": "DelimiterDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AppendCsvFile"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Encoding",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "EncodingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendCsvFile"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "File",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendCsvFile"
+        }
+      ]
+    },
+    {
+      "className": "AppendRange",
+      "clrType": "UiPath.Excel.Activities.AppendRange",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendRange"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "AppendWriteCsvFile",
+      "clrType": "UiPath.CSV.Activities.AppendWriteCsvFile",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.CSV.Activities.BaseCsvActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddHeaders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "AddHeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "CsvAction",
+          "kind": "prop",
+          "type": "UiPath.CSV.Activities.CsvWriteAction",
+          "required": false,
+          "enum": [
+            "Append",
+            "Write"
+          ],
+          "category": "Input",
+          "displayName": "CsvActionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "DataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "Delimitator",
+          "kind": "prop",
+          "type": "UiPath.CSV.DelimitatorOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Input",
+          "displayName": "DelimiterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "DelimitatorForViewModel",
+          "kind": "prop",
+          "type": "UiPath.CSV.Activities.DelimiterOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Options",
+          "displayName": "DelimiterDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Encoding",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "EncodingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "File",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "PathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "File",
+          "displayName": "File",
+          "browsable": true,
+          "overloadGroups": [
+            "PathResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        },
+        {
+          "name": "ShouldQuote",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_WriteCsvFile_Property_ShouldQuote_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AppendWriteCsvFile"
+        }
+      ]
+    },
+    {
+      "className": "CreateNewWorkbook",
+      "clrType": "UiPath.Excel.Activities.CreateNewWorkbook",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<UiPath.Excel.Workbook>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ConflictResolution",
+          "kind": "in",
+          "type": "UiPath.Excel.ConflictBehavior",
+          "required": false,
+          "enum": [
+            "Replace",
+            "Fail",
+            "Skip"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateNewWorkbook"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookFile",
+          "kind": "out",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateNewWorkbook"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "CreatePivotTable",
+      "clrType": "UiPath.Excel.Activities.CreatePivotTable",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LayoutRowType",
+          "kind": "in",
+          "type": "UiPath.Excel.PivotTableLayoutRowType",
+          "required": false,
+          "enum": [
+            "Compact",
+            "Tabular",
+            "Outline"
+          ],
+          "category": "Input",
+          "displayName": "CreatePivotTable_LayoutRowType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "PivotTableFields",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<UiPath.Excel.PivotTableField>>",
+          "required": false,
+          "category": "Input",
+          "displayName": "CreatePivotTable_Fields",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "PivotTableFieldsVariable",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Excel.PivotTableField>",
+          "required": false,
+          "category": "Input",
+          "displayName": "CreatePivotTable_FieldsVariable",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "PivotTableName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "CreatePivotTable_NewTableName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "PlacementCell",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "CreatePivotTable_PlacementCellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "SourceRange",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SourceRangeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "SourceSheet",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SourceSheetDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "SourceTable",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SourceTableNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "UseTableSource",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": true,
+          "category": "Input",
+          "displayName": "CreatePivotTable_UseTableSource",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "ValuesMode",
+          "kind": "in",
+          "type": "UiPath.Excel.PivotTableValuesMode",
+          "required": false,
+          "enum": [
+            "Columns",
+            "Rows"
+          ],
+          "category": "Input",
+          "displayName": "CreatePivotTableValuesMode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreatePivotTable"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "CreateTable",
+      "clrType": "UiPath.Excel.Activities.CreateTable",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "Range",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "RangeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateTable"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "TableName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TableNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateTable"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "GetCellColor",
+      "clrType": "UiPath.Excel.Activities.GetCellColor",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Drawing.Color>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "GetCellColor_CellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetCellColor"
+        },
+        {
+          "name": "Color",
+          "kind": "out",
+          "type": "System.Drawing.Color",
+          "required": false,
+          "category": "Output",
+          "displayName": "GetCellColor_ColorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetCellColor"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "GetSheets",
+      "clrType": "UiPath.Excel.Activities.GetSheets",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivityBase<System.Collections.Generic.IEnumerable<System.String>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "OnlyVisibleSheets",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetSheets"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetSheets"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "GetTableRange",
+      "clrType": "UiPath.Excel.Activities.GetTableRange",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.String>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IsPivot",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "IsPivotDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTableRange"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "Range",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "RangeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTableRange"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "TableName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TableNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTableRange"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "InsertChart",
+      "clrType": "UiPath.Excel.Activities.InsertChart",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.String>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ChartCategory",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelChartCategory",
+          "required": true,
+          "enum": [
+            "Area",
+            "Bar",
+            "Column",
+            "Line",
+            "Pie",
+            "Scatter"
+          ],
+          "displayName": "InsertExcelChartX_ChartCategoryDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "ChartHeight",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "displayName": "InsertExcelChartX_ChartHeightDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "ChartName",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "ChartType",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelChartType",
+          "required": true,
+          "enum": [
+            "xlArea",
+            "xlAreaStacked",
+            "xlAreaStacked100",
+            "xlBarClustered",
+            "xlBarStacked",
+            "xlBarStacked100",
+            "xlColumnClustered",
+            "xlColumnStacked",
+            "xlColumnStacked100",
+            "xlLine",
+            "xlLineMarkers",
+            "xlLineMarkersStacked",
+            "xlLineMarkersStacked100",
+            "xlLineStacked",
+            "xlLineStacked100",
+            "xlDoughnut",
+            "xlPie",
+            "xlXYScatterSmoothNoMarkers",
+            "xlXYScatterSmooth",
+            "xlXYScatterLinesNoMarkers",
+            "xlXYScatterLines",
+            "xlXYScatter",
+            "Other"
+          ],
+          "displayName": "InsertExcelChartX_ChartTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "ChartWidth",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "displayName": "InsertExcelChartX_ChartWidthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "displayName": "InsertExcelChartX_ChartLeftDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "SourceRange",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "SourceSheet",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "SourceSheetDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "SourceTable",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "SourceTableNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "displayName": "InsertExcelChartX_ChartTopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "UseTableSource",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": true,
+          "displayName": "CreatePivotTable_UseTableSource",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertChart"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "InsertImage",
+      "clrType": "UiPath.Excel.Activities.InsertImage",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Input",
+          "displayName": "InsertImage_CellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Height",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "ImagePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "ImagePathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "category": "Options",
+          "displayName": "InsertImage_LeftDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "category": "Options",
+          "displayName": "InsertImage_TopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "Width",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InsertImage"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "ReadCell",
+      "clrType": "UiPath.Excel.Activities.ReadCell",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Object>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Input",
+          "displayName": "CellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCell"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "PreserveFormat",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "PreserveFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCell"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Activities.OutArgument",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCell"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "ReadCellFormula",
+      "clrType": "UiPath.Excel.Activities.ReadCellFormula",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.String>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Input",
+          "displayName": "CellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCellFormula"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCellFormula"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "ReadColumn",
+      "clrType": "UiPath.Excel.Activities.ReadColumn",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Collections.Generic.IEnumerable<System.Object>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "PreserveFormat",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "PreserveFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadColumn"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Object>",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadColumn"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "StartingCell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Input",
+          "displayName": "StartingCellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadColumn"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "ReadCsvFile",
+      "clrType": "UiPath.CSV.Activities.ReadCsvFile",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.CSV.Activities.BaseCsvActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DataTable",
+          "kind": "out",
+          "type": "System.Data.DataTable",
+          "required": false,
+          "category": "Output",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "Delimitator",
+          "kind": "prop",
+          "type": "UiPath.CSV.DelimitatorOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Options",
+          "displayName": "DelimiterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "DelimitatorForViewModel",
+          "kind": "prop",
+          "type": "UiPath.CSV.Activities.DelimiterOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Options",
+          "displayName": "DelimiterDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Encoding",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "EncodingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "File",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "IgnoreQuotes",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "IgnoreQuotesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "IncludeColumnNames",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "HasHeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        },
+        {
+          "name": "PathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "File",
+          "displayName": "File",
+          "browsable": true,
+          "overloadGroups": [
+            "PathResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "ReadCsvFile"
+        }
+      ]
+    },
+    {
+      "className": "ReadRange",
+      "clrType": "UiPath.Excel.Activities.ReadRange",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Data.DataTable>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddHeaders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "AddHeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRange"
+        },
+        {
+          "name": "DataTable",
+          "kind": "out",
+          "type": "System.Data.DataTable",
+          "required": false,
+          "category": "Output",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRange"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "PreserveFormat",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "PreserveFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRange"
+        },
+        {
+          "name": "Range",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "default": "A1:A2",
+          "category": "Input",
+          "displayName": "RangeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRange"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "ReadRow",
+      "clrType": "UiPath.Excel.Activities.ReadRow",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Collections.Generic.IEnumerable<System.Object>>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "PreserveFormat",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "PreserveFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRow"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Object>",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRow"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "StartingCell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Input",
+          "displayName": "StartingCellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReadRow"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "SetRangeColor",
+      "clrType": "UiPath.Excel.Activities.SetRangeColor",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Color",
+          "kind": "in",
+          "type": "System.Drawing.Color",
+          "required": true,
+          "category": "Input",
+          "displayName": "SetRangeColor_ColorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetRangeColor"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "Range",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "SetRangeColor_RangeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetRangeColor"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Input",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivity"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "UpdateChart",
+      "clrType": "UiPath.Excel.Activities.UpdateChart",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivityBase<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ChartName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "UpdateChartX_SourceChart",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateChart"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Modifications",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<UiPath.Excel.IChartModification>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateChart"
+        },
+        {
+          "name": "ModificationsVariable",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Excel.IChartModification>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateChart"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateChart"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "WriteCell",
+      "clrType": "UiPath.Excel.Activities.WriteCell",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Cell",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "A1",
+          "category": "Destination",
+          "displayName": "CellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCell"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Destination",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCell"
+        },
+        {
+          "name": "Text",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TextDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCell"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    },
+    {
+      "className": "WriteCsvFile",
+      "clrType": "UiPath.CSV.Activities.WriteCsvFile",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.CSV.Activities.BaseCsvActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddHeaders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "AddHeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "DataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "Delimitator",
+          "kind": "prop",
+          "type": "UiPath.CSV.DelimitatorOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Input",
+          "displayName": "DelimiterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "DelimitatorForViewModel",
+          "kind": "prop",
+          "type": "UiPath.CSV.Activities.DelimiterOptions",
+          "required": false,
+          "enum": [
+            "Comma",
+            "Semicolon",
+            "Pipe",
+            "Caret",
+            "Tab"
+          ],
+          "category": "Options",
+          "displayName": "DelimiterDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Encoding",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "EncodingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "File",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        },
+        {
+          "name": "ShouldQuote",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_WriteCsvFile_Property_ShouldQuote_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteCsvFile"
+        }
+      ]
+    },
+    {
+      "className": "WriteRange",
+      "clrType": "UiPath.Excel.Activities.WriteRange",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.WorkbookActivity<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddHeaders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "AddHeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteRange"
+        },
+        {
+          "name": "DataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "DataTableDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteRange"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "SheetName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "default": "Sheet1",
+          "category": "Destination",
+          "displayName": "SheetNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteRange"
+        },
+        {
+          "name": "StartingCell",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "default": "A1",
+          "category": "Destination",
+          "displayName": "StartingCellDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WriteRange"
+        },
+        {
+          "name": "Workbook",
+          "kind": "in",
+          "type": "UiPath.Excel.Workbook",
+          "required": false,
+          "category": "Use Workbook",
+          "browsable": true,
+          "overloadGroups": [
+            "Use Workbook"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookLocalPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "File"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        },
+        {
+          "name": "WorkbookPathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "WorkbookResourceDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "FileResource"
+          ],
+          "obsolete": false,
+          "declaredOn": "WorkbookActivityBase"
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "IExcelService",
+      "clrType": "UiPath.Excel.Activities.API.IExcelService",
+      "assembly": "UiPath.Excel.Activities.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "UseWorkBook",
+          "returns": "UiPath.Excel.Activities.API.IWorkHandle",
+          "params": [
+            {
+              "name": "options",
+              "type": "UiPath.Excel.Activities.API.Models.WorkbookOptions",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UseWorkBook",
+          "returns": "UiPath.Excel.Activities.API.IWorkHandle",
+          "params": [
+            {
+              "name": "path",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "createNew",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "true",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    }
+  ],
+  "handles": [
+    {
+      "name": "WorkbookOptions",
+      "clrType": "UiPath.Excel.Activities.API.Models.WorkbookOptions",
+      "assembly": "UiPath.Excel.Activities.API",
+      "bases": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ConflictBehavior",
+          "type": "System.Nullable<UiPath.Excel.ConflictBehavior>",
+          "canWrite": true
+        },
+        {
+          "name": "CreateNew",
+          "type": "System.Boolean",
+          "canWrite": true
+        },
+        {
+          "name": "Password",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Path",
+          "type": "System.String",
+          "canWrite": true
+        }
+      ]
+    },
+    {
+      "name": "CreateChartConfig",
+      "clrType": "UiPath.Excel.CreateChartConfig",
+      "assembly": "UiPath.Excel",
+      "bases": [
+        "UiPath.Excel.ICreateChartConfig"
+      ],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ChartCategory",
+          "type": "UiPath.Excel.ExcelChartCategory",
+          "canWrite": true
+        },
+        {
+          "name": "ChartType",
+          "type": "UiPath.Excel.ExcelChartType",
+          "canWrite": true
+        },
+        {
+          "name": "Height",
+          "type": "System.Int32",
+          "canWrite": true
+        },
+        {
+          "name": "Left",
+          "type": "System.Int32",
+          "canWrite": true
+        },
+        {
+          "name": "PlacementSheet",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "SourceRange",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "SourceSheet",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "SourceTable",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Top",
+          "type": "System.Int32",
+          "canWrite": true
+        },
+        {
+          "name": "UseTableSource",
+          "type": "System.Boolean",
+          "canWrite": true
+        },
+        {
+          "name": "Width",
+          "type": "System.Int32",
+          "canWrite": true
+        }
+      ]
+    },
+    {
+      "name": "CreateImageConfig",
+      "clrType": "UiPath.Excel.CreateImageConfig",
+      "assembly": "UiPath.Excel",
+      "bases": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "Cell",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Height",
+          "type": "System.Nullable<System.Int32>",
+          "canWrite": true
+        },
+        {
+          "name": "ImagePath",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Left",
+          "type": "System.Int32",
+          "canWrite": true
+        },
+        {
+          "name": "Top",
+          "type": "System.Int32",
+          "canWrite": true
+        },
+        {
+          "name": "Width",
+          "type": "System.Nullable<System.Int32>",
+          "canWrite": true
+        }
+      ]
+    },
+    {
+      "name": "UpdateChartConfiguration",
+      "clrType": "UiPath.Excel.UpdateChartConfiguration",
+      "assembly": "UiPath.Excel",
+      "bases": [
+        "UiPath.Excel.IUpdateChartConfiguration"
+      ],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ChartName",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Modifications",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Excel.IChartModification>",
+          "canWrite": true
+        },
+        {
+          "name": "PlacementSheet",
+          "type": "System.String",
+          "canWrite": true
+        },
+        {
+          "name": "Type",
+          "type": "UiPath.Excel.ChartModificationType",
+          "canWrite": true
+        }
+      ]
+    }
+  ],
+  "extensions": [
+    {
+      "name": "ExcelOperations",
+      "clrType": "UiPath.Excel.Activities.API.ExcelOperations",
+      "assembly": "UiPath.Excel.Activities.API",
+      "bases": [],
+      "methods": [
+        {
+          "name": "AppendCsvFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "data",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "delimiter",
+              "type": "UiPath.CSV.DelimitatorOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encodingStr",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AppendRange",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "table",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CreatePivotTable",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetSheet",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "pivotTableInfo",
+              "type": "UiPath.Excel.IPivotTableInfo",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetCellColor",
+          "returns": "System.Drawing.Color",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetSheets",
+          "returns": "System.Collections.Generic.IEnumerable<System.String>",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "onlyVisibleSheets",
+              "type": "System.Boolean",
+              "optional": true,
+              "default": "false",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTableRange",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "tableName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "isPivot",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InsertChart",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "config",
+              "type": "UiPath.Excel.CreateChartConfig",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "InsertImage",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "config",
+              "type": "UiPath.Excel.CreateImageConfig",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadCell",
+          "returns": "System.Object",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "preserveFormat",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadCellFormula",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadColumn",
+          "returns": "System.Collections.Generic.IEnumerable<System.Object>",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "startingCell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "preserveFormat",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadCsvFile",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "delimiter",
+              "type": "UiPath.CSV.DelimitatorOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "includeColumnNames",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encodingStr",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "ignoreQuotes",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadRange",
+          "returns": "System.Data.DataTable",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "range",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "addHeaders",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "preserveFormat",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ReadRow",
+          "returns": "System.Collections.Generic.IEnumerable<System.Object>",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "startingCell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "preserveFormat",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "SetRangeColor",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "range",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "color",
+              "type": "System.Drawing.Color",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "UpdateChart",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "config",
+              "type": "UiPath.Excel.UpdateChartConfiguration",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteCell",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "cell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "text",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteCsvFile",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "data",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "delimiter",
+              "type": "UiPath.CSV.DelimitatorOptions",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "addHeaders",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "encodingStr",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "shouldQuote",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "WriteRange",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "handle",
+              "type": "UiPath.Excel.Activities.API.IWorkHandle",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "sheetName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "startingCell",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "table",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "addHeaders",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    }
+  ],
+  "enums": {
+    "UiPath.CSV.DelimitatorOptions": [
+      "Comma",
+      "Semicolon",
+      "Pipe",
+      "Caret",
+      "Tab"
+    ],
+    "UiPath.Excel.ChartModificationType": [
+      "ChangeDataRange",
+      "ModifyChartTitle",
+      "UpdateAxisTitle",
+      "UpdateAxisBounds",
+      "ShowHideLegend",
+      "ShowHideDataLabels"
+    ],
+    "UiPath.Excel.ConflictBehavior": [
+      "Replace",
+      "Fail",
+      "Skip"
+    ],
+    "UiPath.Excel.ExcelChartCategory": [
+      "Area",
+      "Bar",
+      "Column",
+      "Line",
+      "Pie",
+      "Scatter"
+    ],
+    "UiPath.Excel.ExcelChartType": [
+      "xlArea",
+      "xlAreaStacked",
+      "xlAreaStacked100",
+      "xlBarClustered",
+      "xlBarStacked",
+      "xlBarStacked100",
+      "xlColumnClustered",
+      "xlColumnStacked",
+      "xlColumnStacked100",
+      "xlLine",
+      "xlLineMarkers",
+      "xlLineMarkersStacked",
+      "xlLineMarkersStacked100",
+      "xlLineStacked",
+      "xlLineStacked100",
+      "xlDoughnut",
+      "xlPie",
+      "xlXYScatterSmoothNoMarkers",
+      "xlXYScatterSmooth",
+      "xlXYScatterLinesNoMarkers",
+      "xlXYScatterLines",
+      "xlXYScatter",
+      "Other"
+    ]
+  },
+  "warnings": [],
+  "codedRegistries": [
+    {
+      "type": "UiPath.Excel.Activities.API.ExcelRegistry",
+      "vars": {
+        "excel": "UiPath.Excel.Activities.API.IExcelService"
+      },
+      "namespaces": [
+        "System",
+        "System.Collections.Generic",
+        "System.Data",
+        "UiPath.Excel",
+        "UiPath.Excel.Activities",
+        "UiPath.Excel.Activities.API",
+        "UiPath.Excel.Activities.API.Models"
+      ]
+    }
+  ]
+}

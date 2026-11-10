@@ -35,7 +35,8 @@ node tools/ir/gen.ts <ir.json> --out <dir> --imports-from <既存の.xaml>   # �
 | 版が範囲（`[1.0,2.0)` など） | エラー。1つに決められない |
 | パッケージのカタログが1つも無い（Mail、Testing など） | 注意。そのアクティビティは「未知のアクティビティ」になる |
 | 依存に無いパッケージ | カタログを読まない（そのアクティビティは build でも落ちるので、検証で弾く） |
-| `targetFramework` が Windows でない | 注意 |
+| `targetFramework` が `Portable`（クロスプラットフォーム） | `catalog/<pkg>/<版>.portable.json` を使う。無ければ**エラー**。`bash tools/catalog-extractor/extract-portable.sh <pkg> <版>` で作る（[knowledge/cross-platform.md](../knowledge/cross-platform.md)）。新しい版のカタログを足したら、クロスプラットフォームのものも作る |
+| `targetFramework` が `Windows` でも `Portable` でもない（Legacy） | エラー |
 | 式の言語（`expressionLanguage`） | `CSharp` なら C# の XAML を作る（`docs/worker-guide.md` の 10）。`VisualBasic` と `CSharp` 以外はエラー |
 
 **古い形式のカタログ**（`UiPath.System.Activities` 26.2.6、`UiPath.UIAutomation.Activities` 25.10.33。`services` が無く `readOnly` のプロパティも無いもの）を選んだとき：

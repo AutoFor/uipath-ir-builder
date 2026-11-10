@@ -30,6 +30,7 @@ C:\...\<どこか>\請求書処理\       ← UiPath のプロジェクト（Stu
 `<P>\project.json` を読む。
 
 - `expressionLanguage`：`VisualBasic`（書いていなければこれ）か `CSharp`。生成器は `--project` で自動で合わせるので、AI が切り替える必要はない
+- `targetFramework`：`Windows` かクロスプラットフォームの `Portable`。生成器は `--project` で、その実行環境で使えるアクティビティだけのカタログを使う。Windows ⇄ クロスプラットフォームに移すときは `node tools/ir/migrate-platform.ts --project <P> --to Portable|Windows`（[knowledge/cross-platform.md](knowledge/cross-platform.md)）
 - `dependencies`：使えるパッケージと版。ここに無いパッケージのアクティビティは使えない。版に合うカタログが無いと生成器がエラーにする（近い版で代用しない。人に知らせる）
 
 ### 2. 使うアクティビティを調べる

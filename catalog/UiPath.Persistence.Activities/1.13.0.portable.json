@@ -1,0 +1,2808 @@
+{
+  "package": "UiPath.Persistence.Activities",
+  "version": "1.13.0",
+  "assemblies": [
+    "UiPath.Persistence.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "AddQueueItemAndGetReference",
+      "clrType": "UiPath.Persistence.Activities.Queue.AddQueueItemAndGetReference",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Queue;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DeferDate",
+          "kind": "in",
+          "type": "System.Nullable<System.DateTime>",
+          "required": false,
+          "category": "Input",
+          "displayName": "DeferDate",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DueDate",
+          "kind": "in",
+          "type": "System.Nullable<System.DateTime>",
+          "required": false,
+          "category": "Input",
+          "displayName": "DueDate",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "ItemInformation",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": true,
+          "category": "Input",
+          "displayName": "ItemInformationDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "ItemInformationCollection",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+          "required": false,
+          "category": "Input",
+          "displayName": "ItemInformationCollectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "Priority",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Queue.QueueItemDataPriority",
+          "required": false,
+          "enum": [
+            "High",
+            "Normal",
+            "Low"
+          ],
+          "category": "Input",
+          "displayName": "Priority",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "QueueItemOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.Queue.QueueItemData",
+          "required": false,
+          "category": "Output",
+          "displayName": "QueueItemOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "Reference",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "ReferenceDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddQueueItemAndGetReference"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "AddTaskComment",
+      "clrType": "UiPath.Persistence.Activities.Tasks.AddTaskComment",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Comment",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "Comment",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTaskComment"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTaskComment"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "AssignTasks",
+      "clrType": "UiPath.Persistence.Activities.Tasks.AssignTasks",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AssignmentCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "category": "Input",
+          "displayName": "AssignmentCriteria_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnableMultipleAssignments",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "EnableMultipleAssignments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "FailedTaskAssignments",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Persistence.Activities.Tasks.TaskAssignmentResponse>",
+          "required": false,
+          "category": "Output",
+          "displayName": "FailedTaskAssignments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Group",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Assignment_Group_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "MigrateV144",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "TaskAssignmentType",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Model.Task.TaskAssignmentType",
+          "required": true,
+          "enum": [
+            "Assign",
+            "Reassign"
+          ],
+          "category": "Input",
+          "displayName": "TaskAssignmentType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "TaskUserAssignments",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<UiPath.Persistence.Activities.Tasks.TaskUserAssignment>",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskUserAssignments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "UserId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Input",
+          "displayName": "UserId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        },
+        {
+          "name": "UserNameOrEmail",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "UserNameOrEmail",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssignTasks"
+        }
+      ]
+    },
+    {
+      "className": "CompleteTask",
+      "clrType": "UiPath.Persistence.Activities.Tasks.CompleteTask",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskAction",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompleteTask"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Data",
+          "kind": "in",
+          "type": "Newtonsoft.Json.Linq.JObject",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskData",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompleteTask"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompleteTask"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "ConfigureTaskTimer",
+      "clrType": "UiPath.Persistence.Activities.Tasks.ConfigureTaskTimer",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AssignmentCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "AutoCompleteOutcome",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EndCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaEndCriteria",
+          "required": false,
+          "enum": [
+            "TaskAssigned",
+            "TaskCompleted"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Outcome",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaOutcome",
+          "required": false,
+          "enum": [
+            "Notify",
+            "Reassign",
+            "Unassign",
+            "AutoComplete"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "ReassignGroup",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "ReassignUser",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "StartCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaStartCriteria",
+          "required": false,
+          "enum": [
+            "TaskCreated",
+            "TaskAssigned"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TimerDays",
+          "kind": "prop",
+          "type": "System.Byte",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "TimerDuration",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "TimerHours",
+          "kind": "prop",
+          "type": "System.Byte",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        },
+        {
+          "name": "TimerMinutes",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.MinuteSteps",
+          "required": false,
+          "enum": [
+            "Min0",
+            "Min15",
+            "Min30",
+            "Min45"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConfigureTaskTimer"
+        }
+      ]
+    },
+    {
+      "className": "CreateExternalTask",
+      "clrType": "UiPath.Persistence.Activities.ExternalTask.CreateExternalTask",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseCreateTask<UiPath.Persistence.Activities.ExternalTask.ExternalTaskData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AssignmentCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "category": "Input",
+          "displayName": "AssignmentCriteria_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExternalTag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Group",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Assignment_Group_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "Labels",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskCatalog",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskCatalog",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskData",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskData",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateExternalTask"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.ExternalTask.ExternalTaskData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskPriority",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Model.Task.TaskPriority",
+          "required": true,
+          "enum": [
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+          ],
+          "category": "Input",
+          "displayName": "TaskPriority",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskTitle",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "UserNameOrEmail",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "UserNameOrEmail",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        }
+      ]
+    },
+    {
+      "className": "CreateFormTask",
+      "clrType": "UiPath.Persistence.Activities.FormTask.CreateFormTask",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseCreateTask<UiPath.Persistence.Activities.FormTask.FormTaskData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AssignmentCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "category": "Input",
+          "displayName": "AssignmentCriteria_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "AutoCompleteOutcome",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "BucketFolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Storage",
+          "displayName": "BucketFolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Storage",
+          "displayName": "BucketName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "BulkFormLayout",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "BulkFormLayoutGuid",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DynamicFormPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateFormTask_Property_DynamicFormPath_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "EnableBulkEdit",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "EnableBulkEdit",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "EnableDynamicForms",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateFormTask_Property_EnableDynamicForms_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "EnableV2",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "EnableV2Form",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "EndCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaEndCriteria",
+          "required": false,
+          "enum": [
+            "TaskAssigned",
+            "TaskCompleted"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "ExternalTag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "FormData",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "category": "Input",
+          "displayName": "FormData",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "FormLayout",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "FormLayoutGuid",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "GenerateInputFields",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "GenerateInputFields",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "Group",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Assignment_Group_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "Labels",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "Outcome",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaOutcome",
+          "required": false,
+          "enum": [
+            "Notify",
+            "Reassign",
+            "Unassign",
+            "AutoComplete"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "ReassignCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "ReassignGroup",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "ReassignUser",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "StartCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaStartCriteria",
+          "required": false,
+          "enum": [
+            "TaskCreated",
+            "TaskAssigned"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "TaskCatalog",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskCatalog",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.FormTask.FormTaskData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskPriority",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Model.Task.TaskPriority",
+          "required": true,
+          "enum": [
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+          ],
+          "category": "Input",
+          "displayName": "TaskPriority",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskTimerEnabled",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "TaskTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskTitle",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TimerDuration",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateFormTask"
+        },
+        {
+          "name": "UserNameOrEmail",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "UserNameOrEmail",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        }
+      ]
+    },
+    {
+      "className": "CreateUserAction",
+      "clrType": "UiPath.Persistence.Activities.UserAction.CreateUserAction",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseCreateTask<UiPath.Persistence.Activities.UserAction.UserActionData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionableNotification",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_ActionableNotification_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "AppActionData",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateUserAction_Property_Text_Data",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "AppActionPropertiesMetadata",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, UiPath.Persistence.Activities.Model.Apps.SchemaPropertiesMetadata>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "AppBindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction",
+          "readOnly": true
+        },
+        {
+          "name": "AssignmentCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "category": "Input",
+          "displayName": "AssignmentCriteria_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "AutoCompleteOutcome",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "CatalogBindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "CurrentAppTaskState",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.Apps.AppTaskState",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EndCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaEndCriteria",
+          "required": false,
+          "enum": [
+            "TaskAssigned",
+            "TaskCompleted"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "EnforcePropertyRefresh",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "ExternalTag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Group",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Assignment_Group_Property_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "Labels",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "Outcome",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaOutcome",
+          "required": false,
+          "enum": [
+            "Notify",
+            "Reassign",
+            "Unassign",
+            "AutoComplete"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "PrimaryActionableOutcome",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_PrimaryActionableOutcome_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "PrimaryButtonLabel",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_PrimaryActionableButtonLabel_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "ReassignCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Tasks.Criteria",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "ReassignGroup",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "ReassignUser",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "SecondaryActionableOutcome",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_SecondaryActionableOutcome_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "SecondaryButtonLabel",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_SecondaryActionableButtonLabel_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "SolutionApp",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "SolutionAppResources",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "SolutionTaskCatalog",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "StartCriteria",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.TaskTimer.SlaStartCriteria",
+          "required": false,
+          "enum": [
+            "TaskCreated",
+            "TaskAssigned"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "State",
+          "kind": "prop",
+          "type": "UiPath.Persistence.Activities.Model.Apps.RecordDynamicActionPropertiesState",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "TaskCatalog",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskCatalog",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskFieldsForDesktop",
+          "kind": "prop",
+          "type": "System.String[]",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_TaskFields_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "TaskFieldsForWeb",
+          "kind": "in",
+          "type": "System.String[]",
+          "required": false,
+          "category": "Category_ActionableNotification",
+          "displayName": "Activity_CreateUserAction_Property_TaskFields_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.UserAction.UserActionData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskPriority",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Model.Task.TaskPriority",
+          "required": true,
+          "enum": [
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+          ],
+          "category": "Input",
+          "displayName": "TaskPriority",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TaskTimerEnabled",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "TaskTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskTitle",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TimerDuration",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateUserAction"
+        },
+        {
+          "name": "UserNameOrEmail",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "UserNameOrEmail",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseCreateTask"
+        }
+      ]
+    },
+    {
+      "className": "ForwardTask",
+      "clrType": "UiPath.Persistence.Activities.Tasks.ForwardTask",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Comments",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Comments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardTask"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardTask"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "UserNameOrEmail",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "UserNameOrEmail",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardTask"
+        }
+      ]
+    },
+    {
+      "className": "GetAppTasks",
+      "clrType": "UiPath.Persistence.Activities.UserAction.GetAppTasks",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expand",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataExpandClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "Filter",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataFilterClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "OrderBy",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataOrderByClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "Reference",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskReference",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "Select",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataSelectClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "Skip",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataSkipClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "TaskCatalogName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskCatalogName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "TaskObjects",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Persistence.Activities.UserAction.UserActionData>",
+          "required": true,
+          "category": "Output",
+          "displayName": "TaskOutputObjects",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataTopClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetAppTasks"
+        }
+      ]
+    },
+    {
+      "className": "GetFormTasks",
+      "clrType": "UiPath.Persistence.Activities.FormTask.GetFormTasks",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expand",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataExpandClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "Filter",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataFilterClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "OrderBy",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataOrderByClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "Reference",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskReference",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "Select",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataSelectClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "Skip",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataSkipClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "TaskCatalogName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "TaskCatalogName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "TaskObjects",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Persistence.Activities.FormTask.FormTaskData>",
+          "required": true,
+          "category": "Output",
+          "displayName": "TaskOutputObjects",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "ODataQueryOptions",
+          "displayName": "ODataTopClause",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormTasks"
+        }
+      ]
+    },
+    {
+      "className": "GetTaskData",
+      "clrType": "UiPath.Persistence.Activities.Tasks.GetTaskData",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTaskData"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.Model.Task.TaskData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTaskData"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "ResumeAfterDelay",
+      "clrType": "UiPath.Persistence.Activities.Delay.ResumeAfterDelay",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Delay;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseWaitAsyncActivity<System.DateTime>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ResumeTime",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": true,
+          "category": "Input",
+          "displayName": "ResumeTime",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ResumeAfterDelay"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "System.DateTime",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "StartJobAndGetReference",
+      "clrType": "UiPath.Persistence.Activities.Job.StartJobAndGetReference",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Job;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartJobAndGetReference",
+          "readOnly": true
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "JobArguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Collection",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartJobAndGetReference"
+        },
+        {
+          "name": "JobOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.Job.JobData",
+          "required": false,
+          "category": "Output",
+          "displayName": "JobObjectOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartJobAndGetReference"
+        },
+        {
+          "name": "ProcessName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "ProcessName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartJobAndGetReference"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "UpdateTaskLabels",
+      "clrType": "UiPath.Persistence.Activities.Tasks.UpdateTaskLabels",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Tasks;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseOrchestratorClientAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddLabels",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_UpdateTaskLabels_Property_AddLabels_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateTaskLabels"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DeleteLabels",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_UpdateTaskLabels_Property_DeleteLabels_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateTaskLabels"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "TaskId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskId",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "UpdateTaskLabels"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Category_Miscellaneous",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseOrchestratorClientAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForExternalTaskAndResume",
+      "clrType": "UiPath.Persistence.Activities.ExternalTask.WaitForExternalTaskAndResume",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.ExternalTask;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseWaitForTaskAndResume<UiPath.Persistence.Activities.ExternalTask.ExternalTaskData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "TaskAction",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskAction",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskInput",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.ExternalTask.ExternalTaskData",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskInput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.ExternalTask.ExternalTaskData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.Persistence.Activities.ExternalTask.ExternalTaskData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForFormTaskAndResume",
+      "clrType": "UiPath.Persistence.Activities.FormTask.WaitForFormTaskAndResume",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.FormTask;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseWaitForTaskAndResume<UiPath.Persistence.Activities.FormTask.FormTaskData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "TaskAction",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskAction",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskInput",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.FormTask.FormTaskData",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskInput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.FormTask.FormTaskData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.Persistence.Activities.FormTask.FormTaskData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForJobAndResume",
+      "clrType": "UiPath.Persistence.Activities.Job.WaitForJobAndResume",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Job;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseWaitOrchestratorClientAsyncActivity<UiPath.Persistence.Activities.Job.JobData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "JobInput",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Job.JobData",
+          "required": true,
+          "category": "Input",
+          "displayName": "JobObjectInput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForJobAndResume"
+        },
+        {
+          "name": "JobOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.Job.JobData",
+          "required": false,
+          "category": "Output",
+          "displayName": "JobObject",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForJobAndResume"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.Persistence.Activities.Job.JobData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForQueueItemAndResume",
+      "clrType": "UiPath.Persistence.Activities.Queue.WaitForQueueItemAndResume",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.Queue;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseWaitOrchestratorClientAsyncActivity<UiPath.Persistence.Activities.Queue.QueueItemData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "QueueItemInput",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.Queue.QueueItemData",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueItemInput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForQueueItemAndResume"
+        },
+        {
+          "name": "QueueItemOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.Queue.QueueItemData",
+          "required": false,
+          "category": "Output",
+          "displayName": "QueueItemOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForQueueItemAndResume"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.Persistence.Activities.Queue.QueueItemData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForUserActionAndResume",
+      "clrType": "UiPath.Persistence.Activities.UserAction.WaitForUserActionAndResume",
+      "assembly": "UiPath.Persistence.Activities",
+      "xmlns": "clr-namespace:UiPath.Persistence.Activities.UserAction;assembly=UiPath.Persistence.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Persistence.Activities.BaseTask.BaseWaitForTaskAndResume<UiPath.Persistence.Activities.UserAction.UserActionData>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "StatusMessage",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Common",
+          "displayName": "StatusMessage",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        },
+        {
+          "name": "TaskAction",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskAction",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskInput",
+          "kind": "in",
+          "type": "UiPath.Persistence.Activities.UserAction.UserActionData",
+          "required": true,
+          "category": "Input",
+          "displayName": "TaskInput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TaskOutput",
+          "kind": "out",
+          "type": "UiPath.Persistence.Activities.UserAction.UserActionData",
+          "required": false,
+          "category": "Output",
+          "displayName": "TaskOutput",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitForTaskAndResume"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMS",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseWaitOrchestratorClientAsyncActivity"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.Persistence.Activities.UserAction.UserActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseWaitAsyncActivity"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,3236 @@
+{
+  "package": "UiPath.Testing.Activities",
+  "version": "25.10.1",
+  "assemblies": [
+    "UiPath.Testing.Activities.dll",
+    "UiPath.Testing.Activities.Api.dll"
+  ],
+  "activities": [
+    {
+      "className": "Address",
+      "clrType": "UiPath.Testing.Activities.TestData.Address",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.Collections.Generic.Dictionary<System.String, System.String>>",
+      "displayName": "AddressDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AddressResult",
+          "kind": "out",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "category": "Output",
+          "displayName": "AddressResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Address"
+        },
+        {
+          "name": "City",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "AddressCityDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Address"
+        },
+        {
+          "name": "Country",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "AddressCountryDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "Address"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "AddTestDataQueueItem",
+      "clrType": "UiPath.Testing.Activities.AddTestDataQueueItem",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "TestDataQueueItemActivityDisplayName",
+      "obsolete": true,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ActivityToAdd",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.ActivityItemContainer",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "ArgumentsBridgeActivityCollection",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.ActivityFunc<System.Object>>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "Items",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.ObservableCollection<UiPath.Testing.Activities.ActivityItemContainer>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "ShowOutputArgumentCheckBoxes",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AddTestDataQueueItem"
+        }
+      ]
+    },
+    {
+      "className": "ArgumentsBridge",
+      "clrType": "UiPath.Testing.Activities.ArgumentsBridge",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity<System.Object>",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Input",
+          "kind": "in",
+          "type": "System.Object",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArgumentsBridge"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Object",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "AttachDocument",
+      "clrType": "UiPath.Testing.Activities.AttachDocument",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "AttachDocumentDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AttachDocument"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AttachDocument"
+        },
+        {
+          "name": "Tags",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "category": "Input",
+          "displayName": "TagsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AttachDocument"
+        }
+      ]
+    },
+    {
+      "className": "BulkAddTestDataQueue",
+      "clrType": "UiPath.Testing.Activities.BulkAddTestDataQueue",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "BulkAddTestDataQueueItemActivityDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BulkAddTestDataQueue"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BulkAddTestDataQueue"
+        },
+        {
+          "name": "QueueItemsDataTable",
+          "kind": "in",
+          "type": "System.Data.DataTable",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueItemsDataTable",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BulkAddTestDataQueue"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BulkAddTestDataQueue"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BulkAddTestDataQueue"
+        }
+      ]
+    },
+    {
+      "className": "ComparePdfDocuments",
+      "clrType": "UiPath.Testing.Activities.ComparePdfDocuments",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.AsyncTaskNativeActivity",
+      "displayName": "Activity_ComparePdfDocuments_DisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BaselinePath",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_ComparePdfDocuments_BaselinePath_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "ComparisonType",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.Models.ComparisonType",
+          "required": true,
+          "enum": [
+            "Line",
+            "Word",
+            "Character"
+          ],
+          "category": "Input",
+          "displayName": "Activity_Compare_ComparisonType_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "Differences",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Testing.Activities.Models.Difference>",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_Compare_Differences_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IgnoreIdenticalItems",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_ComparePdfDocuments_IgnoreIdenticalItems_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "IgnoreImagesLocation",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_ComparePdfDocuments_IgnoreWidgetsLocation_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "IncludeImages",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_ComparePdfDocuments_IncludeWidgets_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "InterpretDifferencesWithAutopilot",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Input",
+          "displayName": "Activity_Compare_InterpretDifferencesWithAutopilot_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "OutputFolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "Activity_ComparePdfDocuments_OutputFolderPath_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "Rules",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<UiPath.Testing.Activities.Models.ComparisonRule>>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_Compare_Rules_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "RulesList",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<UiPath.Testing.Activities.Models.ComparisonRule>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_Compare_Rules_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "SemanticDifferences",
+          "kind": "out",
+          "type": "UiPath.Testing.Activities.Models.SemanticDifferences",
+          "required": false,
+          "category": "Output",
+          "displayName": "SemanticDifferencesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        },
+        {
+          "name": "TargetPath",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_ComparePdfDocuments_TargetPath_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ComparePdfDocuments"
+        }
+      ]
+    },
+    {
+      "className": "CompareText",
+      "clrType": "UiPath.Testing.Activities.CompareText",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.AsyncTaskNativeActivity",
+      "displayName": "Activity_CompareText_DisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BaselineText",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_CompareText_BaselineText_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "ComparisonType",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.Models.ComparisonType",
+          "required": true,
+          "enum": [
+            "Line",
+            "Word",
+            "Character"
+          ],
+          "category": "Input",
+          "displayName": "Activity_Compare_ComparisonType_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "Differences",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Testing.Activities.Models.Difference>",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_Compare_Differences_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "InterpretDifferencesWithAutopilot",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Input",
+          "displayName": "Activity_Compare_InterpretDifferencesWithAutopilot_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "OutputFilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Output",
+          "displayName": "Activity_CompareText_OutputFilePath_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "Rules",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<UiPath.Testing.Activities.Models.ComparisonRule>>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_Compare_Rules_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "RulesList",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<UiPath.Testing.Activities.Models.ComparisonRule>",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_Compare_Rules_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "SemanticDifferences",
+          "kind": "out",
+          "type": "UiPath.Testing.Activities.Models.SemanticDifferences",
+          "required": false,
+          "category": "Output",
+          "displayName": "SemanticDifferencesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "TargetText",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_CompareText_TargetText_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        },
+        {
+          "name": "WordSeparators",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CompareText_WordSeparators_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CompareText"
+        }
+      ]
+    },
+    {
+      "className": "CoverageMergeActivity",
+      "clrType": "UiPath.Testing.Activities.Coverage.CoverageMergeActivity",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.Coverage;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.AsyncTaskNativeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "PackageId",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CoverageMergeActivity"
+        },
+        {
+          "name": "TestSetExecutionId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": true,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CoverageMergeActivity"
+        }
+      ]
+    },
+    {
+      "className": "CreateComparisonRule",
+      "clrType": "UiPath.Testing.Activities.CreateComparisonRule",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "Activity_CreateComparisonRule_DisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ComparisonRule",
+          "kind": "out",
+          "type": "UiPath.Testing.Activities.Models.ComparisonRule",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_CreateComparisonRule_ComparisonRule_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        },
+        {
+          "name": "ComparisonRuleType",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.Models.ComparisonRuleType",
+          "required": false,
+          "enum": [
+            "RegexRule",
+            "WildcardRule"
+          ],
+          "category": "Input",
+          "displayName": "Activity_CreateComparisonRule_ComparisonRuleType_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Pattern",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateComparisonRule_Pattern_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        },
+        {
+          "name": "RuleName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateComparisonRule_RuleName_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        },
+        {
+          "name": "UsePlaceholder",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_CreateComparisonRule_UsePlaceholder_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateComparisonRule"
+        }
+      ]
+    },
+    {
+      "className": "DeleteTestDataQueueItems",
+      "clrType": "UiPath.Testing.Activities.DeleteTestDataQueueItems",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "DeleteTestDataQueueItemsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteTestDataQueueItems"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteTestDataQueueItems"
+        },
+        {
+          "name": "TestDataQueueItems",
+          "kind": "in",
+          "type": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+          "required": true,
+          "category": "Input",
+          "displayName": "DeleteTestDataItemsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteTestDataQueueItems"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteTestDataQueueItems"
+        }
+      ]
+    },
+    {
+      "className": "GetTestDataQueueItem",
+      "clrType": "UiPath.Testing.Activities.GetTestDataQueueItem",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "GetTestDataQueueItemDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        },
+        {
+          "name": "MarkConsumed",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "GetTestDataQueueItem_MarkConsumedDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        },
+        {
+          "name": "Output",
+          "kind": "out",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+          "required": true,
+          "category": "Output",
+          "displayName": "OutputTestDataDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItem"
+        }
+      ]
+    },
+    {
+      "className": "GetTestDataQueueItems",
+      "clrType": "UiPath.Testing.Activities.GetTestDataQueueItems",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "GetTestDataQueueItemsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "IdFilter",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "IdFilter",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "Skip",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "Pagination",
+          "displayName": "Skip",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "TestDataQueueItems",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+          "required": true,
+          "category": "Output",
+          "displayName": "OutputTestDataDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "TestDataQueueItemStatus",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus",
+          "required": false,
+          "enum": [
+            "All",
+            "OnlyConsumed",
+            "OnlyNotConsumed"
+          ],
+          "category": "Options",
+          "displayName": "TestDataQueueItemStatus",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems",
+          "enumConverter": "UiPath.Testing.Activities.Converters.TestDataQueueItemStatusEnumConverter",
+          "enumAssembly": "UiPath.Testing.Activities"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "Pagination",
+          "displayName": "Top",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetTestDataQueueItems"
+        }
+      ]
+    },
+    {
+      "className": "GivenName",
+      "clrType": "UiPath.Testing.Activities.TestData.GivenName",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.String>",
+      "displayName": "GivenNameDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "GivenNameResult",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "GivenNameResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GivenName"
+        }
+      ]
+    },
+    {
+      "className": "LastName",
+      "clrType": "UiPath.Testing.Activities.TestData.LastName",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.String>",
+      "displayName": "LastNameDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "LastNameResult",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "LastNameResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "LastName"
+        }
+      ]
+    },
+    {
+      "className": "MockActivity",
+      "clrType": "UiPath.Testing.Activities.Mocks.MockActivity",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.Mocks;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IsMockedActivityScreenShotVisible",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MockActivity",
+          "readOnly": true
+        },
+        {
+          "name": "Mock",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MockActivity"
+        },
+        {
+          "name": "MockedActivity",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MockActivity"
+        },
+        {
+          "name": "MockedActivityIdRef",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MockActivity"
+        },
+        {
+          "name": "MockedActivityScreenShotBase64",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MockActivity"
+        }
+      ]
+    },
+    {
+      "className": "NewAddTestDataQueueItem",
+      "clrType": "UiPath.Testing.Activities.NewAddTestDataQueueItem",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.ContinuableAsyncNativeActivity",
+      "displayName": "TestDataQueueItemActivityDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewAddTestDataQueueItem"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "FolderPath",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewAddTestDataQueueItem"
+        },
+        {
+          "name": "ItemInformation",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument>",
+          "required": true,
+          "category": "Input",
+          "displayName": "Items",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewAddTestDataQueueItem"
+        },
+        {
+          "name": "QueueName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "QueueNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewAddTestDataQueueItem"
+        },
+        {
+          "name": "TimeoutMs",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMs",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewAddTestDataQueueItem"
+        }
+      ]
+    },
+    {
+      "className": "QueryEntitiesFilterActivity",
+      "clrType": "UiPath.Testing.Activities.QueryEntitiesFilterActivity",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.AsyncTaskNativeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ArgumentIdentifier",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "ArgumentIdentifierDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntitiesFilterActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EntityName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "EntityNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntitiesFilterActivity"
+        },
+        {
+          "name": "ExpansionDepth",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "category": "Input",
+          "displayName": "ExpansionDepthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntitiesFilterActivity"
+        },
+        {
+          "name": "Filters",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FiltersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntitiesFilterActivity"
+        },
+        {
+          "name": "OutputPath",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "QueryEntitiesFilterActivity"
+        }
+      ]
+    },
+    {
+      "className": "RandomDate",
+      "clrType": "UiPath.Testing.Activities.TestData.RandomDate",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.DateTime>",
+      "displayName": "RandomDateDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "MaxDate",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": true,
+          "category": "Input",
+          "displayName": "MaxDateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomDate"
+        },
+        {
+          "name": "MinDate",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": true,
+          "category": "Input",
+          "displayName": "MinDateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomDate"
+        },
+        {
+          "name": "Output",
+          "kind": "out",
+          "type": "System.DateTime",
+          "required": false,
+          "category": "Output",
+          "displayName": "OutputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomDate"
+        }
+      ]
+    },
+    {
+      "className": "RandomNumber",
+      "clrType": "UiPath.Testing.Activities.TestData.RandomNumber",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.Decimal>",
+      "displayName": "RandomNumberDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Decimals",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Input",
+          "displayName": "DecimalsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomNumber"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Max",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Input",
+          "displayName": "MaxDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomNumber"
+        },
+        {
+          "name": "Min",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "category": "Input",
+          "displayName": "MinDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomNumber"
+        },
+        {
+          "name": "Output",
+          "kind": "out",
+          "type": "System.Decimal",
+          "required": false,
+          "category": "Output",
+          "displayName": "OutputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomNumber"
+        }
+      ]
+    },
+    {
+      "className": "RandomString",
+      "clrType": "UiPath.Testing.Activities.TestData.RandomString",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.String>",
+      "displayName": "RandomStringDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Case",
+          "kind": "prop",
+          "type": "UiPath.Testing.Enums.Case",
+          "required": true,
+          "enum": [
+            "LowerCase",
+            "UpperCase",
+            "CamelCase",
+            "Mixed"
+          ],
+          "category": "Input",
+          "displayName": "CaseDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomString"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Length",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": true,
+          "category": "Input",
+          "displayName": "LengthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomString"
+        },
+        {
+          "name": "Output",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "OutputDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomString"
+        }
+      ]
+    },
+    {
+      "className": "RandomValue",
+      "clrType": "UiPath.Testing.Activities.TestData.RandomValue",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.TestData.TestDataActivity<System.String>",
+      "displayName": "RandomValueDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomValue"
+        },
+        {
+          "name": "Value",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "RandomValueDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RandomValue"
+        }
+      ]
+    },
+    {
+      "className": "VerifyControlAttribute",
+      "clrType": "UiPath.Testing.Activities.VerifyControlAttribute",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.AssertionActivity",
+      "displayName": "VerifyControlAttributeDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActivityToTest",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction",
+          "required": true,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "AlternativeVerificationTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "AlternativeVerificationTitleDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ArgumentsBridgeActivity",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityFunc<System.Object>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expression",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "KeepScreenshots",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.Testing.Comparison",
+          "required": true,
+          "enum": [
+            "Equality",
+            "Inequality",
+            "GreaterThan",
+            "GreaterThanOrEqual",
+            "LessThan",
+            "LessThanOrEqual",
+            "Contains",
+            "RegexMatch"
+          ],
+          "category": "Input",
+          "displayName": "OperatorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "OutputArgument",
+          "kind": "prop",
+          "type": "System.String",
+          "required": true,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "OutputMessageFormat",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "VerifyOutputFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ScreenshotsPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfFailingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfSucceedingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyControlAttribute"
+        }
+      ]
+    },
+    {
+      "className": "VerifyExpression",
+      "clrType": "UiPath.Testing.Activities.VerifyExpression",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.AssertionActivity",
+      "displayName": "VerifyExpressionDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AlternativeVerificationTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "AlternativeVerificationTitleDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expression",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpression"
+        },
+        {
+          "name": "KeepScreenshots",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "OutputMessageFormat",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "VerifyOutputFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpression"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ScreenshotsPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfFailingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpression"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfSucceedingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpression"
+        }
+      ]
+    },
+    {
+      "className": "VerifyExpressionWithOperator",
+      "clrType": "UiPath.Testing.Activities.VerifyExpressionWithOperator",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.AssertionActivity",
+      "displayName": "VerifyExpressionWithOperatorDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AlternativeVerificationTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "AlternativeVerificationTitleDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FirstExpression",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "FirstExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        },
+        {
+          "name": "KeepScreenshots",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.Testing.Comparison",
+          "required": true,
+          "enum": [
+            "Equality",
+            "Inequality",
+            "GreaterThan",
+            "GreaterThanOrEqual",
+            "LessThan",
+            "LessThanOrEqual",
+            "Contains",
+            "RegexMatch"
+          ],
+          "category": "Input",
+          "displayName": "OperatorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        },
+        {
+          "name": "OutputMessageFormat",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "VerifyOutputFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ScreenshotsPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "SecondExpression",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "SecondExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfFailingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfSucceedingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyExpressionWithOperator"
+        }
+      ]
+    },
+    {
+      "className": "VerifyRange",
+      "clrType": "UiPath.Testing.Activities.VerifyRange",
+      "assembly": "UiPath.Testing.Activities",
+      "xmlns": "clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Testing.Activities.AssertionActivity",
+      "displayName": "Activity_VerifyRange_Name",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AlternativeVerificationTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "AlternativeVerificationTitleDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ContinueOnFailure",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ContinueOnFailureDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Expression",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_VerifyRange_ExpressionName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "KeepScreenshots",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "LowerLimit",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_VerifyRange_LowerLimitName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "OutputMessageFormat",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Messages",
+          "displayName": "VerifyOutputFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "ScreenshotsPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "AssertionActivity"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfFailingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "TakeScreenshotInCaseOfSucceedingAssertion",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "UpperLimit",
+          "kind": "in",
+          "type": "System.Activities.InArgument",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_VerifyRange_UpperLimitName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange"
+        },
+        {
+          "name": "VerificationType",
+          "kind": "prop",
+          "type": "UiPath.Testing.Activities.VerificationType",
+          "required": true,
+          "enum": [
+            "IsWithin",
+            "IsNotWithin"
+          ],
+          "category": "Input",
+          "displayName": "Activity_VerifyRange_VerificationTypeName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "VerifyRange",
+          "enumConverter": "UiPath.Testing.Activities.Converters.VerificationTypeEnumConverter",
+          "enumAssembly": "UiPath.Testing.Activities"
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "ITestingService",
+      "clrType": "UiPath.Testing.API.ITestingService",
+      "assembly": "UiPath.Testing.Activities.Api",
+      "bases": [],
+      "methods": [
+        {
+          "name": "Address",
+          "returns": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "params": [
+            {
+              "name": "country",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "city",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTestDataQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "itemInformation",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTestDataQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "itemInformation",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AddTestDataQueueItem",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "itemInformation",
+              "type": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachDocument",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "AttachDocument",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "tags",
+              "type": "System.Collections.Generic.IEnumerable<System.String>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "BulkAddTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "queueItemsDataTable",
+              "type": "System.Data.DataTable",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "ComparePdfDocuments",
+          "returns": "UiPath.Testing.Activities.Models.ComparisonResult",
+          "params": [
+            {
+              "name": "baselinePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "comparisonType",
+              "type": "UiPath.Testing.Activities.Models.ComparisonType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "options",
+              "type": "UiPath.Testing.Activities.Api.Models.TestingOptions+CompareDocumentsOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "CompareText",
+          "returns": "UiPath.Testing.Activities.Models.ComparisonResult",
+          "params": [
+            {
+              "name": "baselineText",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "targetText",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "comparisonType",
+              "type": "UiPath.Testing.Activities.Models.ComparisonType",
+              "optional": true,
+              "default": "0",
+              "params": false
+            },
+            {
+              "name": "opts",
+              "type": "UiPath.Testing.Activities.Api.Models.TestingOptions+CompareTextOptions",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "testDataQueueItems",
+              "type": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "testDataQueueItems",
+              "type": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "DeleteTestDataQueueItems",
+          "returns": "System.Void",
+          "params": [
+            {
+              "name": "testDataQueueItems",
+              "type": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItem",
+          "returns": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItem",
+          "returns": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItem",
+          "returns": "System.Collections.Generic.Dictionary<System.String, System.Object>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "markConsumed",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItems",
+          "returns": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItems",
+          "returns": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GetTestDataQueueItems",
+          "returns": "System.Collections.Generic.List<UiPath.Testing.Core.TestDataQueueItem>",
+          "params": [
+            {
+              "name": "queueName",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "folderPath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "idFilter",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "testDataQueueItemStatus",
+              "type": "UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "skip",
+              "type": "System.Nullable<System.Int32>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "top",
+              "type": "System.Nullable<System.Int32>",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "timeoutMs",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "GivenName",
+          "returns": "System.String",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "LastName",
+          "returns": "System.String",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "RandomDate",
+          "returns": "System.DateTime",
+          "params": [
+            {
+              "name": "minDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "maxDate",
+              "type": "System.DateTime",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RandomNumber",
+          "returns": "System.Decimal",
+          "params": [],
+          "obsolete": false
+        },
+        {
+          "name": "RandomNumber",
+          "returns": "System.Decimal",
+          "params": [
+            {
+              "name": "min",
+              "type": "System.Int64",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "max",
+              "type": "System.Int64",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RandomNumber",
+          "returns": "System.Decimal",
+          "params": [
+            {
+              "name": "min",
+              "type": "System.Int64",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "max",
+              "type": "System.Int64",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "decimals",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RandomString",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "caseValue",
+              "type": "UiPath.Testing.Enums.Case",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "length",
+              "type": "System.Int32",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "RandomValue",
+          "returns": "System.String",
+          "params": [
+            {
+              "name": "filePath",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyAreEqual",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyAreNotEqual",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyContains",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyExpression",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "expression",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyExpression",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "expression",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyExpression",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "expression",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "continueOnFailure",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "alternativeVerificationTitle",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfFailingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfSucceedingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyExpressionWithOperator",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "operatorValue",
+              "type": "UiPath.Testing.Comparison",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyExpressionWithOperator",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "operatorValue",
+              "type": "UiPath.Testing.Comparison",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "continueOnFailure",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "alternativeVerificationTitle",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfFailingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfSucceedingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyIsGreater",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyIsGreaterOrEqual",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyIsLess",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyIsLessOrEqual",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyIsRegexMatch",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "firstExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "secondExpression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyRange",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "expression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "verificationType",
+              "type": "UiPath.Testing.Activities.VerificationType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lowerLimit",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "upperLimit",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": true,
+              "default": "null",
+              "params": false
+            }
+          ],
+          "obsolete": false
+        },
+        {
+          "name": "VerifyRange",
+          "returns": "System.Boolean",
+          "params": [
+            {
+              "name": "expression",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "verificationType",
+              "type": "UiPath.Testing.Activities.VerificationType",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "lowerLimit",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "upperLimit",
+              "type": "System.Object",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "outputMessageFormat",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "continueOnFailure",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "alternativeVerificationTitle",
+              "type": "System.String",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfFailingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            },
+            {
+              "name": "takeScreenshotInCaseOfSucceedingAssertion",
+              "type": "System.Boolean",
+              "optional": false,
+              "params": false
+            }
+          ],
+          "obsolete": false
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "codedRegistries": [
+    {
+      "type": "UiPath.Testing.API.TestingRegistry",
+      "vars": {
+        "testing": "UiPath.Testing.API.ITestingService"
+      },
+      "namespaces": [
+        "System",
+        "System.Collections.Generic",
+        "UiPath.Testing.Activities.TestDataQueues.Enums",
+        "UiPath.Testing.Activities.TestData",
+        "UiPath.Testing.Enums",
+        "UiPath.Testing",
+        "UiPath.Testing.Activities.Models",
+        "UiPath.Testing.Activities.Api.Models"
+      ]
+    }
+  ]
+}

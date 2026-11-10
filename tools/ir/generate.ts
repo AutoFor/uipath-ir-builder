@@ -50,9 +50,27 @@ const MCA = "clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activitie
 
 export type ExpressionLanguage = "VisualBasic" | "CSharp";
 
-// BlankTemplate のルートの imports / AssemblyReference（式の言語ごと）
-export function templateRootImports(language: ExpressionLanguage = "VisualBasic"): { imports: string[]; refs: string[] } {
-  return language === "CSharp" ? { imports: [...baseImportsCs], refs: [...new Set(baseRefsCs)] } : { imports: [...baseImports], refs: [...baseRefs] };
+// Windows でしか使えない AssemblyReference（WPF）。Studio 26.10 の空のプロジェクトでは、クロスプラットフォーム（Portable）の Main.xaml にこの 3 つが無い。
+// ほかの imports / AssemblyReference は同じ（VB では System.Data.Common の位置だけ System.Data の後ろに変わる）
+export const WINDOWS_ONLY_REFS = ["PresentationFramework", "WindowsBase", "PresentationCore"];
+
+// ルートの AssemblyReference を、その実行環境に合わせる。Portable は WPF の参照を外す。
+// Windows は、無ければ System.Xml.Linq の後ろに足す（Studio の空のプロジェクトの並び。migrate-platform.ts が Portable から移すとき）
+export function refsForPlatform(refs: string[], platform: "Windows" | "Portable"): string[] {
+  if (platform === "Portable") return refs.filter((r) => !WINDOWS_ONLY_REFS.includes(r));
+  const missing = WINDOWS_ONLY_REFS.filter((r) => !refs.includes(r));
+  if (!missing.length) return refs;
+  const i = refs.indexOf("System.Xml.Linq");
+  return i < 0 ? [...refs, ...missing] : [...refs.slice(0, i + 1), ...missing, ...refs.slice(i + 1)];
+}
+
+// BlankTemplate のルートの imports / AssemblyReference（式の言語と実行環境ごと）
+export function templateRootImports(language: ExpressionLanguage = "VisualBasic", platform: "Windows" | "Portable" = "Windows"): { imports: string[]; refs: string[] } {
+  const t = language === "CSharp" ? { imports: [...baseImportsCs], refs: [...new Set(baseRefsCs)] } : { imports: [...baseImports], refs: [...baseRefs] };
+  if (platform === "Windows") return t;
+  let refs = refsForPlatform(t.refs, platform);
+  if (language === "VisualBasic") { refs = refs.filter((r) => r !== "System.Data.Common"); refs.splice(refs.indexOf("System.Data") + 1, 0, "System.Data.Common"); }
+  return { imports: t.imports, refs };
 }
 
 // rootImports：ルートの imports / AssemblyReference の元（対象プロジェクトの既存 XAML から読んだもの。versions.ts）。無ければ BlankTemplate の並び

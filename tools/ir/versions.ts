@@ -9,6 +9,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { loadCatalog } from "./catalog.ts";
 import type { Catalog } from "./catalog.ts";
+import { refsForPlatform, templateRootImports } from "./generate.ts";
 
 // 既定の版（C:\Users\Public\uipath-ir-probe に合わせたもの）。読み込む順もこのまま
 export const DEFAULT_VERSIONS: Record<string, string> = {
@@ -23,7 +24,11 @@ const CODED_BASE = { pkg: "UiPath.CodedWorkflows", version: "24.10.3" };
 // project.json の dependencies に書かれないもの（.NET と Coded の基底クラス）。書かれていれば、そちらの版を使う
 const IMPLICIT = new Set(["System.Activities", CODED_BASE.pkg]);
 
-export const catalogFile = (pkg: string, version: string) => `catalog/${pkg}/${version}.json`;
+// Windows は <版>.json、クロスプラットフォーム（Portable）は <版>.portable.json（tools/catalog-extractor/extract-portable.sh で作る）。
+// .NET の System.Activities と Coded の基底クラスは、どちらでも同じカタログを使う
+export type Platform = "Windows" | "Portable";
+export const catalogFile = (pkg: string, version: string, platform: Platform = "Windows") =>
+  `catalog/${pkg}/${version}${platform === "Portable" && pkg !== "System.Activities" && pkg !== "UiPath.CodedWorkflows" ? ".portable" : ""}.json`;
 export const DEFAULT_CATALOG_FILES = Object.entries(DEFAULT_VERSIONS).map(([p, v]) => catalogFile(p, v));
 export const DEFAULT_SERVICE_FILES = [
   ...["UiPath.System.Activities", "UiPath.UIAutomation.Activities", "UiPath.Excel.Activities", "UiPath.Testing.Activities"].map((p) => catalogFile(p, DEFAULT_VERSIONS[p])),
@@ -34,6 +39,7 @@ export const DEFAULT_SERVICE_FILES = [
 export class VersionError extends Error {}
 
 export type Selection = {
+  platform: Platform; // project.json の targetFramework（selectCatalogs の opts.platform で変えられる）
   versions: Record<string, string>; // パッケージ -> 版
   files: string[]; // loadCatalog に渡すカタログ
   serviceFiles: string[]; // tools/coded/check.ts が読むカタログ
@@ -64,6 +70,13 @@ export function projectLanguage(projectDir: string): "VisualBasic" | "CSharp" {
   return l;
 }
 
+// project.json の targetFramework。書いていなければ Windows。Legacy（.NET Framework）は扱えない
+export function projectPlatform(projectDir: string): Platform {
+  const t = readProject(projectDir).targetFramework ?? "Windows";
+  if (t !== "Windows" && t !== "Portable") throw new VersionError(`${join(projectDir, "project.json")} の targetFramework "${t}" は扱えない（Windows か Portable）`);
+  return t;
+}
+
 // 古い抽出器で作ったカタログ：services の項目が無く、readOnly のプロパティも1つも無い。
 // （services が無いだけなら Coded API の無いパッケージ。Persistence と System.Activities がそう）
 function isLegacy(c: { services?: unknown; activities: { props: { readOnly?: boolean }[] }[] }) {
@@ -71,14 +84,16 @@ function isLegacy(c: { services?: unknown; activities: { props: { readOnly?: boo
 }
 
 // 指定がなければ既定の版。coded: true は C# を作るとき（services の無い古い版はエラーにする）
-export function selectCatalogs(root: string, projectDir?: string, opts: { coded?: boolean } = {}): Selection {
-  if (!projectDir) return { versions: { ...DEFAULT_VERSIONS }, files: DEFAULT_CATALOG_FILES, serviceFiles: DEFAULT_SERVICE_FILES, legacy: [], warnings: [] };
+// opts.platform：project.json の targetFramework の代わりに使う（migrate-platform.ts が移る先を調べるとき）
+export function selectCatalogs(root: string, projectDir?: string, opts: { coded?: boolean; platform?: Platform } = {}): Selection {
+  if (!projectDir) return { platform: "Windows", versions: { ...DEFAULT_VERSIONS }, files: DEFAULT_CATALOG_FILES, serviceFiles: DEFAULT_SERVICE_FILES, legacy: [], warnings: [] };
 
   const pj = readProject(projectDir);
+  const platform = opts.platform ?? projectPlatform(projectDir);
   const warnings: string[] = [];
   const catalogDir = join(root, "catalog");
   const known = readdirSync(catalogDir);
-  const available = (pkg: string) => readdirSync(join(catalogDir, pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json")).map((f) => f.replace(/\.json$/, ""));
+  const available = (pkg: string) => readdirSync(join(catalogDir, pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json") && !f.endsWith(".portable.json")).map((f) => f.replace(/\.json$/, ""));
 
   const wanted = new Map<string, string>([["System.Activities", DEFAULT_VERSIONS["System.Activities"]]]);
   const errors: string[] = [];
@@ -89,6 +104,7 @@ export function selectCatalogs(root: string, projectDir?: string, opts: { coded?
     try {
       const v = parseDependencyVersion(name, spec);
       if (!available(pkg).includes(v)) errors.push(`${pkg} ${v} のカタログが無い（手元にある版：${available(pkg).join(", ")}）`);
+      else if (!existsSync(join(root, catalogFile(pkg, v, platform)))) errors.push(`${pkg} ${v} のクロスプラットフォームのカタログ（${catalogFile(pkg, v, platform)}）が無い。bash tools/catalog-extractor/extract-portable.sh ${pkg} ${v} で作る（DLL が手元に無ければ、その版を入れた Portable のプロジェクトを Studio で開くか build する）`);
       else wanted.set(pkg, v);
     } catch (e) {
       if (!(e instanceof VersionError)) throw e;
@@ -101,13 +117,13 @@ export function selectCatalogs(root: string, projectDir?: string, opts: { coded?
   const order = [...Object.keys(DEFAULT_VERSIONS), ...[...wanted.keys()].filter((p) => !(p in DEFAULT_VERSIONS))];
   const pkgs = order.filter((p) => wanted.has(p) && p !== CODED_BASE.pkg);
   const versions = Object.fromEntries(pkgs.map((p) => [p, wanted.get(p)!]));
-  const files = pkgs.map((p) => catalogFile(p, wanted.get(p)!));
+  const files = pkgs.map((p) => catalogFile(p, wanted.get(p)!, platform));
   const codedBase = catalogFile(CODED_BASE.pkg, wanted.get(CODED_BASE.pkg) ?? CODED_BASE.version);
 
   const legacy: string[] = [];
   const serviceFiles: string[] = [];
   for (const p of pkgs) {
-    const f = catalogFile(p, wanted.get(p)!);
+    const f = catalogFile(p, wanted.get(p)!, platform);
     const c = readJson(join(root, f));
     if (!IMPLICIT.has(p) && "services" in c) serviceFiles.push(f);
     if (isLegacy(c)) {
@@ -125,8 +141,7 @@ export function selectCatalogs(root: string, projectDir?: string, opts: { coded?
   if (opts.coded && legacy.some(mapped))
     throw new VersionError(`C# を作れない。次のカタログには services（Coded API）が無く、呼び出しを確かめられない：${legacy.filter(mapped).join(", ")}。その版の DLL から抽出器で作り直す（docs/version-upgrade.md の手順 2）`);
   if (opts.coded) for (const l of legacy.filter((x) => !mapped(x))) warnings.push(`${l} には services（Coded API）も対応表も無い。C# では、このパッケージのアクティビティを XAML 経由（RunWorkflow）で呼ぶ`);
-  if (pj.targetFramework && pj.targetFramework !== "Windows") warnings.push(`このプロジェクトの targetFramework は ${pj.targetFramework}。生成器は Windows（.NET）の XAML で確かめている`);
-  return { versions, files, serviceFiles, legacy, warnings };
+  return { platform, versions, files, serviceFiles, legacy, warnings };
 }
 
 // services（Coded API）の無いパッケージ（.NET の System.Activities と Coded の基底クラスは除く）。
@@ -140,12 +155,12 @@ export function noCodedApiPackages(root: string, files: string[]): string[] {
 export function sampleCatalogFiles(root: string, pkg: string | undefined): string[] {
   if (!pkg || pkg in DEFAULT_VERSIONS || !existsSync(join(root, "catalog", pkg))) return DEFAULT_CATALOG_FILES;
   const cmp = (a: string, b: string) => { const x = a.split(".").map(Number), y = b.split(".").map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) - (y[i] ?? 0); return 0; };
-  const vs = readdirSync(join(root, "catalog", pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json")).map((f) => f.replace(/\.json$/, "")).sort(cmp);
+  const vs = readdirSync(join(root, "catalog", pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json") && !f.endsWith(".portable.json")).map((f) => f.replace(/\.json$/, "")).sort(cmp);
   return vs.length ? [...DEFAULT_CATALOG_FILES, catalogFile(pkg, vs[vs.length - 1])] : DEFAULT_CATALOG_FILES;
 }
 
 // カタログを読み、既定 XAML が揃っていない版の注意も warnings に足す
-export function loadSelected(root: string, projectDir?: string, opts: { coded?: boolean } = {}): { cat: Catalog; selection: Selection; warnings: string[] } {
+export function loadSelected(root: string, projectDir?: string, opts: { coded?: boolean; platform?: Platform } = {}): { cat: Catalog; selection: Selection; warnings: string[] } {
   const selection = selectCatalogs(root, projectDir, opts);
   const cat = loadCatalog(root, selection.files);
   const warnings = [...selection.warnings];
@@ -190,14 +205,16 @@ export function readRootImportsFile(file: string): RootImports {
   return r;
 }
 
-// --project：main の XAML、無ければ直下の XAML（名前順）のうち、imports のある最初のもの。どれも無ければテンプレート（注意を出す）
-export function projectRootImports(projectDir: string): { imports?: RootImports; notes: string[] } {
+// --project：main の XAML、無ければ直下の XAML（名前順）のうち、imports のある最初のもの。どれも無ければテンプレート（注意を出す）。
+// クロスプラットフォーム（Portable）では WPF の AssemblyReference を外す（テンプレートも Portable のもの）。platform を渡すとそれに合わせる
+export function projectRootImports(projectDir: string, platform: Platform = projectPlatform(projectDir)): { imports?: RootImports; notes: string[] } {
   const pj = readProject(projectDir);
   const others = readdirSync(projectDir).filter((f) => /\.xaml$/i.test(f)).sort();
   const cands = [...new Set([...(pj.main && others.includes(pj.main) ? [pj.main] : []), ...others])];
   for (const f of cands) {
     const r = readRootImports(readFileSync(join(projectDir, f), "utf8"));
-    if (r) return { imports: r, notes: [] };
+    if (r) return { imports: platform === "Portable" ? { imports: r.imports, refs: refsForPlatform(r.refs, platform) } : r, notes: [] };
   }
+  if (platform === "Portable") return { imports: templateRootImports(projectLanguage(projectDir), platform), notes: [`${projectDir} に imports のある XAML が無いので、ルートの imports はクロスプラットフォームの BlankTemplate の並びを使う`] };
   return { notes: [`${projectDir} に imports のある XAML が無いので、ルートの imports は BlankTemplate の並びを使う`] };
 }
