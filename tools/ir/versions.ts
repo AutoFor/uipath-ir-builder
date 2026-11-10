@@ -152,8 +152,12 @@ export function noCodedApiPackages(root: string, files: string[]): string[] {
 
 // サンプルのフォルダ（samples/ir/<pkg>/ など）のパッケージが既定の版に無ければ、既定のカタログにそのパッケージの最新の版を足したもの。
 // 既定の版にあるか、カタログが無ければ既定のまま
+// サンプルを書いた版が最新でないパッケージ（新しい版のカタログはクロスプラットフォームのために足した。新しい版では Tenant / Services が非推奨）
+const SAMPLE_VERSIONS: Record<string, string> = { "UiPath.MicrosoftOffice365.Activities": "2.2.7" };
+
 export function sampleCatalogFiles(root: string, pkg: string | undefined): string[] {
   if (!pkg || pkg in DEFAULT_VERSIONS || !existsSync(join(root, "catalog", pkg))) return DEFAULT_CATALOG_FILES;
+  if (SAMPLE_VERSIONS[pkg]) return [...DEFAULT_CATALOG_FILES, catalogFile(pkg, SAMPLE_VERSIONS[pkg])];
   const cmp = (a: string, b: string) => { const x = a.split(".").map(Number), y = b.split(".").map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) - (y[i] ?? 0); return 0; };
   const vs = readdirSync(join(root, "catalog", pkg)).filter((f) => f.endsWith(".json") && !f.endsWith(".objects.json") && !f.endsWith(".portable.json")).map((f) => f.replace(/\.json$/, "")).sort(cmp);
   return vs.length ? [...DEFAULT_CATALOG_FILES, catalogFile(pkg, vs[vs.length - 1])] : DEFAULT_CATALOG_FILES;

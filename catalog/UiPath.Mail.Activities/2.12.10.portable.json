@@ -1,0 +1,4193 @@
+{
+  "package": "UiPath.Mail.Activities",
+  "version": "2.12.10",
+  "assemblies": [
+    "UiPath.Mail.Activities.dll",
+    "UiPath.Mail.Activities.Api.dll"
+  ],
+  "activities": [
+    {
+      "className": "ArchiveMailX",
+      "clrType": "UiPath.Mail.Activities.Business.ArchiveMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncNativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ArchiveMailX"
+        }
+      ]
+    },
+    {
+      "className": "CreateHtmlContent",
+      "clrType": "UiPath.Mail.Activities.Business.CreateHtmlContent",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncNativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "HtmlContent",
+          "kind": "out",
+          "type": "System.String",
+          "required": true,
+          "category": "Output",
+          "displayName": "CreateHtmlContent_Content",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateHtmlContent"
+        },
+        {
+          "name": "HtmlContentArg",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.HtmlEditor.HtmlContentArgument",
+          "required": false,
+          "category": "Input",
+          "displayName": "HtmlContentArgument_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateHtmlContent"
+        }
+      ]
+    },
+    {
+      "className": "DeleteImapMailMessage",
+      "clrType": "UiPath.Mail.IMAP.Activities.DeleteImapMailMessage",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailConnectionServiceAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ClientName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_DeleteImapMailMessage_Property_ClientName_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "ClientVersion",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_DeleteImapMailMessage_Property_ClientVersion_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "ConnectionDetailsBackupSlot",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.Mail.Activities.Enums.ConnectionDetails>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionMode",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Enums.ConnectionDetails",
+          "required": false,
+          "enum": [
+            "Undefined",
+            "IntegrationService",
+            "LegacyConfiguration"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "FromFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "IgnoreCRL",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "Activity_DeleteImapMailMessage_Property_IgnoreCRL_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Password"
+          ],
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "Port",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Host",
+          "displayName": "PortDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "SecureConnection",
+          "kind": "prop",
+          "type": "UiPath.Mail.SecureSocketEncryption",
+          "required": false,
+          "enum": [
+            "None",
+            "Auto",
+            "SslOnConnect",
+            "StartTls",
+            "StartTlsWhenAvailable"
+          ],
+          "category": "Options",
+          "displayName": "SecureConnectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "Logon",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SecurePassword"
+          ],
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "Server",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "ServerDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        },
+        {
+          "name": "UseISConnection",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "UseOAuth",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_DeleteImapMailMessage_Property_UseOAuth_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteImapMailMessage"
+        }
+      ]
+    },
+    {
+      "className": "DeleteMailX",
+      "clrType": "UiPath.Mail.Activities.Business.DeleteMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteMailX"
+        },
+        {
+          "name": "PermanentlyDelete",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "PermanentlyDelete",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeleteMailX"
+        }
+      ]
+    },
+    {
+      "className": "ExchangeApplicationCard",
+      "clrType": "UiPath.Mail.Activities.Business.ExchangeApplicationCard",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Business.ConnectionServiceMailApplicationCard",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "Account",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard"
+        },
+        {
+          "name": "ApplicationId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "ExchangeApplicationCard_ApplicationId_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "BindingsVersion",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction<UiPath.Mail.IMailQuickHandle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MailApplicationCard"
+        },
+        {
+          "name": "ConnectionAccountName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        },
+        {
+          "name": "Connector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EmailAddress",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "ExchangeApplicationCard_EmailAddress_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard"
+        },
+        {
+          "name": "SharedMailbox",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "ExchangeApplicationCard_SharedMailbox_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard"
+        },
+        {
+          "name": "TenantId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "ExchangeApplicationCard_TenantId_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExchangeApplicationCard"
+        },
+        {
+          "name": "UseConnectionService",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_UseConnectionService_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        }
+      ]
+    },
+    {
+      "className": "ForEachEmailX",
+      "clrType": "UiPath.Mail.Activities.Business.ForEachEmailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Shared.Activities.Business.BusinessForEach",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction<System.Net.Mail.MailMessage, System.Int32>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IncludeSubfolders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_ForEachEMailX_IncludeSubfolders_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "MailFilter",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.ForEachMail.MailFilterArgument",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "Mails",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.Net.Mail.MailMessage>",
+          "required": true,
+          "category": "Options",
+          "displayName": "InEmailsFrom",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "NumberOfEmailsLimit",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Options",
+          "displayName": "LimitEmailsToFirst",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "RetrieveAttachments",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "Activity_ForEachMailX_Property_RetrieveAttachments_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "UnreadOnly",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "UnreadOnly",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "WithAttachmentsOnly",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "ForEachMail_WithAttachmentsOnly",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        }
+      ]
+    },
+    {
+      "className": "ForwardMailX",
+      "clrType": "UiPath.Mail.Activities.Business.ForwardMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Utils.ActivityWithMailBodyProperty",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Bcc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "AddBccRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "Body",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyDocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDocumentPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Utils.MailBodyType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Html",
+            "Text",
+            "WordDocument"
+          ],
+          "category": "Options",
+          "displayName": "MailBodyType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "Cc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "AddCcRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Files",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "HtmlBodyFromFile",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.HtmlEditor.HtmlContentArgument",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromFile",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "HtmlBodyFromText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "IsDraft",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "IsDraftXDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "MaxBodyDocumentSizeMB",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "category": "Options",
+          "displayName": "MaxBodyDocumentSizeMB",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "NewSubject",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "NewSubjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "OnBehalfOf",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Sender",
+          "displayName": "SentOnBehalfOfDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "To",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Receiver",
+          "displayName": "AddToRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForwardMailX"
+        },
+        {
+          "name": "UseDocumentAsBody",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        }
+      ]
+    },
+    {
+      "className": "GetEmailById",
+      "clrType": "UiPath.Mail.Activities.Business.GetEmailById",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Account",
+          "kind": "in",
+          "type": "UiPath.Mail.IMailQuickHandle",
+          "required": true,
+          "category": "Input",
+          "displayName": "AccountDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEmailById"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EmailId",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "Activity_GetEmailById_Property_EmailId_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEmailById"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_GetEmailById_Property_Result_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetEmailById"
+        }
+      ]
+    },
+    {
+      "className": "GetIMAPMailMessages",
+      "clrType": "UiPath.Mail.IMAP.Activities.GetIMAPMailMessages",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.GetMailActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ClientName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_GetIMAPMailMessages_Property_ClientName_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "ClientVersion",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_GetIMAPMailMessages_Property_ClientVersion_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "ConnectionDetailsBackupSlot",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.Mail.Activities.Enums.ConnectionDetails>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionMode",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Enums.ConnectionDetails",
+          "required": false,
+          "enum": [
+            "Undefined",
+            "IntegrationService",
+            "LegacyConfiguration"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "DeleteMessages",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "DeleteMessagesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "EnableSSL",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Host",
+          "displayName": "EnableSSLDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "FilterExpression",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "GetImapMailMessagesFilterExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "FilterExpressionCharacterSet",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "GetImapMailMessagesFilterExpressionCharacterSetDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "IgnoreCRL",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "Activity_GetIMAPMailMessages_Property_IgnoreCRL_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "MailFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "MailFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "MarkAsRead",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "MarkAsReadDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "Messages",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Mail.UiPathMailMessage>",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_GetIMAPMailMessages_Property_Messages_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "OnlyUnreadMessages",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "OnlyUnreadMessagesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "OrderByDate",
+          "kind": "prop",
+          "type": "UiPath.Mail.EOrderByDate",
+          "required": false,
+          "enum": [
+            "NewestFirst",
+            "OldestFirst"
+          ],
+          "category": "Options",
+          "displayName": "GetImapMailMessagesOrderByDateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Password"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "Port",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Host",
+          "displayName": "PortDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "SecureConnection",
+          "kind": "prop",
+          "type": "UiPath.Mail.SecureSocketEncryption",
+          "required": false,
+          "enum": [
+            "None",
+            "Auto",
+            "SslOnConnect",
+            "StartTls",
+            "StartTlsWhenAvailable"
+          ],
+          "category": "Options",
+          "displayName": "SecureConnectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "Logon",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SecurePassword"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "Server",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "ServerDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        },
+        {
+          "name": "TimeoutMS",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMSDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Options",
+          "displayName": "TopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "UseISConnection",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "UseOAuth",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_GetIMAPMailMessages_Property_UseOAuth_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetIMAPMailMessages"
+        }
+      ]
+    },
+    {
+      "className": "GetMailMessageFromFile",
+      "clrType": "UiPath.Mail.Activities.GetMailMessageFromFile",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EmailFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "category": "Input",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailMessageFromFile"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "out",
+          "type": "UiPath.Mail.UiPathMailMessage",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailMessageFromFile"
+        }
+      ]
+    },
+    {
+      "className": "GetPOP3MailMessages",
+      "clrType": "UiPath.Mail.POP3.Activities.GetPOP3MailMessages",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.GetMailActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ConnectionDetailsBackupSlot",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.Mail.Activities.Enums.ConnectionDetails>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionMode",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Enums.ConnectionDetails",
+          "required": false,
+          "enum": [
+            "Undefined",
+            "IntegrationService",
+            "LegacyConfiguration"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "DeleteMessages",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "DeleteMessagesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "EnableSSL",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Host",
+          "displayName": "EnableSSLDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "IgnoreCRL",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "Activity_GetPOP3MailMessages_Property_IgnoreCRL_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "Messages",
+          "kind": "out",
+          "type": "System.Collections.Generic.List<UiPath.Mail.UiPathMailMessage>",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_GetIMAPMailMessages_Property_Messages_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Password"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "Port",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Host",
+          "displayName": "PortDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "SecureConnection",
+          "kind": "prop",
+          "type": "UiPath.Mail.SecureSocketEncryption",
+          "required": false,
+          "enum": [
+            "None",
+            "Auto",
+            "SslOnConnect",
+            "StartTls",
+            "StartTlsWhenAvailable"
+          ],
+          "category": "Options",
+          "displayName": "SecureConnectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "Logon",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SecurePassword"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "Server",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "ServerDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        },
+        {
+          "name": "TimeoutMS",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMSDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Options",
+          "displayName": "TopDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetMailActivity"
+        },
+        {
+          "name": "UseISConnection",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "UseOAuth",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_GetPOP3MailMessages_Property_UseOAuth_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPOP3MailMessages"
+        }
+      ]
+    },
+    {
+      "className": "GmailApplicationCard",
+      "clrType": "UiPath.Mail.Activities.Business.GmailApplicationCard",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Business.ConnectionServiceMailApplicationCard",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "Account",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "BindingsVersion",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction<UiPath.Mail.IMailQuickHandle>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "MailApplicationCard"
+        },
+        {
+          "name": "ClientId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "GmailApplicationCardClientIdDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard"
+        },
+        {
+          "name": "ClientSecret",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "GmailApplicationCardClientSecretDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard"
+        },
+        {
+          "name": "ConnectionAccountName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        },
+        {
+          "name": "Connector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard",
+          "readOnly": true
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EmailAddress",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Authentication",
+          "displayName": "GmailApplicationCardEmailAddressDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard"
+        },
+        {
+          "name": "Timeout",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "category": "Common",
+          "displayName": "GmailApplicationCardTimeoutDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GmailApplicationCard"
+        },
+        {
+          "name": "UseConnectionService",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_UseConnectionService_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ConnectionServiceMailApplicationCard"
+        }
+      ]
+    },
+    {
+      "className": "MarkMailAsReadX",
+      "clrType": "UiPath.Mail.Activities.Business.MarkMailAsReadX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncNativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MarkMailAsReadX"
+        },
+        {
+          "name": "MarkAs",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.MarkMailAs",
+          "required": false,
+          "enum": [
+            "Read",
+            "Unread"
+          ],
+          "category": "Input",
+          "displayName": "MarkAsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MarkMailAsReadX"
+        }
+      ]
+    },
+    {
+      "className": "MoveIMAPMailMessageToFolder",
+      "clrType": "UiPath.Mail.IMAP.Activities.MoveIMAPMailMessageToFolder",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailConnectionServiceAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ClientName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_MoveIMAPMailMessageToFolder_Property_ClientName_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "ClientVersion",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_MoveIMAPMailMessageToFolder_Property_ClientVersion_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "ConnectionDetailsBackupSlot",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.Mail.Activities.Enums.ConnectionDetails>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "ConnectionMode",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Enums.ConnectionDetails",
+          "required": false,
+          "enum": [
+            "Undefined",
+            "IntegrationService",
+            "LegacyConfiguration"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "EnableSSL",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Host",
+          "displayName": "EnableSSLDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "FromFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FromFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "IgnoreCRL",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "Activity_MoveIMAPMailMessageToFolder_Property_IgnoreCRL_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "MailFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Destination",
+          "displayName": "MailFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Input",
+          "displayName": "MailMessageDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Password"
+          ],
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "Port",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Host",
+          "displayName": "PortDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "SecureConnection",
+          "kind": "prop",
+          "type": "UiPath.Mail.SecureSocketEncryption",
+          "required": false,
+          "enum": [
+            "None",
+            "Auto",
+            "SslOnConnect",
+            "StartTls",
+            "StartTlsWhenAvailable"
+          ],
+          "category": "Options",
+          "displayName": "SecureConnectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "Logon",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SecurePassword"
+          ],
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "Server",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "ServerDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        },
+        {
+          "name": "UseISConnection",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "BaseMailConnectionServiceAsyncActivity"
+        },
+        {
+          "name": "UseOAuth",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_MoveIMAPMailMessageToFolder_Property_UseOAuth_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveIMAPMailMessageToFolder"
+        }
+      ]
+    },
+    {
+      "className": "MoveMailX",
+      "clrType": "UiPath.Mail.Activities.Business.MoveMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "MailFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "MoveToDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveMailX"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MoveMailX"
+        }
+      ]
+    },
+    {
+      "className": "NewGmailTrigger",
+      "clrType": "UiPath.Mail.Activities.Business.NewGmailTrigger",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Business.BaseConnectionTriggerActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ConnectionAccountName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger"
+        },
+        {
+          "name": "Connector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilterExpression",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "ObjectName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Operation",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_NewGmailTrigger_Property_Result_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewGmailTrigger"
+        },
+        {
+          "name": "UiPathEvent",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventConnector",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UseConnectionService",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        }
+      ]
+    },
+    {
+      "className": "NewIMAPEmailReceivedTrigger",
+      "clrType": "UiPath.Mail.Activities.IMAP.NewIMAPEmailReceivedTrigger",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.IMAP;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailConnectionServiceTriggerActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ConnectionAccountName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "Connector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Filter",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.IMAP.Filters.TriggerMailFilterCollection",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "FilterExpression",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "IncludeAttachments",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_NewIMAPEmailReceivedTrigger_Property_IncludeAttachments_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "JobData",
+          "kind": "out",
+          "type": "UiPath.Mail.Activities.Utils.JobInformation",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_ConnectionServiceActivities_Property_JobData_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "MailFolder",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "Activity_NewIMAPEmailReceivedTrigger_Property_MailFolder_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "MailFolderBindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "MarkAsRead",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_NewIMAPEmailReceivedTrigger_Property_MarkAsRead_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "ObjectName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Operation",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_NewIMAPEmailReceivedTrigger_Property_Result_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        },
+        {
+          "name": "UiPathEvent",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "UiPathEventConnector",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "UseConnectionService",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_UseConnectionService_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceTriggerActivity"
+        },
+        {
+          "name": "WithAttachmentsOnly",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_NewIMAPEmailReceivedTrigger_Property_WithAttachmentsOnly_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewIMAPEmailReceivedTrigger"
+        }
+      ]
+    },
+    {
+      "className": "NewO365EmailTrigger",
+      "clrType": "UiPath.Mail.Activities.Business.NewO365EmailTrigger",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Business.BaseConnectionTriggerActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ConnectionAccountName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger"
+        },
+        {
+          "name": "Connector",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilterExpression",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "ObjectName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Operation",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger",
+          "readOnly": true
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_NewO365EmailTrigger_Property_Result_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NewO365EmailTrigger"
+        },
+        {
+          "name": "UiPathEvent",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventConnector",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UiPathEventObjectType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        },
+        {
+          "name": "UseConnectionService",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseConnectionTriggerActivity"
+        }
+      ]
+    },
+    {
+      "className": "OutlookForEachMail",
+      "clrType": "UiPath.Mail.Activities.Business.OutlookForEachMail",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Business.ForEachEmailX",
+      "obsolete": true,
+      "browsable": false,
+      "props": [
+        {
+          "name": "Body",
+          "kind": "delegate",
+          "type": "System.Activities.ActivityAction<System.Net.Mail.MailMessage, System.Int32>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "IncludeSubfolders",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_ForEachEMailX_IncludeSubfolders_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "MailFilter",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.ForEachMail.MailFilterArgument",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "Mails",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.Net.Mail.MailMessage>",
+          "required": true,
+          "category": "Options",
+          "displayName": "InEmailsFrom",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "NumberOfEmailsLimit",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Options",
+          "displayName": "LimitEmailsToFirst",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "RetrieveAttachments",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "Activity_ForEachMailX_Property_RetrieveAttachments_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "UnreadOnly",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "UnreadOnly",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        },
+        {
+          "name": "WithAttachmentsOnly",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "ForEachMail_WithAttachmentsOnly",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ForEachEmailX"
+        }
+      ]
+    },
+    {
+      "className": "ReplyToMailX",
+      "clrType": "UiPath.Mail.Activities.Business.ReplyToMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Utils.ActivityWithMailBodyProperty",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AdditionalCc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "AddCcRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "AdditionalTo",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "AddToRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "Bcc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "AddBccRecipientsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "Body",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyDocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDocumentPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Utils.MailBodyType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Html",
+            "Text",
+            "WordDocument"
+          ],
+          "category": "Options",
+          "displayName": "MailBodyType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Files",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "HtmlBodyFromFile",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.HtmlEditor.HtmlContentArgument",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromFile",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "HtmlBodyFromText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "IsDraft",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "IsDraftXDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "MaxBodyDocumentSizeMB",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "category": "Options",
+          "displayName": "MaxBodyDocumentSizeMB",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "NewSubject",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "NewSubjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "ReplyToAll",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Input",
+          "displayName": "ReplyToAll",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ReplyToMailX"
+        },
+        {
+          "name": "UseDocumentAsBody",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        }
+      ]
+    },
+    {
+      "className": "SaveMail",
+      "clrType": "UiPath.Mail.Activities.SaveMail",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMail"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FilePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMail"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Input",
+          "displayName": "MailMessageDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMail"
+        }
+      ]
+    },
+    {
+      "className": "SaveMailAttachments",
+      "clrType": "UiPath.Mail.Activities.SaveMailAttachments",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Attachments",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "category": "Output",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExcludeInlineAttachments",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_SaveMailAttachments_Property_ExcludeInlineAttachments_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "Filter",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "FilterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FolderPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "Message",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Input",
+          "displayName": "MessageDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "OverwriteExisting",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_SaveMailAttachments_PropertyOverwriteExisting_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        },
+        {
+          "name": "ResourceAttachments",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.ILocalResource>",
+          "required": false,
+          "category": "Output",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachments"
+        }
+      ]
+    },
+    {
+      "className": "SaveMailAttachmentsX",
+      "clrType": "UiPath.Mail.Activities.Business.SaveMailAttachmentsX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Attachments",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "category": "Output",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExcludeInlineAttachments",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_SaveMailAttachmentsX_Property_ExcludeInlineAttachments_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        },
+        {
+          "name": "Filter",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FilterByDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SaveToFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        },
+        {
+          "name": "Message",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        },
+        {
+          "name": "OverwriteExisting",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "OverwriteExistingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailAttachmentsX"
+        }
+      ]
+    },
+    {
+      "className": "SaveMailX",
+      "clrType": "UiPath.Mail.Activities.Business.SaveMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncNativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FileName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "FileNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailX"
+        },
+        {
+          "name": "FolderPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Input",
+          "displayName": "SaveToFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailX"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": true,
+          "category": "Input",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SaveMailX"
+        }
+      ]
+    },
+    {
+      "className": "SendCalendarInviteX",
+      "clrType": "UiPath.Mail.Activities.Business.SendCalendarInviteX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.BaseMailAsyncActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Account",
+          "kind": "in",
+          "type": "UiPath.Mail.IMailQuickHandle",
+          "required": true,
+          "category": "Input",
+          "displayName": "AccountDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "AlertInterval",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": true,
+          "category": "AppointmentTime",
+          "displayName": "AlertIntervalDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "AllDayEvent",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "AppointmentTime",
+          "displayName": "AllDayEventDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "BodyDocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDocumentPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "BusyStatus",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.AppointmentBusyStatus",
+          "required": false,
+          "enum": [
+            "Free",
+            "Tentative",
+            "Busy",
+            "OutOfOffice"
+          ],
+          "category": "AppointmentTime",
+          "displayName": "BusyStatusDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "DailyRecurrenceStep",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "DailyRecurrence",
+          "displayName": "DailyRecurrenceStepDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "DailyRecurrenceType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.DailyRecurrenceType",
+          "required": false,
+          "enum": [
+            "EveryNthDays",
+            "EveryWeekDay"
+          ],
+          "category": "DailyRecurrence",
+          "displayName": "DailyRecurrenceTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "Description",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "DescriptionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Duration",
+          "kind": "in",
+          "type": "System.TimeSpan",
+          "required": false,
+          "category": "AppointmentTime",
+          "displayName": "DurationDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "EndDate",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": false,
+          "category": "RangeOfRecurrence",
+          "displayName": "EndDateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "Files",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "IsRecurring",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "RecurrencePattern",
+          "displayName": "IsRecurringDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "Location",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "LocationDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MaxBodyDocumentSizeMB",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "category": "Options",
+          "displayName": "MaxBodyDocumentSizeMB",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MonthlyRecurrenceDay",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.WeekDayType",
+          "required": false,
+          "enum": [
+            "Day",
+            "WeekDay",
+            "WeekendDay",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "category": "MonthlyRecurrence",
+          "displayName": "MonthlyRecurrenceDayDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MonthlyRecurrenceDayIndex",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "MonthlyRecurrence",
+          "displayName": "MonthlyRecurrenceDayIndexDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MonthlyRecurrenceStep",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "MonthlyRecurrence",
+          "displayName": "MonthlyRecurrenceStepDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MonthlyRecurrenceType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.MonthlyRecurrenceType",
+          "required": false,
+          "enum": [
+            "EveryNthDayOnEveryXthMonth",
+            "EveryNWeekDayOnEveryXMonth"
+          ],
+          "category": "MonthlyRecurrence",
+          "displayName": "MonthlyRecurrenceTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "MonthlyRecurrenceWeek",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.RecurrenceInstance",
+          "required": false,
+          "enum": [
+            "First",
+            "Second",
+            "Third",
+            "Fourth",
+            "Last"
+          ],
+          "category": "MonthlyRecurrence",
+          "displayName": "MonthlyRecurrenceWeekDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "OptionalAttendees",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "OptionalAttendeesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "RecurrenceEndType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.RecurrenceEndType",
+          "required": false,
+          "enum": [
+            "ByDate",
+            "AfterNumberOfOccurrences",
+            "NoEndDate"
+          ],
+          "category": "RangeOfRecurrence",
+          "displayName": "RecurrenceEndTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "RecurrencePatternType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.RecurrencePatternType",
+          "required": false,
+          "enum": [
+            "Daily",
+            "Weekly",
+            "Monthly",
+            "Yearly"
+          ],
+          "category": "RecurrencePattern",
+          "displayName": "RecurrencePaternTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "RecurrenceTotalOccurrences",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "RangeOfRecurrence",
+          "displayName": "RecurrenceTotalOccurrencesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "RequiredAttendees",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "RequiredAttendeesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "SaveWithoutSending",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "SaveWithoutSending",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "StartDate",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": true,
+          "category": "AppointmentTime",
+          "displayName": "StartDateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "StartTime",
+          "kind": "in",
+          "type": "System.DateTime",
+          "required": true,
+          "category": "AppointmentTime",
+          "displayName": "StartTimeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "Subject",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "TitleSubjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "UseDocumentAsBody",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "UseDocumentAsBody",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "WeeklyRecurrenceDays",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.WeekDays",
+          "required": false,
+          "enum": [
+            "None",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "category": "WeeklyRecurrence",
+          "displayName": "WeeklyRecurrenceDaysDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "WeeklyRecurrenceStep",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "WeeklyRecurrence",
+          "displayName": "WeeklyRecurrenceStepDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceDay",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.WeekDayType",
+          "required": false,
+          "enum": [
+            "Day",
+            "WeekDay",
+            "WeekendDay",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceDayDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceDayIndex",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceDayIndexDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceMonth",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.Month",
+          "required": false,
+          "enum": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+          ],
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceMonthDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceStep",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceStepDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.YearlyRecurrenceType",
+          "required": false,
+          "enum": [
+            "EveryNthDayOfMonth",
+            "EverySpecificDay"
+          ],
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        },
+        {
+          "name": "YearlyRecurrenceWeek",
+          "kind": "prop",
+          "type": "UiPath.Mail.Implementation.RecurrenceInstance",
+          "required": false,
+          "enum": [
+            "First",
+            "Second",
+            "Third",
+            "Fourth",
+            "Last"
+          ],
+          "category": "YearlyRecurrence",
+          "displayName": "YearlyRecurrenceWeekDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendCalendarInviteX"
+        }
+      ]
+    },
+    {
+      "className": "SendMail",
+      "clrType": "UiPath.Mail.SMTP.Activities.SendMail",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.SendMailActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "in",
+          "type": "UiPath.Mail.MailAction",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Forward",
+            "ReplyTo",
+            "ReplyToAll"
+          ],
+          "category": "Activity_SendMail_Property_ForwardOrReplyTo_Name",
+          "displayName": "Activity_SendMail_Property_Action_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "AttachmentInputMode",
+          "kind": "prop",
+          "type": "UiPath.MicrosoftOffice365.Activities.Mail.Enums.AttachmentInputMode",
+          "required": false,
+          "enum": [
+            "None",
+            "Existing",
+            "Builder",
+            "FilePaths",
+            "FilePathsBuilder"
+          ],
+          "category": "Attachments",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Attachments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.String>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "AttachmentsBackup",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.MicrosoftOffice365.Activities.Mail.Enums.AttachmentInputMode>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "AttachmentsCollection",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsCollectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "Bcc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "BccDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "Body",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "Cc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "CcDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "ConnectionDetailsBackupSlot",
+          "kind": "prop",
+          "type": "UiPath.Shared.Activities.Utils.BackupSlot<UiPath.Mail.Activities.Enums.ConnectionDetails>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceContinuableAsyncActivity"
+        },
+        {
+          "name": "ConnectionId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "General_Category_ConnectionService",
+          "displayName": "Activity_ConnectionServiceActivities_Property_ConnectionId_Name",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceContinuableAsyncActivity"
+        },
+        {
+          "name": "ConnectionMode",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Enums.ConnectionDetails",
+          "required": false,
+          "enum": [
+            "Undefined",
+            "IntegrationService",
+            "LegacyConfiguration"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceContinuableAsyncActivity"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "ContinueOnError",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "CreatedAfterSolutionSupport",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "BaseMailConnectionServiceContinuableAsyncActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Email",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "EmailDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "EnableSSL",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Host",
+          "displayName": "EnableSSLDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Files",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "From",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Sender",
+          "displayName": "FromDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "IgnoreCRL",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "category": "Options",
+          "displayName": "Activity_SendSMTPMail_Property_IgnoreCRL_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "IsBodyHtml",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Options",
+          "displayName": "IsBodyHtmlDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "MailMessage",
+          "kind": "in",
+          "type": "System.Net.Mail.MailMessage",
+          "required": false,
+          "category": "Forward",
+          "displayName": "MailMessageDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Forward"
+          ],
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "Name",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Sender",
+          "displayName": "NameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Logon",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Port",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Host",
+          "displayName": "PortDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "ReplyTo",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "Activity_SendSMTPMail_Property_ReplyTo_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "ResourceAttachmentList",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IEnumerable<System.Activities.InArgument<UiPath.Platform.ResourceHandling.IResource>>",
+          "required": false,
+          "category": "Attachments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "ResourceAttachments",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.IResource>",
+          "required": false,
+          "category": "Attachments",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "Activity_SendSMTPMail_Property_StatusCode_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "SecureConnection",
+          "kind": "prop",
+          "type": "UiPath.Mail.SecureSocketEncryption",
+          "required": false,
+          "enum": [
+            "None",
+            "Auto",
+            "SslOnConnect",
+            "StartTls",
+            "StartTlsWhenAvailable"
+          ],
+          "category": "Options",
+          "displayName": "SecureConnectionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "Logon",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Server",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Host",
+          "displayName": "ServerDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "Subject",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "SubjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "TimeoutMS",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMSDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "To",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "ToDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        },
+        {
+          "name": "UseISConnection",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "BaseMailConnectionServiceContinuableAsyncActivity"
+        },
+        {
+          "name": "UseOAuth",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Logon",
+          "displayName": "Activity_SendSMTPMail_Property_UseOAuth_Name",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMail"
+        },
+        {
+          "name": "UseRichTextEditor",
+          "kind": "prop",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "category": "Options",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMailActivity"
+        }
+      ]
+    },
+    {
+      "className": "SendMailX",
+      "clrType": "UiPath.Mail.Activities.Business.SendMailX",
+      "assembly": "UiPath.Mail.Activities",
+      "xmlns": "clr-namespace:UiPath.Mail.Activities.Business;assembly=UiPath.Mail.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Mail.Activities.Utils.ActivityWithMailBodyProperty",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Account",
+          "kind": "in",
+          "type": "UiPath.Mail.IMailQuickHandle",
+          "required": true,
+          "category": "Input",
+          "displayName": "AccountDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "Bcc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "BccDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "Body",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyDocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "BodyDocumentPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "BodyType",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Utils.MailBodyType",
+          "required": false,
+          "default": "0",
+          "enum": [
+            "Html",
+            "Text",
+            "WordDocument"
+          ],
+          "category": "Options",
+          "displayName": "MailBodyType",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "Cc",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Receiver",
+          "displayName": "CcDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Files",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Attachments",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "HtmlBodyFromFile",
+          "kind": "prop",
+          "type": "UiPath.Mail.Activities.Business.HtmlEditor.HtmlContentArgument",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromFile",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "HtmlBodyFromText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "SendMailX_HtmlBodyFromText",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "Importance",
+          "kind": "prop",
+          "type": "UiPath.Mail.MailImportance",
+          "required": false,
+          "enum": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "category": "Options",
+          "displayName": "MailImportanceProperty",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "IsDraft",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "category": "Options",
+          "displayName": "IsDraftXDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "MaxBodyDocumentSizeMB",
+          "kind": "prop",
+          "type": "System.Double",
+          "required": false,
+          "category": "Options",
+          "displayName": "MaxBodyDocumentSizeMB",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        },
+        {
+          "name": "ReplyTo",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "ReplyToProperty",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "Sensitivity",
+          "kind": "prop",
+          "type": "UiPath.Mail.MailSensitivity",
+          "required": false,
+          "enum": [
+            "Normal",
+            "Personal",
+            "Private",
+            "Confidential"
+          ],
+          "category": "Options",
+          "displayName": "MailSensitivityProperty",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "Subject",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Email",
+          "displayName": "SubjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "To",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Receiver",
+          "displayName": "ToDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SendMailX"
+        },
+        {
+          "name": "UseDocumentAsBody",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ActivityWithMailBodyProperty"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "codedRegistries": [
+    {
+      "type": "UiPath.Mail.Activities.Api.MailRegistry",
+      "vars": {
+        "mail": "UiPath.Mail.Activities.Api.IMailService"
+      },
+      "namespaces": [
+        "UiPath.Mail.Activities.Api"
+      ]
+    }
+  ]
+}

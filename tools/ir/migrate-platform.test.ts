@@ -62,9 +62,17 @@ test("Portable のプロジェクトは <版>.portable.json を読む。.NET と
   assert.ok(loadSelected(root, project("Windows")).cat.activities.some((a) => a.className === "MultipleAssign"));
 });
 
-test("Portable のカタログが無い版はエラー（作り方を出す）", () => {
+test("UI 操作：クロスプラットフォームはモダン（N〜）だけ。クラシックと CV は無い", () => {
   const p = project("Portable", { "UiPath.System.Activities": "[26.10.0]", "UiPath.UIAutomation.Activities": "[26.10.6]" });
-  assert.throws(() => selectCatalogs(root, p), (e: unknown) => e instanceof VersionError && /extract-portable\.sh UiPath\.UIAutomation\.Activities 26\.10\.6/.test(e.message));
+  const { cat } = loadSelected(root, p);
+  const has = (c: string) => cat.activities.some((a) => a.className === c && a.package === "UiPath.UIAutomation.Activities");
+  assert.ok(has("NClick") && has("NApplicationCard") && has("NTypeInto"));
+  assert.ok(!has("Click") && !has("CVClick") && !has("NSAPLogon"));
+});
+
+test("Portable のカタログが無い版はエラー（作り方を出す）", () => {
+  const p = project("Portable", { "UiPath.System.Activities": "[26.10.0]", "UiPath.UIAutomation.Activities": "[26.10.3]" });
+  assert.throws(() => selectCatalogs(root, p), (e: unknown) => e instanceof VersionError && /extract-portable\.sh UiPath\.UIAutomation\.Activities 26\.10\.3/.test(e.message));
   assert.throws(() => selectCatalogs(root, project("Legacy" as "Windows")), VersionError);
 });
 

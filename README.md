@@ -53,10 +53,14 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.Testing.Activities | 23.4.1 | 22（Coded API なし） |
 | UiPath.Testing.Activities | 25.10.1 | 25 |
 | UiPath.Mail.Activities | 1.21.1 | 46（Coded API なし） |
+| UiPath.Mail.Activities | 2.12.10 | 49（Coded API なし） |
 | UiPath.MicrosoftOffice365.Activities | 2.2.7 | 135（Coded API なし） |
+| UiPath.MicrosoftOffice365.Activities | 3.12.11 | 185（Coded API なし） |
 | UiPath.WebAPI.Activities | 1.20.1 | 8（Coded API なし） |
 | UiPath.SAP.BAPI.Activities | 3.0.1 | 5（Coded API なし） |
 | UiPath.DataService.Activities | 26.10.1 | 12（Coded API なし） |
+
+クロスプラットフォーム（`targetFramework` が `Portable`）のカタログは `<版>.portable.json`。どの版にあるかと、使えるアクティビティの数は [knowledge/cross-platform.md](knowledge/cross-platform.md)。
 
 Coded API の無いパッケージのアクティビティは、Coded（C#）では XAML 経由で呼ぶ（[knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)）。
 

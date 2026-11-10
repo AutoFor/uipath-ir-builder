@@ -22,14 +22,18 @@ one() {
   skip "$pkg" && return 0
   [ -f "$win" ] || { echo "NG $pkg $ver: $win が無い"; return 1; }
   lp=$(echo "$pkg" | tr 'A-Z' 'a-z')
-  for a in $(node -e "for (const a of require(process.argv[1]).assemblies ?? []) console.log(a)" "$win"); do
-    p=""
-    for d in "$N/$lp.runtime.portable/$ver" "$N/$lp.runtime/$ver" "$N/$lp/$ver"; do
-      [ -f "$d/lib/net6.0/$a" ] && { p=$d/lib/net6.0/$a; break; }
-    done
-    [ -n "$p" ] || { echo "-- $pkg $ver: クロスプラットフォームの $a が手元に無い（作らない）"; return 0; }
-    dlls+=(--dll "$p")
+  local as=() lib="" absent=()
+  as=($(node -e "for (const a of require(process.argv[1]).assemblies ?? []) console.log(a)" "$win"))
+  # 1 つ目のアセンブリ（アクティビティの本体）がある lib/net6.0 を、そのパッケージのクロスプラットフォーム版とする
+  for d in "$N/$lp.runtime.portable/$ver" "$N/$lp.runtime/$ver" "$N/$lp/$ver"; do
+    [ -f "$d/lib/net6.0/${as[0]}" ] && { lib=$d/lib/net6.0; break; }
   done
+  [ -n "$lib" ] || { echo "-- $pkg $ver: クロスプラットフォームの ${as[0]} が手元に無い（作らない）"; return 0; }
+  # そこに無いほかのアセンブリは、クロスプラットフォームに無い（UIAutomation の旧 UiPath.UiAutomation.Activities.dll、CV など）
+  for a in "${as[@]}"; do
+    if [ -f "$lib/$a" ]; then dlls+=(--dll "$lib/$a"); else absent+=("$a"); fi
+  done
+  [ ${#absent[@]} -eq 0 ] || echo "   $pkg $ver: ${absent[*]} はクロスプラットフォームに無い（$lib）"
   "$exe" --package "$pkg" --version "$ver" "${dlls[@]}" $(extra "$pkg") --out "$root/catalog/$pkg/$ver.portable.json" | tail -1
 }
 

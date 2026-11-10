@@ -57,12 +57,25 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 | UiPath.System.Activities | 26.10.0 | 186 | 150 |
 | UiPath.Excel.Activities | 3.6.1 | 128 | 22（ブックのファイルを直接読み書きするものと CSV だけ。Excel を開く `ExcelApplicationCard` などは無い） |
 | UiPath.MicrosoftOffice365.Activities | 2.2.7 | 135 | 56（Integration Service の `*Connections` 版） |
+| UiPath.MicrosoftOffice365.Activities | 3.12.11 | 185 | 108 |
+| UiPath.UIAutomation.Activities | 26.10.6 | 211 | 66（モダンの `N〜` だけ。下の「UI 操作」） |
+| UiPath.Mail.Activities | 2.12.10 | 49 | 27（Outlook デスクトップ、Lotus Notes、Exchange の旧版、`CreateDraft` などが無い。IMAP / POP3 / SMTP、`〜X` の版、Gmail・Exchange のカードはある） |
 | UiPath.Persistence.Activities | 1.13.0 | 20 | 20 |
 | UiPath.Testing.Activities | 23.4.1 / 25.10.1 | 22 / 25 | 同じ |
 | UiPath.WebAPI.Activities | 1.20.1 | 8 | 8 |
 | UiPath.DataService.Activities | 26.10.1 | 12 | 12 |
 
-まだ無いもの（手元にクロスプラットフォームの DLL が無い）：UiPath.UIAutomation.Activities（全版）、UiPath.Mail.Activities 1.21.1、UiPath.SAP.BAPI.Activities 3.0.1、UiPath.System.Activities 24.10.7 / 26.2.6。これらを使うプロジェクトは、クロスプラットフォームに移そうとすると「カタログが無い」で止まる。
+まだ無いもの（手元にクロスプラットフォームの DLL が無い）：UiPath.UIAutomation.Activities 25.10.33 / 26.10.3、UiPath.Mail.Activities 1.21.1、UiPath.SAP.BAPI.Activities 3.0.1、UiPath.System.Activities 24.10.7 / 26.2.6。これらの版を使うプロジェクトは、クロスプラットフォームに移そうとすると「カタログが無い」で止まる。UiPath.IntegrationService.Activities は Windows のカタログも無い。
+
+- パッケージのクロスプラットフォーム版に、Windows のカタログの DLL の一部が無いことがある。そのアセンブリのアクティビティはクロスプラットフォームに無い（`extract-portable.sh` が「〜はクロスプラットフォームに無い」と出す）
+
+### UI 操作（26.10.6）
+
+クロスプラットフォーム版（`uipath.uiautomation.activities.runtime.portable`）には `UiPath.UIAutomationNext.Activities.dll` と API の DLL しか無い。
+
+- クラシックのアクティビティ（`UiPath.UiAutomation.Activities.dll`：`Click`、`TypeInto`、`OpenBrowser` など 125）と CV（`UiPath.CV.Activities.dll`：18）は全部無い
+- モダンのうち無いのは `NSAPLogon` と `NSetBrowserData` だけ。`NApplicationCard` の `OCREngine` も無い
+- オブジェクトリポジトリ（`.objects`）と `$ref` はそのまま使える（`.objects` はどちらでも同じ形）
 
 ### System 26.10.0 でクロスプラットフォームに無いもの（36）
 
@@ -75,4 +88,5 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 ## 確かめたこと
 
 - `LogMessage` と `Assign` だけのワークフローを Windows → クロスプラットフォーム → Windows と移し、どちらも run の窓口で build が通った。戻した XAML は元と文字まで同じ
-- まだ見ていないもの：クロスプラットフォームでの run、C# のプロジェクトの移行、UI 操作（DLL が無い）
+- オブジェクトリポジトリを使う UI 操作のプロジェクト（`NApplicationCard`、`NClick`、`NTypeInto` と `$ref`）をクロスプラットフォームに移し、Main と Sub の build が通った
+- まだ見ていないもの：クロスプラットフォームでの run、C# のプロジェクトの移行
