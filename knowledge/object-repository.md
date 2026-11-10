@@ -41,6 +41,7 @@ node tools/ir/objrepo.ts move     --project <P> <アプリ/画面/要素> <ア�
 - `target` は IR の `objs.TargetApp`（画面）/ `objs.Target`（要素）と同じ書き方。ただし**リテラルだけ**（式は `REPO_EXPR`）。`Reference` / `ContentHash` は書かない（リポジトリが付ける）
 - 同じ親の下で名前が重なるとエラー（`REPO_NAME`）。Studio と同じく `名前(1)` にする
 - `InformativeScreenshot` は `<P>/.screenshots/<名前>` の画像。リポジトリにはその写しが入る
+  - 無い画面・要素は、Studio のプレビューに「プレビューを利用できません」と出る（動きには関わらない）。`build` は `REPO_NO_SCREENSHOT` の注意を出し、`list` は「（画像なし）」を付ける。手で書いたターゲットには画像が無いので、画像が要るなら Studio でその要素を指定し直す（撮った画像が `.screenshots` に入る）
 
 ### ワークフローの IR から使う
 

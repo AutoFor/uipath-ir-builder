@@ -12,7 +12,7 @@ import { generate } from "./generate.ts";
 import { validate } from "./validate.ts";
 import type { ObjValue, Workflow } from "./types.ts";
 import {
-  b64u, buildObjects, elementContent, elementSearchHash, expandRefs, findRef, netHash, readObjects, registerTargets, repositoryFile,
+  b64u, buildObjects, elementContent, elementSearchHash, expandRefs, findRef, netHash, readObjects, registerTargets, REPO_NOTICES, repositoryFile,
   rewriteRefs, screenSearchHash, staleness, type Repository,
 } from "./objrepo.ts";
 
@@ -98,7 +98,7 @@ test("build：Repository から .objects を作り、読み戻すと同じ。も
   try {
     const repo = sample();
     const r = buildObjects(p, repo, cat, { newId: ids, now: () => "2026-11-10T00:00:00.0000000Z" });
-    assert.deepEqual(r.issues, []);
+    assert.deepEqual(r.issues.filter((i) => i.code !== "REPO_NO_SCREENSHOT"), []); // sample() の画面には画像が無い
     assert.equal(r.idsAdded, true);
     const app = repo.apps[0], s1 = app.screens![0], e = s1.elements![0];
     const eDir = `${app.id!.slice(0, 4)}/${app.versionId!.slice(0, 4)}/${s1.id!.slice(0, 4)}/${e.id!.slice(0, 4)}`;
@@ -165,8 +165,20 @@ test("検証：同じ名前、式、Reference を書いたらエラー", () => {
     const repo = sample();
     repo.apps[0].screens![0].elements!.push({ name: "申請日", target: { FullSelectorArgument: "sel", SearchSteps: "Selector", Reference: "x" } });
     const r = buildObjects(p, repo, cat);
-    assert.deepEqual(r.issues.map((i) => i.code).sort(), ["REPO_EXPR", "REPO_NAME", "REPO_SHAPE"]);
+    assert.deepEqual(r.issues.map((i) => i.code).filter((c) => !REPO_NOTICES.has(c)).sort(), ["REPO_EXPR", "REPO_NAME", "REPO_SHAPE"]);
     assert.ok(!existsSync(join(p, ".objects")));
+  } finally { rmSync(p, { recursive: true, force: true }); }
+});
+
+test("画像の無い画面・要素は注意だけ出して build する", () => {
+  const p = tmpProject();
+  try {
+    const repo = sample();
+    repo.apps[0].screens![0].elements!.push({ name: "送信", target: { FullSelectorArgument: { lit: "<webctrl tag='BUTTON' />" }, SearchSteps: "Selector" } });
+    const r = buildObjects(p, repo, cat);
+    assert.ok(r.issues.every((i) => REPO_NOTICES.has(i.code)));
+    assert.ok(r.issues.some((i) => i.code === "REPO_NO_SCREENSHOT" && i.path.endsWith("/送信")));
+    assert.ok(existsSync(join(p, ".objects")));
   } finally { rmSync(p, { recursive: true, force: true }); }
 });
 

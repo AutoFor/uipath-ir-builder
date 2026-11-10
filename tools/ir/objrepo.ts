@@ -309,6 +309,10 @@ export const pathOf = (f: Found) => [f.app.name, f.screen?.name, f.element?.name
 
 // ---- 検証 ----
 
+/** build を止めない注意（それ以外のコードはエラー） */
+export const REPO_NOTICES = new Set(["REPO_SCREENSHOT", "REPO_SEARCH_HASH", "REPO_NO_SCREENSHOT"]);
+const NO_SHOT = "InformativeScreenshot が無い（Studio のプレビューに「プレビューを利用できません」と出る。Studio で要素を指定し直すと撮られる）";
+
 export function checkRepository(repo: Repository): RepoIssue[] {
   const issues: RepoIssue[] = [];
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
@@ -337,13 +341,17 @@ export function checkRepository(repo: Repository): RepoIssue[] {
       const at = `${app.name}/${s.name}`;
       id(s, at);
       if (!s.target || typeof s.target !== "object") add(at, "REPO_SHAPE", "target（TargetApp）が要る");
-      else literalOnly(s.target, objectTypes.get(TAPP)!, `${at}.target`, add);
+      else {
+        literalOnly(s.target, objectTypes.get(TAPP)!, `${at}.target`, add);
+        if (!s.target.InformativeScreenshot) add(at, "REPO_NO_SCREENSHOT", NO_SHOT);
+      }
       names(s.elements ?? [], at);
       for (const e of s.elements ?? []) {
         const eat = `${at}/${e.name}`;
         id(e, eat);
         if (!e.target || typeof e.target !== "object") { add(eat, "REPO_SHAPE", "target（TargetAnchorable）が要る"); continue; }
         literalOnly(e.target, objectTypes.get(TA)!, `${eat}.target`, add);
+        if (!e.target.InformativeScreenshot) add(eat, "REPO_NO_SCREENSHOT", NO_SHOT);
         if (!searchHashExact(e.target)) add(eat, "REPO_SEARCH_HASH", "画像・CV・Semantic の探し方の SearchHash はまだ Studio と同じ値にならない（Studio の「リポジトリを再利用」で同じ要素と見なされないことがある）");
       }
     }
@@ -401,7 +409,7 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
   const mkId = opts.newId ?? newId;
   const changes: string[] = [];
   const issues = checkRepository(repo);
-  if (issues.length) return { issues, changes, idsAdded: false };
+  if (issues.some((i) => !REPO_NOTICES.has(i.code))) return { issues, changes, idsAdded: false };
   const state = readObjects(project, cat);
   // 読めないものがあっても build は進める（読めなかった中身は書き直す）
   let idsAdded = false;
@@ -487,7 +495,7 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
   // 同じ親の下でフォルダ名（Id の先頭 4 文字）が重なると書けない
   const dirs = new Map<string, string>();
   for (const w of wants) { if (dirs.has(w.dir)) issues.push({ path: w.name ?? w.id, code: "REPO_ID", message: `フォルダ ${w.dir} が "${dirs.get(w.dir)}" と重なる（Id の先頭 4 文字が同じ）` }); dirs.set(w.dir, w.name ?? w.id); }
-  if (issues.some((i) => i.code !== "REPO_SCREENSHOT" && i.code !== "REPO_SEARCH_HASH")) return { issues, changes, idsAdded };
+  if (issues.some((i) => !REPO_NOTICES.has(i.code))) return { issues, changes, idsAdded };
 
   // メタデータ
   const t = now();
@@ -814,7 +822,7 @@ async function main() {
   const saveRepo = (r: Repository) => { mkdirSync(join(P, "ir"), { recursive: true }); writeFileSync(file, JSON.stringify(r, null, 2) + "\n", "utf8"); };
   const build = (repo: Repository, dry = false) => {
     const r = buildObjects(P, repo, cat, { dryRun: dry });
-    const bad = r.issues.filter((i) => i.code !== "REPO_SCREENSHOT" && i.code !== "REPO_SEARCH_HASH");
+    const bad = r.issues.filter((i) => !REPO_NOTICES.has(i.code));
     console.log(bad.length ? `NG build ${file}` : `OK build${dry ? "（--dry-run）" : ""} ${join(P, ".objects")}`);
     show(bad, "エラー");
     show(r.issues.filter((i) => !bad.includes(i)), "注意");
@@ -847,8 +855,9 @@ async function main() {
     for (const a of repo.apps) {
       console.log(`${a.name}  ${a.version ?? "1.0.0"}`);
       for (const s of a.screens ?? []) {
-        console.log(`  ${s.name}`);
-        for (const e of s.elements ?? []) console.log(`    ${e.name}`);
+        const noShot = (t: Record<string, unknown> | undefined) => (t?.InformativeScreenshot ? "" : "  （画像なし）");
+        console.log(`  ${s.name}${noShot(s.target)}`);
+        for (const e of s.elements ?? []) console.log(`    ${e.name}${noShot(e.target)}`);
       }
     }
     return;
@@ -886,7 +895,7 @@ async function main() {
       f.screen!.elements = f.screen!.elements!.filter((e) => e !== f.element);
       (to.screen!.elements ??= []).push(f.element!);
     }
-    const issues = checkRepository(repo);
+    const issues = checkRepository(repo).filter((i) => !REPO_NOTICES.has(i.code));
     if (issues.length) { show(issues, "エラー"); process.exit(1); }
     rewriteAll(before, repo);
     finish(repo);
