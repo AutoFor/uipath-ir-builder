@@ -340,6 +340,8 @@ Claude のセッションは SSH 経由（管理者権限・セッション 0）
 
 ### 8-7. まだ書けないもの・気をつけること
 
+- オブジェクトリポジトリ（`.objects/`）の画面・要素は `objs` に `{ "$ref": "アプリ/画面/要素" }` で書く。作り方・登録・名前の変更・移動・セレクターの編集は [knowledge/object-repository.md](../knowledge/object-repository.md)（`tools/ir/objrepo.ts`）
+
 - `objects.json` に無い型（`UiPath.CV.*` の記述子、`SearchedElement` 以外の Activities.Models など）は「UI のターゲット」として書けない。足すときは抽出器の `--types` で `objects.json` を作り直す（正規表現に型を足す）：
   ```bash
   L=~/.nuget/packages/uipath.uiautomation.activities.runtime/26.10.6/lib/net6.0-windows7.0

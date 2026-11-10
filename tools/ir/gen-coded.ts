@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate } from "./validate.ts";
+import { expandRefs } from "./objrepo.ts";
 import { generateCoded, type ViaXamlFile } from "./generate-coded.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadMappings } from "./mapping.ts";
@@ -68,8 +69,9 @@ const apiCheck = (code: string) => {
 
 let failed = false;
 for (const f of files) {
-  const wf: Workflow = JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, ""));
-  const issues = validate(wf, cat);
+  const ex = expandRefs(JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")) as Workflow, cat, project);
+  const wf = ex.wf;
+  const issues = ex.issues.length ? [...ex.issues] : validate(wf, cat);
   let code = "";
   let warns: { path: string; code: string; message: string }[] = [];
   const subs: { file: ViaXamlFile; xaml: string }[] = [];

@@ -33,7 +33,8 @@
 ## objs で書けるようにしたが、中身に制限があるもの
 
 - `GetQueueItems.FilterBuilder`：`LogicalOperator` だけ書ける。`Filters` の要素の型（`QueueItemFilterElement`）が公開されていない。条件は `Filter`（OData の文字列）で書く
-- `Target.SemanticTexts`（`String[]`）、`Target.OwnerTarget`、`TargetApp.SapInfo`、`CvDescriptor.Anchors`（配列）：`objs` の中で値を書けない
+- `Target.SemanticTexts`（`String[]`）、`Target.OwnerTarget`、`CvDescriptor.Anchors`（配列）：`objs` の中で値を書けない
+- `TargetApp.SapInfo`：UIAutomation 26.10.6 では `{ "IsSapSubsystem": false, "WebAutomationFramework": "Default" }` で書ける（`SAPElementInfo` をカタログに足した）。26.10.3 の DLL にはこの型が無いので書けない
 - `FilterX` / `FilterPivotTableX` の `FilterArgument`、`GetJobs.FilterBuilder`、`GetQueueItems.FilterBuilder`、`NForEachUiElement.Filter`、`NSAPLogon.AutoGenerationOptions`：XAML の build まで確かめた。run と Coded はまだ（使うと `MAPPING_UNUSED_PROP`。各アクティビティのイシューで対応表に足す）
 - `RetryScope.Condition`：XAML の build まで確かめた。Coded は `CODED_UNSUPPORTED`
 

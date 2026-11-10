@@ -14,6 +14,7 @@ C:\...\<どこか>\請求書処理\       ← UiPath のプロジェクト（Stu
     project.json                 ← パッケージの版と式の言語（VB / C#）はここで決まる
     Main.xaml                    ← 生成器が書き出す。手で直さない
     ir\Main.json                 ← AI が書く IR。こちらが正本
+    ir\repository.json           ← オブジェクトリポジトリの IR（使うときだけ）。.objects\ はここから作る
 ```
 
 - AI が書き換えるのは `ir\*.json` だけ。XAML / `.cs` は毎回 IR から作り直す。XAML を直接直すと、次に生成したときに消え、検証も効かない
@@ -43,6 +44,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - アクティビティの一覧はカタログ `catalog/<パッケージ>/<版>.json` の `activities[].className`
 - パッケージごとの注意は `knowledge/`（Excel は `excel.md`、Testing は `testing.md`、UI 操作は [docs/worker-guide.md](docs/worker-guide.md) の 8.）
 - 書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)
+- UI 操作の画面・要素をオブジェクトリポジトリ（`.objects/`）に置くときは [knowledge/object-repository.md](knowledge/object-repository.md)。正本は `<P>/ir/repository.json`、ワークフローの IR からは `{ "$ref": "アプリ/画面/要素" }` で指す。`.objects` は `node tools/ir/objrepo.ts build --project <P>` で作る（手で直さない）。Studio の XAML にある、リポジトリに入っていないセレクターは `import-xaml.ts` で IR にしてから `objrepo.ts register` で登録する
 
 ### 3. IR を書く
 

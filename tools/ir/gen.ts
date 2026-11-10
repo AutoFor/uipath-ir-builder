@@ -18,6 +18,7 @@ import { validate } from "./validate.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadSelected, projectLanguage, projectRootImports, readRootImportsFile, runSelection, VersionError } from "./versions.ts";
 import type { Workflow } from "./types.ts";
+import { expandRefs } from "./objrepo.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -50,8 +51,10 @@ const { cat, rootImports, language } = runSelection(() => {
 });
 let failed = false;
 for (const f of files) {
-  const wf: Workflow = JSON.parse(readFileSync(f, "utf8"));
-  let issues = validate(wf, cat);
+  // objs の { "$ref": ... }（オブジェクトリポジトリ）を、--project の .objects の中身にする
+  const ex = expandRefs(JSON.parse(readFileSync(f, "utf8")) as Workflow, cat, project);
+  const wf = ex.wf;
+  let issues = ex.issues.length ? ex.issues : validate(wf, cat);
   // C# の式に直せないものも検証エラーとして出す（生成してみないと分からないので、--check でも生成する）
   const r = issues.length ? undefined : generateChecked(wf, cat, { rootImports, language });
   if (r) issues = r.issues;
