@@ -45,6 +45,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - アクティビティの一覧はカタログ `catalog/<パッケージ>/<版>.json` の `activities[].className`
 - パッケージごとの注意は `knowledge/`（Excel は `excel.md`、Testing は `testing.md`、UI 操作は [docs/worker-guide.md](docs/worker-guide.md) の 8.）
 - 書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)
+- UiPath Apps（Action Center のタスクの画面など）を作るときは [knowledge/apps.md](knowledge/apps.md)。Coded Action App は `node tools/apps/coded-action.ts <app.json> --out <dir>`（IR は `samples/apps/expense-review.json` を写して直す）
 - UI 操作の画面・要素をオブジェクトリポジトリ（`.objects/`）に置くときは [knowledge/object-repository.md](knowledge/object-repository.md)。正本は `<P>/ir/repository.json`、ワークフローの IR からは `{ "$ref": "アプリ/画面/要素" }` で指す。`.objects` は `node tools/ir/objrepo.ts build --project <P>` で作る（手で直さない）。Studio の XAML にある、リポジトリに入っていないセレクターは `import-xaml.ts` で IR にしてから `objrepo.ts register` で登録する
 
 ### 3. IR を書く

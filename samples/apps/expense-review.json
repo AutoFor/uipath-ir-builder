@@ -1,0 +1,26 @@
+{
+  "app": "expense-review",
+  "kind": "action",
+  "title": "経費の申請を確かめる",
+  "subtitle": "申請の中身を見て、承認するか差し戻すかを選ぶ。",
+  "fields": [
+    { "name": "applicant", "dir": "in", "type": "string", "required": true, "label": "申請者", "section": "申請" },
+    { "name": "amount", "dir": "in", "type": "number", "required": true, "label": "金額", "currency": "JPY", "section": "申請" },
+    { "name": "appliedOn", "dir": "in", "type": "string", "format": "date", "label": "申請日", "section": "申請" },
+    { "name": "items", "dir": "in", "type": "array", "items": { "type": "string" }, "label": "明細", "section": "申請" },
+    { "name": "detail", "dir": "in", "type": "object", "properties": { "dept": { "type": "string" }, "project": { "type": "string" } }, "label": "部署と案件", "section": "申請" },
+    { "name": "receipt", "dir": "in", "type": "file", "label": "領収書", "section": "申請" },
+    { "name": "requestId", "dir": "in", "type": "string", "format": "uuid", "hidden": true },
+    { "name": "category", "dir": "inout", "type": "string", "control": "select", "options": ["交通費", "交際費", "消耗品"], "label": "区分", "required": true },
+    { "name": "taxIncluded", "dir": "inout", "type": "boolean", "label": "税込み" },
+    { "name": "approvedAmount", "dir": "out", "type": "number", "required": true, "min": 0, "label": "承認する金額" },
+    { "name": "priority", "dir": "out", "type": "integer", "min": 1, "max": 5, "label": "優先度" },
+    { "name": "risk", "dir": "out", "type": "string", "control": "radio", "options": ["低", "中", "高"], "label": "リスク" },
+    { "name": "payOn", "dir": "out", "type": "string", "format": "date", "label": "支払日" },
+    { "name": "comment", "dir": "out", "type": "string", "control": "textarea", "required": true, "label": "コメント", "placeholder": "判断の理由を書く", "description": "差し戻すときは直してほしいところを書く" }
+  ],
+  "outcomes": [
+    { "name": "Reject", "label": "差し戻す", "validate": false },
+    { "name": "Approve", "label": "承認する", "primary": true }
+  ]
+}
