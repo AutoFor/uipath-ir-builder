@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" id="definitions_1b15d007-a334-4d5e-b5d9-4ae58345841e" name="Decision" namespace="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" exporter="UiPath Maestro" xmlns:tns="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" xmlns:uipath="http://uipath.com/schema/1.0/dmn/authoring">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" id="definitions_1b15d007-a334-4d5e-b5d9-4ae58345841e" name="Decision" namespace="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" exporter="UiPath Maestro" xmlns:tns="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" xmlns:uipath="http://uipath.com/schema/1.0/dmn/authoring">
   <extensionElements>
     <uipath:authoring surface="decision-table" />
   </extensionElements>
@@ -17,7 +17,7 @@
           <text>input1</text>
         </inputExpression>
       </input>
-      <output id="output_a69eeebe-4284-424e-b1ba-6a0d4b097e18" label="Output 1" name="output1" typeRef="string" />
+      <output id="output_a69eeebe-4284-424e-b1ba-6a0d4b097e18" label="output1" name="output1" typeRef="string" />
       <rule id="rule_vip">
         <inputEntry id="inputEntry_vip">
           <text>"VIP"</text>
