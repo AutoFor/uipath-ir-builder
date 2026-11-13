@@ -56,7 +56,18 @@ UiPath.DocumentUnderstanding.Activities の「Extract Document Data」を IR で
 - 2026-11-14 に `debug.mjs --automate --profile trial` で、`{"out_InvoiceNumber":"INV-1001","out_Total":"8100"}` が返り、全部 Completed。
 - RPA は Studio Web の Deploy で Shared/Solution 1 に出した（クラウドのロボットで動く）。key は `uip or processes list --all-folders --process-type Process` の Key。`registry search "rpa-workflow"` は 0 件だった。
 
-## まだのもの
+## Flow の Extract ノードで作ったモデル（Preview）を、このアクティビティで呼ぶ
 
-- Flow の Extract ノードで作ったモデルを、このアクティビティから呼ぶこと。
-  - 公式の文書では 3.6.0-preview 以降が要る。
+- Studio Web のプロジェクトの一覧で「Extract document (Preview)」を選ぶと、次の値になる。
+  - `ProjectId`：モデルのプロジェクトの ID
+  - `ProjectName`：`Extract document (Preview)`
+  - `ProjectTag` / `ProjectVersionName`：`live`
+  - `ProjectVersionNumber`：`1`
+  - `DocType`：`default_extractor`
+  - `ModernDocumentTypeId`：`00000000-0000-0000-0000-000000000000`
+  - `ModernDocumentTypeName`：`Default`
+  - `ExtractorName`：`IXP Default Extractor`
+- 項目はフィールド グループの下（`Default.SalesOrder` など）。
+- 2026-11-14 に 3.3.0 で run すると、抽出が `Internal Server Error ... [UnexpectedInternalServerError]` で落ちた。
+- 公式の文書は 3.6.0-preview 以降を求める。Studio Web で依存を 3.6.0-preview にすると、「Installing dependencies」から 5 分以上進まず、試せなかった。
+- Flow のノードで実行したときの INVALID_DOCUMENT と合わせると、Preview のモデルは実行時に呼ぶ経路がまだ通らない。
