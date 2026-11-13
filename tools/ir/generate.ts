@@ -3,7 +3,7 @@
 import type { Catalog, Activity, Prop } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
 import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue } from "./types.ts";
-import { toXamlType } from "./types-xaml.ts";
+import { toXamlType, EXPRESSION_IMPORTS } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
 import { excelPrefixes, excelVbForCs } from "./excel.ts";
@@ -109,6 +109,11 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     for (const [p, u] of Object.entries(r.xmlns)) xmlns.set(p, u);
     // Data Fabric の表の型は Studio が entitiesStores から作るアセンブリにある。式から使えるよう参照と import を足す
     if (r.xmlns.de) { refs.add("DataService.DataService.Entities"); imports.add("DataService.Entities"); }
+    // 式から引けるよう名前空間とアセンブリを足す型（types-xaml.ts の EXPRESSION_IMPORTS。無ければ build が BC30002 で落ちる）
+    for (const u of Object.values(r.xmlns)) {
+      const m = EXPRESSION_IMPORTS.has(u) ? /^clr-namespace:([\w.]+);assembly=([\w.]+)$/.exec(u) : null;
+      if (m) { imports.add(m[1]); refs.add(m[2]); }
+    }
     return r.text;
   };
   const idRef = (cls: string) => {

@@ -18,6 +18,10 @@ const UPT = "clr-namespace:UiPath.Platform.Triggers;assembly=UiPath.Platform";
 const SDIAG = "clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Process";
 const SCOM = "clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib";
 const SIO = "clr-namespace:System.IO;assembly=System.Private.CoreLib";
+const UISAD = "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction;assembly=UiPath.IntelligentOCR.StudioWeb.Activities";
+// 変数・引数の型に使ったとき、ルートの imports と AssemblyReference に名前空間とアセンブリを足す xmlns。
+// BlankTemplate に無く、Studio も足さないと式の中で型が引けないもの（Document Understanding の結果の型）
+export const EXPRESSION_IMPORTS = new Set<string>([UISAD]);
 
 const UI = "http://schemas.uipath.com/workflow/activities";
 
@@ -109,6 +113,9 @@ const simple: Record<string, [string, Record<string, string>]> = {
   "UiPath.CV.CvDescriptor": ["uc:CvDescriptor", { uc: "clr-namespace:UiPath.CV;assembly=UiPath.CV" }],
   "UiPath.CV.CvString": ["uc:CvString", { uc: "clr-namespace:UiPath.CV;assembly=UiPath.CV" }],
   "UiPath.Core.EventInfo": ["uuia:EventInfo", { uuia: "clr-namespace:UiPath.Core;assembly=UiPath.UiAutomation.Activities" }],
+  // UiPath.DocumentUnderstanding.Activities（Extract Document Data の「Generate data type」がオフのときの型。knowledge/document-understanding.md）
+  "UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.DictionaryData": ["uisad:DictionaryData", { uisad: UISAD }],
+  DictionaryData: ["uisad:DictionaryData", { uisad: UISAD }],
 };
 
 const generic: Record<string, [string, Record<string, string>]> = {
@@ -120,6 +127,8 @@ const generic: Record<string, [string, Record<string, string>]> = {
   IList: ["scg:IList", { scg: SCG }],
   ICollection: ["scg:ICollection", { scg: SCG }],
   Nullable: ["s:Nullable", { s: S }],
+  "UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.IDocumentData": ["uisad:IDocumentData", { uisad: UISAD }],
+  IDocumentData: ["uisad:IDocumentData", { uisad: UISAD }], // C# の XAML では名前空間を落とした名前で来る
 };
 
 // 完全名（"UiPath.Platform.ResourceHandling.ILocalResource"、"System.Collections.ObjectModel.Collection"）→ 表の項目。

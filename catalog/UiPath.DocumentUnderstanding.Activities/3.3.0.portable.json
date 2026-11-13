@@ -1,0 +1,2219 @@
+{
+  "package": "UiPath.DocumentUnderstanding.Activities",
+  "version": "3.3.0",
+  "assemblies": [
+    "UiPath.IntelligentOCR.StudioWeb.Activities.dll",
+    "UiPath.IntelligentOCR.dll"
+  ],
+  "activities": [
+    {
+      "className": "ClassifyDocument",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.ClassifyDocument",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/intelligentocr",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.ClassifierAsyncTaskActivity",
+      "displayName": "ClassifyDocumentDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ApiKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ClassificationResults",
+          "kind": "out",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.DocumentData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ClassifierId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ClassifierName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ClassifierResult",
+          "kind": "out",
+          "type": "UiPath.DocumentProcessing.Contracts.Classification.ClassifierResult",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DocumentObjectModel",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Dom.Document",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentTypes",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Classification.ClassifierDocumentType[]",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "Endpoint",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "FileInput",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "GptPromptWithVariables",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "MinimumConfidence",
+          "kind": "in",
+          "type": "System.Single",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "PersistenceId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "PredictionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifierAsyncCodeActivity"
+        },
+        {
+          "name": "ProjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ProjectName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ProjectTag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ProjectVersionName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "ProjectVersionNumber",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "Prompt",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "RuntimeAssetPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "RuntimeTenantUrl",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        },
+        {
+          "name": "TimeoutInSeconds",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ClassifyDocument"
+        }
+      ]
+    },
+    {
+      "className": "CreateClassificationValidationAction",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.CreateClassificationValidationAction",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.AsyncTaskActivity",
+      "displayName": "CreateClassificationValidationActionDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCatalogue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ActionPriority",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "ActionTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "AutomaticClassificationResults",
+          "kind": "in",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.DocumentData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction",
+          "readOnly": true
+        },
+        {
+          "name": "BucketId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "CreatedClassificationValidationAction",
+          "kind": "out",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.CreatedClassificationValidationAction",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnablePageReordering",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "OrchestratorBucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationAction"
+        }
+      ]
+    },
+    {
+      "className": "CreateClassificationValidationActionAndWait",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.CreateClassificationValidationActionAndWait",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.PersistentAsyncTaskActivity",
+      "displayName": "CreateClassificationValidationActionAndWaitDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCatalogue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ActionPriority",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "ActionTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "AutomaticClassificationResults",
+          "kind": "in",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.DocumentData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait",
+          "readOnly": true
+        },
+        {
+          "name": "BucketId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "ClassifierId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnablePageReordering",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "OperationId",
+          "kind": "inout",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "OrchestratorBucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "OrganizationId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "ProjectId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "TenantId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "ValidatedClassificationResults",
+          "kind": "out",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.DocumentData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateClassificationValidationActionAndWait"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.DocumentActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity"
+        }
+      ]
+    },
+    {
+      "className": "CreateDocumentValidationArtifacts",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.Artifacts.CreateDocumentValidationArtifacts",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.Artifacts;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.AsyncTaskActivity",
+      "displayName": "CreateDocumentValidationArtifactsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "AutomaticExtractionResults",
+          "kind": "in",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateDocumentValidationArtifacts"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateDocumentValidationArtifacts",
+          "readOnly": true
+        },
+        {
+          "name": "ContentValidationData",
+          "kind": "out",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.ContentValidationData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateDocumentValidationArtifacts"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "OrchestratorBucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateDocumentValidationArtifacts"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateDocumentValidationArtifacts"
+        }
+      ]
+    },
+    {
+      "className": "CreateValidationAction",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.CreateValidationAction",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.AsyncTaskActivity",
+      "displayName": "CreateValidationActionDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCatalogue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ActionPriority",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "ActionTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "AutomaticExtractionResults",
+          "kind": "in",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction",
+          "readOnly": true
+        },
+        {
+          "name": "BucketId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "ContainsDocument",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "ContainsTaxonomy",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "CreatedValidationAction",
+          "kind": "out",
+          "type": "CreatedValidationAction<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "DisplayMode",
+          "kind": "in",
+          "type": "UiPath.DU.Shared.Actions.DisplayModeArgument",
+          "required": false,
+          "enum": [
+            "Classic",
+            "Compact"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnableRTLControls",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "FieldsValidationConfidence",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "OrchestratorBucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "OrchestratorFolderId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CreateValidationAction"
+        },
+        {
+          "name": "OriginalFilePath",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "CreateValidationAction"
+        }
+      ]
+    },
+    {
+      "className": "ExtractDocumentData",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.ExtractDocumentData",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/intelligentocr",
+      "genericArity": 0,
+      "baseType": "System.Activities.AsyncCodeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DocType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "DocumentBounds",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Results.ResultsDocumentBounds",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "DocumentObjectModel",
+          "kind": "in",
+          "type": "System.Reflection.Metadata.Document",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "DocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "DocumentText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "ExtractionResults",
+          "kind": "out",
+          "type": "System.Collections.Generic.IDictionary<System.String, System.Object>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "ExtractorDocumentType",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.DataExtraction.ExtractorDocumentType",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "ExtractorResult",
+          "kind": "out",
+          "type": "UiPath.DocumentProcessing.Contracts.DataExtraction.ExtractorResult",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "FileInput",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "Outputs",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.OutArgument<System.String>>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "PersistenceId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "PredictionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        },
+        {
+          "name": "ProjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentData"
+        }
+      ]
+    },
+    {
+      "className": "ExtractDocumentDataWithDocumentData",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.ExtractDocumentDataWithDocumentData",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities/intelligentocr",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.ExtractorAsyncTaskActivity",
+      "displayName": "ExtractDocumentDataDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActivityMajorVersion",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ApplyAutoValidation",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "AutoValidationConfidenceThreshold",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "DocType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "DocumentBounds",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Results.ResultsDocumentBounds",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentObjectModel",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Dom.Document",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "DocumentText",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "ExtractionResults",
+          "kind": "out",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ExtractorDocumentType",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.DataExtraction.ExtractorDocumentType",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "ExtractorName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ExtractorResult",
+          "kind": "out",
+          "type": "UiPath.DocumentProcessing.Contracts.DataExtraction.ExtractorResult",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "FileInput",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "GenerateData",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "GptPromptWithVariables",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ModernDocumentTypeId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ModernDocumentTypeName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "PersistenceId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "PredictionId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractorAsyncCodeActivity"
+        },
+        {
+          "name": "ProjectId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ProjectName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ProjectTag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ProjectVersionName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ProjectVersionNumber",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "Prompt",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "RuntimeAssetPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "RuntimeTenantUrl",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        },
+        {
+          "name": "TimeoutInSeconds",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractDocumentDataWithDocumentData"
+        }
+      ]
+    },
+    {
+      "className": "ExtractPDFImages",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFImages.ExtractPDFImages",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFImages;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "Activity_ExtractPDFImages_DisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExtractedImages",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.ILocalResource>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFImages"
+        },
+        {
+          "name": "FilePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFImages"
+        },
+        {
+          "name": "ImageExtension",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFImages"
+        },
+        {
+          "name": "PdfFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFImages"
+        }
+      ]
+    },
+    {
+      "className": "ExtractPDFPageRange",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFPageRange.ExtractPDFPageRange",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFPageRange;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "ExtractPDFPageRangeDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExportedPdf",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFPageRange"
+        },
+        {
+          "name": "FilePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFPageRange"
+        },
+        {
+          "name": "PageRange",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFPageRange"
+        },
+        {
+          "name": "PdfFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFPageRange"
+        },
+        {
+          "name": "ResultFileName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFPageRange"
+        }
+      ]
+    },
+    {
+      "className": "ExtractPDFText",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFText.ExtractPDFText",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.ExtractPDFText;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "ExtractPDFTextDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ApplyOcr",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFText"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFText"
+        },
+        {
+          "name": "OcrEngine",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFText"
+        },
+        {
+          "name": "PdfFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFText"
+        },
+        {
+          "name": "Text",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExtractPDFText"
+        }
+      ]
+    },
+    {
+      "className": "GetPDFPageCount",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.GetPDFPageCount.GetPDFPageCount",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.GetPDFPageCount;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "ExtractPDFPageRangeDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FilePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPDFPageCount"
+        },
+        {
+          "name": "PageCount",
+          "kind": "out",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPDFPageCount"
+        },
+        {
+          "name": "PdfFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetPDFPageCount"
+        }
+      ]
+    },
+    {
+      "className": "MergePDFs",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.MergePDFs.MergePDFs",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.MergePDFs;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "MergePDFsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "CollectionPdfFiles",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.IResource>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergePDFs"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExportedPdf",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergePDFs"
+        },
+        {
+          "name": "IndividualPdfFiles",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IEnumerable<System.Activities.InArgument<UiPath.Platform.ResourceHandling.IResource>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergePDFs"
+        },
+        {
+          "name": "ResultFileName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergePDFs"
+        }
+      ]
+    },
+    {
+      "className": "RetrieveDocumentValidationArtifacts",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.Artifacts.RetrieveDocumentValidationArtifacts",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.Artifacts;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.AsyncTaskActivity",
+      "displayName": "RetrieveDocumentValidationArtifactsDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "CompletedAppAction",
+          "kind": "in",
+          "type": "System.Object",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RetrieveDocumentValidationArtifacts"
+        },
+        {
+          "name": "ContentValidationData",
+          "kind": "in",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.ContentValidationData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RetrieveDocumentValidationArtifacts"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "RemoveDataFromStorage",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RetrieveDocumentValidationArtifacts"
+        },
+        {
+          "name": "ReturnAutomaticExtractionResults",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RetrieveDocumentValidationArtifacts"
+        },
+        {
+          "name": "ValidatedExtractionResults",
+          "kind": "out",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.IDocumentData<UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.DictionaryData>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RetrieveDocumentValidationArtifacts"
+        }
+      ]
+    },
+    {
+      "className": "SetPDFPassword",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.SetPDFPassword.SetPDFPassword",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.PDF.SetPDFPassword;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.PDF.PDFActivityBase",
+      "displayName": "Activity_SetPDFPassword_DisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "CurrentManagePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "CurrentOpenPassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExportedPdf",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "NewManagePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "NewOpenPassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "PdfFile",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        },
+        {
+          "name": "ResultFileName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetPDFPassword"
+        }
+      ]
+    },
+    {
+      "className": "ValidateDocumentData",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.ValidateDocumentData",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.PersistentAsyncTaskActivity",
+      "displayName": "ValidateDocumentDataDisplayName",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ActionCatalogue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ActionPriority",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "ActionTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "AutomaticExtractionResults",
+          "kind": "in",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "BucketId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "ContainsDocument",
+          "kind": "inout",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "ContainsTaxonomy",
+          "kind": "inout",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "OriginalFilePath",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "RemoveDataAfterProcessing",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "ValidatedExtractionResults",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentData"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.DocumentActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity"
+        }
+      ]
+    },
+    {
+      "className": "ValidateDocumentDataWithDocumentData",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.ValidateDocumentDataWithDocumentData",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.PersistentAsyncTaskActivity",
+      "displayName": "ValidateDocumentDataDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCatalogue",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "ActionPriority",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ActionTitle",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "AutomaticExtractionResults",
+          "kind": "in",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "BindingsKey",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData",
+          "readOnly": true
+        },
+        {
+          "name": "BucketId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "BucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ContainsDocument",
+          "kind": "inout",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ContainsTaxonomy",
+          "kind": "inout",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "DisplayMode",
+          "kind": "in",
+          "type": "UiPath.DU.Shared.Actions.DisplayModeArgument",
+          "required": false,
+          "enum": [
+            "Classic",
+            "Compact"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnableRTLControls",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "FieldsValidationConfidence",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OperationId",
+          "kind": "inout",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OrchestratorBucketName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OrchestratorFolderId",
+          "kind": "in",
+          "type": "System.Int64",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OrchestratorFolderName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OrganizationId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "OriginalFilePath",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "RemoveDataAfterProcessing",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "TenantId",
+          "kind": "inout",
+          "type": "System.String",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "ValidatedExtractionResults",
+          "kind": "out",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "ValidateDocumentDataWithDocumentData"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.DocumentActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForClassificationValidationAction",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.WaitForClassificationValidationAction",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.PersistentAsyncTaskActivity",
+      "displayName": "WaitForClassificationValidationActionDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "CreatedClassificationValidationAction",
+          "kind": "in",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.CreatedClassificationValidationAction",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForClassificationValidationAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ValidatedClassificationResults",
+          "kind": "out",
+          "type": "UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification.DocumentData",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForClassificationValidationAction"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.DocumentActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity"
+        }
+      ]
+    },
+    {
+      "className": "WaitForValidationAction",
+      "clrType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.WaitForValidationAction",
+      "assembly": "UiPath.IntelligentOCR.StudioWeb.Activities",
+      "xmlns": "clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation;assembly=UiPath.IntelligentOCR.StudioWeb.Activities",
+      "genericArity": 1,
+      "baseType": "UiPath.IntelligentOCR.StudioWeb.Activities.DataValidation.PersistentAsyncTaskActivity",
+      "displayName": "WaitForValidationActionDisplayName",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ActionCenterServiceFactory",
+          "kind": "prop",
+          "type": "UiPath.IntelligentOCR.Actions.Abstractions.IActionCenterServiceFactory",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity",
+          "readOnly": true
+        },
+        {
+          "name": "CreatedValidationAction",
+          "kind": "in",
+          "type": "CreatedValidationAction<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForValidationAction"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "RemoveDataAfterProcessing",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": true,
+          "declaredOn": "WaitForValidationAction"
+        },
+        {
+          "name": "ValidatedExtractionResults",
+          "kind": "out",
+          "type": "IDocumentData<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "WaitForValidationAction"
+        },
+        {
+          "name": "WaitItemDataObject",
+          "kind": "inout",
+          "type": "UiPath.DocumentProcessing.Contracts.Actions.DocumentActionData",
+          "required": false,
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "PersistentAsyncTaskActivity"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
