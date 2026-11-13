@@ -32,7 +32,7 @@ Maestro のプロジェクトを AI に作らせるときに読む。作り方�
 ```bash
 cd tools/maestro && npm install --ignore-scripts                         # SDK（package.json で 6.66.5 に固定）
 node tools/maestro/verify.mjs --automate --out <dir> <名前>.flow.ts       # types → check → compile → validate（--pack で .nupkg も）
-node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"x":1}'   # テナントでデバッグ実行し、ノードごとの結果を出す
+node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"x":1}'   # テナントでデバッグ実行し、ノードごとの結果を出す（.bpmn と <名前>.case/caseplan.json も。--attachment <入力名>=<ファイル>）
 ```
 
 - `debug.mjs` は一時フォルダに `flow init`（`--automate` なら Automate）し、`.flow` を入れて `uip maestro flow debug` を流す。**テナントの Studio Web に試しのソリューションが 1 つ増える**
@@ -57,6 +57,16 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - **Terminate は Completed で終わる**（Faulted にならない）
 - コネクタは 2026-11-11 から、相手が 2xx 以外を返すと失敗になった（それまでは成功の道で、本文を見て分けていた）
 
+### エージェント・会話・コネクタ（Automate で動かして分かったこと）
+
+- **flow の中のエージェント（`inlineAgent`）**：compile が `.flow` の横に `<id>/agent.json` を書く。これもプロジェクトに入れないと実行で `Package resolution failed`（`debug.mjs` は横のフォルダも写す）。返す値は `returns: { answer: "string" }` で宣言し、プロンプトで「それを返して終える」と言う。言わないとモデルが「エラーとして終える」を選んで `AGENT_RUNTIME.TERMINATION_LLM_RAISED_ERROR` になった。`maxTokenPerResponse` が小さすぎると `CHAT_MODEL.UNSUCCESSFUL_STOP_REASON`
+- **会話のエージェント（`conversationalAgent`）の `maxIterations` は 8 以下**。SDK の既定はそれを超え、`verify.mjs` は通すが、Studio Web の問題パネルが止める。明示する
+- **会話の flow は CLI の debug では動かない**（`inputSchema` / `outputSchema` が無いと言われて上がらない。チャットを送る手段も無い）。`uip solution upload <ソリューションのフォルダ>` で上げ、Studio Web のデバッグのチャットで話しかける。返事と `sendMessage` の文が出て、成功になった
+- **コネクタは `uip maestro registry prepare` を `tools/maestro`（SDK のあるフォルダ）で流す**。ほかの場所だと「SDK が無い」と言われる。接続は `uip is connections list --all-folders` で探す（既定は個人ワークスペースだけを見る）
+- **人のタスク（Quick Form）は `uip tasks complete <id> --type QuickFormTask --folder-id <id> --action Approve --data <JSON>` で完了できる**。タスクは `uip tasks list` の `CreatedTime` と `Title` で探す。完了すると、出力に `Action` と入力した値が入り、分岐の先へ進んだ
+- **ファイルを入力にするとき**は `debug.mjs --attachment <入力名>=<ファイル>`
+- **要約（`summarize`）と一括変換（`batchTransform`）はプランによっては動かない**（`460002 Failed to create ephemeral index`、詳細は `Unavailable with current plan`）。手元の検証は通る
+
 ## 4. ノードと、確かめた範囲
 
 「テナント」はテナントでデバッグ実行して Completed を見たもの。「手元」は `verify.mjs`（types・check・compile・validate）だけ。見本は `samples/maestro/coverage/`、`samples/maestro/work-calendar/`、`tools/maestro/fixtures/`。
@@ -77,14 +87,23 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `onError` | テナント | 手元 | `ControlTour` |
 | `mock`、`terminate` | テナント | 手元 | `LoopTour` |
 | `dataFabricCreate` / `Read` / `Update` / `Delete` | テナント | 手元 | `DataFabricTour`、`WorkCalendarCheck` |
-| `rpaWorkflow` | 未（同じ .flow。Orchestrate で動いた） | テナント | `fixtures/tenant/Rpa.*` |
-| `connector`（Slack など） | 未（同上） | テナント | `fixtures/tenant/Slack.*` |
-| `agent`（公開済み） | 未（同上） | テナント | `fixtures/tenant/Agent.*` |
-| `hitl`（Quick Form、Action App） | 未 | テナント（タスクができ、人が完了して再開） | `fixtures/ok/Approval.*`、`fixtures/tenant/App.*` |
-| `queueItem`、`inlineAgent`、`apiWorkflow`、`publishedFunction`、`summarize`、`batchTransform` | 手元 | 手元 | `LocalOnly` |
-| 会話（`conversationTrigger`、`waitForMessage`、`sendMessage`、`conversationalAgent`）、音声、文書（`ixpExtract` など）、`waitForEvent` / `onEvent` | 未 | 未 | — |
+| `rpaWorkflow` | テナント | テナント | `fixtures/tenant/Rpa.*` |
+| `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
+| `agent`（公開済み） | テナント | テナント | `fixtures/tenant/Agent.*`（PERSONAL_WORKSPACE を実際の名前にして流す） |
+| `inlineAgent`（flow の中で定義するエージェント） | テナント | 手元 | `InlineAgent` |
+| `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
+| 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
+| `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
+| `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
+| `ixpExtract` / `dynamicExtract` | 動かせない：テナントに IXP のモデルが無い | 同じ | — |
+| 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元。着信はデプロイと電話番号が要り、発信はデバッグでも本当にかけて課金される | 同じ | `Voice` |
+| `queueItem`、`apiWorkflow`、`publishedFunction` | 手元（API ワークフローと関数はテナントに無い。キューは書き込みになる） | 手元 | `LocalOnly` |
+| BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
+| BPMN：Inclusive ゲートウェイ、Event-based ゲートウェイ、エラー開始のイベントサブプロセス | — | テナント | `BpmnEvents.bpmn` |
+| Case：ステージ 3 つ、前のステージの完了で入る、タスク 2 つを並べて動かす、必須のステージで完了 | — | テナント | `CaseTour.case` |
+| `waitForEvent` / `onEvent`（コネクタのイベント）、BPMN の Call activity・DMN・キュー | 未（イベントを起こす相手、デプロイ済みの別プロセス、Orchestrator のルールが要る） | 未 | — |
 
-Automate で「未」のものは、テナントへの書き込みや外への送信になる（RPA の実行、Slack、タスク）ので、この回は流していない。Automate と Orchestrate で `.flow` が同じなので、Orchestrate での結果がそのまま当てはまると見ている（未確認）。
+**Automate として動いていることの確かめ**：`debug.mjs --automate` で動かしたプロジェクトを Studio Web で開くと、下のツールバーが「製品: Maestro Automate」、エクスプローラーが「Maestro Automate プロジェクト」になっていた。Orchestrator のジョブは `RuntimeType: "Flow"` で、profile は出ない。
 
 ## 5. 稼働日カレンダー（Automate の見本）
 
@@ -102,6 +121,11 @@ Automate で「未」のものは、テナントへの書き込みや外への�
 - 1 プロジェクトに `.bpmn` は 1 つ。`bpmn:process` の id は変えない（"No diagrams found"）。変数名を変えると変数 ID も変わる（2026-03）
 - エラー：Error mapping（2026-03）でノードの失敗をエラーに対応づけ、境界のエラーかイベントサブプロセスで受ける。同じスコープではイベントサブプロセスが先。再試行は 1〜10 回、1 秒〜1 時間、合計 24 時間まで
 - `humanTask({ app })` は SDK のままでは落ちる。`tools/maestro/bpmn-app-task.mjs` で書き換える（[docs/maestro-tenant-resources.md](../docs/maestro-tenant-resources.md)）
+- **multi-instance で今の要素を読むには `itemVar: "iterator[0]"` にし、`inputs: { cur: "=iterator[0].item" }` で渡して、スクリプトでは `cur` と名前で読む**（テナントで確かめた）。次はどれも値が入らない：`itemVar: "item"` と `=iterator.item`（エンジンが `iterator.iterator<id>.item` に読み替えて「無い」）、`vars.item`（空のまま。黙って通るので、空なら投げるようにして気づいた）、`=js:iterator.item`（`iterator` が undefined）。この形に SDK の `check` は `SCRIPT_BARE_INPUT_REF` の warning を出すが、動く。SDK の説明（`iterator.<itemVar>`、inputs の名前はスクリプトから読めない）とは違う
+- **Inclusive ゲートウェイの `default` の道は、ほかの条件に当たっても毎回通った**（Exclusive の既定とは違う）。「どれにも当たらないときだけ」にしたいなら、その道にも条件を書く
+- **メッセージの中間イベント（`intermediateCatchEvent({ message })`）は、コネクタのイベントを結ばないと待たずにすぐ完了した**。Event-based ゲートウェイで「返事か期限か」を作るなら、返事の側にコネクタのイベントが要る
+- **イベントサブプロセスの開始イベントは SDK が `<id>_start` として作る**。自分で `startEvent` を書くとエラー。`sequenceFlow("<id>_start", …)` でつなぐ
+- 失敗の理由は `uip traces spans get <インスタンス>` の `Incident - <要素>` の `errorDetails`。BPMN の debug はスクリプトの出力を見せないので、調べたい値は `throw new Error(JSON.stringify(…))` で投げてここで読んだ
 - `uip maestro bpmn debug` の結果は PascalCase（`FinalStatus`、`ElementExecutions`）で、変数の値は出ない。`--timeout` も無い（`debug.mjs` が吸収する）。init の雛形に入れたあと `bpmn refresh` で `entry-points.json` を作り直す
 
 ## 7. Case Management（Orchestrate）
@@ -113,6 +137,7 @@ Automate で「未」のものは、テナントへの書き込みや外への�
 - **Exit ルールは動いているタスクを止めない**。Exit で終えた Required のステージは「完了」に数えないので、後ろで受けるか Exit the case と組にする
 - 再入場で動かすかのフラグは、ドキュメントに `runOnlyOnce`（新しい）と `runOnReentry`（古い）が混ざり意味が逆。値を明示する
 - Case Manager エージェントの出力は `caseManagerDecisions` の形でないと**黙って無視される**
+- `uip maestro case debug` は JSON の前にログの行を出す（`debug.mjs` は最初の `{` の行から読む）。Case は内部で BPMN にされ、`CaseRulesEvaluatorNode`（ルールの評価）、`CaseManagerNode`、ステージごとの SLA のイベントサブプロセスなどが動く。ステージは `Stage_<id>`、タスクは `t<id>` という要素になる
 - 実行するアカウントに Triggers.view と Triggers.create が無いと、wait-for-trigger の段で 403（実行時にしか出ない）
 - `action` にアプリを指定しないと 170004。QuickForm は SDK で書けず、`caseplan.json` と `.hitl.json` を手で足すと動いた（docs/maestro-tenant-resources.md）
 
@@ -133,3 +158,6 @@ Automate で「未」のものは、テナントへの書き込みや外への�
 | Terminate は Completed か Failed か | Flow の `terminate` は **Completed**（`LoopTour`） |
 | Data Fabric のノードにエラーの道は付くか | 付かない（SDK も同じ） |
 | 抽出の出力は `ExtractionResult` か `result` か | 2026-07 に `result` に変わった（リリースノート）。未確認 |
+| BPMN の multi-instance で今の要素は `iterator.item` か（SDK とドキュメント） | **`itemVar: "iterator[0]"` と `inputs: { cur: "=iterator[0].item" }`、スクリプトでは `cur`**（`BpmnTour`）。SDK の「inputs の名前はスクリプトから読めない」も、この場合は当たらない |
+| Inclusive の合流は「動いた辺だけ待つ」か | 当たった道と `default` の道が全部動き、合流は全部を待って進んだ（`BpmnEvents`） |
+| Automate のプロジェクトが本当に Automate として扱われるか | Studio Web で「製品: Maestro Automate」と出た（`operate.json` の `Lite`） |
