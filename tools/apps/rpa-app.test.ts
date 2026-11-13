@@ -108,3 +108,63 @@ test(".uis：/ 区切りの zip で、.local も入り、中身が戻る", () =>
   assert.deepEqual(got, f);
   assert.ok("RequestApp/.local/ProjectSettings.json" in got);
 });
+
+// ---- Data Fabric の表（samples/apps/work-calendar.json。Studio Web でデバッグして保存・更新・削除・一覧を確かめた）----
+import { loadStore } from "./rpa-app.ts";
+const calFile = join(root, "samples", "apps", "work-calendar.json");
+const cal: RpaApp = JSON.parse(readFileSync(calFile, "utf8"));
+const calStore = loadStore(cal, calFile);
+
+test("表：見本は検証を通る。表の定義が無い・無い列・必須の列の抜け・into の型を弾く", () => {
+  assert.deepEqual(check(cal, calStore), []);
+  assert.deepEqual(check(cal).map((i) => i.code).sort().slice(0, 1), ["APP_REF"]);
+  const t = (steps: any[], extra: Partial<RpaApp> = {}) => codes2({ app: "T", entities: "x", variables: [{ name: "D", type: "list", of: "WorkCalendar" }, { name: "S", type: "string" }], pages: [{ name: "P", controls: [{ type: "button", name: "B", onClick: steps }] }], ...extra });
+  const codes2 = (a: RpaApp) => check(a, calStore).map((i) => i.code).sort();
+  assert.deepEqual(t([{ create: "WorkCalendar", fields: { Nope: "1" } }]), ["APP_REF", "APP_REF"]); // 無い列と、必須の WorkDate の抜け
+  assert.deepEqual(t([{ create: "WorkCalendar", fields: { WorkDate: "Now", Id: "Guid.Empty" } }]), ["APP_REF"]); // Data Fabric が書く列
+  assert.deepEqual(t([{ query: "WorkCalendar", into: "S" }]), ["APP_REF"]);
+  assert.deepEqual(t([{ delete: "Nope", id: "x" }]), ["APP_REF"]);
+  assert.deepEqual(t([{ if: "True", then: [{ set: "Nope", value: "1" }] }]), ["APP_REF"]);
+  assert.deepEqual(t([{ set: "S", value: "1", open: "P" }]), ["APP_SHAPE"]);
+});
+
+test("表：XAML に Create / Update / Delete / Query と If が入り、list の変数は ListSource", () => {
+  const f = generateFiles(cal, calStore);
+  const save = f["WorkCalendarApp/MainPage_Save_click.xaml"];
+  assert.match(save, /<uda:QueryEntityRecords x:TypeArguments="de:WorkCalendar"[^>]*OutputRecords="\[rows1\]"/);
+  assert.match(save, /<InArgument x:TypeArguments="ac:ListSource\(de:WorkCalendar\)">\[rows1\.ToListSource\(\)\]<\/InArgument>/);
+  assert.match(save, /<uda:UpdateEntityRecord [^>]*RecordId="\[CType\(/);
+  assert.match(save, /<uda:CreateEntityRecord [^>]*EntityId="0f7fabd4-1ddf-f111-91f2-000d3ab0541e"/);
+  assert.match(save, /<udam:DynamicEntityField Id="197fabd4-1ddf-f111-91f2-000d3ab0541e" IsRequired="True" Name="WorkDate">/);
+  assert.match(save, /<If Condition="\[Not Controls\.MainPage\.TargetDate\.Value\.HasValue\]"/);
+  assert.match(save, /xmlns:uda="clr-namespace:UiPath\.DataService\.Activities;assembly=UiPath\.DataService\.Activities\.Core"/);
+  assert.ok(!/<AssemblyReference>Apps\.(app|form)\./.test(save));
+  assert.match(f["WorkCalendarApp/MainPage_Remove_click.xaml"], /<uda:DeleteEntityRecord [^>]*RecordId="\[CType\(/);
+  // 変数
+  const app = Object.entries(f).filter(([k]) => /\/models\/models-/.test(k)).map(([, v]) => JSON.parse(v)).find((m) => m.type === "app");
+  const days = app.appFields.find((x: any) => x.name === "Days");
+  assert.equal(days.appVariableDefinition.dataType, "Apps.Controls.ListSource");
+  assert.equal(days.appVariableDefinition.options[0].dataType, "[5ba47f0c-5858-4f65-9378-b4be1cff98f2]::DataService.Entities.WorkCalendar");
+  // 表の定義と project.json
+  assert.deepEqual(JSON.parse(f["WorkCalendarApp/project.json"]).entitiesStores, [{ serviceDocument: ".entities/EntitiesStore.json", namespace: "DataService.Entities" }]);
+  assert.ok("WorkCalendarApp/.entities/EntitiesStore.json" in f);
+});
+
+test("表：データの元は App の変数の token、列は見出しと列の名前", () => {
+  const f = generateFiles(cal, calStore);
+  const main = pageOf(f, "MainPage");
+  const tbl: any = Object.values(main.controls).find((x: any) => x.name === "DayList");
+  const g = main.expressions[tbl.id].expressions;
+  const src = g[tbl.config.sourceBinding.expressionId];
+  assert.equal(src.expression, "Days");
+  assert.equal(src.tokens[0].tokenType, "app-variable");
+  assert.deepEqual(tbl.config.columns.map((c: any) => [g[c.headingExpression.expressionId].expression, g[c.valueExpression.expressionId].expression]),
+    [['"日付"', "WorkDate"], ['"祝日"', "IsHoliday"], ['"祝日の名前"', "HolidayName"], ['"RPA を動かす"', "RunRpa"]]);
+  assert.match(g[tbl.config.columns[0].valueExpression.expressionId].contextSourceId, /\.config\.columns\[\?\(@\.id=="ID\d+"\)\]\.valueExpression$/);
+});
+
+test("表の定義：rpa-app-entities.ts は指定した表と参照先だけ残し、作った人の id を消す", () => {
+  const e = JSON.parse(calStore.EntitiesJson);
+  assert.deepEqual(e.entities.map((x: any) => x.name).sort(), ["SystemUser", "WorkCalendar"]);
+  assert.ok(!/"createdBy":"(?!0{8}-)/.test(calStore.EntitiesJson));
+});

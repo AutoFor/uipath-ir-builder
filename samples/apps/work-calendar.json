@@ -1,0 +1,82 @@
+{
+  "app": "WorkCalendarApp",
+  "solution": "WorkCalendarSolution",
+  "kind": "rpa-app",
+  "entities": "work-calendar.entities.json",
+  "variables": [
+    { "name": "Days", "type": "list", "of": "WorkCalendar" },
+    { "name": "Msg", "type": "string" }
+  ],
+  "pages": [
+    {
+      "name": "MainPage",
+      "controls": [
+        { "type": "label", "name": "Title", "text": "稼働日カレンダー" },
+        { "type": "label", "name": "Guide", "text": "日付を選び、祝日か・その日に RPA を動かすかを決めて「保存」を押します。登録の無い日は、RPA は動きません。" },
+        { "type": "date", "name": "TargetDate", "label": "日付", "required": true },
+        { "type": "checkbox", "name": "Holiday", "text": "祝日" },
+        { "type": "textbox", "name": "HolidayName", "label": "祝日の名前", "placeholder": "元日" },
+        { "type": "checkbox", "name": "RunRpa", "text": "この日に RPA を動かす" },
+        { "type": "button", "name": "Save", "text": "保存",
+          "onClick": [
+            { "if": "Not Controls.MainPage.TargetDate.Value.HasValue",
+              "then": [ { "set": "Msg", "value": "\"日付を選んでください\"" } ],
+              "else": [
+                { "query": "WorkCalendar", "into": "Days" },
+                { "if": "AppVariable.Days.data.Any(Function(r) CDate(r.WorkDate).Date = Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue))",
+                  "then": [
+                    { "update": "WorkCalendar",
+                      "id": "CType(AppVariable.Days.data.First(Function(r) CDate(r.WorkDate).Date = Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue)).Id, Guid)",
+                      "fields": {
+                        "WorkDate": "Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue)",
+                        "IsHoliday": "Controls.MainPage.Holiday.Value",
+                        "HolidayName": "Controls.MainPage.HolidayName.Value",
+                        "RunRpa": "Controls.MainPage.RunRpa.Value"
+                      } }
+                  ],
+                  "else": [
+                    { "create": "WorkCalendar",
+                      "fields": {
+                        "WorkDate": "Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue)",
+                        "IsHoliday": "Controls.MainPage.Holiday.Value",
+                        "HolidayName": "Controls.MainPage.HolidayName.Value",
+                        "RunRpa": "Controls.MainPage.RunRpa.Value"
+                      } }
+                  ] },
+                { "query": "WorkCalendar", "into": "Days" },
+                { "set": "Msg", "value": "Controls.MainPage.TargetDate.Value.Value.ToString(\"yyyy/MM/dd\") & \" を保存しました\"" }
+              ] }
+          ] },
+        { "type": "button", "name": "Remove", "text": "この日の設定を消す",
+          "onClick": [
+            { "if": "Not Controls.MainPage.TargetDate.Value.HasValue",
+              "then": [ { "set": "Msg", "value": "\"日付を選んでください\"" } ],
+              "else": [
+                { "query": "WorkCalendar", "into": "Days" },
+                { "if": "AppVariable.Days.data.Any(Function(r) CDate(r.WorkDate).Date = Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue))",
+                  "then": [
+                    { "delete": "WorkCalendar",
+                      "id": "CType(AppVariable.Days.data.First(Function(r) CDate(r.WorkDate).Date = Controls.MainPage.TargetDate.Value.Value.ToDateTime(TimeOnly.MinValue)).Id, Guid)" },
+                    { "query": "WorkCalendar", "into": "Days" },
+                    { "set": "Msg", "value": "Controls.MainPage.TargetDate.Value.Value.ToString(\"yyyy/MM/dd\") & \" の設定を消しました\"" }
+                  ],
+                  "else": [ { "set": "Msg", "value": "\"この日の設定はありません\"" } ] }
+              ] }
+          ] },
+        { "type": "button", "name": "Reload", "text": "一覧を読み込む",
+          "onClick": [
+            { "query": "WorkCalendar", "into": "Days" },
+            { "set": "Msg", "value": "AppVariable.Days.data.Count().ToString() & \" 日分を読み込みました\"" }
+          ] },
+        { "type": "label", "name": "Status", "text": { "var": "Msg" } },
+        { "type": "table", "name": "DayList", "source": { "var": "Days" },
+          "columns": [
+            { "heading": "日付", "value": "WorkDate" },
+            { "heading": "祝日", "value": "IsHoliday" },
+            { "heading": "祝日の名前", "value": "HolidayName" },
+            { "heading": "RPA を動かす", "value": "RunRpa" }
+          ] }
+      ]
+    }
+  ]
+}

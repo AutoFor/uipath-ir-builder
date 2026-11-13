@@ -98,12 +98,43 @@ uip solution upload out/RequestApp.uis                                          
 - 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）
 - 項目：`label`、`text`、`placeholder`、`required`、`checked`、`hidden`、`disabled`、`min` / `max`（number）、`rows`（textarea）。部品に無い項目は `APP_PROP`。雛形の部品にあるほかの式の項目は `props: { "tooltip": "…" }`
 - 値：文字（VB の文字列にする）・真偽・数、`{ "var": "<App の変数>" }`（tokens と bindingReferences でつなぐ）、`{ "vb": "<式>" }`（そのまま）
-- 変数：`type` は `string` だけ（ほかの型は Studio Web で確かめていない。`APP_UNSUPPORTED`）
+- 変数：`type` は `string` と `list`（`{ "type": "list", "of": "<Data Fabric の表>" }`。表の一覧を持つ）。ほかの型はまだ（`APP_UNSUPPORTED`）
 - `onClick`（button）：`{ "set": "<変数>", "value": "<VB の式>" }` は代入、`{ "open": "<ページ>" }` はアプリのページを開く。式の `Controls.<ページ>.<部品>` は名前があるかを調べる
-- 部品の JSON は雛形（`templates/rpa-app/controls.json`。Studio Web の書き出しから `node tools/apps/rpa-app-templates.ts <書き出したフォルダ>` で作る）を写し、id を振り直して式だけ書き換える。ドロップダウンの選択肢、表の列、画像はまだ
+- `table`：`source: { "var": "<list の変数>" }` と `columns: [{ "heading": "日付", "value": "<表の列の名前>" }]`
+- Data Fabric の表を使う手順は下の「Data Fabric の表」
+- 部品の JSON は雛形（`templates/rpa-app/controls.json`。Studio Web の書き出しから `node tools/apps/rpa-app-templates.ts <書き出したフォルダ>` で作る）を写し、id を振り直して式だけ書き換える。ドロップダウンの選択肢、画像はまだ
 - **`open` があると注意 `APP_OPEN_PAGE`**：取り込んだあと、開く先のページの部品の式を Studio Web で 1 回直して保存する（そのページの DLL ができるまで「Selected page is not accessible」）
 
-確かめたこと：見本を `--uis` で作って `upload` し、Studio Web で 2 ページ・変数・部品の文字（日本語、プレースホルダー）が出た。ボタンの XAML の代入は通った。Confirm の式を 1 回直すと Confirm の DLL ができ、XAML に Studio Web が `Apps.*` の参照を足した。実行（デバッグ）はしていない
+確かめたこと：見本を `--uis` で作って `upload` し、Studio Web で 2 ページ・変数・部品の文字（日本語、プレースホルダー）が出た。ボタンの XAML の代入は通った。Confirm の式を 1 回直すと Confirm の DLL ができ、XAML に Studio Web が `Apps.*` の参照を足した。そのあと Debug で動かし、申請者を入れて「確認へ」を押すと、Confirm ページに切り替わり、入れた名前が変数を通ってラベルに出た（ワークフローの 3 つの手順がすべて成功）。問題パネルに「Workflow has validation errors」が残っていても、そのワークフローを開くと「No issues found」に変わった（前の検査の結果が残っていただけ）
+
+### Data Fabric の表（見本：`samples/apps/work-calendar.json`、稼働日カレンダー）
+
+App は表を直接は持たない。ボタンのワークフローの中で Data Service の手順を使って読み書きし、一覧は `list` の App の変数に入れて表の部品に出す。
+
+```bash
+uip df entities create WorkCalendar --body '{"fields":[{"name":"WorkDate","type":"DATE","isRequired":true},{"name":"IsHoliday","type":"BOOLEAN"},…]}'
+# 表の定義：表を 1 回でも使った App を書き出し（uip solution download）、使う表だけに絞る
+node tools/apps/rpa-app-entities.ts <書き出し>/<App>/.entities/EntitiesStore.json WorkCalendar --out samples/apps/work-calendar.entities.json
+node tools/apps/rpa-app.ts samples/apps/work-calendar.json --uis out/WorkCalendar.uis
+uip solution upload out/WorkCalendar.uis
+```
+
+- IR の `"entities": "work-calendar.entities.json"`（IR からの相対パス）で表の定義を渡す。表の id、列の id と型をここから読む
+- 書き出しの `EntitiesStore.json` には**テナントの表がすべて**入る（ほかの業務の表の名前・説明も）。`rpa-app-entities.ts` で使う表と参照先（`SystemUser`）だけにし、作った人の id は 0 にする
+- 手順（`onClick`）：
+  - `{ "create": "<表>", "fields": { "<列>": "<VB>" } }` → `uda:CreateEntityRecord`。必須の列が無いと `APP_REF`。`Id`・`CreateTime` などは書けない
+  - `{ "update": "<表>", "id": "<Guid の VB>", "fields": {…} }` → `uda:UpdateEntityRecord`（`RecordId`）
+  - `{ "delete": "<表>", "id": "<Guid の VB>" }` → `uda:DeleteEntityRecord`
+  - `{ "query": "<表>", "into": "<list の変数>", "top": 1000 }` → `uda:QueryEntityRecords`（`OutputRecords` をワークフローの変数 `rowsN` に）と、`AppVariable.<変数> = rowsN.ToListSource()`
+  - `{ "if": "<VB>", "then": [...], "else": [...] }` → `If`
+- XAML：表を使うワークフローは見出しを `templates/rpa-app/event-entities.xaml`（`uda` / `udam` / `de` / `ac` の名前空間、`DataService.DataService.Entities` などの参照）にする。`ScopeValue="テナント"` は日本語の画面の Studio Web が書いた値のまま
+- `project.json` の `entitiesStores: [{ serviceDocument: ".entities/EntitiesStore.json", namespace: "DataService.Entities" }]` と `.entities/EntitiesStore.json` だけ置く。型の DLL（`EntitiesBundle.<hash>.zip`）と `.project/JitCustomTypes*.json` は入れなくても、取り込んだあと Studio Web が作った
+- list の変数：`appVariableDefinition: { baseType: "generic", dataType: "Apps.Controls.ListSource", options: [{ baseType: "class", dataType: "[5ba47f0c-5858-4f65-9378-b4be1cff98f2]::DataService.Entities.WorkCalendar" }] }`（`type: "object"`）。XAML の型は `ac:ListSource(de:WorkCalendar)`（`Apps.Controls.ListSource(Of T)`、`UiPath.Apps.Expressions.Integrations`）。`New ListSource(Of T)(data, totalRecords)` か拡張の `.ToListSource()`。中身は `.data`
+- 表の部品：`config.sourceBinding.expressionId` の式に変数（token 付き）、`config.columns[]` の `headingExpression`（文字）と `valueExpression`（列の名前。式は `$.controls.<id>.config.columns[?(@.id=="ID…")].valueExpression`）
+- 日付の部品の値は `DateOnly?`。日付の列（DateTime）へは `Controls.P.D.Value.Value.ToDateTime(TimeOnly.MinValue)`。チェックボックスの値は `Boolean`
+- 表の日付の列は `2026-11-23T00:00:00.0000000Z` と出る（書式はまだ）
+
+確かめたこと（2026-11-13）：見本を `--uis` で作って `upload` し、3 つのワークフローを開いて問題なし。デバッグで、日付を入れて「保存」→ 表に 1 行出た、チェックを変えて「保存」→ 同じ行が直った（行は増えない）、「この日の設定を消す」→ 行が消えた。DESKTOP の Chrome でやった（Studio Web は UiPath Assistant とのつなぎを求める）
 
 ### ソリューション（.uis = zip）
 
