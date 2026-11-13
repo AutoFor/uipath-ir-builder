@@ -95,7 +95,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
 | `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
-| `ixpExtract` / `dynamicExtract` | 動かせない：テナントに IXP のモデルが無い | 同じ | — |
+| `ixpExtract` / `dynamicExtract` | 動かせない：IXP のモデルは作れて抽出もできたが、フォルダへのデプロイが 403（Community）で Flow から見えない（10 節） | 同じ | — |
 | 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元。着信はデプロイと電話番号が要り、発信はデバッグでも本当にかけて課金される | 同じ | `Voice` |
 | `queueItem`、`apiWorkflow`、`publishedFunction` | 手元（API ワークフローと関数はテナントに無い。キューは書き込みになる） | 手元 | `LocalOnly` |
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
@@ -209,6 +209,8 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
   3. **`where` で見張るエンティティを指定し、コンパイルした `.flow` の `detail.filterExpression` を消す**。この操作の引数は `entityScope`（`tenant` か `folder`）と `tenantEntityName` / `folderEntityName`（`uip is triggers objects uipath-uipath-dataservice CREATED_V3 --connection-id <id>` で見える）。SDK 6.66.5 は `where` を `eventParameters` に入れるが、同じ値で `filterExpression: "entityScope == 'tenant' && …"` も作り、これが残っていると起動しなかった（中身に `entityScope` は無い）。SDK は `EVENT_SCOPE_NOT_TAKEN` の warning も出すが誤り。`object` は `EVENT_UNKNOWN` で通らない
   2 と 3 は（デプロイして起動まで確かめた）`node tools/maestro/event-bindings.mjs <ソリューションの中の Flow プロジェクト>` がまとめてやる（そのあと `uip solution resources refresh --solution-folder <ソリューション>` → `solution pack`）。見本は `DfEvent.flow.ts`
 
+- **IXP（文書の抽出）は Community プランだと、学習側は動くが Flow から呼べない**（2026-11-13）。`uip ixp projects create <名前> <PDF のフォルダ> -d "<抜く項目>"` でプロジェクトを作り、項目案（請求書と明細）が出て、`labellings get-predictions` の抽出も正しかった。`projects publish` も通った。**`uip ixp deployments create … --folder-key <Key>` は 403**（個人ワークスペースでも Standard のフォルダでも同じ。トークンには `Du.*` と `Reinfer` のスコープがある）。Flow の registry（`uip maestro flow registry search "uipath.ixp"`）はフォルダにデプロイしたモデルしか出さないので 0 件のまま、`ixpExtract` のノードは作れない。文書では Community でも抽出は「含まれる」が「機能は限られる」とあり、デプロイの可否は書いていない。`deployments` に削除のコマンドは無い（試しのプロジェクトは `projects delete <名前> -y` で消す）
+
 ### まだのもの
 
-- 文書の抽出（IXP のモデルが無い）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
+- 文書の抽出（IXP のフォルダへのデプロイが 403。Community の制限と見ている）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
