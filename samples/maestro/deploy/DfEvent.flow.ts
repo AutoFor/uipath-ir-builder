@@ -6,7 +6,7 @@ export default flow("DfEvent")
   .name("DfEvent")
   .trigger(onEvent({
     connector: "uipath-uipath-dataservice", event: "record-created",
-    // どのエンティティを見張るか。無いと購読は作られるが、行を足しても起動しなかった（テナントで確かめた）
+    // 見張るエンティティ。コンパイル後の detail.filterExpression は消す（残すと起動しない。knowledge/maestro.md 10 節）
     where: { entityScope: "tenant", tenantEntityName: "WorkCalendar" },
     connection: "df", folder: "shared",
   }))
