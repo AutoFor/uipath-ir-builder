@@ -1,0 +1,35 @@
+{
+  "app": "RequestApp",
+  "solution": "RequestAppSolution",
+  "kind": "rpa-app",
+  "variables": [
+    { "name": "ApplicantName", "type": "string" }
+  ],
+  "pages": [
+    {
+      "name": "MainPage",
+      "controls": [
+        { "type": "label", "name": "Title", "text": "経費の申請" },
+        { "type": "textbox", "name": "Applicant", "label": "申請者", "placeholder": "山田 太郎", "required": true },
+        { "type": "number", "name": "Amount", "label": "金額", "required": true, "min": 1 },
+        { "type": "date", "name": "AppliedOn", "label": "申請日" },
+        { "type": "dropdown", "name": "Category", "label": "区分" },
+        { "type": "textarea", "name": "Memo", "label": "メモ", "placeholder": "使い道を書く" },
+        { "type": "checkbox", "name": "Agree", "text": "内容を確かめた" },
+        { "type": "button", "name": "GoConfirm", "text": "確認へ",
+          "onClick": [
+            { "set": "ApplicantName", "value": "Controls.MainPage.Applicant.Value" },
+            { "open": "Confirm" }
+          ] }
+      ]
+    },
+    {
+      "name": "Confirm",
+      "controls": [
+        { "type": "label", "name": "Heading", "text": "申請者" },
+        { "type": "label", "name": "Who", "text": { "var": "ApplicantName" } },
+        { "type": "table", "name": "Items" }
+      ]
+    }
+  ]
+}

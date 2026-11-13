@@ -1,0 +1,594 @@
+{
+ "id": "ID78ba1363cac5457cb52d6339ab5ddd9b",
+ "order": 0,
+ "dateCreated": "2026-01-01T00:00:00.000Z",
+ "dateLastOpened": "2026-01-01T00:00:00.000Z",
+ "type": "form",
+ "iconUrl": "assets/svg/form.svg",
+ "idCounter": 2210,
+ "ownerFqn": "",
+ "ownerId": "",
+ "createdByFqn": "",
+ "createdById": "",
+ "systemName": "IDbea5f70f31ef4b7b9285c302d73df667",
+ "categorySystemName": "j-category-forms-organization",
+ "appSystemName": "ID07d525eb3553422d9ebc0d6922204ff2",
+ "tenantId": "",
+ "buildVersion": "2026.11.5-10.8.11-s205.d09e8c5b0",
+ "modelVersion": 1,
+ "currentModelVersion": 1,
+ "dllVersion": 0,
+ "modelTypesVersion": 0,
+ "ownerDisplayName": "",
+ "rootReferences": {
+  "ID07d525eb3553422d9ebc0d6922204ff2": {
+   "id": "ID1001",
+   "instances": [
+    {
+     "id": "ID1002",
+     "instanceJPath": "$",
+     "titleIconUrl": "assets/svg/form.svg",
+     "titlePropertyName": "title",
+     "subTitles": []
+    }
+   ],
+   "titleIconUrl": "assets/svg/expressions-editor/app-variable.svg",
+   "titlePropertyName": "title",
+   "type": "app"
+  }
+ },
+ "title": "",
+ "description": "",
+ "allModelErrors": {},
+ "valueBindingMetadata": {},
+ "controls": {
+  "ID1": {
+   "id": "ID1",
+   "iconUrl": "assets/svg/form/controls/basic/panel.svg",
+   "component": "form-vb-panel",
+   "ruleInstances": {},
+   "name": "rootPanel",
+   "config": {
+    "id": "ID1010",
+    "childIds": []
+   },
+   "properties": {
+    "display": {
+     "id": "ID1011",
+     "name": "display",
+     "valueType": "string",
+     "value": "flex"
+    },
+    "size": {
+     "id": "ID1009",
+     "name": "size",
+     "valueType": "size",
+     "value": {
+      "id": "ID1008",
+      "width": 100,
+      "widthUnit": "%",
+      "height": null,
+      "heightUnit": "auto",
+      "showFullWidth": true,
+      "isFullWidthChecked": true
+     }
+    },
+    "minSize": {
+     "id": "ID1012",
+     "name": "minSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID1013"
+     }
+    },
+    "maxSize": {
+     "id": "ID1014",
+     "name": "maxSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID1015"
+     }
+    },
+    "verticalOverflow": {
+     "id": "ID1016",
+     "name": "verticalOverflow",
+     "valueType": "string",
+     "value": "auto"
+    },
+    "horizontalOverflow": {
+     "id": "ID1017",
+     "name": "horizontalOverflow",
+     "valueType": "string",
+     "value": "auto"
+    },
+    "bold": {
+     "id": "ID1018",
+     "name": "bold",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "italic": {
+     "id": "ID1019",
+     "name": "italic",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "underline": {
+     "id": "ID1020",
+     "name": "underline",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "fontFamily": {
+     "id": "ID1021",
+     "name": "fontFamily",
+     "valueType": "string",
+     "value": "var(--apps-theme-font-family, Noto Sans)"
+    },
+    "fontSize": {
+     "id": "ID1022",
+     "name": "fontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID1023"
+     }
+    },
+    "textColor": {
+     "id": "ID1024",
+     "name": "textColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "backgroundColor": {
+     "id": "ID1025",
+     "name": "backgroundColor",
+     "valueType": "string",
+     "value": "var(--apps-theme-page-background-color, #F4F9FA)"
+    },
+    "hidden": {
+     "id": "ID1026",
+     "name": "hidden",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "disabled": {
+     "id": "ID1027",
+     "name": "disabled",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "readonly": {
+     "id": "ID1028",
+     "name": "readonly",
+     "valueType": "boolean"
+    },
+    "margin": {
+     "id": "ID1029",
+     "name": "margin",
+     "valueType": "box",
+     "value": {
+      "id": "ID1030",
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "padding": {
+     "id": "ID1031",
+     "name": "padding",
+     "valueType": "box",
+     "value": {
+      "id": "ID1032",
+      "top": 4,
+      "left": 4,
+      "bottom": 4,
+      "right": 4,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderColor": {
+     "id": "ID1033",
+     "name": "borderColor",
+     "valueType": "string",
+     "value": "#A4B1B8"
+    },
+    "fontStyle": {
+     "id": "ID1034",
+     "name": "fontStyle",
+     "valueType": "string"
+    },
+    "fontSizeColor": {
+     "id": "ID1035",
+     "name": "fontSizeColor",
+     "valueType": "string"
+    },
+    "borderStyle": {
+     "id": "ID1003",
+     "name": "borderStyle",
+     "valueType": "string",
+     "value": "solid"
+    },
+    "borderThickness": {
+     "id": "ID1005",
+     "name": "borderThickness",
+     "valueType": "box",
+     "value": {
+      "id": "ID1004",
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderRadius": {
+     "id": "ID1007",
+     "name": "borderRadius",
+     "valueType": "corner",
+     "value": {
+      "id": "ID1006",
+      "topLeftUnit": "px",
+      "topRightUnit": "px",
+      "bottomRightUnit": "px",
+      "bottomLeftUnit": "px"
+     }
+    },
+    "boxShadow": {
+     "id": "ID1036",
+     "name": "boxShadow",
+     "valueType": "drop-shadow",
+     "value": {
+      "id": "ID1037"
+     }
+    },
+    "boxShadowColor": {
+     "id": "ID1038",
+     "name": "boxShadowColor",
+     "valueType": "string"
+    },
+    "gridColumn": {
+     "id": "ID1039",
+     "name": "gridColumn",
+     "valueType": "number"
+    },
+    "gridRow": {
+     "id": "ID1040",
+     "name": "gridRow",
+     "valueType": "number"
+    },
+    "gridColumnSpan": {
+     "id": "ID1041",
+     "name": "gridColumnSpan",
+     "valueType": "number"
+    },
+    "gridRowSpan": {
+     "id": "ID1042",
+     "name": "gridRowSpan",
+     "valueType": "number"
+    },
+    "cssClasses": {
+     "id": "ID1043",
+     "name": "cssClasses",
+     "valueType": "string"
+    },
+    "cursor": {
+     "id": "ID1044",
+     "name": "cursor",
+     "valueType": "string"
+    },
+    "opacity": {
+     "id": "ID1045",
+     "name": "opacity",
+     "valueType": "decimal"
+    },
+    "backgroundImageUrl": {
+     "id": "ID1046",
+     "name": "backgroundImageUrl",
+     "valueType": "resolver-list",
+     "value": {
+      "id": "ID1047",
+      "resolvers": [],
+      "customExpressionBuilderDefinition": {
+       "id": "ID1048",
+       "customResolversForRegistration": []
+      }
+     }
+    },
+    "backgroundImageBase64": {
+     "id": "ID1049",
+     "name": "backgroundImageBase64",
+     "valueType": "string"
+    },
+    "backgroundImageDocumentBinding": {
+     "id": "ID1050",
+     "name": "backgroundImageDocumentBinding",
+     "valueType": "document-binding",
+     "value": {
+      "id": "ID1051",
+      "binding": {
+       "id": "ID1052",
+       "rootType": null,
+       "rootSystemName": "",
+       "instanceJPath": "",
+       "objectJPath": "",
+       "itemType": null
+      }
+     }
+    },
+    "backgroundImagePosition": {
+     "id": "ID1053",
+     "name": "backgroundImagePosition",
+     "valueType": "position",
+     "value": {
+      "id": "ID1054"
+     }
+    },
+    "backgroundImageRepeat": {
+     "id": "ID1055",
+     "name": "backgroundImageRepeat",
+     "valueType": "string"
+    },
+    "backgroundImageSize": {
+     "id": "ID1056",
+     "name": "backgroundImageSize",
+     "valueType": "string"
+    },
+    "flexGrow": {
+     "id": "ID1057",
+     "name": "flexGrow",
+     "valueType": "number"
+    },
+    "flexShrink": {
+     "id": "ID1058",
+     "name": "flexShrink",
+     "valueType": "number"
+    },
+    "position": {
+     "id": "ID1059",
+     "name": "position",
+     "valueType": "string"
+    },
+    "absolutePosition": {
+     "id": "ID1060",
+     "name": "absolutePosition",
+     "valueType": "box",
+     "value": {
+      "id": "ID1061"
+     }
+    },
+    "zIndex": {
+     "id": "ID1062",
+     "name": "zIndex",
+     "valueType": "number"
+    },
+    "borderSizeColor": {
+     "id": "ID1063",
+     "name": "borderSizeColor",
+     "valueType": "string"
+    },
+    "spaceBetween": {
+     "id": "ID1064",
+     "name": "spaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID1065"
+     }
+    },
+    "resolvableDisabled": {
+     "id": "ID1066",
+     "name": "resolvableDisabled",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID1067",
+      "expressionId": "idf5e23854af9a4661a7d873114bccd5b4",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID1068"
+      }
+     }
+    },
+    "resolvableHidden": {
+     "id": "ID1069",
+     "name": "resolvableHidden",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID1070",
+      "expressionId": "id349c81499abc4e17b04c7bf13d462cf5",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID1071"
+      }
+     }
+    },
+    "flexScroll": {
+     "id": "ID1072",
+     "name": "flexScroll",
+     "valueType": "boolean",
+     "value": false
+    },
+    "flexDirection": {
+     "id": "ID1073",
+     "name": "flexDirection",
+     "valueType": "string",
+     "value": "column"
+    },
+    "verticalAlignment": {
+     "id": "ID1074",
+     "name": "verticalAlignment",
+     "valueType": "string",
+     "value": "flex-start"
+    },
+    "horizontalAlignment": {
+     "id": "ID1075",
+     "name": "horizontalAlignment",
+     "valueType": "string",
+     "value": "flex-start"
+    },
+    "flexWrap": {
+     "id": "ID1076",
+     "name": "flexWrap",
+     "valueType": "boolean",
+     "value": false
+    },
+    "tooltip": {
+     "id": "ID1077",
+     "name": "tooltip",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID1078",
+      "expressionId": "id09cd97fe4ae745cba40f6ba5f4d04be4",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID1079"
+      }
+     }
+    },
+    "accessibleLabel": {
+     "id": "ID1080",
+     "name": "accessibleLabel",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID1081",
+      "expressionId": "id3bb284edf5c844eda14d53e207b64220",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID1082"
+      }
+     }
+    },
+    "accessibleRole": {
+     "id": "ID1083",
+     "name": "accessibleRole",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID1084",
+      "expressionId": "idd20f67deeed2483b931ddd21d68c77eb",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID1085"
+      }
+     }
+    },
+    "flexBasis": {
+     "id": "ID1086",
+     "name": "flexBasis",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID1087"
+     }
+    },
+    "controlAlignment": {
+     "id": "ID1088",
+     "name": "controlAlignment",
+     "valueType": "string"
+    },
+    "isValid": {
+     "id": "ID1089",
+     "name": "isValid",
+     "valueType": "boolean"
+    }
+   },
+   "events": {
+    "load": {
+     "id": "ID1090",
+     "eventType": "load",
+     "description": "",
+     "executors": []
+    }
+   },
+   "ruleOutputs": {},
+   "traits": {}
+  }
+ },
+ "rootPanelId": "ID1",
+ "isPublic": false,
+ "formId": "id7b85842e9f7d44ae8b1d0206e8b5c2bb",
+ "showRuntimeLoadProgress": true,
+ "expressions": {
+  "ID1": {
+   "id": "ID1091",
+   "expressions": {
+    "idf5e23854af9a4661a7d873114bccd5b4": {
+     "id": "ID1092",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.ID1.properties.resolvableDisabled.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID1093"
+     }
+    },
+    "id349c81499abc4e17b04c7bf13d462cf5": {
+     "id": "ID1094",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.ID1.properties.resolvableHidden.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID1095"
+     }
+    },
+    "id09cd97fe4ae745cba40f6ba5f4d04be4": {
+     "id": "ID1096",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.ID1.properties.tooltip.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID1097"
+     }
+    },
+    "id3bb284edf5c844eda14d53e207b64220": {
+     "id": "ID1098",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.ID1.properties.accessibleLabel.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID1099"
+     }
+    },
+    "idd20f67deeed2483b931ddd21d68c77eb": {
+     "id": "ID1100",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.ID1.properties.accessibleRole.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID1101"
+     }
+    }
+   }
+  }
+ },
+ "bindingReferences": {},
+ "autoDeletedControls": {},
+ "workflowBindings": {},
+ "alwaysHydratedControlIds": {},
+ "documentBasedControlIds": {},
+ "pageTitle": "",
+ "isFloatingCanvas": false,
+ "codedEventMap": {}
+}

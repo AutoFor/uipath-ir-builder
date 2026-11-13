@@ -6,7 +6,7 @@ UiPath の Apps には 2 つある。
 | --- | --- | --- |
 | 作り方 | React + TypeScript を書く | Studio Web の画面で部品を並べる |
 | 道具 | `uip codedapp`（pack / publish / deploy） | `uip` に無い。Studio Web で作り、ソリューションで出し入れする |
-| この道具 | `tools/apps/coded-action.ts`（Action App） | まだ（本物を書き出して読み解くところから） |
+| この道具 | `tools/apps/coded-action.ts`（Action App） | `tools/apps/rpa-app.ts`（RPA アプリ） |
 
 ## Coded Action App
 
@@ -74,4 +74,111 @@ uip codedapp publish -t Action   /   uip codedapp deploy -n <app> --folder-key <
 
 ## ローコードの Apps
 
-まだ。Studio Web で部品を並べた App を作り、ソリューションを書き出してもらって、部品ごとに読み解く（AUT-1177）。
+Studio Web の「RPA アプリ」（新規作成 ▾ → アプリ）。見本は Studio Web で作った Solution 7（2 ページ、部品 9 種、App の変数、ボタンのイベント）を `uip solution download <solutionId> -d <dir>` で書き出したもの（`C:\Users\seiya\Documents\UiPath\apps-sample\`）。ブラウザーの「ソリューションをダウンロード」はブラウザーのあるマシンに落ちるので、`uip` で取るほうが確か。
+
+### 生成器（`tools/apps/rpa-app.ts`）
+
+```bash
+node tools/apps/rpa-app.ts samples/apps/rpa-app-request.json --uis out/RequestApp.uis   # --out <dir> でフォルダ、--check で検証だけ
+uip solution upload out/RequestApp.uis                                                  # 新しいソリューションとして入る（フォルダを渡すと .local が落ちる）
+```
+
+```json
+{ "app": "RequestApp", "solution": "RequestAppSolution", "kind": "rpa-app",
+  "variables": [ { "name": "ApplicantName", "type": "string" } ],
+  "pages": [
+    { "name": "MainPage", "controls": [
+        { "type": "textbox", "name": "Applicant", "label": "申請者", "placeholder": "山田 太郎", "required": true },
+        { "type": "button", "name": "GoConfirm", "text": "確認へ", "onClick": [
+            { "set": "ApplicantName", "value": "Controls.MainPage.Applicant.Value" },
+            { "open": "Confirm" } ] } ] },
+    { "name": "Confirm", "controls": [ { "type": "label", "name": "Who", "text": { "var": "ApplicantName" } } ] } ] }
+```
+
+- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）
+- 項目：`label`、`text`、`placeholder`、`required`、`checked`、`hidden`、`disabled`、`min` / `max`（number）、`rows`（textarea）。部品に無い項目は `APP_PROP`。雛形の部品にあるほかの式の項目は `props: { "tooltip": "…" }`
+- 値：文字（VB の文字列にする）・真偽・数、`{ "var": "<App の変数>" }`（tokens と bindingReferences でつなぐ）、`{ "vb": "<式>" }`（そのまま）
+- 変数：`type` は `string` だけ（ほかの型は Studio Web で確かめていない。`APP_UNSUPPORTED`）
+- `onClick`（button）：`{ "set": "<変数>", "value": "<VB の式>" }` は代入、`{ "open": "<ページ>" }` はアプリのページを開く。式の `Controls.<ページ>.<部品>` は名前があるかを調べる
+- 部品の JSON は雛形（`templates/rpa-app/controls.json`。Studio Web の書き出しから `node tools/apps/rpa-app-templates.ts <書き出したフォルダ>` で作る）を写し、id を振り直して式だけ書き換える。ドロップダウンの選択肢、表の列、画像はまだ
+- **`open` があると注意 `APP_OPEN_PAGE`**：取り込んだあと、開く先のページの部品の式を Studio Web で 1 回直して保存する（そのページの DLL ができるまで「Selected page is not accessible」）
+
+確かめたこと：見本を `--uis` で作って `upload` し、Studio Web で 2 ページ・変数・部品の文字（日本語、プレースホルダー）が出た。ボタンの XAML の代入は通った。Confirm の式を 1 回直すと Confirm の DLL ができ、XAML に Studio Web が `Apps.*` の参照を足した。実行（デバッグ）はしていない
+
+### ソリューション（.uis = zip）
+
+| ファイル | 中身 |
+| --- | --- |
+| `<名前>.uipx` | `SolutionId`、`Projects: [{ Type: "WebApp", ProjectRelativePath: "App/project.uiproj", Id }]` |
+| `SolutionStorage.json` | Studio Web の SolutionId と ProjectId |
+| `resources/solution_folder/{app,appVersion,package,process/webApp}/App.json` | 配置の設定（app → appVersion と codeBehindProcess の process → package） |
+| `App/project.uiproj` | `ProjectType: "WebApp"`、`WebAppSettings.AppId`（App の systemName） |
+| `App/project.json` | ふつうの RPA の project.json。`targetFramework: "Portable"`、VB、依存に `UiPath.WorkflowEvents.Activities`（App Events）、DataService、IntegrationService、WebAPI、System |
+| `App/Main.xaml` | 裏で動くプロセス。`InitializeHubConnection(sessionId)` → `StartTriggers(.local/generated/Triggers.Generated.xaml)`。引数は `sessionId` |
+| `App/<ページ>_<部品>_<イベント>.xaml` | イベントのワークフロー（下） |
+| `App/.app/models/models-<App の systemName>.json` | App 本体（`type: "app"`）。`appFields` が App の変数 |
+| `App/.app/models/models-<ページの systemName>.json` | ページ（`type: "form"`）。1 ページで約 110KB |
+| `App/.app/AppsRequestTrigger.xaml`、`.local/generated/Triggers.Generated.xaml` | 決まった形のトリガー |
+| `App/.entities/EntitiesBundle.<hash>.zip`、`.project/JitCustomTypes*.json` | Studio Web がページから作る DLL（`Apps.app.<hash>`、`Apps.form.<ページ>.<hash>`、`…Expressions.<hash>`）。ワークフローの式の `Controls.<ページ>.<部品>`、`AppVariable.<名前>` はここの型 |
+| `App/.local/ProjectSettings.json` | `ProjectAppMetadata`：イベントの XAML → ページの `formId`（取り込むと消える。下） |
+
+### ページ（models-<systemName>.json）
+
+- `title`（ページの名前）、`formId`、`rootPanelId: "ID1"`、`controls`、`expressions`、`workflowBindings`、`bindingReferences`
+- `controls`：部品の id → 部品。`component`、`name`、`config.childIds`（パネルの子の順）、`_logicalParent`、`properties`、`events`
+- `properties` は 1 部品で 60〜90 個あり、ほとんどスタイルの既定値。値は `valueType` ごと（`string`、`boolean`、`size`、`box`、`vb-expression` …）。内部の `id`（`ID1234`）は 1 ページの中で重ならない通し番号（`idCounter` が次の番号）
+- 文字や真偽などの式（`vb-expression`）は `properties.<名>.value.expressionId` だけを持ち、中身は `expressions[<部品 id>].expressions[<expressionId>]` にある：`{ expression: "\"Approve\"", isLiteral, contextSourceId: "$.controls.<部品 id>.properties.<名>.value", tokens }`
+- App の変数を使う式は `tokens: [{ token: "ApplicantName", tokenId: <appFields の id>, tokenType: "app-variable", type: "AppVariables.AppVariable", startIndex, endIndex }]` を持ち、`bindingReferences[<appFields の id>]` にその式の id が入る
+
+部品（`component`）と、式で持つ主な項目：
+
+| 部品 | component | 式の項目 | イベント |
+| --- | --- | --- | --- |
+| パネル | `form-vb-panel` | — | click / load（根） |
+| テキストボックス | `form-text-vb` | `label`、`placeholder`、`required`、`text` | change |
+| 数 | `form-text-number-vb` | `label`、`required`、`inputControlMinValue` / `MaxValue` | change |
+| テキスト領域 | `form-text-area-vb` | `label`、`required` | change |
+| チェックボックス | `form-check-box` | `text`、`resolvableChecked`、`required` | change |
+| ドロップダウン | `form-dropdown-vb` | `label`、`required`（選択肢は別の項目） | change |
+| 日付 | `form-mobile-date-picker-vb` | `label`、`required` | change |
+| ボタン | `form-button` | `text` | click |
+| ラベル | `form-label` | `text` | click |
+| 表 | `form-simple-table-vb` | — | change |
+| 画像 | `form-image-vb` | `url`（`new AppsFile("data:…")`） | click |
+
+全部の部品に `resolvableHidden`、`resolvableDisabled` がある。
+
+### App の変数（App 本体の `appFields`）
+
+```json
+{ "id": "hs3218…", "name": "ApplicantName", "type": "string",
+  "appVariableDefinition": { "name": "ApplicantName", "baseType": "primitive", "dataType": "System.String", "defaultValue": null } }
+```
+
+型は Text、Whole number、Decimal number、True or false、Date、DateOnly、DataTable、List、Array、AppsFile、Object など。
+
+### イベント（RPA アプリ）
+
+ボタンのクリックなどの中身は RPA のワークフロー（XAML）。部品の `events.click.executors` に `{ executorMethod: "start-automation", config: { automationId: <Studio Web のファイル id>, workflowPath: "MainPage_Button_click.xaml" } }`、ページの `workflowBindings[<automationId>]` に部品の id。
+
+```xml
+<ui:ManualTrigger DisplayName="MainPage_Button : クリック時 Event" />
+<Assign><Assign.To><OutArgument x:TypeArguments="x:String">[AppVariable.ApplicantName]</OutArgument></Assign.To>
+        <Assign.Value><InArgument x:TypeArguments="x:String">[Controls.MainPage.Text.Value]</InArgument></Assign.Value></Assign>
+<uwana:OpenAppsPage CurrentFormId="<今のページの formId>" PageFormId="<開くページの formId>" PageName="SimpleApproval" … />
+```
+
+App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：アプリのページを開く（Open Apps Page）、アプリで URL を開く、アプリの値をリセット、アプリのメッセージを表示、スピナーの表示/非表示、ポップオーバー/ボトムシートを閉じる。値は「代入」（Assign）で `AppVariable.<名>` や `Controls.<ページ>.<部品>.Value` に入れる。
+
+### 取り込み（`uip solution upload`）で確かめたこと
+
+- 書き出しの SolutionId と ProjectId を新しくし、ページの式（ラベルの文字）を書き換えて `upload` すると、新しいソリューションとして入り、Studio Web で書き換えたとおりに出る。`.entities` と `JitCustomTypes*.json` を消しても開ける（Studio Web が DLL を作り直す）
+- 取り込んだソリューションへの上書き（`upload` をもう一度）は HTTP 500（`.project/…` が見つからない）で通らなかった
+
+#### イベント（XAML）を生かすには
+
+- **`uip solution upload <フォルダ>` は `.local` を送らない**（solution-tool の `DEFAULT_EXCLUDED_DIR_NAMES` に `.local`、`.git`、`node_modules` など）。`.local/ProjectSettings.json` の `ProjectAppMetadata`（イベントの XAML → ページの `formId`）が消え、Studio Web はその XAML を「Workflow is not codebehind」として扱う。その XAML の `AssemblyReference` も直してくれない
+- **自分で zip にした `.uis`（`/` 区切り、`.local` 入り）を `uip solution upload <ファイル>.uis` で送ると `.local` が残る**。これで codebehind として扱われる
+- そのうえで、XAML の `Apps.app.*` / `Apps.form.*` の `AssemblyReference` を消し、`.entities` と `JitCustomTypes*.json` も入れずに送ると、Studio Web が DLL を作り直し、XAML の参照も足す。`Controls.MainPage.Text.Value`、`AppVariable.ApplicantName` は通った（ボタンのあるページの DLL は、その XAML を開くと作られる）
+- **別のページを開く（Open Apps Page）は、開く先のページの DLL が無いと「Selected page is not accessible」**（ページの選択肢も空になる）。開く先のページを開くだけ、ページのタイトルを変えるだけ、そのページにイベントを足すだけでは作られなかった。そのページの式（ラベルの文字）を Studio Web で直したら DLL ができ、エラーが消えた。`Apps.root.dll` に、DLL のできたページだけが並ぶ
+- 部品の `automationId`（Studio Web のファイル id）は取り込みで変わるが、`workflowPath` で開けるので、古いままでもボタンから XAML を開けた
