@@ -50,8 +50,13 @@ UiPath.DocumentUnderstanding.Activities の「Extract Document Data」を IR で
   - 足さないと build が `BC30002: Type 'IDocumentData' is not defined` で落ちる。
   - どの型にも足す形にすると、既存のスナップショットが変わる。なので表にした。
 
+## Flow から呼ぶ
+
+- `samples/maestro/deploy/DuViaRpa.flow.ts`：Flow のファイルの入力を `rpaWorkflow` の `inputs` で RPA の `IResource` の引数（`in_Invoice`）にそのまま渡す。RPA の出力の引数（`out_InvoiceNumber`、`out_Total`）は `$vars.<id>.output` に入る。
+- 2026-11-14 に `debug.mjs --automate --profile trial` で、`{"out_InvoiceNumber":"INV-1001","out_Total":"8100"}` が返り、全部 Completed。
+- RPA は Studio Web の Deploy で Shared/Solution 1 に出した（クラウドのロボットで動く）。key は `uip or processes list --all-folders --process-type Process` の Key。`registry search "rpa-workflow"` は 0 件だった。
+
 ## まだのもの
 
-- Flow から、この RPA を呼ぶこと。
 - Flow の Extract ノードで作ったモデルを、このアクティビティから呼ぶこと。
   - 公式の文書では 3.6.0-preview 以降が要る。
