@@ -95,7 +95,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
 | `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
-| `ixpExtract` / `dynamicExtract` | `ixpExtract` は動いた（Standard のトライアル。Community はデプロイが 403）。`dynamicExtract` は出力が空（10 節） | 同じ | — |
+| `ixpExtract` / `dynamicExtract` | `ixpExtract` は動いた（Standard のトライアル。Community はデプロイが 403）。`dynamicExtract` は出力が空（Studio Web が作る processor が要ると見ている。10 節） | 同じ | — |
 | 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元。着信はデプロイと電話番号が要り、発信はデバッグでも本当にかけて課金される | 同じ | `Voice` |
 | `queueItem`、`apiWorkflow`、`publishedFunction` | 手元（API ワークフローと関数はテナントに無い。キューは書き込みになる） | 手元 | `LocalOnly` |
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
@@ -215,7 +215,7 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
   3. `uip ixp projects create` → `uip ixp deployments create <プロジェクト> --version 0 --folder-key <Shared の Key>`（最初のモデルは version 0）。これで `uip maestro flow registry search "uipath.ixp"` に出る
   4. SDK の `ixpExtract({ project: <registry の NodeType>, modelName: <DeploymentName>, name: <DeploymentTitle>, folderName, fileRef })`。結果は `$vars.<id>.output.ExtractionResult.ResultsDocument.Fields[]` で、最上位はフィールド グループ（`FieldType: "FieldGroup"`、`FieldName` は `Invoice` や `Invoice > Line Items`）。項目はその `Values[]`（1 件 = 1 回の出現、明細なら 1 行）の `Components[]` に `{ FieldName, Values: [{ Value }] }` で入る。日付は `2026-10-05`、金額は `8100.00 JPY` の形
   見本は `samples/maestro/deploy/IxpExtract.flow.ts`（請求書番号・合計・明細 2 行が取れた）。`tools/maestro/debug.mjs` に `--profile` を足した
-  `dynamicExtract`（項目をノードに直接書く）は、このテナントの registry にノード（`uipath.ixp.extract-document-builder`）が無く、JSON Schema の形の `schema` を渡すと出力が空のまま Completed になった。Studio Web の Extract ノードで「新しいモデルを作る」使い方で、項目は IXP の taxonomy の形と見ている。まだ動かせていない
+  `dynamicExtract`（項目をノードに直接書く、registry の表示名は「Extract v2」、serviceType `IXP.DynamicExtraction`）は、まだ動かせていない。`schema` はノードの `inputs.schemaDocument` にそのまま入り、uip（maestro-tool）の中では `{ config: { extraction_method: "external_llm", model: { family, version }, execution_mode, "pre-processing", attribution, model_config }, prompt, outputSchema: <JSON Schema（properties と $defs）> }` の形として扱われている。JSON Schema だけ・IXP の taxonomy（entity_defs と label_groups）・この形の 3 通りを渡したが、どれも Completed なのに出力は null（traces にも子の span が無い）。uip は Extract v2 のノードの `inputs.processorKey` から `idpProcessor` のバインディング（ソリューションのリソース）を作るので、Studio Web で Extract v2 のノードを置いたときにできる processor が要ると見ている。このテナントの registry に `uipath.ixp.extract-document-builder` は出ない
 - **IXP（文書の抽出）は Community プランだと、学習側は動くが Flow から呼べない**（2026-11-13）。`uip ixp projects create <名前> <PDF のフォルダ> -d "<抜く項目>"` でプロジェクトを作り、項目案（請求書と明細）が出て、`labellings get-predictions` の抽出も正しかった。`projects publish` も通った。**`uip ixp deployments create … --folder-key <Key>` は 403**（個人ワークスペースでも Standard のフォルダでも同じ。トークンには `Du.*` と `Reinfer` のスコープがある）。Flow の registry（`uip maestro flow registry search "uipath.ixp"`）はフォルダにデプロイしたモデルしか出さないので 0 件のまま、`ixpExtract` のノードは作れない。文書では Community でも抽出は「含まれる」が「機能は限られる」とあり、デプロイの可否は書いていない。`deployments` に削除のコマンドは無い（試しのプロジェクトは `projects delete <名前> -y` で消す）
 
 ### まだのもの
