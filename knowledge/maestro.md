@@ -101,8 +101,11 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
 | BPMN：Inclusive ゲートウェイ、Event-based ゲートウェイ、エラー開始のイベントサブプロセス | — | テナント | `BpmnEvents.bpmn` |
 | Case：ステージ 3 つ、前のステージの完了で入る、タスク 2 つを並べて動かす、必須のステージで完了 | — | テナント | `CaseTour.case` |
-| `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。このイベントは WEBHOOK 方式で、`prepare` が「デバッグでは動かない、デプロイして確かめる」と言う | 同じ | `EventWait`（先に `registry pull` と `registry prepare`） |
-| BPMN の Call activity、DMN、キュー、定期実行のトリガー | 未：デプロイ済みの別プロセス、Orchestrator へのルールの登録、テスト用のキュー、デプロイが要る（どれも人の OK が要る） | 未 | — |
+| `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。WEBHOOK 方式でデバッグでは動かない。デプロイは接続のサインイン切れ（invalid_grant）で失敗（10 章） | 同じ | `EventWait`、`deploy/DfEvent` |
+| 定期実行のトリガー（デプロイ） | テナント（5 分ごとに動いた） | — | `deploy/Nightly` |
+| `queueItem` | テナント（試しのキューに項目ができた） | — | `deploy/QueueTour` |
+| BPMN の Call activity（`startAgenticProcess`）と戻り値 | — | テナント | `deploy/Parent`、`deploy/Child` |
+| ビジネスルール（`businessRule`、DMN） | — | デプロイまで。評価は 403（権限） | `deploy/RuleCall`、`deploy/Tier` |
 
 **Automate として動いていることの確かめ**：`debug.mjs --automate` で動かしたプロジェクトを Studio Web で開くと、下のツールバーが「製品: Maestro Automate」、エクスプローラーが「Maestro Automate プロジェクト」になっていた。Orchestrator のジョブは `RuntimeType: "Flow"` で、profile は出ない。
 
@@ -162,3 +165,41 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN の multi-instance で今の要素は `iterator.item` か（SDK とドキュメント） | **`itemVar: "iterator[0]"` と `inputs: { cur: "=iterator[0].item" }`、スクリプトでは `cur`**（`BpmnTour`）。SDK の「inputs の名前はスクリプトから読めない」も、この場合は当たらない |
 | Inclusive の合流は「動いた辺だけ待つ」か | 当たった道と `default` の道が全部動き、合流は全部を待って進んだ（`BpmnEvents`） |
 | Automate のプロジェクトが本当に Automate として扱われるか | Studio Web で「製品: Maestro Automate」と出た（`operate.json` の `Lite`） |
+## 10. デプロイして確かめたこと（2026-11-13、個人ワークスペース）
+
+見本は `samples/maestro/deploy/`。1 つのソリューション（Flow 2 本・BPMN・rules プロジェクト）にまとめてデプロイし、確かめたあと片付けた（キューの削除 → `deploy uninstall` → 公開した版の `packages delete`）。
+
+### 流れ
+
+```bash
+uip solution init <名前>                                   # その中で
+uip maestro flow init <Flow> --automate                    # 入れ物を作り、verify.mjs --out の .flow を入れる
+uip maestro bpmn init <BPMN>   && uip maestro bpmn refresh <BPMN>
+uip rules init <Rules>         && uip rules validate <Rules> && uip rules refresh <Rules>
+uip solution pack <ソリューション> <出力先> --version 1.0.0
+python -I tools/maestro/fix-entry-points.py <出力先>/<名前>_1.0.0.zip <直した.zip>   # 定期実行の Flow があるとき（下）
+uip solution publish <直した.zip> --personal-workspace
+uip solution deploy run --name <名前> --package-name <名前> --package-version 1.0.0 --personal-workspace --folder-name <フォルダ>
+uip solution deploy upgrade --name <名前> --package-name <名前> --version 1.0.1 --personal-workspace   # 版を上げる
+# 片付け
+uip solution deploy uninstall <名前> --yes
+uip solution packages delete <名前> <版> --personal-workspace --yes
+```
+
+### 分かったこと
+
+- **定期実行のトリガーの Flow は、そのままでは publish できない**。`solution pack` が作る nupkg の `entry-points.json` で、定期実行の入口の `uniqueId` が `"start"`（GUID でない）になり、`solution publish` が `1205 Corrupted solution package: No entry points defined for project <id>` で拒む。会話・イベントのトリガーや BPMN の入口は GUID なので通る。`tools/maestro/fix-entry-points.py` で GUID に直すと通った
+- **デプロイすると、定期実行は本当に動いた**（5 分ごと。Orchestrator のジョブの `Source` が `Schedule`、Automate の flow として成功）
+- **`flow init --automate` でソリューションに足すと、process の resource の `runtimeProfile` は `Standard` のまま**。Studio Web で作った Automate のソリューションも `Standard` だったので、Automate かどうかは project の `operate.json` の `profile: "Lite"` で決まると見ている
+- `deploy run` は `--folder-name` が要る（`--personal-workspace` でも）。フォルダは `<個人ワークスペース>/<フォルダ名>`。`rules` のコマンドはこのフォルダをパスで見つけられず（Folder not found）、`--folder-key` なら通った。フォルダの Key は `uip or jobs get <ジョブ>` の `FolderKey`
+- **BPMN の Call activity（`startAgenticProcess`）で、デプロイ済みの別の BPMN を呼んで待てた**（要素の種類は `CallActivity`）。入力は `input: { n: 21 }`、戻りは `outputs: { whole: "=result", doubled: "=result.doubled" }` で `{ doubled: 42 }` と `42` が入った
+- **BPMN が値を返すには、終了イベントに mapping が要る**。SDK の `.output("doubled", …)` は宣言（`<uipath:output id elementId="done">`）だけで、それだけだとジョブの出力は `{}`。Studio Web で終了イベントに「引数」を足すと、終了イベントに `<uipath:mapping><uipath:type value="BPMN.Variables"/><uipath:output name source var custom="true"/></uipath:mapping>` が入る。SDK では `endEvent("done", { payload: { type: "BPMN.Variables", outputRows: [{ name: "doubled", type: "number", source: "=vars.value", var: "doubled", custom: true }] } })`。`source` は普通の変数（`.var()`）を指す（出力の名前を指すと `VARIABLE_DOES_NOT_EXIST`）
+- **キュー**：`queueItem({ queue, folderPath, key: <キューの Key>, reference, item })` で項目ができた（`uip or queue-items list` で `New`）。試しのキューは `uip or queues create <名前> --folder-path …` で作り、`uip or queues delete <Key> --yes --force` で消した。Flow の SDK にはキューのトリガー、BPMN の SDK にはキューの開始イベントが無い
+- **ビジネスルール（DMN）**：`uip rules init` が DMN（`Business rule.dmn`、デシジョン テーブル）と `entry-points.json`（`type: "BusinessRules"`、出力は `x-uipath-decision-keyed`）を作る。デシジョン テーブルの行を書き換え、`rules validate` → `refresh` → ソリューションでデプロイまでは通り、`uip rules list` に出た。**ただし評価は通らなかった**：BPMN の `businessRule` は `Data at the root level is invalid. Line 1, position 1.`、`uip rules debug` は `403 Forbidden`（トークンに `BusinessRules` のスコープはある）。テナントかアカウントの権限（Business Rules は Preview）の問題と見ている。見本は `samples/maestro/deploy/Tier/` と `RuleCall.bpmn.ts`
+- **コネクタのイベントのトリガー（Data Fabric のレコード作成）**：デプロイで `ConnectedEventTrigger` を作るところで `Failed to receive access token / invalid_grant` になり、デプロイが失敗した。接続（`uip is connections list --all-folders` の Data Fabric の接続）のサインインが切れている。接続を入れ直せば確かめられる（人がサインインする）。見本は `DfEvent.flow.ts`
+
+### まだのもの
+
+- コネクタのイベント：Data Fabric の接続のサインインが要る
+- ビジネスルールの評価：テナントかアカウントの権限が要る
+- 文書の抽出（IXP のモデルが無い）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）

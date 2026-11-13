@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" id="definitions_1b15d007-a334-4d5e-b5d9-4ae58345841e" name="Decision" namespace="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" exporter="UiPath Maestro" xmlns:tns="http://uipath.com/dmn/ns_377a70c3-158e-4e7a-996e-06fca0a50de9" xmlns:uipath="http://uipath.com/schema/1.0/dmn/authoring">
+  <extensionElements>
+    <uipath:authoring surface="decision-table" />
+  </extensionElements>
+  <decision id="decision_d77bf1c5-cb52-4e3b-ab8d-fde6abc1d59e" name="decision1" label="Decision">
+    <extensionElements>
+      <uipath:authoring editor="decision-table" />
+    </extensionElements>
+    <variable id="variable_26673dd7-e921-4bbc-a3ba-f9487befed8e" name="decision1" typeRef="string" />
+    <informationRequirement id="informationRequirement_43ea058b-cb1b-497b-a144-50efe0aa4563">
+      <requiredInput href="#inputData_8924b3f6-7069-4c88-96f0-2d0b0621b021" />
+    </informationRequirement>
+    <decisionTable id="decisionTable_25c8a534-a7cb-47dc-815a-4e2f3ad2bc74" hitPolicy="FIRST">
+      <input id="input_9a09af12-371a-459b-b3d6-c3c35fa5d9a7" label="Input 1">
+        <inputExpression id="inputExpression_418371ee-5610-44ee-be39-35bc2cdbdd53" typeRef="string">
+          <text>input1</text>
+        </inputExpression>
+      </input>
+      <output id="output_a69eeebe-4284-424e-b1ba-6a0d4b097e18" label="Output 1" name="output1" typeRef="string" />
+      <rule id="rule_vip">
+        <inputEntry id="inputEntry_vip">
+          <text>"VIP"</text>
+        </inputEntry>
+        <outputEntry id="outputEntry_vip">
+          <text>"gold"</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_other">
+        <inputEntry id="inputEntry_other">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="outputEntry_other">
+          <text>"standard"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData name="input1" id="inputData_8924b3f6-7069-4c88-96f0-2d0b0621b021">
+    <variable id="variable_00c3dfdf-a218-4922-9106-c1f7819cf2e5" name="input1" typeRef="string" />
+  </inputData>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1">
+      <dmndi:DMNShape id="DMNShape_1" dmnElementRef="tns:decision_d77bf1c5-cb52-4e3b-ab8d-fde6abc1d59e">
+        <dc:Bounds height="80" width="180" x="0" y="0" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_3e4b02cb-7df2-4c89-a7d9-44da56040fda" dmnElementRef="inputData_8924b3f6-7069-4c88-96f0-2d0b0621b021">
+        <dc:Bounds x="32" y="176" width="216" height="96" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
