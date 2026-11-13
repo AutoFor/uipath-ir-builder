@@ -18,6 +18,7 @@
 //     --pack       成果物を init の雛形に入れて .nupkg まで作る（ローカルだけ）
 //     --tenant     成果物が指す資源がテナントにあるかを照合する（一覧を読むだけ。ログインが要る）
 //     --workspace  .flow-sdk/（bindings.json、connectors-local）がある場所。コネクタを使うソースで指定する
+//     --automate   Flow を Maestro Automate として扱う（--pack の雛形を init --automate で作る。operate.json の profile が Lite になる）
 // 既定ではテナントに一切触らない。テナントを読むのは --tenant のときだけで、書き込みは無い。
 // 終了コード: 0 = すべて OK、1 = NG がある、2 = 使い方の間違いか、環境の問題（uip や SDK が無い）
 
@@ -217,7 +218,7 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   if (opts.pack) {
     // NG のものは pack しない。Flow の script の文法の間違いは pack を通ってしまうので、pack の OK を合格と読ませない
     if (!existsSync(target) || results.some((s) => s.status === "ng")) results.push({ name: "pack", status: "skip", ms: 0, diagnostics: [], reason: "前の工程が NG" });
-    else results.push({ name: "pack", ...packArtifact(uipJs, info.family, target, dir) });
+    else results.push({ name: "pack", ...packArtifact(uipJs, info.family, target, dir, opts.automate) });
   }
   const j = judge(results, opts.strict);
   const steps = results.map(({ data, ...s }) => s);
@@ -273,11 +274,11 @@ function checkTenant(uipJs, family, artifact) {
 }
 
 // 成果物を init の雛形に入れて .nupkg を作る（ローカルだけ。アップロードしない）
-function packArtifact(uipJs, family, artifact, dir) {
+function packArtifact(uipJs, family, artifact, dir, automate = false) {
   const work = join(dir, "pack");
   mkdirSync(work, { recursive: true });
   const name = "Pkg";
-  const init = runUip(uipJs, ["maestro", family, "init", name], work);
+  const init = runUip(uipJs, ["maestro", family, "init", name, ...(automate && family === "flow" ? ["--automate"] : [])], work);
   if (init.status === "ng") return init;
   const project = join(work, `${name}Solution`, name);
   copyFileSync(artifact, join(project, family === "case" ? "caseplan.json" : `${name}.${family}`));
@@ -359,6 +360,7 @@ export function main(argv) {
     else if (a === "--json") opts.json = true;
     else if (a === "--pack") opts.pack = true;
     else if (a === "--tenant") opts.tenant = true;
+    else if (a === "--automate") opts.automate = true;
     else if (a === "--out") opts.out = resolve(argv[++i] ?? "");
     else if (a === "--workspace") opts.workspace = resolve(argv[++i] ?? "");
     else if (a.startsWith("--")) { console.error(`知らないオプション: ${a}`); return 2; }
