@@ -2,7 +2,8 @@
 // uip maestro flow debug は Studio Web にソリューションを上げて動かす（テナントに試しのソリューションが 1 つ増える）。
 //
 // 使い方:
-//   node tools/maestro/debug.mjs <file.flow | file.bpmn | caseplan.json> [--automate] [-i '<入力の JSON>'] [--attachment <入力名>=<ファイル>]... [--timeout <秒>] [--json]
+//   node tools/maestro/debug.mjs <file.flow | file.bpmn | caseplan.json> [--automate] [-i '<入力の JSON>'] [--attachment <入力名>=<ファイル>]... [--timeout <秒>] [--json] [--profile <名前>]
+//     --profile   uip login --profile で作ったログイン（別の組織・テナント）で動かす
 //     --automate  Maestro Automate のプロジェクト（operate.json の profile が Lite）で動かす
 //   caseplan.json は verify.mjs --out の <dir>/<名前>.case/caseplan.json（横の bindings_v2.json も写す）
 //   .bpmn は init の雛形に入れたあと bpmn refresh で entry-points.json を作り直してから debug する（--automate は Flow だけ）
@@ -31,7 +32,7 @@ export function summarize(data) {
 
 function main() {
   const argv = process.argv.slice(2);
-  const opt = { automate: false, inputs: undefined, timeout: 600, json: false, attachments: [] };
+  const opt = { automate: false, inputs: undefined, timeout: 600, json: false, attachments: [], profile: undefined };
   const files = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -40,6 +41,7 @@ function main() {
     else if (a === "--timeout") opt.timeout = Number(argv[++i]);
     else if (a === "--json") opt.json = true;
     else if (a === "--attachment") opt.attachments.push(argv[++i]);
+    else if (a === "--profile") opt.profile = argv[++i];
     else files.push(a);
   }
   const family = files[0]?.endsWith(".bpmn") ? "bpmn" : basename(files[0] ?? "") === "caseplan.json" ? "case" : "flow";
@@ -51,7 +53,7 @@ function main() {
   const base = family === "case" ? basename(dirname(resolve(files[0]))).replace(/\.case$/, "") : basename(files[0]).replace(/\.(flow|bpmn)$/, "");
   const name = base.replace(/[^A-Za-z0-9_]/g, "") || "Flow";
   const work = mkdtempSync(join(tmpdir(), "maestro-debug-"));
-  const run = (args) => spawnSync(process.execPath, [uipJs, ...args, "--output", "json"], { cwd: work, encoding: "utf8", maxBuffer: 64 << 20, timeout: (opt.timeout + 120) * 1000 });
+  const run = (args) => spawnSync(process.execPath, [uipJs, ...args, "--output", "json", ...(opt.profile ? ["--profile", opt.profile] : [])], { cwd: work, encoding: "utf8", maxBuffer: 64 << 20, timeout: (opt.timeout + 120) * 1000 });
   const init = run(["maestro", family, "init", name, ...(opt.automate && family === "flow" ? ["--automate"] : [])]);
   if (init.status !== 0) { console.error(init.stdout || init.stderr); process.exit(1); }
   const project = join(work, `${name}Solution`, name);

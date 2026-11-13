@@ -95,7 +95,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
 | `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
-| `ixpExtract` / `dynamicExtract` | 動かせない：IXP のモデルは作れて抽出もできたが、フォルダへのデプロイが 403（Community）で Flow から見えない（10 節） | 同じ | — |
+| `ixpExtract` / `dynamicExtract` | `ixpExtract` は動いた（Standard のトライアル。Community はデプロイが 403）。`dynamicExtract` は出力が空（10 節） | 同じ | — |
 | 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元。着信はデプロイと電話番号が要り、発信はデバッグでも本当にかけて課金される | 同じ | `Voice` |
 | `queueItem`、`apiWorkflow`、`publishedFunction` | 手元（API ワークフローと関数はテナントに無い。キューは書き込みになる） | 手元 | `LocalOnly` |
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
@@ -209,8 +209,15 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
   3. **`where` で見張るエンティティを指定し、コンパイルした `.flow` の `detail.filterExpression` を消す**。この操作の引数は `entityScope`（`tenant` か `folder`）と `tenantEntityName` / `folderEntityName`（`uip is triggers objects uipath-uipath-dataservice CREATED_V3 --connection-id <id>` で見える）。SDK 6.66.5 は `where` を `eventParameters` に入れるが、同じ値で `filterExpression: "entityScope == 'tenant' && …"` も作り、これが残っていると起動しなかった（中身に `entityScope` は無い）。SDK は `EVENT_SCOPE_NOT_TAKEN` の warning も出すが誤り。`object` は `EVENT_UNKNOWN` で通らない
   2 と 3 は（デプロイして起動まで確かめた）`node tools/maestro/event-bindings.mjs <ソリューションの中の Flow プロジェクト>` がまとめてやる（そのあと `uip solution resources refresh --solution-folder <ソリューション>` → `solution pack`）。見本は `DfEvent.flow.ts`
 
+- **IXP（文書の抽出）は Standard のトライアルの組織で、Flow から呼べた**（2026-11-13、組織 sorahaneworks、`uip login --profile trial` で別にログイン）。要ったこと:
+  1. 組織を作っただけではテナントに IXP が無い（`Service: du not found`）。`uip admin tenants services add --service du` と `--service reinfer` を足す（`uip admin tenants services list` で入っているものが見える）
+  2. そのあと API が 401 になる。ブラウザでテナントの IXP の画面（`/<org>/<tenant>/reinfer_/ixp`）を一度開くと通る（利用者の登録が起きる）
+  3. `uip ixp projects create` → `uip ixp deployments create <プロジェクト> --version 0 --folder-key <Shared の Key>`（最初のモデルは version 0）。これで `uip maestro flow registry search "uipath.ixp"` に出る
+  4. SDK の `ixpExtract({ project: <registry の NodeType>, modelName: <DeploymentName>, name: <DeploymentTitle>, folderName, fileRef })`。結果は `$vars.<id>.output.ExtractionResult.ResultsDocument.Fields[]` で、最上位はフィールド グループ（`FieldType: "FieldGroup"`、`FieldName` は `Invoice` や `Invoice > Line Items`）。項目はその `Values[]`（1 件 = 1 回の出現、明細なら 1 行）の `Components[]` に `{ FieldName, Values: [{ Value }] }` で入る。日付は `2026-10-05`、金額は `8100.00 JPY` の形
+  見本は `samples/maestro/deploy/IxpExtract.flow.ts`（請求書番号・合計・明細 2 行が取れた）。`tools/maestro/debug.mjs` に `--profile` を足した
+  `dynamicExtract`（項目をノードに直接書く）は、このテナントの registry にノード（`uipath.ixp.extract-document-builder`）が無く、JSON Schema の形の `schema` を渡すと出力が空のまま Completed になった。Studio Web の Extract ノードで「新しいモデルを作る」使い方で、項目は IXP の taxonomy の形と見ている。まだ動かせていない
 - **IXP（文書の抽出）は Community プランだと、学習側は動くが Flow から呼べない**（2026-11-13）。`uip ixp projects create <名前> <PDF のフォルダ> -d "<抜く項目>"` でプロジェクトを作り、項目案（請求書と明細）が出て、`labellings get-predictions` の抽出も正しかった。`projects publish` も通った。**`uip ixp deployments create … --folder-key <Key>` は 403**（個人ワークスペースでも Standard のフォルダでも同じ。トークンには `Du.*` と `Reinfer` のスコープがある）。Flow の registry（`uip maestro flow registry search "uipath.ixp"`）はフォルダにデプロイしたモデルしか出さないので 0 件のまま、`ixpExtract` のノードは作れない。文書では Community でも抽出は「含まれる」が「機能は限られる」とあり、デプロイの可否は書いていない。`deployments` に削除のコマンドは無い（試しのプロジェクトは `projects delete <名前> -y` で消す）
 
 ### まだのもの
 
-- 文書の抽出（IXP のフォルダへのデプロイが 403。Community の制限と見ている）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
+- 文書の抽出の `dynamicExtract`（出力が空）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）

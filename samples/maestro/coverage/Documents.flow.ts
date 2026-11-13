@@ -3,7 +3,7 @@
 //   node tools/maestro/debug.mjs <dir>/Documents.flow/Documents.flow --automate \
 //     --attachment docFile=samples/maestro/coverage/data/invoice.txt --attachment csvFile=samples/maestro/coverage/data/items.csv \
 //     --attachment pdfFile=samples/maestro/coverage/data/invoice.pdf
-// 抽出（ixpExtract / dynamicExtract）は IXP のモデルが要る。このテナントには無いので入れていない（knowledge/maestro.md）。
+// 抽出（ixpExtract）は IXP のモデルをフォルダにデプロイしてから使う。見本は samples/maestro/deploy/IxpExtract.flow.ts（knowledge/maestro.md 10 節）。
 
 import { flow, summarize, batchTransform, documentClassify, out, types } from "@uipath/maestro-builder-sdk";
 
