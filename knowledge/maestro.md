@@ -101,7 +101,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
 | BPMN：Inclusive ゲートウェイ、Event-based ゲートウェイ、エラー開始のイベントサブプロセス | — | テナント | `BpmnEvents.bpmn` |
 | Case：ステージ 3 つ、前のステージの完了で入る、タスク 2 つを並べて動かす、必須のステージで完了 | — | テナント | `CaseTour.case` |
-| `waitForEvent` / `onEvent`（コネクタのイベント）、BPMN の Call activity・DMN・キュー | 未（イベントを起こす相手、デプロイ済みの別プロセス、Orchestrator のルールが要る） | 未 | — |
+| `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。このイベントは WEBHOOK 方式で、`prepare` が「デバッグでは動かない、デプロイして確かめる」と言う | 同じ | `EventWait`（先に `registry pull` と `registry prepare`） |
+| BPMN の Call activity、DMN、キュー、定期実行のトリガー | 未：デプロイ済みの別プロセス、Orchestrator へのルールの登録、テスト用のキュー、デプロイが要る（どれも人の OK が要る） | 未 | — |
 
 **Automate として動いていることの確かめ**：`debug.mjs --automate` で動かしたプロジェクトを Studio Web で開くと、下のツールバーが「製品: Maestro Automate」、エクスプローラーが「Maestro Automate プロジェクト」になっていた。Orchestrator のジョブは `RuntimeType: "Flow"` で、profile は出ない。
 
