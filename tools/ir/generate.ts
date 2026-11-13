@@ -107,6 +107,8 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     const r = toXamlType(t);
     if ("error" in r) throw new Error(r.error); // validate 済みなら来ない
     for (const [p, u] of Object.entries(r.xmlns)) xmlns.set(p, u);
+    // Data Fabric の表の型は Studio が entitiesStores から作るアセンブリにある。式から使えるよう参照と import を足す
+    if (r.xmlns.de) { refs.add("DataService.DataService.Entities"); imports.add("DataService.Entities"); }
     return r.text;
   };
   const idRef = (cls: string) => {

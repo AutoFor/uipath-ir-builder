@@ -1,0 +1,34 @@
+{
+  "workflow": "IsRunDay",
+  "arguments": [
+    { "name": "in_Date", "dir": "In", "type": "DateTime" },
+    { "name": "out_Run", "dir": "Out", "type": "Boolean" },
+    { "name": "out_Reason", "dir": "Out", "type": "String" }
+  ],
+  "variables": [
+    { "name": "rows", "type": "IList<DataService.Entities.WorkCalendar>" },
+    { "name": "day", "type": "DataService.Entities.WorkCalendar" }
+  ],
+  "body": [
+    { "act": "QueryEntityRecords", "name": "稼働日カレンダーを読む", "typeArg": "DataService.Entities.WorkCalendar",
+      "props": { "EntityId": "New Guid(\"0f7fabd4-1ddf-f111-91f2-000d3ab0541e\")", "Top": "1000", "OutputRecords": "rows" } },
+    { "act": "Assign", "name": "その日の行を探す", "typeArg": "DataService.Entities.WorkCalendar",
+      "props": { "To": "day", "Value": "rows.FirstOrDefault(Function(r) CDate(r.WorkDate).Date = in_Date.Date)" } },
+    { "act": "If", "name": "登録があるか", "props": { "Condition": "day Is Nothing" },
+      "then": [
+        { "act": "Assign", "props": { "To": "out_Run", "Value": "False" } },
+        { "act": "Assign", "props": { "To": "out_Reason", "Value": "\"登録が無い日\"" } }
+      ],
+      "else": [
+        { "act": "If", "name": "祝日か", "props": { "Condition": "day.IsHoliday.Equals(True)" },
+          "then": [
+            { "act": "Assign", "props": { "To": "out_Run", "Value": "False" } },
+            { "act": "Assign", "props": { "To": "out_Reason", "Value": "\"祝日（\" & day.HolidayName & \"）\"" } }
+          ],
+          "else": [
+            { "act": "Assign", "props": { "To": "out_Run", "Value": "day.RunRpa.Equals(True)" } },
+            { "act": "Assign", "props": { "To": "out_Reason", "Value": "If(out_Run, \"RPA を動かす日\", \"RPA を動かさない日\")" } }
+          ] }
+      ] }
+  ]
+}

@@ -136,6 +136,22 @@ uip solution upload out/WorkCalendar.uis
 
 確かめたこと（2026-11-13）：見本を `--uis` で作って `upload` し、3 つのワークフローを開いて問題なし。デバッグで、日付を入れて「保存」→ 表に 1 行出た、チェックを変えて「保存」→ 同じ行が直った（行は増えない）、「この日の設定を消す」→ 行が消えた。DESKTOP の Chrome でやった（Studio Web は UiPath Assistant とのつなぎを求める）
 
+### RPA 側：今日動くか（`samples/apps/work-calendar-rpa/ir`）
+
+App で決めた「RPA を動かす日」を、ふつうの RPA のプロセスが朝に見る。`IsRunDay`（in_Date → out_Run、out_Reason）を本番のプロセスの最初に呼ぶ。
+
+- 決めごと：その日の行が無い → 動かさない。祝日 → 動かさない。それ以外は「RPA を動かす」の値
+- IR の型 `DataService.Entities.<表>` は XAML で `de:<表>`。生成器が `DataService.DataService.Entities` の参照と `DataService.Entities` の import を足す
+- プロジェクトに要るもの：依存 `UiPath.DataService.Activities`、`project.json` の `entitiesStores`、`.entities/EntitiesStore.json`（`rpa-app-entities.ts` の出力をそのまま置ける）。型の DLL は build のときに作られた
+- 確かめ用のテンプレート `C:\Users\Public\uipath-ir-probe-df`（ふつうのテンプレートに上の 3 つを足したもの）。`verify.mjs` はテンプレートの `.entities` も写す
+- 表の値：必須でない真偽の列は `r.RunRpa.Equals(True)` で比べる（空でも落ちない）。日付の列は `CDate(r.WorkDate).Date`
+
+```bash
+node tools/verify/queue-run.mjs --name wcal --template 'C:\Users\Public\uipath-ir-probe-df' --use-project --no-coded samples/apps/work-calendar-rpa/ir/Main.json samples/apps/work-calendar-rpa/ir/IsRunDay.json
+```
+
+確かめたこと（2026-11-13、DESKTOP のロボットでテナントの WorkCalendar を読んだ）：登録なし →「今日は動かさない: 登録が無い日」、RPA を動かす日 →「今日は動かす: RPA を動かす日」、祝日 →「今日は動かさない: 祝日（テストの祝日）」。試しの行は消した
+
 ### ソリューション（.uis = zip）
 
 | ファイル | 中身 |

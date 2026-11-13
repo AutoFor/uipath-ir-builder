@@ -145,6 +145,9 @@ const alias: Record<string, string> = {
 
 export function toXamlType(t: string): XamlType | { error: string } {
   if (simple[t.trim()]) return { text: simple[t.trim()][0], xmlns: simple[t.trim()][1] }; // 完全名で登録したもの（UiPath.Core.Image）
+  // Data Fabric の表の型（project.json の entitiesStores から Studio が作るクラス。knowledge/apps.md の「Data Fabric の表」）
+  const ent = /^DataService\.Entities\.(\w+)$/.exec(t.trim());
+  if (ent) return { text: `de:${ent[1]}`, xmlns: { de: "clr-namespace:DataService.Entities;assembly=DataService.DataService.Entities" } };
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
   const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Drawing|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {

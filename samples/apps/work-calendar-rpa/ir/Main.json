@@ -1,0 +1,21 @@
+{
+  "workflow": "Main",
+  "variables": [
+    { "name": "run", "type": "Boolean" },
+    { "name": "reason", "type": "String" }
+  ],
+  "body": [
+    { "act": "InvokeWorkflowFile", "name": "今日動くか", "props": { "WorkflowFileName": { "lit": "IsRunDay.xaml" } },
+      "args": [
+        { "name": "in_Date", "dir": "In", "type": "DateTime", "value": "Today" },
+        { "name": "out_Run", "dir": "Out", "type": "Boolean", "value": "run" },
+        { "name": "out_Reason", "dir": "Out", "type": "String", "value": "reason" } ] },
+    { "act": "If", "name": "動く日か", "props": { "Condition": "run" },
+      "then": [
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"今日は動かす: \" & reason" } }
+      ],
+      "else": [
+        { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"今日は動かさない: \" & reason" } }
+      ] }
+  ]
+}

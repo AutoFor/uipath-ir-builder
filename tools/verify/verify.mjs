@@ -358,7 +358,7 @@ function prepareProject() {
   if (!existsSync(projDir)) {
     // プロジェクトの骨組みだけ写す。.local（ビルドのキャッシュ）とワークフローは写さない
     mkdirSync(projDir, { recursive: true });
-    for (const e of ["project.json", "project.uiproj", ".settings", ".project", ".objects", ".codedworkflows"]) {
+    for (const e of ["project.json", "project.uiproj", ".settings", ".project", ".objects", ".codedworkflows", ".entities"]) {
       const src = join(opt.template, e);
       if (existsSync(src)) cpSync(src, join(projDir, e), { recursive: true });
     }

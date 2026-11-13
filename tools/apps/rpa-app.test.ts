@@ -168,3 +168,12 @@ test("表の定義：rpa-app-entities.ts は指定した表と参照先だけ残
   assert.deepEqual(e.entities.map((x: any) => x.name).sort(), ["SystemUser", "WorkCalendar"]);
   assert.ok(!/"createdBy":"(?!0{8}-)/.test(calStore.EntitiesJson));
 });
+
+// ---- RPA 側（samples/apps/work-calendar-rpa/ir。Data Fabric 入りのプロジェクトで build・run を確かめた）----
+import { toXamlType } from "../ir/types-xaml.ts";
+
+test("IR の型：DataService.Entities.<表> は de:<表>（DataService.DataService.Entities）", () => {
+  assert.deepEqual(toXamlType("DataService.Entities.WorkCalendar"), { text: "de:WorkCalendar", xmlns: { de: "clr-namespace:DataService.Entities;assembly=DataService.DataService.Entities" } });
+  const l = toXamlType("IList<DataService.Entities.WorkCalendar>") as any;
+  assert.equal(l.text, "scg:IList(de:WorkCalendar)");
+});
