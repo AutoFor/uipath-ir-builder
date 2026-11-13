@@ -174,6 +174,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 ```bash
 uip solution init <名前>                                   # その中で
 uip maestro flow init <Flow> --automate                    # 入れ物を作り、verify.mjs --out の .flow を入れる
+node tools/maestro/event-bindings.mjs <Flow>               # コネクタのイベントのトリガーの Flow のとき（下）
+uip solution resources refresh --solution-folder .         # 同上
 uip maestro bpmn init <BPMN>   && uip maestro bpmn refresh <BPMN>
 uip rules init <Rules>         && uip rules validate <Rules> && uip rules refresh <Rules>
 uip solution pack <ソリューション> <出力先> --version 1.0.0
@@ -200,7 +202,7 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
   1. 接続のサインインが生きていること（切れていると `ConnectedEventTrigger` を作るところで `invalid_grant`。人が Orchestrator の「コネクション」で再接続する）
   2. **ソリューションのプロジェクトに `bindings_v2.json` と `entry-points.json` を置き、`uip solution resources refresh` してから pack する**。`.flow` だけを入れると process の resource の `runtimeDependencies` が空で、デプロイは通るのにトリガーが作られず、行を足しても起動しない。2 つのファイルは `uip maestro flow pack <プロジェクト> <出力先>` が作る nupkg の `content/` から取れる（プロジェクトには書かない）
   3. **`where` で見張るエンティティを指定し、コンパイルした `.flow` の `detail.filterExpression` を消す**。この操作の引数は `entityScope`（`tenant` か `folder`）と `tenantEntityName` / `folderEntityName`（`uip is triggers objects uipath-uipath-dataservice CREATED_V3 --connection-id <id>` で見える）。SDK 6.66.5 は `where` を `eventParameters` に入れるが、同じ値で `filterExpression: "entityScope == 'tenant' && …"` も作り、これが残っていると起動しなかった（中身に `entityScope` は無い）。SDK は `EVENT_SCOPE_NOT_TAKEN` の warning も出すが誤り。`object` は `EVENT_UNKNOWN` で通らない
-  見本は `DfEvent.flow.ts`
+  2 と 3 は `node tools/maestro/event-bindings.mjs <ソリューションの中の Flow プロジェクト>` がまとめてやる（そのあと `uip solution resources refresh --solution-folder <ソリューション>` → `solution pack`）。見本は `DfEvent.flow.ts`
 
 ### まだのもの
 
