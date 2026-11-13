@@ -101,7 +101,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
 | BPMN：Inclusive ゲートウェイ、Event-based ゲートウェイ、エラー開始のイベントサブプロセス | — | テナント | `BpmnEvents.bpmn` |
 | Case：ステージ 3 つ、前のステージの完了で入る、タスク 2 つを並べて動かす、必須のステージで完了 | — | テナント | `CaseTour.case` |
-| `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。WEBHOOK 方式でデバッグでは動かない。デプロイは接続のサインイン切れ（invalid_grant）で失敗（10 章） | デプロイで起動した（`event-bindings.mjs` で整える。10 節） | `EventWait`、`deploy/DfEvent` |
+| `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。WEBHOOK 方式でデバッグでは動かない。デプロイすると行の作成で起動した（10 節） | デプロイで起動した（`event-bindings.mjs` で整える。10 節） | `EventWait`、`deploy/DfEvent` |
 | 定期実行のトリガー（デプロイ） | テナント（5 分ごとに動いた） | — | `deploy/Nightly` |
 | `queueItem` | テナント（試しのキューに項目ができた） | — | `deploy/QueueTour` |
 | BPMN の Call activity（`startAgenticProcess`）と戻り値 | — | テナント | `deploy/Parent`、`deploy/Child` |
