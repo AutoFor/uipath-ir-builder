@@ -1,0 +1,12 @@
+{
+  "version": "1.0", "id": "smoke-test", "name": "Smoke test",
+  "evaluatorRefs": ["ContainsEvaluator", "ToolCallCountEvaluator"],
+  "evaluations": [
+    { "id": "test-1-gold", "name": "合計 1650 円は GOLD",
+      "inputs": { "question": "りんご 300 円、みかん 450 円、メロン 900 円。上限 1000 円。合計とランクは？" },
+      "evaluationCriterias": { "ContainsEvaluator": { "searchText": "GOLD" }, "ToolCallCountEvaluator": { "toolCallsCount": { "price_tier": ["=", 1] } } } },
+    { "id": "test-2-silver", "name": "小さいものだけは SILVER",
+      "inputs": { "question": "ガム 120 円だけ買う。上限は 1000 円。ランクは？" },
+      "evaluationCriterias": { "ContainsEvaluator": { "searchText": "SILVER" }, "ToolCallCountEvaluator": { "toolCallsCount": { "price_tier": ["=", 1] } } } }
+  ]
+}

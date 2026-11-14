@@ -81,7 +81,7 @@ uipath auth / pack / publish / deploy / push / pull / eval / dev
 
 - 関数の雛形（`--type function`）は、ログインせずに手元で `run` できた。
 - エージェント（`--type agent`）は `uipath-langchain` などのエージェントの枠組みが要る。
-- `uip` にも `uip agent`・`uip function` がある。uipath-ir-builder では Python のエージェントを作っていないので、使うときにスキル（`uipath-agents`・`uipath-functions`）と合わせて調べる。
+- エージェントを作るときは、`uipath` を直接呼ばずに `uip codedagent`（`uip` のログインを渡す）を使う。手順と確かめた結果は [python-agents.md](python-agents.md)。
 
 ## UiPath.Studio.CommandLine.exe
 

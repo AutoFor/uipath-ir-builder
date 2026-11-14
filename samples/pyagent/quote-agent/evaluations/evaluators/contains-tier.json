@@ -1,0 +1,2 @@
+{ "version": "1.0", "id": "ContainsEvaluator", "evaluatorTypeId": "uipath-contains",
+  "evaluatorConfig": { "name": "ContainsEvaluator", "targetOutputKey": "answer" } }
