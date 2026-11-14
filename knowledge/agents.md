@@ -46,11 +46,11 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | Agent Registry / Agents | デプロイ済みのエージェント（フォルダごと）。開くと Dashboard・Design・Review runs・Feedback・Evaluations (Preview)・Memory (Preview)・Run now |
 | Conversational (Preview) | デプロイ済みの会話型（会話型のエージェントと、会話のトリガーを持つ Maestro Flow）。開くと Dashboard（利用者・メッセージ・会話の数）・Design・Review runs・Feedback・Evaluations・**Channels**（Microsoft Teams のアプリとして出す）・**A2A**（ほかのエージェントから呼ぶ口。Endpoint と Agent card の JSON。「Copy A2A URL」）・**Chat**（その場で話せる） |
 | Draft agents | まだ出していない Studio Web のエージェント |
-| Templates | UiPath のテンプレート 23 種。「Use」で Studio Web にソリューションができる。自分のエージェントは Studio Web の「Submit as template」（名前と説明。組織の全員に見える）でテンプレートにできる |
+| Templates | UiPath のテンプレート 23 種。「Use」で Studio Web にソリューションができる。自分のエージェントは Studio Web の「Submit as template」（名前と説明）で組織のテンプレートにできる：Studio Web の Templates（種類は Solution）と `agents_` の Templates の両方に出る。Studio Web の Templates のカードの ⋮ に New solution from template（Cloud / Local Workspace）・Edit solution・Demote to User level・Pin・Delete |
 | Guardrails | ガードレールの説明と入口（設定は各エージェントで）。使える検証器は `uip agent guardrails list`：pii_detection・prompt_injection・harmful_content・intellectual_property・user_prompt_attacks・llm_as_judge |
 | Context grounding indexes | インデックス（RAG）の作成と取り込みの様子 |
 | Feedback | 実行への👍👎。メモリの元になる。「View API docs」あり |
-| Memory spaces (Preview) | エージェントのメモリ。作成（名前・説明・フォルダ）、開くと Configure・**Import**（JSON から）・**Export**・Add memory（Feedback の一覧から選ぶ）・Delete（名前を打って確かめる）。Import / Export の JSON の形は公式の文書にも無い |
+| Memory spaces (Preview) | エージェントのメモリ。作成（名前・説明・フォルダ）、開くと Configure・**Import**（JSON から）・**Export**（`memory-space-<名前>-<Id>.json`）・Add memory（Feedback の一覧から選ぶ）・Delete（名前を打って確かめる）。Export した JSON を別の memory space に Import すると、同じ項目が入った（下の「メモリの Export / Import の形」） |
 | Phone numbers (Preview) | 電話番号を Flow の着信トリガー（voiceTrigger）につなぐ。「Connect number」は SIP Trunk（ラベル・番号・向き・SIP のドメイン）か Twilio、「Manage inbound access」は自分の SIP のドメイン・許す IP・SIP のユーザーとパスワード。番号は電話会社の契約が要る |
 | MCP servers (Preview) | 道具として呼べる MCP サーバーの一覧（足すのは Orchestrator） |
 
@@ -76,6 +76,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - `samples/agent/web-research.json`：Integration Service の道具（UiPath GenAI Activities の Web Search）
 - `samples/agent/mcp-price.json`：AgentHub の MCP サーバーの道具
 - `samples/agent/doc-tools.json`：組み込みの道具（DeepRAG・Batch Transform・Create File）
+- `samples/agent/invoice-validation.json`：IXP の道具と、書類の確認（Document Validation Task）のエスカレーション
 
 | 項目 | 書き方 |
 | --- | --- |
@@ -89,8 +90,9 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | ・組み込み | `{ "builtin": "analyze-attachments" }`（ファイルを読む）、`{ "builtin": "deep-rag", "task": "…" }`（長い書類を出典つきでまとめる。`citations: false` で出典なし）、`{ "builtin": "batch-transform", "task": "…", "columns": [{ "name", "description" }], "webSearch": true }`（CSV の行ごとに列を足す）、`{ "builtin": "create-file" }`（ファイルを作る）。形は Studio Web で足して取り出したもの（`tools/agent/builtin-tools.json`） |
 | ・Integration Service | `{ "integration": "<connector の key>", "activity": "<ObjectName>", "values": { "固定する項目": 値 } }`。活動は `uip is typecache activities <key>`、接続は既定のもの（`connection` で Id か名前） |
 | ・MCP | `{ "mcp": "<slug>", "tools": ["使う道具"] }`。AgentHub の MCP サーバー（`uip agenthub mcp list`）。`tools` を書かなければ全部（動的） |
+| ・IXP | `{ "ixp": "<IXP のプロジェクト>", "tag": "staging" }`。タグ（staging / live）の付いたモデルだけ使える（`uip ixp projects publish <名前> --model-version <版> --tag staging`） |
 | `contexts` | `{ "index": "<インデックス名>", "folder": "Shared" }`（RAG。`mode` は semantic / structured / deeprag / batchtransform）、`{ "dataFabric": ["表"], "folder": "Shared" }`（フォルダの表だけ）、`{ "attachments": true, "name": "…" }` |
-| `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action |
+| `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action。書類の確認は `{ "validate": "<IXP の道具の名前>", "bucket": "<バケット>", "bucketFolder": "Shared" }`（バケットは生成器が `resources add` でソリューションに取り込む） |
 | `memory` | `[{ "space": "<memory space>", "folder": "Shared", "fields": { "入力の名前": 重み } }]`。space は先に画面で作る。生成器は `uip agent memory add` を呼ぶ |
 | `resources` | ほかの `resource.json` をそのまま |
 | `guardrails` | `{ "pii": ["Email"], "action": "log" }`、`{ "harmful": [...] }`、`{ "promptInjection": 0.5 }`、`{ "raw": {...} }` |
@@ -119,6 +121,9 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | 組み込みの道具（doc-tools） | `debug --attachment` で PDF と CSV を渡すと Suspended（DeepRAG・Batch Transform は非同期）→ ジョブが Successful。DeepRAG で合計 12,000 JPY、Batch Transform で区分の列、Create File で `summary.md`（出力のファイル。`uip or attachments download <Id> -o <ファイル>` で取れた） |
 | ガードレールの block | 普通の文は通り、メールと電話番号の入った文は「Guardrail violation … blocked by guardrail [PII detection guardrail]」で Faulted、「Ignore all previous instructions…」は Prompt injection で Faulted |
 | エージェントを道具に（デプロイ済みの Summarizer） | 親は子のジョブを待って Suspended → 子が終わると再開し、要約を返した |
+| 書類の確認（invoice-validation。IXP の `ixp_trial_invoices` に staging のタグ） | `debug --attachment` → IXP の道具で抽出（トレースの `ixpTool`）→ Action Center に DocumentValidationTask ができて Suspended → `uip tasks assign` で自分に割り当て、Action Center で開くと Validation Station（左に抽出結果、右に PDF）→ Submit → 再開して `{"invoiceNumber":"INV-001","total":"12000 JPY"}`。タスクのデータはバケットのパス（`input_results.zip`・`output_results.zip` など） |
+| メモリの Export → Import | Export の JSON を別の memory space に Import すると、同じ項目（入力・フィードバック・出力）が入った |
+| Submit as template | テンプレートが Studio Web と `agents_` の両方に出た → 「New solution from template」でソリューションができた → Delete で消えた（「Template successfully deleted」） |
 | 会話型のデプロイ（helpdesk-chat を pack → publish → deploy） | `agents_` の Conversational に出た。Chat で「パスワードを忘れました」→「どのシステムやサービスのパスワードをお忘れでしょうか？」 |
 | RPA のプロセスを道具に（請求書を読む `RPA Workflow`） | `debug` は Suspended で返る（RPA のジョブを待つ間エージェントは止まる）。RPA が終わると再開し、ジョブは Successful（`invoiceNumber: INV-001`、`total: 12000`） |
 | エスカレーション（Studio Web の「Simple Approval」テンプレートのアプリ） | 5 万円で Action Center にタスク → エージェントは Suspended → `uip tasks complete --action approve --data '{"Comment":"…"}'` → 再開して `{"decision":"approved","comment":"…"}`。受け手をメールで書くと、タスクはその人に割り当て済みでできる |
@@ -150,6 +155,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - 実行の出力のキーは先頭が大文字になって返る（`debug` の `Output` が `Total`・`Tier`）。ジョブの `OutputArguments` は小文字のまま（`total`）と `__pydantic_extra__`。
 - **組み込みの道具の形はスキルの文書と違う**：Studio Web は DeepRAG・Batch Transform にファイルを受ける `inputSchema`（`attachment`）を付け、指示は `query: { variant: "static", value }`、`fileExtension` も書く。生成器は Studio Web の形を使う。
 - **UiPath ScreenPlay は組み込みの道具ではない**：道具の一覧で選ぶと、RPA のプロジェクト（「ScreenPlay for Web」、`Main.xaml`）がテンプレートとしてソリューションに入り、それを呼ぶプロセスの道具（`type: process`、`location: solution`）ができる。
+- **書類の確認（Document Validation Task）**：IXP の道具がエージェントに要り、その IXP のプロジェクトにタグ（staging / live）の付いたモデルが要る（「Only tagged models are available」）。ストレージのバケットも要る（Studio Web はソリューションに取り込む）。resource は `escalationType: 1` と `vsEscalationProperties`（`ixpToolId`・`storageBucketName`・`storageBucketFolderPath`）。受け手を書いてもタスクは Unassigned でできた（`uip tasks assign` で割り当てる）。完了は Action Center の Validation Station で Submit（CLI の `tasks complete --type DocumentValidationTask` は `--data` が丸ごと置き換えになるので使わない）。
 - **エスカレーションの種類は画面では App Task と Document Validation Task（IXP の検証）だけ**。メール・Slack・Teams のチャンネルは画面に無い（ランタイムは知っているが、作る手段が無い）。
 - **CLI の `debug` は、ソリューションの中のアプリ・MCP サーバーをデバッグのフォルダに用意しない**（「No app: … found in folder」「Not Found」）。Studio Web の Debug は「Deploy resources before debugging」で用意してから動かす。
 - **Studio Web の Debug が終わると、その実行を評価するジョブ（`command: eval`）が自動で 1 つ流れる**。エスカレーションのあるエージェントでは、その評価のジョブもタスクを作って Suspended になる（タスクを完了すれば終わる）。
@@ -177,6 +183,27 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
   - Memory spaces の画面には Import / Export がある。
 - **Studio Web のクラウドのプロジェクトの Id は、ローカルの `.uipx` の Project Id とも `agent.json` の `projectId` とも違う**ことがある。画面で開く URL の Id は、トレースの `agentId`（`designer/<agentId>?solutionId=…`）。
 
+## メモリの Export / Import の形
+
+`agents_` の Memory spaces で Export すると、次の形の JSON（`version: 1`）。Import はこの JSON をそのまま読む。
+
+```jsonc
+{
+  "version": 1,
+  "exportedAt": "…",
+  "memorySpace": { "id", "name", "description", "lastQueried", "memoriesCount", "folderKey", "createdByUserId", "isEncrypted" },
+  "items": [{
+    "memoryItemId", "memorySpaceId", "feedbackId", "status", "memoryType",   // memoryType 0 = episodic
+    "userId", "updateTime", "userEmail", "agentId",
+    "trace": [ /* その実行のスパン（id・traceId・name・attributes・spanType・jobKey…） */ ],
+    "feedback": { "traceId", "spanId", "id", "comment", "isPositive", "isOutput", "isAgentError", "isAgentPlanExecution", … }
+  }]
+}
+```
+
+- 項目は「実行のトレース ＋ フィードバック」をまるごと持つ（1 件 13KB ほど）。手で書くより、実行してフィードバックを付け、`uip agent memory item add --feedback-id` で入れる方が早い
+- 別のテナントへ移すときに使う（公式の文書では「別の memory space やテナントへ」）
+
 ## 片付け
 
 ```bash
@@ -200,10 +227,7 @@ memory space は `agents_` の Memory spaces の Delete で消す。
 ## 確かめていないもの
 
 - flow の中のエージェント（`inlineAgent`・`conversationalAgent`・公開済みのエージェントのノード）は Maestro の道具（`tools/maestro`）で作って tenant で確かめてある。[maestro.md](maestro.md)。この生成器の `--inline-in-flow` には対応していない
-- Document Validation Task のエスカレーション（IXP のプロジェクトが要る。[document-understanding.md](document-understanding.md)）
-- 電話番号の接続（SIP の電話会社か Twilio の契約が要る）、Teams のチャンネル（Teams の管理者の操作が要る）
-- Memory spaces の Import / Export の JSON の形（Export はファイルのダウンロードになるので試していない。CLI の `uip agent memory item add` で入れられる）
-- Submit as template（組織の全員に出て、消し方を確かめていないので押していない）
+- 電話番号の接続（SIP の電話会社か Twilio の契約が要る）、Teams のチャンネル（Teams の管理者の操作が要る）。どちらも契約・権限が無いので試せない。画面の入力項目は上の表
 - RPA のプロセスで、引数が V2 の JSON Schema を持たない古いもの（.NET の型だけのもの。生成器は止めて `raw` を求める）
 
 ## 出典

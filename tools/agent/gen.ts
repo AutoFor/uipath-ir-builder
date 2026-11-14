@@ -35,6 +35,8 @@ export type Tool =
   | { builtin: "batch-transform"; task: string; columns: { name: string; description: string }[]; webSearch?: boolean; fileExtension?: string; name?: string; description?: string }
   /** Create File（ファイルを作って、ほかの道具に渡すか出力に返す） */
   | { builtin: "create-file"; name?: string; description?: string }
+  /** IXP（Document Understanding）の抽出の道具。tag は IXP のプロジェクトのタグ（staging / live）。タグの付いたモデルだけ使える */
+  | { ixp: string; tag: "staging" | "live"; name?: string; description?: string }
   /** AgentHub の MCP サーバー（slug）。tools で使う道具を絞る（書かなければ全部） */
   | { mcp: string; tools?: string[]; description?: string }
   /** Integration Service の活動。connection は接続の Id か名前（書かなければその connector の既定の接続）。values は固定の値 */
@@ -74,7 +76,7 @@ export type AgentIR = {
   /** 知識（コンテキスト）。インデックス（RAG）・Data Fabric の表・実行時の添付 */
   contexts?: Context[];
   /** 人に上げる（Action Center のタスク）。アプリは Workflow Action の種類（Studio Web の「RPA app」の Action App） */
-  escalations?: Escalation[];
+  escalations?: (Escalation | ValidationEscalation)[];
   /** 道具以外のリソース（コンテキスト・エスカレーション・MCP）。resource.json をそのまま書く */
   resources?: Record<string, unknown>[];
   guardrails?: Guardrail[];
@@ -92,6 +94,9 @@ export type Context =
 export type EntityLookup = (names: string[], folder: string) =>
   | { folderKey: string; entities: { id: string; name: string; description: string | null }[] }
   | { error: string };
+
+/** 書類の確認（Document Validation Task）。IXP の道具の抽出結果を人に確かめてもらう。bucket は書類を置くストレージ */
+export type ValidationEscalation = { validate: string; bucket: string; bucketFolder: string; name?: string; description?: string; recipients?: string[] };
 
 export type Escalation = {
   /** Action Center のアプリの名前（ソリューションの中か、デプロイ済み） */
@@ -229,6 +234,17 @@ function toolResource(t: Tool, i: number, lookup: ProcessLookup | undefined, pro
   const p = `tools[${i}]`;
   if ("raw" in t) return t.raw;
   if ("integration" in t) return integrationResource(t, i, isLookup, project, probs);
+  if ("ixp" in t) {
+    if (t.tag !== "staging" && t.tag !== "live") { probs.push({ path: `${p}.tag`, code: "BAD_TAG", message: "tag は staging か live（IXP のプロジェクトでタグを付けたモデルだけ使える）" }); return undefined; }
+    const name = t.name ?? t.ixp.replace(/[^A-Za-z0-9_]/g, "_");
+    return {
+      $resourceType: "tool", id: (project && oldId(project, name)) ?? randomUUID(), name, description: t.description ?? "Extract data from the document with IXP",
+      location: "external", type: "ixp",
+      inputSchema: { type: "object", properties: { attachment: { description: "File to extract data from.", $ref: "#/definitions/job-attachment" } }, required: ["attachment"], definitions: { "job-attachment": JOB_ATTACHMENT } },
+      outputSchema: { type: "object", properties: {} },
+      settings: {}, properties: { projectName: t.ixp, versionTag: t.tag }, guardrail: { policies: [] }, isEnabled: true, argumentProperties: {},
+    };
+  }
   if ("mcp" in t) {
     if (!mcpLookup) { probs.push({ path: p, code: "NEED_TENANT", message: "MCP の道具は --project で生成する（サーバーを探す）" }); return undefined; }
     const m = mcpLookup(t.mcp);
@@ -514,6 +530,30 @@ function integrationResource(t: Extract<Tool, { integration: string }>, i: numbe
   };
 }
 
+function validationResource(e: ValidationEscalation, i: number, ir: AgentIR, project: string | undefined, probs: Problem[]): Record<string, unknown> | undefined {
+  const p = `escalations[${i}]`;
+  const ixpTools = (ir.tools ?? []).filter((t): t is Extract<Tool, { ixp: string }> => "ixp" in t).map(t => t.name ?? t.ixp.replace(/[^A-Za-z0-9_]/g, "_"));
+  if (!ixpTools.includes(e.validate)) { probs.push({ path: `${p}.validate`, code: "UNKNOWN_IXP_TOOL", message: `IXP の道具 "${e.validate}" が tools に無い（ある物: ${ixpTools.join(", ") || "なし"}）` }); return undefined; }
+  const name = e.name ?? "Validation";
+  const oldRes = project && existsSync(join(project, "resources", name, "resource.json")) ? readJson(join(project, "resources", name, "resource.json")) : undefined;
+  return {
+    $resourceType: "escalation", id: oldRes?.id ?? randomUUID(), name, description: e.description ?? "",
+    channels: [{
+      id: oldRes?.channels?.[0]?.id ?? randomUUID(), name: "Channel", description: "Channel description",
+      inputSchema: { type: "object", properties: {} }, inputSchemaDotnetTypeMapping: null,
+      outputSchema: { type: "object", properties: {} }, outputSchemaDotnetTypeMapping: null,
+      outcomeMapping: null, recipients: (e.recipients ?? []).map(v => ({ type: 3, value: v })), type: "actionCenter",
+      properties: { appName: null, appVersion: 1, folderName: null, resourceKey: null, isActionableMessageEnabled: false, actionableMessageMetaData: null },
+      argumentProperties: {},
+    }],
+    isAgentMemoryEnabled: false, governanceProperties: { isEscalatedAtRuntime: false },
+    escalationType: 1, properties: {},
+    // バケットはソリューションに取り込む（gen の最後に resources add）
+    vsEscalationProperties: { ixpToolId: e.validate, storageBucketName: e.bucket, storageBucketFolderPath: "solution_folder" },
+    isEnabled: true,
+  };
+}
+
 // ---------- ガードレール ----------
 
 function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: Problem[]): Record<string, unknown> | undefined {
@@ -584,7 +624,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
     resources[n] = r;
   });
   (ir.escalations ?? []).forEach((e, i) => {
-    const r = escalationResource(e, i, opts.appLookup, opts.project, probs);
+    const r = "validate" in e ? validationResource(e, i, ir, opts.project, probs) : escalationResource(e, i, opts.appLookup, opts.project, probs);
     if (!r) return;
     const n = String(r.name);
     if (resources[n]) probs.push({ path: `escalations[${i}]`, code: "DUP_NAME", message: `名前 "${n}" が重なる` });
@@ -914,7 +954,7 @@ ${r.text}`); return 1; }
   // ソリューションのリソースを取り込むのは、外（デプロイ済み）を指す道具・エスカレーションがあるときだけ。
   // ソリューションの中のアプリがあると refresh がその宣言を新しい key で作り直し、エスカレーションの resourceKey が宙に浮く
   const external = (r: Record<string, any>) =>
-    r.$resourceType === "escalation" ? r.channels?.some((c: any) => c.properties?.folderName !== "solution_folder")
+    r.$resourceType === "escalation" ? r.escalationType !== 1 && r.channels?.some((c: any) => c.properties?.folderName !== "solution_folder")
       : r.$resourceType === "mcp" ? false
         : r.$resourceType === "context" ? r.contextType !== "attachments"
           : r.type !== "internal";
@@ -924,6 +964,12 @@ ${r.text}`); return 1; }
   if (needsSolution && solution) {
     const r = uip(["solution", "resources", "refresh", "--solution-folder", q(solution)], profile);
     if (!r.ok) { console.error(`uip solution resources refresh が失敗した:\n${r.text}`); return 1; }
+  }
+  // 書類の確認（Document Validation）のバケットは resources add --source remote で取り込む（Studio Web と同じく solution_folder に置く）
+  for (const e of ir.escalations ?? []) {
+    if (!("validate" in e) || !solution) continue;
+    const r = uip(["solution", "resources", "add", "--source", "remote", "--kind", "Bucket", "--name", q(e.bucket), "--folder-path", q(e.bucketFolder), "--solution-folder", q(solution)], profile);
+    if (!r.ok && !/already|exists/i.test(r.text)) { console.error(`uip solution resources add（バケット）が失敗した:\n${r.text}`); return 1; }
   }
   // MCP サーバーは refresh だと種類を取り違える（UiPath の種類を mCPServer/coded に置き、実行で Not Found）。
   // 間違った宣言を消し、resources add --source remote で取り込む（Studio Web と同じ mcpServer/<種類>/ と、道具が呼ぶプロセスも入る）

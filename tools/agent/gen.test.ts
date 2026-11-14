@@ -296,3 +296,17 @@ test("組み込みの道具：DeepRAG・Batch Transform・Create File は Studio
   const bad = generate(ir({ tools: [{ builtin: "batch-transform", task: "", columns: [] } as any, { builtin: "nope" } as any] }), BASE).problems.map(p => p.code).sort();
   assert.deepEqual(bad, ["BAD_BUILTIN", "MISSING"]);
 });
+
+test("IXP の道具と書類の確認（Document Validation Task）：tags は staging / live、確認は tools の IXP の道具を指す", () => {
+  const { result, problems } = generate(ir({ tools: [{ ixp: "ixp_trial_invoices", tag: "staging" }], escalations: [{ validate: "ixp_trial_invoices", bucket: "B", bucketFolder: "Shared", recipients: ["a@example.com"] }] }), BASE);
+  assert.deepEqual(problems, []);
+  const tool = result!.resources.ixp_trial_invoices as any;
+  assert.equal(tool.type, "ixp");
+  assert.deepEqual(tool.properties, { projectName: "ixp_trial_invoices", versionTag: "staging" });
+  const esc = result!.resources.Validation as any;
+  assert.equal(esc.escalationType, 1);
+  assert.deepEqual(esc.vsEscalationProperties, { ixpToolId: "ixp_trial_invoices", storageBucketName: "B", storageBucketFolderPath: "solution_folder" });
+  assert.deepEqual(esc.channels[0].recipients, [{ type: 3, value: "a@example.com" }]);
+  const bad = generate(ir({ tools: [{ ixp: "p", tag: "prod" as any }], escalations: [{ validate: "nope", bucket: "B", bucketFolder: "Shared" }] }), BASE).problems.map(p => p.code).sort();
+  assert.deepEqual(bad, ["BAD_TAG", "UNKNOWN_IXP_TOOL"]);
+});

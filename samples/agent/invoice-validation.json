@@ -1,0 +1,21 @@
+{
+  "name": "InvoiceValidation",
+  "description": "請求書を IXP で読み、抽出結果を人に確かめてもらって（Document Validation Task）、確かめた後の値を返す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 8000,
+  "maxIterations": 6,
+  "system": "請求書を受け取ったら、まず @{tools.ixp_trial_invoices} で読み取る。次に必ず @{escalations.Validation} で人に読み取り結果を確かめてもらう。確かめた後の値から請求書番号と合計を出力に入れる。",
+  "user": "請求書: {{input.invoice}}",
+  "input": { "invoice": "file" },
+  "output": {
+    "invoiceNumber": { "type": "string", "required": true },
+    "total": "string"
+  },
+  "tools": [
+    { "ixp": "ixp_trial_invoices", "tag": "staging" }
+  ],
+  "escalations": [
+    { "validate": "ixp_trial_invoices", "bucket": "AgentDvTest", "bucketFolder": "Shared", "recipients": ["approver@example.com"] }
+  ]
+}

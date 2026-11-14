@@ -8,7 +8,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool } from "./gen.ts";
+import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool, ValidationEscalation } from "./gen.ts";
 
 /** uip agent init が作る評価器（生成の先に必ずあるので IR に持たない） */
 const DEFAULT_EVALUATORS = new Set(["evaluator-default.json", "evaluator-default-trajectory.json"]);
@@ -80,8 +80,16 @@ function contextToIR(r: any): Context | undefined {
 }
 
 /** エスカレーション（Action Center、受け手がメール）を省略形に戻す */
-function escalationToIR(r: any): Escalation | undefined {
+function escalationToIR(r: any): Escalation | ValidationEscalation | undefined {
   const ch = r.channels?.[0];
+  if (r.escalationType === 1 && r.vsEscalationProperties?.ixpToolId) {
+    // 書類の確認（Document Validation Task）。バケットのフォルダはソリューションの中に取り込んだ後は分からないので、元のフォルダは IR に書き足す
+    const v: any = { validate: r.vsEscalationProperties.ixpToolId, bucket: r.vsEscalationProperties.storageBucketName, bucketFolder: r.vsEscalationProperties.bucketFolder ?? "Shared" };
+    if (r.name !== "Validation") v.name = r.name;
+    if (r.description) v.description = r.description;
+    if (ch?.recipients?.length) v.recipients = ch.recipients.map((x: any) => x.value);
+    return v;
+  }
   if (r.channels?.length !== 1 || ch?.type !== "actionCenter" || !ch.properties?.appName) return undefined;
   if ((ch.recipients ?? []).some((x: any) => x.type !== 3)) return undefined;
   const e: any = { app: ch.properties.appName };
@@ -152,7 +160,7 @@ export function toIR(dir: string): AgentIR {
   // resources/
   const tools: Tool[] = [];
   const contexts: Context[] = [];
-  const escalations: Escalation[] = [];
+  const escalations: (Escalation | ValidationEscalation)[] = [];
   const others: Record<string, unknown>[] = [];
   const resDir = join(dir, "resources");
   for (const d of existsSync(resDir) ? readdirSync(resDir).sort() : []) {
@@ -185,6 +193,11 @@ export function toIR(dir: string): AgentIR {
         t.columns = (s.outputColumns ?? []).map((c: any) => ({ name: c.name, description: c.description }));
         if (s.webSearchGrounding?.value === "Enabled") t.webSearch = true;
       }
+      tools.push(t);
+    } else if (r.$resourceType === "tool" && r.type === "ixp" && r.properties?.projectName) {
+      const t: any = { ixp: r.properties.projectName, tag: r.properties.versionTag };
+      if (r.name !== String(r.properties.projectName).replace(/[^A-Za-z0-9_]/g, "_")) t.name = r.name;
+      if (r.description && r.description !== "Extract data from the document with IXP") t.description = r.description;
       tools.push(t);
     } else if (r.$resourceType === "tool" && r.type === "integration" && r.properties?.objectName && r.properties?.connection?.connector?.key) {
       const t: any = { integration: r.properties.connection.connector.key, activity: r.properties.objectName };
