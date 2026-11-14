@@ -1,0 +1,17 @@
+{
+  "inputs": {
+    "UiPathEventConnector": "string",
+    "UiPathEvent": "string",
+    "UiPathEventObjectType": "string",
+    "UiPathEventObjectId": "string",
+    "UiPathTime": "string"
+  },
+  "outputs": { "event": "string", "recordId": "string", "title": "string", "amount": "number" },
+  "body": [
+    { "name": "イベントを記録", "log": "`${$workflow.input.UiPathEvent} ${$workflow.input.UiPathEventObjectId}`" },
+    { "id": "rec", "name": "作られたレコードを読む", "stub": "d94d7374-fcc3-3212-83f6-1dac43c4e109",
+      "connection": "9111c056-a06f-4125-96a5-532f447c4446",
+      "inputs": { "entityScope": { "lit": "tenant" }, "tenantEntityName": { "lit": "IrProbeItem" }, "recordId": "$workflow.input.UiPathEventObjectId" } },
+    { "response": { "event": "$workflow.input.UiPathEvent", "recordId": "$workflow.input.UiPathEventObjectId", "title": "@rec.content.Title", "amount": "@rec.content.Amount" } }
+  ]
+}

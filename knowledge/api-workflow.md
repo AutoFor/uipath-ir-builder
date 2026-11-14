@@ -36,6 +36,7 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 | `HttpTour.json` | HTTP Request の GET と POST（GET の結果を POST の本文に入れる） | 手元の run（`--no-auth`） |
 | `ConnectorTour.json` | Integration Service のコネクタ（Data Fabric の Query Entity Records）。会社のテナントの接続 | 手元の run（ログイン） |
 | `FileTour.json` | File to Base64、Base64 to File（参照から・文字列から） | 手元の run（ログイン、`--input-file` / `--output-dir`）。元のファイルと同じ中身に戻った |
+| `EventTour.json` | Integration Service のイベントのトリガーで起動し、イベントの入力（`UiPathEventObjectId`）で Data Fabric の Get Entity Record by ID を呼ぶ | トライアルのテナントで、レコードを足す → イベントのトリガー → ジョブの出力にレコードの値。接続（`connection`）は試したあと消したので、使うときは自分の接続に差し替える |
 | `RetryTour.json` | HTTP の再試行（`httpRetry`。指数で 2 回）。503 を返す GET を Try/Catch で受ける | 手元の run（`--no-auth`）。500 ms・1000 ms 待って 2 回やり直し、「HTTP Status: 503」で Catch に入った |
 
 ### IR の書き方
@@ -149,6 +150,24 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
   - URL は `https://cloud.uipath.com/<組織>/<テナント>/orchestrator_/t/<フォルダの Key>/<slug>`。Bearer のトークンを付け、本文に入力の JSON を入れて呼ぶ。
   - AsyncRequestReply は 202 → `Location` を GET して 303 → 200 で、Response の値が返る（4 秒ほど）。ジョブの Source は `HttpTrigger`。
   - 見る・消すときは `--type api` が要る（`triggers get`・`delete`）。消すのは `--yes` も要る。
+
+- **Integration Service のイベント**：
+  - CLI では作れない（`uip or triggers create` は time・queue・api だけ）。Orchestrator の画面で、プロセスのフォルダの「Automations > Triggers > Event triggers > Add a new trigger」から作る。
+    - 入れるもの：プロセス、コネクタ、接続、イベント、そのイベントの項目（Data Fabric なら Entity Scope と Entity）。
+    - 実行の種類は API ワークフローなら「Cloud - Serverless」になる。
+  - 接続は親のフォルダ（`Shared`）にあれば、子のフォルダ（ソリューションのフォルダ）のプロセスから使えた。
+  - `uip or triggers list` にイベントのトリガーは出ない。見る・消すのも画面から。
+  - パッケージの版を上げても（`solution deploy upgrade`）、イベントのトリガーは残った。
+  - Data Fabric の Record Created は、レコードを足してから 5 秒ほどでジョブが始まった。ジョブの Source は `IntegrationTrigger`。
+  - **ワークフローの入力に来るのはイベントの情報で、レコードの中身ではない**。次のキーが文字列で来る。
+    - `UiPathEventConnector`（`uipath-uipath-dataservice`）
+    - `UiPathEvent`（`CREATED_V3`）
+    - `UiPathEventObjectType`（`EntityTriggers_V3`）
+    - `UiPathEventObjectId`（レコードの Id。小文字）
+    - `UiPathTime`、`UiPathCorrelationId`
+    - `UiPathAdditionalEventData`（JSON の文字列）、`UiPathTriggerActionId`
+  - 入力のスキーマに書いていないキーも渡ってくる。使うものは IR の `inputs` に書く。
+  - 中身が要るなら、`UiPathEventObjectId` でコネクタの取得の活動を呼ぶ（見本は `EventTour.json`）。
 
 ## 動かすときの注意
 
