@@ -1,0 +1,9 @@
+{
+  "outputs": { "count": "number", "first": "object" },
+  "body": [
+    { "id": "rows", "name": "稼働日カレンダーを読む", "stub": "deababb7-2da5-3651-a5ca-2e6bb4bbd957",
+      "connection": "f0ea630c-5085-401b-9e25-5a7560e0f9f5",
+      "inputs": { "entityScope": { "lit": "tenant" }, "tenantEntityName": { "lit": "WorkCalendar" } } },
+    { "response": { "count": "(@rows.content ?? []).length", "first": "(@rows.content ?? [])[0] ?? null" } }
+  ]
+}

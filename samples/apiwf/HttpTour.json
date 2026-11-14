@@ -1,0 +1,13 @@
+{
+  "inputs": { "maxLength": "number", "who": "string" },
+  "outputs": { "fact": "string", "status": "number", "echoed": "string" },
+  "body": [
+    { "id": "fact", "name": "猫の豆知識を取る", "stub": "5c4cc855-b42a-37e6-b910-de8588998fce",
+      "inputs": { "method": { "lit": "GET" }, "url": "'https://catfact.ninja/fact?max_length=' + $workflow.input.maxLength" } },
+    { "id": "echo", "name": "POST で送り返してもらう", "stub": "5c4cc855-b42a-37e6-b910-de8588998fce",
+      "inputs": { "method": { "lit": "POST" }, "url": { "lit": "https://postman-echo.com/post" },
+                  "headers": "{ 'Content-Type': 'application/json' }",
+                  "body": "{ who: $workflow.input.who, fact: @fact.content.fact }" } },
+    { "response": { "fact": "@fact.content.fact", "status": "@fact.statusCode", "echoed": "@echo.content.json.who" } }
+  ]
+}

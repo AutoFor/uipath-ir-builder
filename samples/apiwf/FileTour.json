@@ -1,0 +1,10 @@
+{
+  "inputs": { "document": "file" },
+  "outputs": { "encoded": "file", "decoded": "file", "fromText": "file" },
+  "body": [
+    { "id": "b64", "name": "ファイルを Base64 にする", "fileToBase64": "$workflow.input.document" },
+    { "id": "back", "name": "Base64 をファイルに戻す", "base64ToFile": "@b64.output" },
+    { "id": "txt", "name": "文字列から作る", "base64ToFile": "btoa('hello api workflow')", "fileName": { "lit": "hello.txt" }, "mimeType": { "lit": "text/plain" } },
+    { "response": { "encoded": "@b64.output", "decoded": "@back.output", "fromText": "@txt.output" } }
+  ]
+}
