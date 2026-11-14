@@ -1,23 +1,133 @@
 {
-  "inputs": { "items": "array", "limit": "number" },
-  "outputs": { "total": "number", "tier": "string", "loops": "number", "caught": "string", "picked": "array" },
+  "inputs": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "limit": "number"
+  },
+  "outputs": {
+    "total": "number",
+    "tier": "string",
+    "loops": "number",
+    "caught": "string",
+    "picked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
   "variables": {
-    "total": { "type": "number", "default": 0 },
-    "tier": { "type": "string", "default": "" },
-    "n": { "type": "number", "default": 0 },
-    "caught": { "type": "string", "default": "" }
+    "total": {
+      "type": "number",
+      "default": 0
+    },
+    "tier": {
+      "type": "string",
+      "default": ""
+    },
+    "n": {
+      "type": "number",
+      "default": 0
+    },
+    "caught": {
+      "type": "string",
+      "default": ""
+    }
   },
   "body": [
-    { "id": "pick", "name": "大きいものを選ぶ", "js": "return $workflow.input.items.filter(x => x.price >= 100);" },
-    { "name": "合計を出す", "forEach": "@pick", "item": "row", "body": [
-      { "if": "$row.price > $workflow.input.limit", "then": [ { "break": true } ], "else": [
-        { "assign": "total", "value": "$context.variables.total + $row.price" }
-      ] }
-    ] },
-    { "if": "$context.variables.total >= 500", "then": [ { "assign": "tier", "value": { "lit": "GOLD" } } ], "else": [ { "assign": "tier", "value": { "lit": "SILVER" } } ] },
-    { "doWhile": "$context.variables.n < 3", "body": [ { "assign": "n", "value": "$context.variables.n + 1" } ] },
-    { "try": [ { "js": "throw new Error('boom');" } ], "as": "err", "catch": [ { "assign": "caught", "value": "$err.title" } ] },
-    { "wait": { "milliseconds": 200 } },
-    { "response": { "total": "$context.variables.total", "tier": "$context.variables.tier", "loops": "$context.variables.n", "caught": "$context.variables.caught", "picked": "@pick.map(x => x.name)" } }
+    {
+      "id": "pick",
+      "name": "大きいものを選ぶ",
+      "js": "return $workflow.input.items.filter(x => x.price >= 100);"
+    },
+    {
+      "name": "合計を出す",
+      "forEach": "@pick",
+      "item": "row",
+      "body": [
+        {
+          "if": "$row.price > $workflow.input.limit",
+          "then": [
+            {
+              "break": true
+            }
+          ],
+          "else": [
+            {
+              "assign": "total",
+              "value": "$context.variables.total + $row.price"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "if": "$context.variables.total >= 500",
+      "then": [
+        {
+          "assign": "tier",
+          "value": {
+            "lit": "GOLD"
+          }
+        }
+      ],
+      "else": [
+        {
+          "assign": "tier",
+          "value": {
+            "lit": "SILVER"
+          }
+        }
+      ]
+    },
+    {
+      "doWhile": "$context.variables.n < 3",
+      "body": [
+        {
+          "assign": "n",
+          "value": "$context.variables.n + 1"
+        }
+      ]
+    },
+    {
+      "try": [
+        {
+          "js": "throw new Error('boom');"
+        }
+      ],
+      "as": "err",
+      "catch": [
+        {
+          "assign": "caught",
+          "value": "$err.title"
+        }
+      ]
+    },
+    {
+      "wait": {
+        "milliseconds": 200
+      }
+    },
+    {
+      "response": {
+        "total": "$context.variables.total",
+        "tier": "$context.variables.tier",
+        "loops": "$context.variables.n",
+        "caught": "$context.variables.caught",
+        "picked": "@pick.map(x => x.name)"
+      }
+    }
   ]
 }

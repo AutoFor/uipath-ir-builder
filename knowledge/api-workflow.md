@@ -32,7 +32,7 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 
 | 見本 | 中身 | 確かめたこと |
 | --- | --- | --- |
-| `ControlTour.json` | JavaScript、ForEach、If、Break、Assign、DoWhile、Try/Catch、Wait、Response | 手元の run（`--no-auth`）、デプロイして Orchestrator のジョブ、Studio Web の Debug |
+| `ControlTour.json` | JavaScript、ForEach、If、Break、Assign、DoWhile、Try/Catch、Wait、Response | 手元の run（`--no-auth`）、デプロイして Orchestrator のジョブ、Studio Web の Debug、Flow の apiWorkflow から呼ぶ |
 | `HttpTour.json` | HTTP Request の GET と POST（GET の結果を POST の本文に入れる） | 手元の run（`--no-auth`） |
 | `ConnectorTour.json` | Integration Service のコネクタ（Data Fabric の Query Entity Records）。会社のテナントの接続 | 手元の run（ログイン） |
 | `FileTour.json` | File to Base64、Base64 to File（参照から・文字列から） | 手元の run（ログイン、`--input-file` / `--output-dir`）。元のファイルと同じ中身に戻った |
@@ -95,6 +95,18 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
   - TryCatch に `name` が足される。
   - Wait の 0 の項目が消える。
 - **配列の入力**：`items` を持たない `array` は、Studio Web で `String[]` に見え、Debug の入力が JSON の欄だけになる（「Rich UI support is not available」）。オブジェクトの配列は、IR の `inputs` に JSON Schema（`{ "type": "array", "items": { … } }`）で書く。
+
+## Flow から呼ぶ
+
+- 見本は `samples/maestro/deploy/CallApiWorkflow.flow.ts`。
+  - SDK の `apiWorkflow({ key, name, folderPath, inputs, returns })` を使う。
+  - key は `uip or processes list --folder-path <フォルダ>` の Key。
+  - 出力は `$vars.<id>.output`（Response の値そのもの）。
+  - トライアルのテナントで、配列の引数を渡して `{ total: 500, tier: "GOLD", … }` が返った。
+- **SDK 6.66.5 の型の付け方**：プロセスを呼ぶノード（`apiWorkflow`・`rpaWorkflow` など）の `inputDefinition` を、渡した値から作る。数と真偽以外はすべて `string` にするので、配列やオブジェクトを渡すと `flow validate` が「TYPE_MISMATCH … expects string」で落ちる。
+  - 動かすと値はそのまま渡り、結果も正しい。
+  - `tools/maestro/verify.mjs` が compile のあとに直す（`fixProcessInputTypes`）。
+- **API ワークフローの配列の入力**：`items` の型まで JSON Schema で書く。書かないと、Studio Web では `String[]` に見える。
 
 ## 動かすときの注意
 

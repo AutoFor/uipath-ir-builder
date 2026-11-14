@@ -150,6 +150,29 @@ export function parseEnvelope(stdout) {
   }
 }
 
+/**
+ * SDK 6.66.5 は、プロセスを呼ぶノード（rpaWorkflow・apiWorkflow・agenticProcess など）の inputDefinition を
+ * 渡した値の型から作るが、数・真偽以外はすべて string にする。配列やオブジェクトを渡すと validate が
+ * TYPE_MISMATCH（"… expects string"）で落ちる（動かすと値はそのまま渡り、結果も正しい）。
+ * ノードの inputs の値が配列・オブジェクトで、定義が string のものだけ、array / object に直す。
+ * 直したノードと引数の一覧を返す（knowledge/api-workflow.md）
+ */
+export function fixProcessInputTypes(text) {
+  const flow = JSON.parse(text);
+  const changed = [];
+  const defs = new Map((flow.definitions ?? []).map((d) => [d.nodeType, d]));
+  for (const n of flow.nodes ?? []) {
+    const props = defs.get(n.type)?.inputDefinition?.properties;
+    if (!props || !n.inputs) continue;
+    for (const [k, v] of Object.entries(n.inputs)) {
+      if (props[k]?.type !== "string" || v === null || typeof v !== "object") continue;
+      props[k] = { type: Array.isArray(v) ? "array" : "object" };
+      changed.push(`${n.id}.${k}`);
+    }
+  }
+  return { text: changed.length ? JSON.stringify(flow, null, 2) : text, changed };
+}
+
 /** 工程の結果をまとめて、ファイルの判定を出す */
 export function judge(steps, strict) {
   const counts = { errors: 0, warnings: 0 };
@@ -208,6 +231,10 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     const r = runUip(uipJs, step.args);
     // compile が失敗したのに古いものが残らないように、上で dir を消してある
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
+    if (step.name === "compile" && info.family === "flow" && existsSync(artifact)) {
+      const fixed = fixProcessInputTypes(readFileSync(artifact, "utf8"));
+      if (fixed.changed.length) writeFileSync(artifact, fixed.text);
+    }
   }
   const target = artifact;
   if (existsSync(target)) results.push({ name: "assign", ...checkAssign(info.family, target) });

@@ -231,3 +231,16 @@ test("--tenant は実在の RPA を通し、無いものを止める", { skip: t
     assert.ok(codes(r, "tenant").includes("REF_NOT_FOUND"), f);
   }
 });
+
+test("fixProcessInputTypes：プロセスを呼ぶノードの配列・オブジェクトの引数を string から直す", async () => {
+  const { fixProcessInputTypes } = await import("./verify.mjs");
+  const flow = {
+    nodes: [{ id: "calc", type: "uipath.core.api-workflow.k", inputs: { items: [1, 2], opt: { a: 1 }, name: "x", n: 1 } }],
+    definitions: [{ nodeType: "uipath.core.api-workflow.k", inputDefinition: { type: "object", properties: { items: { type: "string" }, opt: { type: "string" }, name: { type: "string" }, n: { type: "number" } } } }],
+  };
+  const r = fixProcessInputTypes(JSON.stringify(flow));
+  assert.deepEqual(r.changed, ["calc.items", "calc.opt"]);
+  const props = JSON.parse(r.text).definitions[0].inputDefinition.properties;
+  assert.deepEqual(props, { items: { type: "array" }, opt: { type: "object" }, name: { type: "string" }, n: { type: "number" } });
+  assert.deepEqual(fixProcessInputTypes(JSON.stringify({ nodes: [], definitions: [] })).changed, []);
+});
