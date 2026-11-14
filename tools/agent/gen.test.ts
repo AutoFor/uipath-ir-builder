@@ -310,3 +310,19 @@ test("IXP の道具と書類の確認（Document Validation Task）：tags は s
   const bad = generate(ir({ tools: [{ ixp: "p", tag: "prod" as any }], escalations: [{ validate: "nope", bucket: "B", bucketFolder: "Shared" }] }), BASE).problems.map(p => p.code).sort();
   assert.deepEqual(bad, ["BAD_TAG", "UNKNOWN_IXP_TOOL"]);
 });
+
+test("古い RPA のプロセスの .NET の引数を JSON Schema にする", async () => {
+  const { dotnetArgsToSchema } = await import("./gen.ts");
+  const s = dotnetArgsToSchema([
+    { name: "in_Name", type: "System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e", required: true },
+    { name: "in_Count", type: "System.Int32, System.Private.CoreLib" },
+    { name: "in_Ok", type: "System.Boolean, mscorlib" },
+    { name: "in_Tags", type: "System.String[], System.Private.CoreLib" },
+    { name: "in_At", type: "System.DateTime, System.Private.CoreLib" },
+    { name: "in_Table", type: "System.Data.DataTable, System.Data" },
+  ]);
+  assert.deepEqual(s, { type: "object", required: ["in_Name"], properties: {
+    in_Name: { type: "string" }, in_Count: { type: "number" }, in_Ok: { type: "boolean" },
+    in_Tags: { type: "array", items: { type: "string" } }, in_At: { type: "string", format: "date-time" }, in_Table: { type: "string" },
+  } });
+});

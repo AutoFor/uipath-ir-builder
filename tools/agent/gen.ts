@@ -221,11 +221,18 @@ function writeJson(path: string, v: unknown) {
   writeFileSync(path, JSON.stringify(v, null, 2) + "\n");
 }
 
-/** 前に生成した resource.json の id（作り直しても同じ id にする） */
+/** 前に生成した resource.json の id（作り直しても同じ id にする）。flow の中のエージェントはフォルダが id なので、name で探す */
 function oldId(dir: string, name: string): string | undefined {
   const f = join(dir, "resources", name, "resource.json");
-  if (!existsSync(f)) return undefined;
-  try { return readJson(f).id; } catch { return undefined; }
+  if (existsSync(f)) { try { return readJson(f).id; } catch { return undefined; } }
+  const rd = join(dir, "resources");
+  if (!existsSync(rd)) return undefined;
+  for (const d of readdirSync(rd)) {
+    const g = join(rd, d, "resource.json");
+    if (!existsSync(g)) continue;
+    try { const r = readJson(g); if (r.name === name) return r.id; } catch { /* 読めない */ }
+  }
+  return undefined;
 }
 
 // ---------- 道具 ----------
@@ -726,10 +733,36 @@ export function cliLookup(profile: string | undefined, cwd: string): ProcessLook
     const parse = (s: unknown) => (typeof s === "string" && s ? JSON.parse(s) : undefined);
     let inputSchema = parse(spec.InputArgumentsSchemaV2 ?? spec.inputArgumentsSchemaV2);
     let outputSchema = parse(spec.OutputArgumentsSchemaV2 ?? spec.outputArgumentsSchemaV2);
-    if (!inputSchema && (spec.InputArgumentsSchema ?? spec.inputArgumentsSchema)) return { error: `"${name}" は RPA の .NET の引数。今は V2（API ワークフロー・エージェント・Maestro）だけ。raw で resource.json を書く` };
+    // 古い RPA のプロセスは V2 が無く、.NET の型の配列（Arguments.Input / Output）だけを持つ。JSON Schema に直す
+    if (!inputSchema) { const raw = parse(spec.InputArgumentsSchema ?? spec.inputArgumentsSchema); if (Array.isArray(raw)) inputSchema = dotnetArgsToSchema(raw); }
+    if (!outputSchema) { const raw = parse(spec.OutputArgumentsSchema ?? spec.outputArgumentsSchema); if (Array.isArray(raw)) outputSchema = dotnetArgsToSchema(raw); }
     for (const s of [inputSchema, outputSchema]) if (s) delete s.title;
     return { key: row.Key, name: row.Name, type: String(row.Type), folder: row.Folder, inputSchema, outputSchema };
   };
+}
+
+/** .NET の型の引数の並び（[{ name, type: "System.String, System.Private.CoreLib, …", required }]）を JSON Schema にする。
+ *  型の対応はスキルの solution-files.md：String → string、Int32 / Int64 / Decimal / Double → number、Boolean → boolean、ほかは string。
+ *  配列（String[] など）は array にする */
+export function dotnetArgsToSchema(args: { name: string; type?: string; required?: boolean }[]): Record<string, unknown> {
+  const one = (short: string): Record<string, unknown> => {
+    if (short.endsWith("[]")) return { type: "array", items: one(short.slice(0, -2)) };
+    if (short === "String") return { type: "string" };
+    if (["Int32", "Int64", "Int16", "Decimal", "Double", "Single"].includes(short)) return { type: "number" };
+    if (short === "Boolean") return { type: "boolean" };
+    if (short === "DateTime" || short === "DateTimeOffset") return { type: "string", format: "date-time" };
+    return { type: "string" };
+  };
+  const properties: Record<string, unknown> = {};
+  const required: string[] = [];
+  for (const a of args) {
+    const full = String(a.type ?? "System.String").split(",")[0].trim();
+    // 総称型（List`1[[System.String …]]）は中の型を取り出せないので string にする
+    const short = full.includes("`") ? "Object" : full.split(".").pop()!;
+    properties[a.name] = one(short);
+    if (a.required) required.push(a.name);
+  }
+  return { type: "object", properties, ...(required.length ? { required } : {}) };
 }
 
 /** Action Center のアプリを探す。ソリューションの中（resources/solution_folder/app/workflow Action/<名前>.json と
@@ -864,12 +897,14 @@ function writeEvals(project: string, cases: EvalCase[]) {
 }
 
 /** 生成した中身をプロジェクトのフォルダに書く。resources/ と評価は IR が正本（IR に無いものは消す） */
-export function writeProject(dir: string, ir: AgentIR, result: Generated) {
+export function writeProject(dir: string, ir: AgentIR, result: Generated, opts: { inline?: boolean } = {}) {
   writeJson(join(dir, "agent.json"), result.agent);
-  // resources/ は IR が正本。IR に無いものは消す
+  // resources/ は IR が正本。IR に無いものは消す。flow の中のエージェントはフォルダの名前を resource の id（UUID）にする
   const resDir = join(dir, "resources");
-  if (existsSync(resDir)) for (const d of readdirSync(resDir)) if (!result.resources[d]) rmSync(join(resDir, d), { recursive: true, force: true });
-  for (const [n, r] of Object.entries(result.resources)) writeJson(join(resDir, n, "resource.json"), r);
+  const folderOf = (n: string, r: Record<string, unknown>) => (opts.inline ? String(r.id) : n);
+  const want = new Set(Object.entries(result.resources).map(([n, r]) => folderOf(n, r)));
+  if (existsSync(resDir)) for (const d of readdirSync(resDir)) if (!want.has(d)) rmSync(join(resDir, d), { recursive: true, force: true });
+  for (const [n, r] of Object.entries(result.resources)) writeJson(join(resDir, folderOf(n, r), "resource.json"), r);
   const up = join(dir, "project.uiproj");
   if (existsSync(up)) writeJson(up, { ...readJson(up), Name: ir.name, ...(ir.description !== undefined ? { Description: ir.description } : {}) });
   writeEvals(dir, result.evals);
@@ -899,8 +934,9 @@ function main(argv: string[]): number {
   const opt = (n: string) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
   const project = opt("--project");
   const profile = opt("--profile");
+  const inline = args.includes("--inline-in-flow");
   if (!irPath || (!project && !args.includes("--print"))) {
-    console.error("使い方: node tools/agent/gen.ts <ir.json> --project <エージェントのフォルダ> [--profile <名前>] | --print");
+    console.error("使い方: node tools/agent/gen.ts <ir.json> --project <エージェントのフォルダ> [--inline-in-flow] [--profile <名前>] | --print\n  --inline-in-flow：flow の中のエージェント（<flow のフォルダ>/<UUID>）。無ければ --project に flow のフォルダを渡すと uip agent init --inline-in-flow で作る");
     return 2;
   }
   const ir = readJson(irPath) as AgentIR;
@@ -915,6 +951,13 @@ function main(argv: string[]): number {
   }
 
   let dir = resolve(project);
+  if (inline && !existsSync(join(dir, "agent.json"))) {
+    const init = uip(["agent", "init", q(dir), "--inline-in-flow", ...(ir.model ? ["--model", q(ir.model)] : [])], profile);
+    if (!init.ok) { console.error(`uip agent init --inline-in-flow が失敗した:
+${init.text}`); return 1; }
+    dir = init.json.Data.Path;
+    console.log(`作った（flow の中）: ${dir}  ← flow の uipath.agent.autonomous ノードの inputs.source に ${init.json.Data.ProjectId}`);
+  }
   if (!existsSync(join(dir, "agent.json"))) {
     // 無ければ init。ソリューションの中ならそこに登録、外なら <名前>Solution/<名前> ができる
     const init = uip(["agent", "init", q(dir), ...(ir.conversational ? ["--conversational"] : []), ...(ir.model ? ["--model", q(ir.model)] : [])], profile);
@@ -927,7 +970,22 @@ function main(argv: string[]): number {
   const { result, problems } = generate(ir, base, { lookup: cliLookup(profile, solution ?? dir), appLookup: appLookup(profile, solution), entityLookup: entityLookup(profile), isLookup: isLookup(profile), mcpLookup: mcpLookup(profile, solution ?? dir), project: dir });
   if (!result) return report(problems);
 
-  writeProject(dir, ir, result);
+  writeProject(dir, ir, result, { inline });
+  if (inline) {
+    // flow の中のエージェント：refresh / validate は --inline-in-flow。bindings は flow の bindings_v2.json に入れる。
+    // 道具・コンテキスト・エスカレーションは flow にもノード（uipath.agent.resource.*、inputs.source = resource の id）が要る（Maestro の道具の側で書く）
+    const flowDir = dirname(dir);
+    const hasRes = Object.keys(result.resources).length > 0;
+    const steps = [["agent", "refresh", q(dir), "--inline-in-flow", ...(hasRes ? ["--bindings-target", q(join(flowDir, "bindings_v2.json"))] : [])], ["agent", "validate", q(dir), "--inline-in-flow"]];
+    for (const step of steps) {
+      const r = uip(step, profile);
+      if (!r.ok) { console.error(`uip ${step.slice(0, 2).join(" ")} --inline-in-flow が失敗した:
+${r.text}`); return 1; }
+    }
+    if (hasRes) console.error("注意 flow の中のエージェントの resources は、flow にも uipath.agent.resource.* のノードを足してつなぐ（inputs.source = resource の id）。生成器は flow を書かない");
+    console.log(`OK ${basename(dir)}（flow の中）: agent.json と resources ${Object.keys(result.resources).length} 個。refresh → validate 済み`);
+    return 0;
+  }
   for (const e of result.evals)
     if (!e.expected || !Object.keys(e.expected).length)
       console.error(`注意 evals「${e.name}」: expected が無い。既定の評価器（出力の比較）はこのケースでエラーになる（振る舞いの評価器だけが点を付ける）`);

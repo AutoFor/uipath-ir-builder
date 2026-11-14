@@ -47,8 +47,8 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | Conversational (Preview) | デプロイ済みの会話型（会話型のエージェントと、会話のトリガーを持つ Maestro Flow）。開くと Dashboard（利用者・メッセージ・会話の数）・Design・Review runs・Feedback・Evaluations・**Channels**（Microsoft Teams のアプリとして出す）・**A2A**（ほかのエージェントから呼ぶ口。Endpoint と Agent card の JSON。「Copy A2A URL」）・**Chat**（その場で話せる） |
 | Draft agents | まだ出していない Studio Web のエージェント |
 | Templates | UiPath のテンプレート 23 種。「Use」で Studio Web にソリューションができる。自分のエージェントは Studio Web の「Submit as template」（名前と説明）で組織のテンプレートにできる：Studio Web の Templates（種類は Solution）と `agents_` の Templates の両方に出る。Studio Web の Templates のカードの ⋮ に New solution from template（Cloud / Local Workspace）・Edit solution・Demote to User level・Pin・Delete |
-| Guardrails | ガードレールの説明と入口（設定は各エージェントで）。使える検証器は `uip agent guardrails list`：pii_detection・prompt_injection・harmful_content・intellectual_property・user_prompt_attacks・llm_as_judge |
-| Context grounding indexes | インデックス（RAG）の作成と取り込みの様子 |
+| Guardrails | ガードレールの説明だけの画面（Configure / Fine-tune / Monitor の 3 つの絵と、公式の文書へのリンク。押せるものは無い。設定は Studio Web の各エージェント、試すのは評価、見るのは各エージェントの Review runs）。使える検証器は `uip agent guardrails list`：pii_detection・prompt_injection・harmful_content・intellectual_property・user_prompt_attacks・llm_as_judge |
+| Context grounding indexes | インデックス（RAG）の一覧と、検索・取り込みのジョブの数のグラフ、使っている数（trial は 10 個まで）。「Create Index」：名前・説明・フォルダ、Ingestion（Basic＝文字だけ・無料、Advanced＝表や画像も・Platform Units を使う）、Data Source（Storage Bucket か Connector）→ Orchestrator のフォルダ・バケット（「Add New」でその場で作れる）・ファイルの種類・Include Subfolders、右の File Upload でバケットにファイルを上げる、Schedule Ingestion（定期の取り込み。無ければ手で）。Save で取り込みが始まる |
 | Feedback | 実行への👍👎。メモリの元になる。「View API docs」あり |
 | Memory spaces (Preview) | エージェントのメモリ。作成（名前・説明・フォルダ）、開くと Configure・**Import**（JSON から）・**Export**（`memory-space-<名前>-<Id>.json`）・Add memory（Feedback の一覧から選ぶ）・Delete（名前を打って確かめる）。Export した JSON を別の memory space に Import すると、同じ項目が入った（下の「メモリの Export / Import の形」） |
 | Phone numbers (Preview) | 電話番号を Flow の着信トリガー（voiceTrigger）につなぐ。「Connect number」は SIP Trunk（ラベル・番号・向き・SIP のドメイン）か Twilio、「Manage inbound access」は自分の SIP のドメイン・許す IP・SIP のユーザーとパスワード。番号は電話会社の契約が要る |
@@ -95,6 +95,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action。書類の確認は `{ "validate": "<IXP の道具の名前>", "bucket": "<バケット>", "bucketFolder": "Shared" }`（バケットは生成器が `resources add` でソリューションに取り込む） |
 | `memory` | `[{ "space": "<memory space>", "folder": "Shared", "fields": { "入力の名前": 重み } }]`。space は先に画面で作る。生成器は `uip agent memory add` を呼ぶ |
 | `resources` | ほかの `resource.json` をそのまま |
+| （flow の中） | `--inline-in-flow` を付けると、`--project` は `<flow のフォルダ>/<UUID>`（無ければ flow のフォルダを渡すと `uip agent init --inline-in-flow` で作る）。リソースのフォルダは名前ではなく id、refresh は flow の `bindings_v2.json` に bindings を書き、ソリューションの手順（refresh・resources add）は飛ばす。flow 側のノードは [maestro.md](maestro.md) |
 | `guardrails` | `{ "pii": ["Email"], "action": "log" }`、`{ "harmful": [...] }`、`{ "promptInjection": 0.5 }`、`{ "raw": {...} }` |
 | `evals` | 既定の評価セットのケース：`name`・`inputs`・`expected`・`behavior`（振る舞いの評価器に渡す期待） |
 | `evalFiles` | 既定のほかの評価セット・評価器のファイル（`to-ir.ts` がテンプレートから取り込む） |
@@ -130,6 +131,8 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | コンテキスト（インデックスと Data Fabric） | 規程の質問に「第1条 交通費」、過去の件数 2。トレースで、インデックスはセマンティック検索、表はエージェントが SQL（`SELECT COUNT(Applicant) … WHERE Applicant = '山田'`）を書いて流していた |
 | Integration Service（Web Search） | 「UiPath の本社は？」→ ニューヨーク、出典 2 つ（uipath.com、Wikipedia） |
 | MCP（UiPath の種類のサーバーに Probe を道具 `price_total` として足す） | Studio Web の Debug で `{"tier":"SILVER","usedTool":true}`。CLI の `debug` は Not Found |
+| インデックスを画面で作る（Basic・バケットに規程の txt） | Save から 1 分足らずで取り込みが Successful。CLI の `context-grounding list` では `extraction_strategy: NativeV1`（Basic）、`search` で規程の本文が出た |
+| flow の中のエージェントを生成（`--inline-in-flow`） | flow（`InlineAgent.flow`）の `<UUID>` のフォルダに生成 → `node tools/maestro/debug.mjs` で flow ごと動かして Completed、エージェントのノードが `{"answer":"no"}` を返した |
 | メモリ | 実行 → `uip traces feedback create --positive` → `uip agent memory item add <名前> --memory-type episodic --feedback-id <Id>` → 次の実行でメモリが 1 件当たり、例としてプロンプトに入った（トレースの `agentMemoryLookup`） |
 
 ## 落とし穴
@@ -226,9 +229,8 @@ memory space は `agents_` の Memory spaces の Delete で消す。
 
 ## 確かめていないもの
 
-- flow の中のエージェント（`inlineAgent`・`conversationalAgent`・公開済みのエージェントのノード）は Maestro の道具（`tools/maestro`）で作って tenant で確かめてある。[maestro.md](maestro.md)。この生成器の `--inline-in-flow` には対応していない
 - 電話番号の接続（SIP の電話会社か Twilio の契約が要る）、Teams のチャンネル（Teams の管理者の操作が要る）。どちらも契約・権限が無いので試せない。画面の入力項目は上の表
-- RPA のプロセスで、引数が V2 の JSON Schema を持たない古いもの（.NET の型だけのもの。生成器は止めて `raw` を求める）
+- RPA のプロセスで、引数が V2 の JSON Schema を持たない古いもの：生成器は .NET の型の一覧（`InputArgumentsSchema`）から JSON Schema を作る（String → string、Int・Decimal・Double → number、Boolean → boolean、DateTime → date-time の string、`X[]` → array、それ以外は string。必須は引き継ぐ）。単体テストだけで、trial にそういうプロセスが無いので tenant では確かめていない
 
 ## 出典
 
