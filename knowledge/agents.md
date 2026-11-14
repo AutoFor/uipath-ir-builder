@@ -3,7 +3,7 @@
 UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の画面と、Studio Web の Agent Builder）について分かったこと（2026-11-15）。
 
 - 公式のスキル（`uipath-agents` の lowcode）を読み、CLI（`uip agent`、`uip` 1.204.0）と画面を全部触った。
-- トライアルのテナントで、生成 → 実行 → 評価 → デプロイ → ジョブ → 取り出し → 取り込みまで確かめた。
+- トライアルのテナントで、生成 → 実行 → 評価 → デプロイ → ジョブ → 取り出し → 取り込みまで確かめた。道具（プロセス・RPA・Integration Service・MCP・組み込み）、コンテキスト（インデックス・Data Fabric）、エスカレーション、メモリとフィードバックも動かした。
 - Python で書くエージェント（Coded Agent）は [python-agents.md](python-agents.md)。CLI 全体の使い分けは [uipath-clis.md](uipath-clis.md)。
 
 ## 結論
@@ -15,7 +15,8 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
     - `uip agent init`（フォルダが無ければ）
     - `agent.json`・`resources/`・評価を書く
     - `uip agent refresh` → `validate`
-    - 道具があれば `uip solution resources refresh`
+    - 外を指す道具・コンテキスト・メモリがあれば `uip solution resources refresh`（MCP は `resources add`）
+  - 道具（プロセス・Integration Service・MCP）、コンテキスト（インデックス・Data Fabric）、エスカレーションの引数や形は、テナントから取って書く（推測で書かない）
 - **画面やテンプレートで作ったものは IR に戻して取り込む**。
   - 手順：`uip solution download <Id> -d <dir> --extract` → `node tools/agent/to-ir.ts <エージェントのフォルダ> --out <ir.json>`。
   - 以後は IR を正本にする。
@@ -26,7 +27,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | エージェントを作る・直す | IR ＋ `tools/agent/gen.ts`（中で `uip agent init / refresh / validate`） |
 | 画面・テンプレートで作ったものを取り込む | `uip solution download --extract` ＋ `tools/agent/to-ir.ts` |
 | 品質の点検 | `uip agent review`（評価が 5 件未満などを FAIL にする） |
-| 1 回動かして結果を見る（自律型） | `uip agent debug <フォルダ> -i '{…}' [--attachment 名前=ファイル]` |
+| 1 回動かして結果を見る（自律型） | `uip agent debug <フォルダ> -i '{…}' [--attachment 名前=ファイル]`。ソリューションの中のアプリ（エスカレーション）・MCP サーバーを使うものは Studio Web の Debug（「Deploy resources before debugging」で用意する。CLI の `debug` は用意しない） |
 | 会話型を試す | Studio Web の Debug のチャット（`debug` は会話型に未対応） |
 | 評価を流す | Studio Web の Evaluations の再生ボタン。結果は `uip agent eval run list / results` で読める（`eval run start` は落ちる。下の「落とし穴」） |
 | Studio Web に置く | `uip solution upload <ソリューションのフォルダ>`（`debug` も裏で上げる） |
@@ -70,6 +71,10 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - `samples/agent/price-agent.json`：自律型。デプロイ済みの API ワークフローを道具にする。ガードレールと評価 5 件つき
 - `samples/agent/invoice-reader.json`：ファイルの入力と組み込みの Analyze Files
 - `samples/agent/helpdesk-chat.json`：会話型
+- `samples/agent/policy-qa.json`：コンテキスト（インデックスの規程と、Data Fabric の表）
+- `samples/agent/expense-escalation.json`：エスカレーション（Action Center のアプリで人に承認してもらう）
+- `samples/agent/web-research.json`：Integration Service の道具（UiPath GenAI Activities の Web Search）
+- `samples/agent/mcp-price.json`：AgentHub の MCP サーバーの道具
 
 | 項目 | 書き方 |
 | --- | --- |
@@ -78,15 +83,23 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | `model`・`temperature`・`maxTokens`・`maxIterations` | 書かなければ init のまま。モデルは `uip agent model list --profile <名前>` で選ぶ（init の既定は古い） |
 | `system`・`user` | 本文。`{{input.名前}}` で入力、`@{tools.名前}`・`@{contexts.名前}`・`@{escalations.名前}` でリソースを指す。`contentTokens` は生成器が作る。会話型は `user` を書かない |
 | `input`・`output` | `{ "名前": "string" }` か JSON Schema。`"file"`・`"file[]"` はファイル（job-attachment）。入力は既定で必須（`"required": false` で外す）、出力は `"required": true` を書いたものだけ必須 |
-| `tools` | `{ "process": "名前", "folder": "Shared/…" }`（デプロイ済みの API ワークフロー・エージェント・Maestro。引数の形はテナントから取る）、`{ "builtin": "analyze-attachments" }`、`{ "raw": {resource.json} }` |
-| `resources` | 道具以外（コンテキスト・エスカレーション・MCP）の `resource.json` をそのまま |
+| `tools` | 下の 5 つと `{ "raw": {resource.json} }` |
+| ・プロセス | `{ "process": "名前", "folder": "Shared/…" }`。デプロイ済みの RPA・API ワークフロー・エージェント・Maestro。引数の形（V2 の JSON Schema）はテナントから取る |
+| ・組み込み | `{ "builtin": "analyze-attachments" }`（ファイルを読む） |
+| ・Integration Service | `{ "integration": "<connector の key>", "activity": "<ObjectName>", "values": { "固定する項目": 値 } }`。活動は `uip is typecache activities <key>`、接続は既定のもの（`connection` で Id か名前） |
+| ・MCP | `{ "mcp": "<slug>", "tools": ["使う道具"] }`。AgentHub の MCP サーバー（`uip agenthub mcp list`）。`tools` を書かなければ全部（動的） |
+| `contexts` | `{ "index": "<インデックス名>", "folder": "Shared" }`（RAG。`mode` は semantic / structured / deeprag / batchtransform）、`{ "dataFabric": ["表"], "folder": "Shared" }`（フォルダの表だけ）、`{ "attachments": true, "name": "…" }` |
+| `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action |
+| `memory` | `[{ "space": "<memory space>", "folder": "Shared", "fields": { "入力の名前": 重み } }]`。space は先に画面で作る。生成器は `uip agent memory add` を呼ぶ |
+| `resources` | ほかの `resource.json` をそのまま |
 | `guardrails` | `{ "pii": ["Email"], "action": "log" }`、`{ "harmful": [...] }`、`{ "promptInjection": 0.5 }`、`{ "raw": {...} }` |
 | `evals` | 既定の評価セットのケース：`name`・`inputs`・`expected`・`behavior`（振る舞いの評価器に渡す期待） |
 | `evalFiles` | 既定のほかの評価セット・評価器のファイル（`to-ir.ts` がテンプレートから取り込む） |
 
 - `resources/` と評価のファイルは IR が正本。IR から消したものは消える。id（resource・評価・ガードレール）は前のものを引き継ぐ
-- 生成の前に止めるもの：入力に無い `{{input.x}}`、無いリソースへの `@{…}`、`{{x}}` の形、評価のケースの入出力の名前、見つからない・複数のフォルダにあるプロセス
-- RPA（XAML）のプロセスの道具は、引数が .NET の形なので今は `raw` で書く
+- 生成の前に止めるもの：入力に無い `{{input.x}}`、無いリソースへの `@{…}`、`{{x}}` の形、評価のケースの入出力の名前、見つからない・複数のフォルダにあるプロセス、アプリに無い結果、受け手の無いエスカレーション、活動に無い項目、サーバーに無い MCP の道具
+- `to-ir.ts` は省略形に戻せるものを戻し（プロセス・組み込み・Integration Service・MCP・コンテキスト・エスカレーション・メモリ・ガードレール）、戻せないものは `raw` で持つ。リソースは名前の順に並ぶ
+- 道具・コンテキスト・エスカレーションの書き方は、Studio Web で同じものを足して取り出した形に合わせてある（下の「落とし穴」）
 
 ## 確かめた結果（trial）
 
@@ -102,6 +115,12 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | helpdesk-chat（会話型）を生成 → upload | Studio Web の Debug のチャットで「パソコンが急に遅くなりました」→ 1 つだけ質問を返した（プロンプトどおり） |
 | price-agent を pack → publish → deploy | `Shared/PriceAgentTest` に出た。`agents_` の Deployed agents に出る |
 | ジョブ（`or jobs start`） | Serverless（ServerlessJobType `PythonAgent`）で 12 秒、Successful |
+| RPA のプロセスを道具に（請求書を読む `RPA Workflow`） | `debug` は Suspended で返る（RPA のジョブを待つ間エージェントは止まる）。RPA が終わると再開し、ジョブは Successful（`invoiceNumber: INV-001`、`total: 12000`） |
+| エスカレーション（Studio Web の「Simple Approval」テンプレートのアプリ） | 5 万円で Action Center にタスク → エージェントは Suspended → `uip tasks complete --action approve --data '{"Comment":"…"}'` → 再開して `{"decision":"approved","comment":"…"}`。受け手をメールで書くと、タスクはその人に割り当て済みでできる |
+| コンテキスト（インデックスと Data Fabric） | 規程の質問に「第1条 交通費」、過去の件数 2。トレースで、インデックスはセマンティック検索、表はエージェントが SQL（`SELECT COUNT(Applicant) … WHERE Applicant = '山田'`）を書いて流していた |
+| Integration Service（Web Search） | 「UiPath の本社は？」→ ニューヨーク、出典 2 つ（uipath.com、Wikipedia） |
+| MCP（UiPath の種類のサーバーに Probe を道具 `price_total` として足す） | Studio Web の Debug で `{"tier":"SILVER","usedTool":true}`。CLI の `debug` は Not Found |
+| メモリ | 実行 → `uip traces feedback create --positive` → `uip agent memory item add <名前> --memory-type episodic --feedback-id <Id>` → 次の実行でメモリが 1 件当たり、例としてプロンプトに入った（トレースの `agentMemoryLookup`） |
 
 ## 落とし穴
 
@@ -124,6 +143,31 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
   - `uip agent refresh` で 1.2.0 に上がる。
 - **`debug` は会話型に未対応**。`agent init` の既定のモデル（`gpt-5.4`、会話型は Claude Sonnet 4.5）は古いので、IR で選ぶ。
 - 実行の出力のキーは先頭が大文字になって返る（`debug` の `Output` が `Total`・`Tier`）。ジョブの `OutputArguments` は小文字のまま（`total`）と `__pydantic_extra__`。
+- **CLI の `debug` は、ソリューションの中のアプリ・MCP サーバーをデバッグのフォルダに用意しない**（「No app: … found in folder」「Not Found」）。Studio Web の Debug は「Deploy resources before debugging」で用意してから動かす。
+- **Studio Web の Debug が終わると、その実行を評価するジョブ（`command: eval`）が自動で 1 つ流れる**。エスカレーションのあるエージェントでは、その評価のジョブもタスクを作って Suspended になる（タスクを完了すれば終わる）。
+- **RPA など時間のかかる道具を呼ぶと、`debug` は Suspended を返して終わる**。結果は `uip or jobs get <JobKey>`（Successful になるまで待つ）。
+- **エスカレーションのアプリ**：
+  - Workflow Action の種類だけ（Studio Web の「RPA app」の Action App。Coded Action App は使えない）。このリポジトリの `rpa-app.ts` が作るのは普通の RPA アプリなので使えない。
+  - いちばん早いのは、Studio Web でエスカレーションの「Action App」→「+ New App」→ テンプレート（Simple Approval など）。アプリがソリューションの中にできる。
+  - ソリューションの中のアプリがあるときに `uip solution resources refresh` を流すと、アプリの宣言を新しい key で作り直し（`app/workflow Action/` → `app/`）、エスカレーションの `resourceKey` が宙に浮く。生成器はアプリがソリューションの中のときは refresh を流さない。
+  - Studio Web が書くエスカレーションは受け手が空（`recipients: []`）。生成器は受け手を必ず求める。
+- **コンテキスト**：
+  - Data Fabric は**フォルダの表だけ**（「This view displays folder-level entities only」）。テナントの表は使えない。表は `uip df entities create <名前> --folder-key <フォルダ>` で作る。
+  - インデックスは `uip context-grounding create --index-name <名前> --bucket-source <バケット> --folder-path Shared` → `ingest`（バケットは `uip or buckets create`、ファイルは `uip or bucket-files upload`）。
+  - `solution resources refresh` はインデックス・バケット・Data Fabric の表もソリューションに取り込む（スキルの文書の「Data Fabric は作られない」は古い）。
+- **Integration Service の道具**：
+  - 固定の項目（選択肢のある項目、`values` で決めた項目）も `inputSchema` に残す（`enum` を選んだ値だけにし、`oneOf` に選択肢を並べる）。消すと実行で「Integration service returned an error … Request failed」（HTTP の失敗）。
+  - 接続は `uip is connections create <key> --no-wait` で同意の URL をもらい、ブラウザで「Connect」を押す。UiPath GenAI Activities の接続は個人のワークスペースにできる。
+- **MCP**：
+  - サーバーは `uip agenthub mcp create uipath --name … --slug … --folder-path Shared`、道具は `uip agenthub mcp-tools create-resource --mcp <slug> --category api-workflow|automation|agent|agentic-process --target-name <プロセス> --target-folder-path <フォルダ>`。`--category` を間違えると「No automation candidate matched」。
+  - `uip solution resources refresh` は UiPath の種類のサーバーを `mCPServer/coded/` に取り違え、実行で Not Found。正しくは `uip solution resources add --source remote --kind MCPServer --name <表示名> --cloud-key <サーバーの Id>`（`mcpServer/uiPath/` に置き、道具が呼ぶプロセスも入る）。生成器はこちらで取り込む。
+  - エージェントの resource の `name` はサーバーの表示名、`folderPath` は `solution_folder`（Studio Web と同じ）。
+- **メモリ**：
+  - memory space は CLI で作れない（Studio Web のエージェントの Memory の「Create new」か `agents_` の Memory spaces）。`uip agent memory add` は付けるだけ。
+  - フィードバックは `uip traces feedback create --trace-id … --positive --comment … --agent-id <agent.json の projectId> --folder-key <実行したフォルダ>`。
+  - フィードバックをメモリに入れるのは `uip agent memory item add <名前> --memory-type episodic --feedback-id <Id>`。`agents_` の Feedback の行のアイコンを押しただけでは入らなかった。
+  - Memory spaces の画面には Import / Export がある。
+- **Studio Web のクラウドのプロジェクトの Id は、ローカルの `.uipx` の Project Id とも `agent.json` の `projectId` とも違う**ことがある。画面で開く URL の Id は、トレースの `agentId`（`designer/<agentId>?solutionId=…`）。
 
 ## 片付け
 
@@ -133,16 +177,25 @@ uip solution packages delete <パッケージ名> <版> --yes --profile <名前>
 uip solution delete <Studio Web のソリューションの Id> --yes --profile <名前>   # debug・upload・テンプレートで作ったもの。--yes が要る
 ```
 
-`deploy uninstall` で、デプロイ先のフォルダ（道具のプロセスの写しも）が消える。
+`deploy uninstall` で、デプロイ先のフォルダ（道具のプロセスの写しも）が消える。試しに作ったほかのもの：
 
 ```bash
+uip agenthub mcp delete <slug> --profile <名前>                       # MCP サーバー
+uip is connections delete <接続の Id> --profile <名前>                 # Integration Service の接続
+uip context-grounding delete --index-name <名前> --folder-path Shared  # インデックス（バケットは uip or buckets delete）
+uip df entities delete <表の Id> --folder-key <フォルダ> --yes         # Data Fabric の表
+uip traces feedback delete <Id> --folder-key <フォルダ> --yes          # フィードバック
 ```
+
+memory space は `agents_` の Memory spaces の Delete で消す。
 
 ## 確かめていないもの
 
-- エスカレーション（Action Center のアプリ。Workflow Action の種類が要る。Coded Action App は使えない）、コンテキスト（インデックス・Data Fabric）、MCP、Integration Service の道具、メモリ（`uip agent memory`）。生成器では `resources` の raw で書ける
-- RPA（XAML）のプロセスを道具にする（.NET の引数を JSON Schema に直す）
 - flow の中のエージェント（`--inline-in-flow`）。[maestro.md](maestro.md) の `inlineAgent` を参照
+- エスカレーションのメール・Slack・Teams のチャンネル、Document Validation Task（IXP の検証）の種類
+- 組み込みの道具のうち Analyze Files 以外（DeepRAG・Batch Transform・Create File・UiPath ScreenPlay。DeepRAG と Batch Transform はインデックスのコンテキストの `mode` で書ける）
+- RPA のプロセスで、引数が V2 の JSON Schema を持たない古いもの（.NET の型だけのもの。生成器は止めて `raw` を求める）
+- 会話型のデプロイ（`agents_` の Conversational）と、Conversation Service からの呼び出し
 
 ## 出典
 

@@ -1,0 +1,18 @@
+{
+  "name": "ExpenseEscalation",
+  "description": "経費の一次審査。上限を超えたら Action Center のアプリ（Workflow Action）で人に上げ、承認か却下かで結果を返す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 8,
+  "system": "あなたは経費の一次審査の担当です。\n- 金額が 10000 円以下なら自分で承認し、decision を auto-approved にする\n- 10000 円を超えたら自分で決めず、必ず @{escalations.Approval} で人に上げる。Content には「申請者・金額・目的」を 1 行で書く。人が approve なら decision を approved、reject なら rejected にし、人の Comment を comment に入れる",
+  "user": "申請者: {{input.applicant}}\n金額: {{input.amount}}\n目的: {{input.purpose}}",
+  "input": { "applicant": "string", "amount": "number", "purpose": "string" },
+  "output": {
+    "decision": { "type": "string", "description": "approved / rejected / auto-approved", "required": true },
+    "comment": "string"
+  },
+  "escalations": [
+    { "app": "SimpleApprovalApp", "name": "Approval", "description": "上限を超えた経費を人に承認してもらう", "recipients": ["approver@example.com"], "title": "経費の承認" }
+  ]
+}

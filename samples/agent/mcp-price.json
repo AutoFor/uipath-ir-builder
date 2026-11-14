@@ -1,0 +1,21 @@
+{
+  "name": "McpPrice",
+  "description": "AgentHub の MCP サーバー（UiPath の種類。API ワークフロー Probe を道具 price_total として出す）を使って合計を出す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 6,
+  "system": "あなたは見積もりの担当です。合計は自分で計算せず、MCP の道具 price_total に items（name と price の配列）と limit を渡して出します。返ってきた tier を出力の tier に、道具を呼んだかどうかを usedTool に入れます。",
+  "user": "品目: {{input.items}}\n上限: {{input.limit}}",
+  "input": {
+    "items": { "type": "string", "description": "品目の JSON 配列" },
+    "limit": "number"
+  },
+  "output": {
+    "tier": { "type": "string", "required": true },
+    "usedTool": "boolean"
+  },
+  "tools": [
+    { "mcp": "agent-mcp-test", "tools": ["price_total"] }
+  ]
+}

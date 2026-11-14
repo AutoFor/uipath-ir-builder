@@ -1,0 +1,18 @@
+{
+  "name": "WebResearch",
+  "description": "Web を検索して、問いに出典つきで短く答える（Integration Service の UiPath GenAI Activities の Web Search を道具にする）",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 6,
+  "system": "あなたは調べものの担当です。自分の記憶で答えず、必ず @{tools.Web_Search} で検索してから答えます。\n\n出力:\n- answer: 日本語で 2〜3 文\n- sources: 根拠にしたページの URL（1〜3 個、検索結果にあったものだけ）",
+  "user": "問い: {{input.question}}",
+  "input": { "question": { "type": "string", "description": "調べたいこと" } },
+  "output": {
+    "answer": { "type": "string", "required": true },
+    "sources": { "type": "array", "items": { "type": "string" } }
+  },
+  "tools": [
+    { "integration": "uipath-uipath-airdk", "activity": "v2::webSearch", "values": { "provider": "GoogleCustomSearch" } }
+  ]
+}

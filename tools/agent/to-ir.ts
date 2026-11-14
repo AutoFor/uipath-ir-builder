@@ -8,7 +8,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { AgentIR, EvalCase, Field, Guardrail, Tool } from "./gen.ts";
+import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool } from "./gen.ts";
 
 /** uip agent init が作る評価器（生成の先に必ずあるので IR に持たない） */
 const DEFAULT_EVALUATORS = new Set(["evaluator-default.json", "evaluator-default-trajectory.json"]);
@@ -45,6 +45,52 @@ function textOf(m: any): string {
   if (!m) return "";
   if (!Array.isArray(m.contentTokens) || !m.contentTokens.length) return m.content ?? "";
   return m.contentTokens.map((t: any) => t.type === "variable" ? `{{${t.rawString}}}` : t.type === "expression" ? `@{${t.rawString}}` : t.rawString).join("");
+}
+
+/** コンテキストを省略形に戻す。戻せない形（ソリューションの中に取り込んだインデックスなど）は undefined（raw で持つ） */
+function contextToIR(r: any): Context | undefined {
+  if (r.contextType === "index" && r.folderPath && r.folderPath !== "solution_folder") {
+    const s = r.settings ?? {};
+    const c: any = { index: r.indexName, folder: r.folderPath };
+    if (r.name !== String(r.indexName).replace(/[^A-Za-z0-9_]/g, "_")) c.name = r.name;
+    if (r.description) c.description = r.description;
+    if (s.retrievalMode && s.retrievalMode !== "semantic") c.mode = s.retrievalMode;
+    if (s.resultCount !== undefined && s.resultCount !== 3) c.resultCount = s.resultCount;
+    if (s.threshold !== undefined && s.threshold !== 0) c.threshold = s.threshold;
+    if (s.fileExtension?.value && s.fileExtension.value !== "All") c.fileExtension = s.fileExtension.value;
+    if (s.query?.description && s.query.description !== "Query for retrieval") c.queryDescription = s.query.description;
+    return c;
+  }
+  if (r.contextType === "datafabricentityset" && r.entitySet?.length) {
+    const folders = new Set(r.entitySet.map((e: any) => e.folderDisplayName));
+    if (folders.size !== 1) return undefined;
+    const c: any = { dataFabric: r.entitySet.map((e: any) => e.name), folder: [...folders][0] };
+    if (r.name !== "Entities") c.name = r.name;
+    if (r.description) c.description = r.description;
+    return c;
+  }
+  if (r.contextType === "attachments") {
+    const c: any = { attachments: true, name: r.name };
+    if (r.description) c.description = r.description;
+    return c;
+  }
+  return undefined;
+}
+
+/** エスカレーション（Action Center、受け手がメール）を省略形に戻す */
+function escalationToIR(r: any): Escalation | undefined {
+  const ch = r.channels?.[0];
+  if (r.channels?.length !== 1 || ch?.type !== "actionCenter" || !ch.properties?.appName) return undefined;
+  if ((ch.recipients ?? []).some((x: any) => x.type !== 3)) return undefined;
+  const e: any = { app: ch.properties.appName };
+  if (ch.properties.folderName && ch.properties.folderName !== "solution_folder") e.folder = ch.properties.folderName;
+  if (r.name !== String(ch.properties.appName).replace(/[^A-Za-z0-9_]/g, "_")) e.name = r.name;
+  if (r.description && r.description !== `Escalate to a human via the ${ch.properties.appName} app`) e.description = r.description;
+  e.recipients = (ch.recipients ?? []).map((x: any) => x.value);
+  const ends = Object.entries(ch.outcomeMapping ?? {}).filter(([, v]) => v !== "continue");
+  if (ends.length) e.outcomes = Object.fromEntries(ends);
+  if (ch.taskTitle && ch.taskTitle !== "Approval request") e.title = ch.taskTitle;
+  return e;
 }
 
 /** 生成器の省略形で書けるガードレールは省略形に、ほかは raw に戻す */
@@ -103,6 +149,8 @@ export function toIR(dir: string): AgentIR {
 
   // resources/
   const tools: Tool[] = [];
+  const contexts: Context[] = [];
+  const escalations: Escalation[] = [];
   const others: Record<string, unknown>[] = [];
   const resDir = join(dir, "resources");
   for (const d of existsSync(resDir) ? readdirSync(resDir).sort() : []) {
@@ -119,14 +167,51 @@ export function toIR(dir: string): AgentIR {
       const t: Tool = { builtin: "analyze-attachments" };
       if (r.name !== "AnalyzeFiles") (t as any).name = r.name;
       tools.push(t);
+    } else if (r.$resourceType === "tool" && r.type === "integration" && r.properties?.objectName && r.properties?.connection?.connector?.key) {
+      const t: any = { integration: r.properties.connection.connector.key, activity: r.properties.objectName };
+      if (r.name !== String(r.properties.toolDisplayName ?? "").replace(/[^A-Za-z0-9_]/g, "_")) t.name = r.name;
+      if (r.description && r.description !== r.properties.toolDescription) t.description = r.description;
+      const statics = (r.properties.parameters ?? []).filter((p: any) => p.fieldVariant === "static");
+      if (statics.length) t.values = Object.fromEntries(statics.map((p: any) => [p.name, p.value]));
+      tools.push(t);
     } else if (r.$resourceType === "tool") {
       tools.push({ raw: r });
+    } else if (r.$resourceType === "mcp" && r.slug) {
+      const t: any = { mcp: r.slug };
+      if (r.toolsConfiguration?.discoveryMode?.type === "cached") t.tools = (r.availableTools ?? []).map((x: any) => x.name);
+      tools.push(t);
+    } else if (r.$resourceType === "context" && contextToIR(r)) {
+      contexts.push(contextToIR(r)!);
+    } else if (r.$resourceType === "escalation" && escalationToIR(r)) {
+      escalations.push(escalationToIR(r)!);
     } else {
       others.push(r);
     }
   }
   if (tools.length) ir.tools = tools;
+  if (contexts.length) ir.contexts = contexts;
+  if (escalations.length) ir.escalations = escalations;
   if (others.length) ir.resources = others;
+
+  // メモリ（features/<名前>/feature.json。uip agent memory が書いたもの）
+  const featDir = join(dir, "features");
+  const memory: NonNullable<AgentIR["memory"]> = [];
+  for (const d of existsSync(featDir) ? readdirSync(featDir).sort() : []) {
+    const f = join(featDir, d, "feature.json");
+    if (!existsSync(f)) continue;
+    const m = readJson(f);
+    if (m.$featureType !== "memorySpace") continue;
+    const e: NonNullable<AgentIR["memory"]>[number] = { space: m.memorySpaceName, folder: m.folderPath };
+    if (m.name !== m.memorySpaceName) e.name = m.name;
+    const s = m.dynamicFewShotSettings ?? {};
+    if (s.isEnabled === false) e.fewShot = false;
+    if (s.threshold !== undefined && s.threshold !== 0) e.threshold = s.threshold;
+    if (s.resultCount !== undefined && s.resultCount !== 3) e.resultCount = s.resultCount;
+    if (s.searchMode && s.searchMode !== "hybrid") e.searchMode = s.searchMode;
+    if (s.fieldSettings?.length) e.fields = Object.fromEntries(s.fieldSettings.map((x: any) => [x.name, x.weight]));
+    memory.push(e);
+  }
+  if (memory.length) ir.memory = memory;
   if (agent.guardrails?.length) ir.guardrails = agent.guardrails.map(guardrailToIR);
 
   // 評価のケース（既定の評価セット。無ければ最初のもの）

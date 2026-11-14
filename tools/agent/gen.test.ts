@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { generate, tokenize, writeProject, type AgentIR, type ProcessLookup } from "./gen.ts";
+import { generate, tokenize, writeProject, type AgentIR, type AppLookup, type EntityLookup, type IsLookup, type McpLookup, type ProcessLookup } from "./gen.ts";
 import { toIR } from "./to-ir.ts";
 
 // uip agent init が作る agent.json の要るところ
@@ -23,6 +23,19 @@ const fakeLookup: ProcessLookup = (name, folder) =>
     inputSchema: { type: "object", properties: { items: { type: "array" }, limit: { type: "number" } } },
     outputSchema: { type: "object", properties: { total: { type: "number" }, tier: { type: "string" } } },
   };
+
+// アプリ・表・Integration Service・MCP を探す関数の代わり
+const fakeApp: AppLookup = (name) => name === "Nope" ? { error: "無い" } : ({ key: "app-key", name, folder: "solution_folder",
+  schema: { version: 0, inputs: [{ name: "Content", type: "System.String" }], inOuts: [{ name: "Comment", type: "System.String", description: "c" }], outputs: [], outcomes: [{ name: "approve" }, { name: "reject" }] } });
+const fakeEntity: EntityLookup = (names) => ({ folderKey: "folder-key", entities: names.map(n => ({ id: "id-" + n, name: n, description: null })) });
+const fakeIs: IsLookup = () => ({
+  meta: { DisplayName: "Web Search", Operation: { Method: "POST", Path: "/v2/webSearch", Description: "Web search" },
+    RequestFields: [{ Name: "provider", Type: "string", Enum: ["GoogleCustomSearch", "Jina"], Required: true }, { Name: "query", Type: "string", Required: true }, { Name: "num", Type: "integer" }],
+    ResponseFields: [{ Name: "formattedResults", Type: "string" }, { Name: "results[*].title", Type: "string" }, { Name: "results[*].url", Type: "string" }] },
+  connection: { id: "conn-id", name: "GenAI", folderKey: "fk" }, connectorName: "UiPath GenAI Activities", iconUrl: "https://example/icon" });
+const fakeMcp: McpLookup = slug => ({ key: "mcp-key", slug, name: "Agent MCP Test", folder: "Shared", description: "d",
+  tools: [{ name: "price_total", description: "p", inputSchema: { type: "object", properties: {} }, outputSchema: null }, { name: "other", description: "o", inputSchema: { type: "object", properties: {} }, outputSchema: null }] });
+const ALL = { lookup: fakeLookup, appLookup: fakeApp, entityLookup: fakeEntity, isLookup: fakeIs, mcpLookup: fakeMcp };
 
 const ir = (over: Partial<AgentIR> = {}): AgentIR => ({ name: "A", system: "あなたは係です。", user: "入力: {{input.text}}", input: { text: "string" }, output: { answer: "string" }, ...over });
 
@@ -152,7 +165,7 @@ test("見本の IR は全部生成でき、書いて to-ir で戻すと同じ IR
     try {
       const base = sample.conversational ? CONV_BASE : BASE;
       writeFileSync(join(proj, "agent.json"), JSON.stringify(base));
-      const { result, problems } = generate(sample, base, { lookup: fakeLookup, project: proj });
+      const { result, problems } = generate(sample, base, { ...ALL, project: proj });
       assert.deepEqual(problems, [], f);
       writeProject(proj, sample, result!);
       assert.deepEqual(toIR(proj), sample, f);
@@ -188,5 +201,78 @@ test("to-ir：本文は contentTokens から組み直す（古い形の {{Conten
     assert.equal(back.user, "見る {{input.Content}}");
     assert.deepEqual(back.input, { Content: { type: "string", required: false } });
     assert.deepEqual(generate(back, BASE).problems, []);
+  } finally { rmSync(proj, { recursive: true, force: true }); }
+});
+
+test("エスカレーション：アプリの action schema から入出力・結果を作り、受け手はメール。無い結果や受け手なしは誤り", () => {
+  const { result, problems } = generate(ir({ system: "@{escalations.Approval} に上げる", escalations: [{ app: "SimpleApprovalApp", name: "Approval", recipients: ["a@example.com"], outcomes: { reject: "end" } }] }), BASE, ALL);
+  assert.deepEqual(problems, []);
+  const ch = (result!.resources.Approval as any).channels[0];
+  assert.deepEqual(Object.keys(ch.inputSchema.properties), ["Content", "Comment"]);
+  assert.deepEqual(Object.keys(ch.outputSchema.properties), ["Comment"]);
+  assert.deepEqual(ch.outcomeMapping, { approve: "continue", reject: "end" });
+  assert.deepEqual(ch.recipients, [{ type: 3, value: "a@example.com" }]);
+  assert.equal(ch.properties.folderName, "solution_folder");
+  assert.equal(ch.properties.appVersion, 1);
+  assert.equal((result!.resources.Approval as any).isEnabled, true);
+  const bad = generate(ir({ escalations: [{ app: "SimpleApprovalApp", recipients: [], outcomes: { maybe: "end" } }] }), BASE, ALL).problems.map(p => p.code).sort();
+  assert.deepEqual(bad, ["NO_RECIPIENT", "UNKNOWN_OUTCOME"]);
+});
+
+test("コンテキスト：インデックスは名前で、Data Fabric はフォルダの表、モードは小文字だけ", () => {
+  const { result, problems } = generate(ir({ contexts: [{ index: "kb-1", folder: "Shared" }, { dataFabric: ["T"], folder: "Shared" }, { attachments: true, name: "Files" }] }), BASE, ALL);
+  assert.deepEqual(problems, []);
+  const idx = result!.resources.kb_1 as any;
+  assert.equal(idx.contextType, "index");
+  assert.equal(idx.referenceKey, null);
+  assert.equal(idx.settings.retrievalMode, "semantic");
+  const df = result!.resources.Entities as any;
+  assert.deepEqual(df.entitySet[0], { id: "id-T", referenceKey: "id-T", name: "T", folderId: "folder-key", folderDisplayName: "Shared", description: null, entityType: "native" });
+  assert.equal((result!.resources.Files as any).contextType, "attachments");
+  assert.equal(generate(ir({ contexts: [{ index: "x", folder: "S", mode: "DeepRag" as any }] }), BASE, ALL).problems[0].code, "BAD_MODE");
+});
+
+test("Integration Service：固定の値も入力のスキーマに残し（enum を選んだ値に）、results[*] はそのままのキー", () => {
+  const { result, problems } = generate(ir({ tools: [{ integration: "uipath-uipath-airdk", activity: "v2::webSearch", values: { provider: "Jina" } }] }), BASE, ALL);
+  assert.deepEqual(problems, []);
+  const r = result!.resources.Web_Search as any;
+  assert.equal(r.type, "integration");
+  assert.deepEqual(r.inputSchema.properties.provider.enum, ["Jina"]);
+  assert.equal(r.inputSchema.properties.provider.oneOf.length, 2);
+  assert.deepEqual(r.inputSchema.required, ["provider", "query"]);
+  const prov = r.properties.parameters.find((p: any) => p.name === "provider");
+  assert.equal(prov.fieldVariant, "static");
+  assert.equal(prov.value, "Jina");
+  assert.deepEqual(prov.enumValues, [{ name: "GoogleCustomSearch", value: "GoogleCustomSearch" }, { name: "Jina", value: "Jina" }]);
+  assert.equal(r.properties.parameters.find((p: any) => p.name === "query").value, "{{prompt}}");
+  assert.deepEqual(r.outputSchema.properties["results[*]"].items, { $ref: "#/definitions/results[*]" });
+  assert.deepEqual(Object.keys(r.outputSchema.definitions["results[*]"].properties), ["title", "url"]);
+  assert.equal(r.properties.connection.isDefault, false);
+  assert.equal(r.properties.connection.solutionProperties.resourceKey, "conn-id");
+  assert.equal(generate(ir({ tools: [{ integration: "x", activity: "y", values: { nope: 1 } }] }), BASE, ALL).problems[0].code, "UNKNOWN_FIELD");
+});
+
+test("MCP：名前はサーバーの表示名、tools で絞ると cached、無い道具は誤り", () => {
+  const { result } = generate(ir({ tools: [{ mcp: "agent-mcp-test", tools: ["price_total"] }] }), BASE, ALL);
+  const r = result!.resources["Agent MCP Test"] as any;
+  assert.equal(r.$resourceType, "mcp");
+  assert.equal(r.slug, "agent-mcp-test");
+  assert.equal(r.folderPath, "solution_folder");
+  assert.deepEqual(r.availableTools.map((t: any) => t.name), ["price_total"]);
+  assert.deepEqual(r.toolsConfiguration, { discoveryMode: { type: "cached" } });
+  assert.deepEqual(r.solutionProperties, { resourceKey: "mcp-key", resourceName: "Agent MCP Test" });
+  const all = generate(ir({ tools: [{ mcp: "agent-mcp-test" }] }), BASE, ALL).result!.resources["Agent MCP Test"] as any;
+  assert.deepEqual(all.toolsConfiguration, { discoveryMode: { type: "dynamic", allowAll: true } });
+  assert.equal(generate(ir({ tools: [{ mcp: "agent-mcp-test", tools: ["zzz"] }] }), BASE, ALL).problems[0].code, "UNKNOWN_MCP_TOOL");
+});
+
+test("to-ir：メモリ（features/）を memory に戻す", () => {
+  const proj = scaffold();
+  try {
+    mkdirSync(join(proj, "features", "PastDecisions"), { recursive: true });
+    writeFileSync(join(proj, "features", "PastDecisions", "feature.json"), JSON.stringify({ $featureType: "memorySpace", name: "PastDecisions", memorySpaceName: "Mem", folderPath: "Shared",
+      dynamicFewShotSettings: { isEnabled: true, threshold: 0, resultCount: 3, searchMode: "hybrid", fieldSettings: [{ name: "request", weight: 1 }] } }));
+    writeFileSync(join(proj, "agent.json"), JSON.stringify({ ...BASE, messages: [{ role: "system", content: "s" }, { role: "user", content: "u" }] }));
+    assert.deepEqual(toIR(proj).memory, [{ space: "Mem", folder: "Shared", name: "PastDecisions", fields: { request: 1 } }]);
   } finally { rmSync(proj, { recursive: true, force: true }); }
 });

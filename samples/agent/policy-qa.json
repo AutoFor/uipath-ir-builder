@@ -1,0 +1,31 @@
+{
+  "name": "PolicyQa",
+  "description": "経費規程（インデックス）と経費の記録（Data Fabric の表）を見て、申請が規程に合うかを答える",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 8,
+  "system": "あなたは経理の担当です。規程は @{contexts.Policy}、これまでの経費の記録は @{contexts.Expenses} で調べます。自分の知識で規程を作らず、必ず調べてから答えます。\n\n出力:\n- ok: 規程に合えば true、合わなければ false\n- rule: 根拠にした規程の条（例「第3条 接待費」）\n- reason: 理由を 1〜2 文で\n- pastCount: 同じ申請者の過去の記録の件数（記録で調べる）",
+  "user": "申請者: {{input.applicant}}\n内容: {{input.request}}",
+  "input": {
+    "applicant": { "type": "string", "description": "申請者の名前" },
+    "request": { "type": "string", "description": "申請の内容（何に・いくら・何人など）" }
+  },
+  "output": {
+    "ok": { "type": "boolean", "required": true },
+    "rule": "string",
+    "reason": "string",
+    "pastCount": "integer"
+  },
+  "contexts": [
+    { "dataFabric": ["AgentExpenseTest"], "folder": "Shared", "name": "Expenses", "description": "これまでの経費の記録（Title・Amount・Applicant）" },
+    { "index": "expense-policy-test", "folder": "Shared", "name": "Policy", "description": "会社の経費規程" }
+  ],
+  "evals": [
+    { "name": "接待の上限超え", "inputs": { "applicant": "佐藤", "request": "顧客 2 名との会食、1 人 12,000 円" }, "expected": { "ok": false, "rule": "第3条 接待費" }, "behavior": "Policy を調べ、1 人 8,000 円の上限を超えるので false" },
+    { "name": "新幹線の普通車", "inputs": { "applicant": "山田", "request": "大阪出張の新幹線、普通車指定席 14,000 円" }, "expected": { "ok": true, "rule": "第1条 交通費", "pastCount": 2 }, "behavior": "Policy と Expenses を調べる。山田の記録は 2 件" },
+    { "name": "グリーン車", "inputs": { "applicant": "山田", "request": "新幹線のグリーン車 20,000 円（一般社員）" }, "expected": { "ok": false, "rule": "第1条 交通費" }, "behavior": "グリーン車は部長以上なので false" },
+    { "name": "タクシー夜", "inputs": { "applicant": "山田", "request": "23 時のタクシー 6,000 円" }, "expected": { "ok": true, "rule": "第1条 交通費" }, "behavior": "22 時以降、8,000 円以下なので true" },
+    { "name": "宿泊の上限", "inputs": { "applicant": "佐藤", "request": "福岡の宿泊 1 泊 13,000 円" }, "expected": { "ok": false, "rule": "第2条 宿泊費" }, "behavior": "東京・大阪以外は 11,000 円が上限なので false" }
+  ]
+}
