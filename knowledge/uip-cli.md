@@ -13,14 +13,7 @@
 
 ## ほかの UiPath の CLI と使い分け
 
-| CLI | 使う場面 |
-| --- | --- |
-| **`uip`** | この道具の標準。Orchestrator・Studio Web・Integration Service・Data Fabric・API ワークフロー・Maestro・ソリューション・RPA の build / run（Studio の裏の Helm を使う）を 1 つで扱う |
-| `uipcli`（UiPath.CLI。.NET） | CI/CD（GitHub Actions・Azure DevOps・Jenkins）で pack・deploy・テストを流すとき。今の作業では使わない |
-| `UiRobot.exe` | ロボットのある機械で、Orchestrator を通さずに動かす |
-| `UiPath.Studio.CommandLine.exe` | Studio のある機械での publish・analyze（[studio-extract-form-data.md](studio-extract-form-data.md)） |
-| `uipath`（Python の SDK） | Python の Coded Agent |
-| UiPath.PowerShell | 古い。使わない |
+`uipcli`（UiPath.CLI.Windows）、Python の `uipath`、`UiPath.Studio.CommandLine.exe`、`UiRobot.exe` の入れ方と使い分けは [uipath-clis.md](uipath-clis.md)。この道具では、テナントの操作は `uip`、build の前の式のコンパイルの確認は `uipcli package analyze`（`tools/verify/analyze.mjs`）を使う。
 
 ## ログインとテナント
 

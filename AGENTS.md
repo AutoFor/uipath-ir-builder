@@ -46,7 +46,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - パッケージごとの注意は `knowledge/`（Excel は `excel.md`、Testing は `testing.md`、UI 操作は [docs/worker-guide.md](docs/worker-guide.md) の 8.）
 - 書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)
 - UiPath Apps（Action Center のタスクの画面など）を作るときは [knowledge/apps.md](knowledge/apps.md)。Coded Action App は `node tools/apps/coded-action.ts <app.json> --out <dir>`（IR は `samples/apps/expense-review.json` を写して直す）。ローコードの RPA アプリ（Studio Web）は `node tools/apps/rpa-app.ts <app.json> --uis <file.uis>` → `uip solution upload <file.uis>`（IR は `samples/apps/rpa-app-request.json`、Data Fabric の表を使う見本は `samples/apps/work-calendar.json`。フォルダを upload に渡さない）
-- `uip`（UiPath の CLI）のつまずきどころ（`--profile`、`--yes`、フォルダ、出力の PascalCase、トリガーのタイムゾーン、デプロイの手順）は [knowledge/uip-cli.md](knowledge/uip-cli.md)。ほかの UiPath の CLI との使い分けもここ
+- `uip`（UiPath の CLI）のつまずきどころ（`--profile`、`--yes`、フォルダ、出力の PascalCase、トリガーのタイムゾーン、デプロイの手順）は [knowledge/uip-cli.md](knowledge/uip-cli.md)。ほかの UiPath の CLI（`uipcli`・Python の `uipath`・Studio の CommandLine・UiRobot）との使い分けは [knowledge/uipath-clis.md](knowledge/uipath-clis.md)
 - API ワークフロー（Studio Web の API workflow。サーバーレスの JSON のワークフロー）を作るときは [knowledge/api-workflow.md](knowledge/api-workflow.md)。`uip api-workflow init` でプロジェクトを作り、IR（`samples/apiwf/*.json` を写して直す）から `node tools/apiwf/gen.ts <ir.json> --project <プロジェクト>` で Workflow.json を作る。`uip api-workflow validate` → `run` で確かめる
 - Maestro（Flow・BPMN・Case、Maestro Automate）を作るときは [knowledge/maestro.md](knowledge/maestro.md)。IR ではなく公式 SDK のソース（`*.flow.ts` など）を書き、`node tools/maestro/verify.mjs [--automate] --out <dir> <ソース>` で確かめ、`node tools/maestro/debug.mjs <.flow | .bpmn | caseplan.json> [--automate]` でテナントでデバッグ実行する。デプロイの手順と落とし穴は knowledge/maestro.md の 10 章
 - UI 操作の画面・要素をオブジェクトリポジトリ（`.objects/`）に置くときは [knowledge/object-repository.md](knowledge/object-repository.md)。正本は `<P>/ir/repository.json`、ワークフローの IR からは `{ "$ref": "アプリ/画面/要素" }` で指す。`.objects` は `node tools/ir/objrepo.ts build --project <P>` で作る（手で直さない）。Studio の XAML にある、リポジトリに入っていないセレクターは `import-xaml.ts` で IR にしてから `objrepo.ts register` で登録する
@@ -93,6 +93,7 @@ node tools/ir/gen.ts <P>/ir/Main.json <P>/ir/Greet.json --project <P> --out <P> 
 - IR は1つずつ並べて渡す（gen.ts はフォルダも `*.json` も受け取らない）
 - 「〜のカタログが無い」という注意は、そのパッケージのアクティビティを使わなければ気にしなくてよい
 - エラーが出たら、メッセージを読んで IR を直し、通るまで繰り返す。エラーを避けるために XAML を手で書かない。IR が正しいのに通らないなら、道具を直す（下の「道具を育てる」）
+- 生成した XAML の式まで確かめたいときは `node tools/verify/analyze.mjs <P>`（uipcli の package analyze。式をコンパイルし、未定義の変数などを数秒で出す。SSH から動く。プロジェクトは写しで流す）。通れば 5. の build / run に進む
 - Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）
   - 対応表（`mappings/`）の無いアクティビティと、Coded API の無いパッケージ（Mail、Office 365、WebAPI、SAP BAPI、Data Service、Testing 23.4.1 など）のアクティビティは、XAML にして C# から `RunWorkflow` で呼ぶ。注意 `CODED_VIA_XAML` が出る。仕組みと落とし穴は [knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)
     - 子の無いアクティビティ：`<--out>/_activities/<アクティビティ名>.xaml`（形が違えば `<アクティビティ名>_<ハッシュ>.xaml`）。アクティビティ 1 つだけを置いた汎用の XAML で、値は C# から引数（`in_<Prop>` など）で渡す。出力・入出力はいつも引数にする。同じ形なら使い回す
