@@ -12,7 +12,7 @@ UiPath のエージェントを Python で作るときに分かったこと（20
   - 雛形と JSON（`entry-points.json`、`bindings.json`、`project.uiproj`）は、`new` と `init` が Python のコードから自動で作る。
   - AI が書くのは `main.py` だけで、それはふつうの LangGraph の Python。IR を挟んでも短くも安全にもならない。
   - 守るべき約束事（下の「書くときの約束」）を、この文書と見本で渡す。
-- **始め方**：見本 `samples/pyagent/quote-agent/` を写して直す。手順は下の「作り方」。
+- **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`。手順は下の「作り方」。
 - **フレームワークは LangGraph**（`uipath-langchain`）。スキルの第一の推奨で、人のタスク（HITL）やプロセスの呼び出しの形がいちばんそろっている。
 - **LLM の API キーは要らない**。UiPath の LLM Gateway を通るので、テナントで使えるモデル（Claude・GPT・Gemini）がそのまま使える。
 - **単純なエージェント**（道具を呼ぶだけ・人の確認を挟むだけ）なら、Studio Web の low-code のエージェント（`agent.json`、`uip agent`）の方が公式の推奨に合う。Python にするのは、独自のグラフ、外部のライブラリ、複雑な HITL、コードでの評価が要るとき。
@@ -50,6 +50,28 @@ uip codedagent invoke agent '{"question":"…"}' --profile trial   # クラウ�
   - `OutputArguments` は `{"answer": "合計は 350円、ランクは SILVER", "tool_calls": 1}`。
   - Linux のコンテナで動く（ログのパスが `/tmp/home/...`）。
 - 片付け：`uip or processes delete <Key> --yes` と、`uip or packages delete <名前>:<版> --feed-id <個人ワークスペースのフィード> --yes`。フィードの Id は `uip or feeds list` の「Orchestrator Personal Workspace Feed」。
+
+## Playwright でブラウザを操作する（見本 playwright-form）
+
+Python の関数（LLM を使わない）から Playwright で DOM を操作し、Orchestrator のジョブとして動かせた。
+
+- **見本**：`samples/pyagent/playwright-form/`。
+  - 試し用の公開ページ https://httpbin.org/forms/post を開き、名前・サイズ・トッピング・コメントを入れて送信する。
+  - サーバーが受け取った値を返す。
+- **作り方**：
+  - 雛形は `uipath new <名前> --type function`（`uip codedagent new` は `--type` を受け取らずに落ちた。`new` はログインが要らないので `uipath` で直接作る）。
+  - `pyproject.toml` の `dependencies` に `playwright` を足す。
+  - 手元では `python -m playwright install chromium` でブラウザを入れる（この PC で 43 秒）。
+- **手元の run**：9 秒で送信まで終わり、受け取った値が入力と一致した。
+- **クラウド**：`deploy` → `invoke` で Successful（57 秒。うちパッケージの入れ込み 15 秒）。
+  - **コンテナにブラウザは入っていない**（`Executable doesn't exist at /tmp/home/.cache/ms-playwright/...`）。
+  - 起動に失敗したら、その場で `python -m playwright install chromium` を流すようにした。Chrome Headless Shell（125.7 MiB）が入り、そのまま起動・送信できた。OS のライブラリ（`--with-deps`）は要らなかった。
+  - 毎回ブラウザを取ってくるので、そのぶん遅く、ネットワークも使う。
+- **ログ**：`logging.info` も `print` も、Orchestrator のジョブのログ（`uip or jobs logs <ジョブ>`）に出た。
+- **向き・不向き**：
+  - 向く：画面の無い（headless）取得や入力を、ロボットなしにクラウドだけで回したいとき。LLM に判断させながら操作したいとき。
+  - 向かない：社内のサイト（クラウドから届かない）、ログインの画面や二段階認証、デスクトップのアプリ。これらはロボットで動く RPA（UI Automation。この道具の IR の生成器）を使う。
+  - パスワードは Orchestrator の資格情報のアセットから読める（`UiPath().assets.retrieve_credential`）。試していない。
 
 ## 書くときの約束（守らないと落ちる）
 
