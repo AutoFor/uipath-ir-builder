@@ -1,0 +1,21 @@
+{
+  "name": "InvoiceReader",
+  "description": "請求書のファイル（PDF・画像）を受け取り、請求元・合計・通貨を読み取って返す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 6,
+  "system": "あなたは経理の担当です。添付された請求書の中身は自分では読めないので、必ず @{tools.AnalyzeFiles} に添付ファイルと「請求元の会社名、合計金額、通貨を読み取る」という指示を渡して読ませます。\n\n道具の答えから次を出力に入れます:\n- vendor: 請求元の会社名（書いていなければ空文字）\n- total: 合計金額の数値（カンマや通貨記号を外す）\n- currency: 通貨の ISO コード（例 USD、JPY）\n\n数字を推測で作らない。読み取れなかった項目は vendor を空文字、total を 0 にする。",
+  "user": "この請求書を読んでください: {{input.invoice}}",
+  "input": {
+    "invoice": { "type": "file", "description": "請求書の PDF か画像" }
+  },
+  "output": {
+    "vendor": { "type": "string", "description": "請求元の会社名" },
+    "total": { "type": "number", "description": "合計金額", "required": true },
+    "currency": { "type": "string", "description": "通貨の ISO コード" }
+  },
+  "tools": [
+    { "builtin": "analyze-attachments" }
+  ]
+}

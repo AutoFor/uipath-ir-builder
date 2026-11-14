@@ -1,0 +1,109 @@
+{
+  "name": "PriceAgent",
+  "description": "品目の一覧から、上限を超える品目の合計と区分を Probe（API ワークフロー）で計算して返す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 8,
+  "system": "あなたは見積もりの担当です。品目の合計は自分で計算せず、必ず @{tools.Probe} を 1 回だけ呼び、その結果の total と tier をそのまま返します。\n\n手順:\n1. 入力の品目（JSON の配列。name と price）と上限 limit を、そのまま @{tools.Probe} の items と limit に渡す\n2. 返ってきた total と tier を出力の total と tier に入れる\n3. summary には「<tier>：合計 <total> 円」の形で 1 行書く\n\n道具が失敗したら、推測で数字を作らず、summary に失敗した理由を書いて total を 0 にする。",
+  "user": "品目: {{input.items}}\n上限: {{input.limit}}",
+  "input": {
+    "items": {
+      "type": "string",
+      "description": "品目の JSON 配列。例 [{\"name\":\"A\",\"price\":200}]"
+    },
+    "limit": {
+      "type": "number",
+      "description": "この値を超える品目だけを合計する"
+    }
+  },
+  "output": {
+    "total": {
+      "type": "number",
+      "description": "上限を超える品目の合計",
+      "required": true
+    },
+    "tier": {
+      "type": "string",
+      "description": "Probe が返した区分"
+    },
+    "summary": {
+      "type": "string",
+      "description": "1 行のまとめ"
+    }
+  },
+  "tools": [
+    {
+      "process": "Probe",
+      "folder": "Shared/ApiwfControlTour",
+      "description": "品目の配列 items と上限 limit を受け取り、上限を超える品目の合計 total と区分 tier を返す"
+    }
+  ],
+  "guardrails": [
+    {
+      "pii": [
+        "Email",
+        "PhoneNumber"
+      ],
+      "scopes": [
+        "Agent"
+      ],
+      "action": "log"
+    }
+  ],
+  "evals": [
+    {
+      "name": "上限100で3品",
+      "inputs": {
+        "items": "[{\"name\":\"A\",\"price\":50},{\"name\":\"B\",\"price\":200},{\"name\":\"C\",\"price\":300}]",
+        "limit": 100
+      },
+      "expected": {
+        "total": 0,
+        "tier": "SILVER"
+      },
+      "behavior": "Probe を 1 回呼び、その total と tier をそのまま返す（Probe は最初の大きい品目で Break するので total は 0）"
+    },
+    {
+      "name": "全部が上限以下",
+      "inputs": {
+        "items": "[{\"name\":\"A\",\"price\":10},{\"name\":\"B\",\"price\":20}]",
+        "limit": 100
+      },
+      "expected": {
+        "total": 0
+      },
+      "behavior": "Probe を 1 回呼び、その total をそのまま返す"
+    },
+    {
+      "name": "品目が空",
+      "inputs": {
+        "items": "[]",
+        "limit": 100
+      },
+      "expected": {
+        "total": 0
+      },
+      "behavior": "空の配列でも Probe を呼び、自分で数字を作らない"
+    },
+    {
+      "name": "上限0",
+      "inputs": {
+        "items": "[{\"name\":\"A\",\"price\":900}]",
+        "limit": 0
+      },
+      "expected": {
+        "tier": "SILVER"
+      },
+      "behavior": "Probe を 1 回呼び、tier をそのまま返す"
+    },
+    {
+      "name": "summaryの形",
+      "inputs": {
+        "items": "[{\"name\":\"A\",\"price\":150}]",
+        "limit": 100
+      },
+      "behavior": "summary を「<tier>：合計 <total> 円」の 1 行で書く"
+    }
+  ]
+}

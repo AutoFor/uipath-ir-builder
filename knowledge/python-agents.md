@@ -15,7 +15,7 @@ UiPath のエージェントを Python で作るときに分かったこと（20
 - **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`、アセットと Data Fabric を読む関数は `samples/pyagent/sdk-probe/`、人の承認を挟むエージェントは `samples/pyagent/hitl-agent/`。手順は下の「作り方」。
 - **フレームワークは LangGraph**（`uipath-langchain`）。スキルの第一の推奨で、人のタスク（HITL）やプロセスの呼び出しの形がいちばんそろっている。
 - **LLM の API キーは要らない**。UiPath の LLM Gateway を通るので、テナントで使えるモデル（Claude・GPT・Gemini）がそのまま使える。
-- **単純なエージェント**（道具を呼ぶだけ・人の確認を挟むだけ）なら、Studio Web の low-code のエージェント（`agent.json`、`uip agent`）の方が公式の推奨に合う。Python にするのは、独自のグラフ、外部のライブラリ、複雑な HITL、コードでの評価が要るとき。
+- **単純なエージェント**（道具を呼ぶだけ・人の確認を挟むだけ）なら、Studio Web の low-code のエージェント（`agent.json`、`uip agent`）の方が公式の推奨に合う（[agents.md](agents.md)。IR から生成器で作れる）。Python にするのは、独自のグラフ、外部のライブラリ、複雑な HITL、コードでの評価が要るとき。
 
 ## 作り方（確かめた手順）
 
