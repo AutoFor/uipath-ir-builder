@@ -69,28 +69,28 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 
 ## 4. ノードと、確かめた範囲
 
-「テナント」はテナントでデバッグ実行して Completed を見たもの。「手元」は `verify.mjs`（types・check・compile・validate）だけ。見本は `samples/maestro/coverage/`、`samples/maestro/work-calendar/`、`tools/maestro/fixtures/`。
+「テナント」はテナントでデバッグ実行して Completed を見たもの（Orchestrate の列は 2026-11-14 に、Automate で確かめた見本を `--automate` なしで流し直した）。「手元」は `verify.mjs`（types・check・compile・validate）だけ。見本は `samples/maestro/coverage/`、`samples/maestro/work-calendar/`、`tools/maestro/fixtures/`。
 
 | ノード（SDK） | Automate | Orchestrate | 見本 |
 | --- | --- | --- | --- |
 | manual トリガー、`input` / `output` / `return` | テナント | テナント | `LoopTour`、`ControlTour` |
-| `entryPoint` で入口を増やす、`scheduled`、`formTrigger` | テナント（既定の入口だけ動かした。定期実行はデプロイしないと動かない） | 手元 | `Triggers` |
+| `entryPoint` で入口を増やす、`scheduled`、`formTrigger` | テナント（既定の入口だけ動かした。定期実行はデプロイしないと動かない） | テナント（既定の入口） | `Triggers` |
 | `script` | テナント | テナント | 全部 |
-| `transform`（filter） | テナント | 手元 | `ControlTour` |
-| `branch` / `switch` / `parallel` | テナント | テナント（branch） | `ControlTour` |
-| `loop` / `doWhile` / `updates`（変数の更新）、ループの中の変数 | テナント | 手元 | `ControlTour`、`LoopTour`、`LoopVars` |
+| `transform`（filter） | テナント | テナント | `ControlTour` |
+| `branch` / `switch` / `parallel` | テナント | テナント | `ControlTour` |
+| `loop` / `doWhile` / `updates`（変数の更新）、ループの中の変数 | テナント | テナント | `ControlTour`、`LoopTour`、`LoopVars` |
 | BPMN：Script task、Exclusive（既定の道）、入力 | — | テナント | `ScriptGateway.bpmn` |
 | Case：ステージ、ルール、タイマーのタスク | — | テナント | `samples/maestro/TimerCase.case` |
-| `delay` | テナント | 手元 | `ControlTour` |
-| `http`（managed: false） | テナント | 手元 | `ControlTour` |
-| `subflow` | テナント | 手元 | `ControlTour` |
-| `onError` | テナント | 手元 | `ControlTour` |
-| `mock`、`terminate` | テナント | 手元 | `LoopTour` |
-| `dataFabricCreate` / `Read` / `Update` / `Delete` | テナント | 手元 | `DataFabricTour`、`WorkCalendarCheck` |
-| `rpaWorkflow` | テナント | テナント | `fixtures/tenant/Rpa.*` |
+| `delay` | テナント | テナント | `ControlTour` |
+| `http`（managed: false） | テナント | テナント | `ControlTour` |
+| `subflow` | テナント | テナント | `ControlTour` |
+| `onError` | テナント | テナント | `ControlTour` |
+| `mock`、`terminate` | テナント | テナント | `LoopTour` |
+| `dataFabricCreate` / `Read` / `Update` / `Delete` | テナント | テナント | `DataFabricTour`、`WorkCalendarCheck`（RPA から Data Fabric を使う形は knowledge/dataservice.md） |
+| `rpaWorkflow` | テナント | テナント | `fixtures/tenant/Rpa.*`、`deploy/DuViaRpa`（RPA で Document Understanding） |
 | `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
 | `agent`（公開済み） | テナント | テナント | `fixtures/tenant/Agent.*`（PERSONAL_WORKSPACE を実際の名前にして流す） |
-| `inlineAgent`（flow の中で定義するエージェント） | テナント | 手元 | `InlineAgent` |
+| `inlineAgent`（flow の中で定義するエージェント） | テナント | テナント | `InlineAgent` |
 | `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
