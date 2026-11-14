@@ -71,7 +71,7 @@ Python の関数（LLM を使わない）から Playwright で DOM を操作し�
 - **向き・不向き**：
   - 向く：画面の無い（headless）取得や入力を、ロボットなしにクラウドだけで回したいとき。LLM に判断させながら操作したいとき。
   - 向かない：社内のサイト（クラウドから届かない）、ログインの画面や二段階認証、デスクトップのアプリ。これらはロボットで動く RPA（UI Automation。この道具の IR の生成器）を使う。
-  - パスワードは Orchestrator の資格情報のアセットから読める（`UiPath().assets.retrieve_credential`）。試していない。
+  - パスワードは Orchestrator の資格情報のアセットから読める（`UiPath().assets.retrieve_credential`）。クラウドのジョブの中なら読めた（下の「アセットと Data Fabric を読む」）。
 
 ## アセットと Data Fabric を読む（見本 sdk-probe）
 
@@ -82,10 +82,15 @@ Python の関数（LLM を使わない）から Playwright で DOM を操作し�
 | テキストのアセット | `await uip.assets.retrieve_async("名前", folder_path="Shared")` の `.value` | 値が読めた |
 | Data Fabric のレコードの一覧 | `entity = await uip.entities.retrieve_by_name_async("表の名前")` → `await uip.entities.list_records_async(entity.id, limit=50)` | 足した 2 件が読めた。列は表の列名（`Title`、`Amount`）で取れる |
 | Data Fabric の SQL | `await uip.entities.query_entity_records_async("SELECT Title, Amount FROM 表 WHERE Amount >= 500")` | 条件に合う 1 件だけが返った。DECIMAL の列は `880.0` のように小数になる |
-| 資格情報のアセット | `await uip.assets.retrieve_credential_async("名前", folder_path=…)` → 復号したパスワード | **未確認**（試しの資格情報を作っていない） |
+| 資格情報のアセット | `await uip.assets.retrieve_credential_async("名前", folder_path=…)` → 復号したパスワード | **クラウドのジョブの中では読めた**（8 文字）。**手元の run では読めない**（下の注意） |
 
 - 手元の run は 5.6 秒。
 - クラウドのジョブ（個人ワークスペースで動く）からも、`Shared` のアセットと tenant の表が読めた。フォルダが違っても `folder_path` を書けば読める（デプロイした本人の権限で動くため、と考えられる。ロボットのアカウントで動かす場合は未確認）。
+- **資格情報は、ロボットの鍵が無いと読めない**。
+  - 手元の `uip codedagent run` では `ValueError: No robot key available and 'AllowDirectApiAccess' is disabled for asset '…'` になった。
+  - Orchestrator のジョブの中（デプロイして `invoke`）なら、そのまま読めた。
+  - 手元でも読みたいときは、アセットの「Access」の「Expose value to API」をオンにする（`AllowDirectApiAccess`）。API から値が見えるようになるので、試し以外では勧めない。
+- 資格情報のアセットは、作るときにパスワードを入れる（画面か `uip or assets create <名前> <値> --type Credential --credential-store-key <キー>`）。AI はパスワードを入れないので、人に作ってもらう。
 - 見本は、資格情報を読んでも値を返さず、読めたかどうかと文字数だけを返す。パスワードを出力やログに出さない。
 - 試しに作ったアセット・レコード・プロセス・パッケージは消した。
 
