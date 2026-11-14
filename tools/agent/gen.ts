@@ -29,6 +29,12 @@ export type Field = string | ({ type?: string; description?: string; required?: 
 export type Tool =
   | { process: string; folder?: string; name?: string; description?: string; examples?: unknown[] }
   | { builtin: "analyze-attachments"; name?: string; description?: string }
+  /** DeepRAG（書類を読んで出典つきでまとめる）。task は何をするか。fileExtension は pdf / txt */
+  | { builtin: "deep-rag"; task: string; fileExtension?: string; citations?: boolean; name?: string; description?: string }
+  /** Batch Transform（CSV の行ごとに LLM で列を足す） */
+  | { builtin: "batch-transform"; task: string; columns: { name: string; description: string }[]; webSearch?: boolean; fileExtension?: string; name?: string; description?: string }
+  /** Create File（ファイルを作って、ほかの道具に渡すか出力に返す） */
+  | { builtin: "create-file"; name?: string; description?: string }
   /** AgentHub の MCP サーバー（slug）。tools で使う道具を絞る（書かなければ全部） */
   | { mcp: string; tools?: string[]; description?: string }
   /** Integration Service の活動。connection は接続の Id か名前（書かなければその connector の既定の接続）。values は固定の値 */
@@ -145,6 +151,9 @@ const JOB_ATTACHMENT = {
   "x-uipath-resource-kind": "JobAttachment",
 };
 
+/** Studio Web が書く組み込みの道具の形 */
+const BUILTINS = JSON.parse(readFileSync(new URL("./builtin-tools.json", import.meta.url), "utf8")).tools;
+
 const SIMPLE = new Set(["string", "number", "integer", "boolean", "object", "array"]);
 
 // ---------- 部品 ----------
@@ -236,8 +245,30 @@ function toolResource(t: Tool, i: number, lookup: ProcessLookup | undefined, pro
       solutionProperties: { resourceKey: m.key, resourceName: m.name },
     };
   }
+  if ("builtin" in t && t.builtin !== "analyze-attachments") {
+    // DeepRAG・Batch Transform・Create File：Studio Web が書く形（builtin-tools.json）を写し、設定だけ入れる
+    const tpl = (BUILTINS as any)[t.builtin];
+    if (!tpl) { probs.push({ path: p, code: "BAD_BUILTIN", message: `組み込みの道具 "${t.builtin}" は無い（analyze-attachments / deep-rag / batch-transform / create-file）` }); return undefined; }
+    const b = t as Extract<Tool, { builtin: string }> & Record<string, any>;
+    const r = JSON.parse(JSON.stringify(tpl));
+    r.name = b.name ?? r.name;
+    if (b.description) r.description = b.description;
+    const s = r.properties.settings;
+    if (t.builtin === "deep-rag" || t.builtin === "batch-transform") {
+      if (!b.task) { probs.push({ path: `${p}.task`, code: "MISSING", message: `${t.builtin} は task（何をするかの指示）が要る` }); return undefined; }
+      s.query = { variant: "static", value: b.task };
+      if (b.fileExtension) s.fileExtension = { value: b.fileExtension };
+    }
+    if (t.builtin === "deep-rag" && b.citations === false) s.citationMode = { value: "Skip" };
+    if (t.builtin === "batch-transform") {
+      if (!b.columns?.length) { probs.push({ path: `${p}.columns`, code: "MISSING", message: "batch-transform は columns（足す列の name と description）が要る" }); return undefined; }
+      for (const c of b.columns) if (!/^[\w\s.,!?-]{1,500}$/.test(c.name)) probs.push({ path: `${p}.columns`, code: "BAD_NAME", message: `列の名前 "${c.name}" は英数字・空白・.,!?- だけ` });
+      s.outputColumns = b.columns.map((c: any) => ({ name: c.name, description: c.description }));
+      s.webSearchGrounding = { value: b.webSearch ? "Enabled" : "Disabled" };
+    }
+    return { ...r, id: (project && oldId(project, r.name)) ?? randomUUID() };
+  }
   if ("builtin" in t) {
-    if (t.builtin !== "analyze-attachments") { probs.push({ path: p, code: "BAD_BUILTIN", message: `組み込みの道具 "${t.builtin}" は無い（analyze-attachments だけ）` }); return undefined; }
     const name = t.name ?? "AnalyzeFiles";
     return {
       $resourceType: "tool",

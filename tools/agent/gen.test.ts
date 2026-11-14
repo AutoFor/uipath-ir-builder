@@ -276,3 +276,23 @@ test("to-ir：メモリ（features/）を memory に戻す", () => {
     assert.deepEqual(toIR(proj).memory, [{ space: "Mem", folder: "Shared", name: "PastDecisions", fields: { request: 1 } }]);
   } finally { rmSync(proj, { recursive: true, force: true }); }
 });
+
+test("組み込みの道具：DeepRAG・Batch Transform・Create File は Studio Web の形を写し、task と列を入れる", () => {
+  const { result, problems } = generate(ir({ tools: [
+    { builtin: "deep-rag", task: "要約する", citations: false },
+    { builtin: "batch-transform", task: "行ごとに分ける", columns: [{ name: "Category", description: "区分" }], webSearch: true },
+    { builtin: "create-file" },
+  ] }), BASE);
+  assert.deepEqual(problems, []);
+  const d = result!.resources.DeepRAG as any;
+  assert.equal(d.properties.toolType, "deep-rag");
+  assert.deepEqual(d.properties.settings.query, { variant: "static", value: "要約する" });
+  assert.deepEqual(d.properties.settings.citationMode, { value: "Skip" });
+  assert.equal(d.inputSchema.properties.attachment.$ref, "#/definitions/job-attachment");
+  const b = result!.resources["Batch Transform"] as any;
+  assert.deepEqual(b.properties.settings.outputColumns, [{ name: "Category", description: "区分" }]);
+  assert.deepEqual(b.properties.settings.webSearchGrounding, { value: "Enabled" });
+  assert.equal((result!.resources["Create File"] as any).properties.toolType, "create-file");
+  const bad = generate(ir({ tools: [{ builtin: "batch-transform", task: "", columns: [] } as any, { builtin: "nope" } as any] }), BASE).problems.map(p => p.code).sort();
+  assert.deepEqual(bad, ["BAD_BUILTIN", "MISSING"]);
+});

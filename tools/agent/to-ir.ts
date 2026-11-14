@@ -12,6 +12,8 @@ import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool } f
 
 /** uip agent init が作る評価器（生成の先に必ずあるので IR に持たない） */
 const DEFAULT_EVALUATORS = new Set(["evaluator-default.json", "evaluator-default-trajectory.json"]);
+/** Studio Web が書く組み込みの道具の形（gen.ts と同じもの） */
+const BUILTINS = JSON.parse(readFileSync(new URL("./builtin-tools.json", import.meta.url), "utf8")).tools;
 const PROCESS_TYPES = new Set(["process", "agent", "api", "processOrchestration"]);
 
 function readJson(path: string): any {
@@ -166,6 +168,23 @@ export function toIR(dir: string): AgentIR {
     } else if (r.$resourceType === "tool" && r.type === "internal" && r.properties?.toolType === "analyze-attachments") {
       const t: Tool = { builtin: "analyze-attachments" };
       if (r.name !== "AnalyzeFiles") (t as any).name = r.name;
+      tools.push(t);
+    } else if (r.$resourceType === "tool" && r.type === "internal" && ["deep-rag", "batch-transform", "create-file"].includes(r.properties?.toolType)) {
+      const tt = r.properties.toolType;
+      const tpl = (BUILTINS as any)[tt];
+      const t: any = { builtin: tt };
+      if (r.name !== tpl.name) t.name = r.name;
+      if (r.description && r.description !== tpl.description) t.description = r.description;
+      const s = r.properties.settings ?? {};
+      if (tt !== "create-file") {
+        if (s.query?.value) t.task = s.query.value;
+        if (s.fileExtension?.value && s.fileExtension.value !== tpl.properties.settings.fileExtension?.value) t.fileExtension = s.fileExtension.value;
+      }
+      if (tt === "deep-rag" && s.citationMode?.value === "Skip") t.citations = false;
+      if (tt === "batch-transform") {
+        t.columns = (s.outputColumns ?? []).map((c: any) => ({ name: c.name, description: c.description }));
+        if (s.webSearchGrounding?.value === "Enabled") t.webSearch = true;
+      }
       tools.push(t);
     } else if (r.$resourceType === "tool" && r.type === "integration" && r.properties?.objectName && r.properties?.connection?.connector?.key) {
       const t: any = { integration: r.properties.connection.connector.key, activity: r.properties.objectName };

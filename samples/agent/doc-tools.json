@@ -1,0 +1,51 @@
+{
+  "name": "DocTools",
+  "description": "組み込みの道具の見本。DeepRAG で請求書を読み、Batch Transform で経費の CSV に区分の列を足し、Create File でまとめのファイルを作って返す",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "temperature": 0,
+  "maxTokens": 16000,
+  "maxIterations": 10,
+  "system": "あなたは経理の担当です。次の順に進めます。\n1. 請求書（invoice）を @{tools.DeepRAG} に渡し、請求元と合計を調べる\n2. 経費の CSV（expenses）を @{tools.Batch_Transform} に渡し、行ごとに区分を付ける\n3. 1 と 2 の結果をマークダウンにまとめ、@{tools.Create_File} で summary.md を作る\n\n出力: summary に 3 行以内のまとめ、report に 3 で作ったファイル",
+  "user": "請求書: {{input.invoice}}\n経費: {{input.expenses}}",
+  "input": {
+    "invoice": {
+      "type": "file",
+      "description": "請求書の PDF"
+    },
+    "expenses": {
+      "type": "file",
+      "description": "経費の CSV（Title, Amount）"
+    }
+  },
+  "output": {
+    "summary": {
+      "type": "string",
+      "required": true
+    },
+    "report": {
+      "type": "file",
+      "description": "まとめのマークダウン"
+    }
+  },
+  "tools": [
+    {
+      "builtin": "batch-transform",
+      "name": "Batch_Transform",
+      "task": "For each expense row, decide its category.",
+      "columns": [
+        {
+          "name": "Category",
+          "description": "One of: travel, meal, lodging, other"
+        }
+      ]
+    },
+    {
+      "builtin": "create-file",
+      "name": "Create_File"
+    },
+    {
+      "builtin": "deep-rag",
+      "task": "Read the invoice and report the vendor name and the total amount, with citations."
+    }
+  ]
+}

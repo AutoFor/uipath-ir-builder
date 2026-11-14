@@ -1,0 +1,265 @@
+{
+  "_note": "Studio Web で組み込みの道具を足して取り出した resource.json（id を除く）。gen.ts が写して使う。2026-11-15、trial",
+  "tools": {
+    "deep-rag": {
+      "$resourceType": "tool",
+      "referenceKey": null,
+      "name": "DeepRAG",
+      "type": "internal",
+      "description": "Get comprehensive synthesis across up to 1,000 pages with citations.",
+      "isEnabled": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "attachment": {
+            "$ref": "#/definitions/job-attachment",
+            "title": "Source",
+            "description": "File or document to analyze with DeepRAG"
+          }
+        },
+        "required": [
+          "attachment"
+        ],
+        "definitions": {
+          "job-attachment": {
+            "type": "object",
+            "properties": {
+              "ID": {
+                "type": "string",
+                "description": "Orchestrator attachment key"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "File name"
+              },
+              "MimeType": {
+                "type": "string",
+                "description": "The MIME type of the content, such as \"application/json\" or \"image/png\""
+              },
+              "Metadata": {
+                "type": "object",
+                "description": "Dictionary<string, string> of metadata",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "ID"
+            ],
+            "x-uipath-resource-kind": "JobAttachment"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "The content of the analyzed attachment"
+            }
+          }
+        },
+        "properties": {}
+      },
+      "settings": {},
+      "guardrail": {
+        "policies": []
+      },
+      "argumentProperties": {},
+      "properties": {
+        "toolType": "deep-rag",
+        "settings": {
+          "contextType": "attachments",
+          "query": {
+            "variant": "static",
+            "value": "Read the document and answer the request with citations."
+          },
+          "folderPathPrefix": {
+            "variant": "static"
+          },
+          "citationMode": {
+            "value": "Inline"
+          },
+          "fileExtension": {
+            "value": "pdf"
+          }
+        }
+      }
+    },
+    "batch-transform": {
+      "$resourceType": "tool",
+      "referenceKey": null,
+      "name": "Batch Transform",
+      "type": "internal",
+      "description": "Process and transform CSV files.",
+      "isEnabled": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "attachment": {
+            "$ref": "#/definitions/job-attachment",
+            "title": "Source",
+            "description": "CSV file to transform"
+          }
+        },
+        "required": [
+          "attachment"
+        ],
+        "definitions": {
+          "job-attachment": {
+            "type": "object",
+            "properties": {
+              "ID": {
+                "type": "string",
+                "description": "Orchestrator attachment key"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "File name"
+              },
+              "MimeType": {
+                "type": "string",
+                "description": "The MIME type of the content, such as \"application/json\" or \"image/png\""
+              },
+              "Metadata": {
+                "type": "object",
+                "description": "Dictionary<string, string> of metadata",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "ID"
+            ],
+            "x-uipath-resource-kind": "JobAttachment"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "The content of the analyzed attachment"
+            }
+          }
+        },
+        "properties": {}
+      },
+      "settings": {},
+      "guardrail": {
+        "policies": []
+      },
+      "argumentProperties": {},
+      "properties": {
+        "toolType": "batch-transform",
+        "settings": {
+          "contextType": "attachments",
+          "query": {
+            "variant": "static",
+            "value": "For each row, classify the expense category."
+          },
+          "folderPathPrefix": {
+            "variant": "static"
+          },
+          "fileExtension": {
+            "value": "csv"
+          },
+          "outputColumns": [
+            {
+              "name": "OutputColumn",
+              "description": "Expense category: travel, meal, lodging or other"
+            }
+          ],
+          "webSearchGrounding": {
+            "value": "Enabled"
+          }
+        }
+      }
+    },
+    "create-file": {
+      "$resourceType": "tool",
+      "referenceKey": null,
+      "name": "Create File",
+      "type": "internal",
+      "description": "Create a file to pass to another tool or return as output.",
+      "isEnabled": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "Name of the file to create, including its extension (e.g., 'summary.md' or 'accounts.csv'). The extension sets the file type, so it must match the content."
+          },
+          "content": {
+            "type": "string",
+            "description": "Text content of the file."
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Not available for this agent. Leave this empty and put the file's text in content."
+          }
+        },
+        "required": [
+          "fileName"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "$ref": "#/definitions/job-attachment",
+            "description": "Reference to the created file"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "definitions": {
+          "job-attachment": {
+            "type": "object",
+            "properties": {
+              "ID": {
+                "type": "string",
+                "description": "Orchestrator attachment key"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "File name"
+              },
+              "MimeType": {
+                "type": "string",
+                "description": "The MIME type of the content, such as \"application/json\" or \"image/png\""
+              },
+              "Metadata": {
+                "type": "object",
+                "description": "Dictionary<string, string> of metadata",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "ID"
+            ],
+            "x-uipath-resource-kind": "JobAttachment"
+          }
+        }
+      },
+      "settings": {},
+      "guardrail": {
+        "policies": []
+      },
+      "argumentProperties": {},
+      "properties": {
+        "toolType": "create-file"
+      }
+    }
+  }
+}
