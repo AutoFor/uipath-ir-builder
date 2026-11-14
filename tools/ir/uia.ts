@@ -23,6 +23,7 @@ import { createHash } from "node:crypto";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { isArgumentList, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
+import { toXamlType } from "./types-xaml.ts";
 
 type Add = (path: string, code: string, message: string) => void;
 
@@ -113,6 +114,14 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
         x.forEach((e, i) => {
           if (!isValue(e) || (plain && !(typeof e === "object" && "lit" in e))) add(`${kat}[${i}]`, "BAD_OBJ", `"${k}" の要素は ${plain ? "{ lit }" : "式か { lit }"} で書く`);
         });
+        continue;
+      }
+      // 型の決まっていない引数（System.Activities.Argument。Data Service の DynamicEntityField.ArgumentValue など）は { type, value } で書く
+      if (p.type === "System.Activities.Argument") {
+        const arg = x as { type?: unknown; value?: unknown };
+        if (typeof x !== "object" || x === null || Array.isArray(x) || typeof arg.type !== "string" || !isValue(arg.value as Value))
+          add(kat, "BAD_OBJ", `"${k}"（System.Activities.Argument）は { "type": "<型>", "value": <式か { lit }> } で書く`);
+        else if ("error" in toXamlType(arg.type)) add(kat, "UNKNOWN_TYPE", `"${k}" の型 "${arg.type}" が分からない`);
         continue;
       }
       if (!isValue(x)) { add(kat, "BAD_OBJ", `"${k}"（${p.type}）は値（式・{ lit }・数値・真偽値）で書く`); continue; }
@@ -245,6 +254,14 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx, path: str
   for (const [k, x] of Object.entries(v)) {
     if (k === "$type" || k === "$typeArg") continue;
     const p = t.props.find((q) => q.name === k)!;
+    if (p.type === "System.Activities.Argument") {
+      // 型の決まっていない引数は要素にする：<Tag.Prop><InArgument x:TypeArguments="…">[式]</InArgument></Tag.Prop>
+      const arg = x as unknown as { type: string; value: Value };
+      const tt = ctx.typeText(arg.type);
+      const body = ctx.cs ? ctx.cs.content(arg.value, tt, `${path}.${k}`) : ctx.esc(ctx.attrValue(arg.value, { kind: "in", type: "System.Object" } as Prop));
+      csElems.push([k, `<InArgument x:TypeArguments="${tt}">${body}</InArgument>`]);
+      continue;
+    }
     const el = isValue(x) ? ctx.cs?.element(x, p, `${path}.${k}`, t.genericArity ? String(v.$typeArg) : undefined) : undefined;
     if (el !== undefined) csElems.push([k, el]);
     else if (isValue(x)) attrs.push([k, ctx.attrValue(x, p)]);

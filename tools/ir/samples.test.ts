@@ -155,9 +155,16 @@ for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", 
 for (const f of files("samples/ir-unbuildable", ".json")) {
   test(`IR（build できない）${rel(f)}`, () => {
     const wf: Workflow = JSON.parse(read(f));
-    const { cat } = catOf(f, "ir-unbuildable");
-    assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
-    assert.ok(generate(wf, cat).includes(`x:Class="${wf.workflow}"`));
+    // 既定の版に無いパッケージは、そのカタログを読み直して objs の型（objectTypes）を入れ、終わったら既定の版に戻す
+    const pkg = relative(join(root, "samples", "ir-unbuildable"), f).split(/[\\/]/)[0];
+    const own = pkgCats.has(pkg);
+    const cat = own ? loadCatalog(root, sampleCatalogFiles(root, pkg)) : catOf(f, "ir-unbuildable").cat;
+    try {
+      assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
+      assert.ok(generate(wf, cat).includes(`x:Class="${wf.workflow}"`));
+    } finally {
+      if (own) loadCatalog(root, DEFAULT_CATALOG_FILES);
+    }
     const side = f.replace(/\.json$/, ".verify.json");
     assert.ok(existsSync(side) && JSON.parse(read(side)).unbuildable, "verify.json の unbuildable に理由を書く");
   });

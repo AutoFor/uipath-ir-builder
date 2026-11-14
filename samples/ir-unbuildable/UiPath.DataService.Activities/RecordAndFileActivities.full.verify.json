@@ -1,0 +1,4 @@
+{
+  "unbuildable": "テナントの表 IrProbeItem（Title 文字・必須、Amount 小数 0 桁、Note 文字、Attachment ファイル）の型が要る。表の定義は samples/dataservice/irprobe.entities.json（トライアルのテナントの id。tools/apps/df-entities-store.ts で作る）を、確かめ用のテンプレートの .entities/EntitiesStore.json に置けば build できる",
+  "noRun": "Data Service（テナントの表）に書き込むため。2026-11-14 にトライアルのテナントで 11 のアクティビティすべてを run して確かめた（knowledge/dataservice.md）"
+}

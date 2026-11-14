@@ -1,0 +1,292 @@
+{
+  "workflow": "RecordAndFileActivities_Full",
+  "variables": [
+    {
+      "name": "rec",
+      "type": "DataService.Entities.IrProbeItem"
+    },
+    {
+      "name": "got",
+      "type": "DataService.Entities.IrProbeItem"
+    },
+    {
+      "name": "upd",
+      "type": "DataService.Entities.IrProbeItem"
+    },
+    {
+      "name": "recs",
+      "type": "IList<DataService.Entities.IrProbeItem>"
+    },
+    {
+      "name": "recs2",
+      "type": "IList<DataService.Entities.IrProbeItem>"
+    },
+    {
+      "name": "rows",
+      "type": "IList<DataService.Entities.IrProbeItem>"
+    },
+    {
+      "name": "failedIds",
+      "type": "IList<Guid>"
+    },
+    {
+      "name": "tmpPath",
+      "type": "String"
+    },
+    {
+      "name": "dl",
+      "type": "ILocalResource"
+    }
+  ],
+  "body": [
+    {
+      "act": "CreateEntityRecord",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "OutputEntity": "rec",
+        "InputEntityInFieldView": "new DataService.Entities.IrProbeItem() With { .Title = \"one\", .Amount = 100 }"
+      },
+      "objs": {
+        "State": {
+          "RequiredFieldCount": 1,
+          "SelectedFields": [
+            {
+              "Id": "9452022e-c2df-f111-91f2-7c1e521513a8",
+              "IsRequired": true,
+              "Name": "Title",
+              "ArgumentValue": {
+                "type": "String",
+                "value": "\"one\""
+              }
+            },
+            {
+              "Id": "9552022e-c2df-f111-91f2-7c1e521513a8",
+              "Name": "Amount",
+              "ArgumentValue": {
+                "type": "Decimal",
+                "value": "100"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"CREATE id=\" & rec.Id.ToString() & \" title=\" & rec.Title"
+      }
+    },
+    {
+      "act": "GetEntityRecordById",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id",
+        "OutputEntity": "got"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"GET title=\" & got.Title & \" amount=\" & got.Amount.ToString()"
+      }
+    },
+    {
+      "act": "UpdateEntityRecord",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id",
+        "OutputEntity": "upd",
+        "InputEntityInFieldView": "new DataService.Entities.IrProbeItem() With { .Title = \"one-updated\", .Note = \"updated\" }"
+      },
+      "objs": {
+        "State": {
+          "RequiredFieldCount": 1,
+          "SelectedFields": [
+            {
+              "Id": "9452022e-c2df-f111-91f2-7c1e521513a8",
+              "IsRequired": true,
+              "Name": "Title",
+              "ArgumentValue": {
+                "type": "String",
+                "value": "\"one-updated\""
+              }
+            },
+            {
+              "Id": "9652022e-c2df-f111-91f2-7c1e521513a8",
+              "Name": "Note",
+              "ArgumentValue": {
+                "type": "String",
+                "value": "\"updated\""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"UPDATE title=\" & upd.Title & \" note=\" & upd.Note"
+      }
+    },
+    {
+      "act": "CreateMultipleEntityRecords",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "InputRecords": "New List(Of DataService.Entities.IrProbeItem) From { New DataService.Entities.IrProbeItem With { .Title = \"two\", .Amount = 2 }, New DataService.Entities.IrProbeItem With { .Title = \"three\", .Amount = 3 } }",
+        "OutputRecords": "recs"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"CREATE MANY count=\" & recs.Count.ToString()"
+      }
+    },
+    {
+      "act": "UpdateMultipleEntityRecords",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "InputRecords": "recs.Select(Function(r) New DataService.Entities.IrProbeItem With { .Id = r.Id, .Title = r.Title & \"-updated\", .Amount = r.Amount }).ToList()",
+        "OutputRecords": "recs2"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"UPDATE MANY titles=\" & String.Join(\",\", recs2.Select(Function(r) r.Title))"
+      }
+    },
+    {
+      "act": "QueryEntityRecords",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "Top": "1000",
+        "OutputRecords": "rows"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"QUERY count=\" & rows.Count.ToString()"
+      }
+    },
+    {
+      "act": "Assign",
+      "props": {
+        "To": "tmpPath",
+        "Value": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irprobe-upload.txt\")"
+      }
+    },
+    {
+      "act": "WriteTextFile",
+      "props": {
+        "FileName": "tmpPath",
+        "Text": {
+          "lit": "hello data fabric"
+        }
+      }
+    },
+    {
+      "act": "UploadFileToRecordField",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id",
+        "Field": {
+          "lit": "Attachment"
+        },
+        "FilePath": "tmpPath"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"UPLOAD done\""
+      }
+    },
+    {
+      "act": "DownloadFileFromRecordField",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id",
+        "Field": {
+          "lit": "Attachment"
+        },
+        "FilePath": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"irprobe-dl\")",
+        "DownloadedFileResource": "dl"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"DOWNLOAD \" & dl.LocalPath & \" = \" & System.IO.File.ReadAllText(dl.LocalPath)"
+      }
+    },
+    {
+      "act": "DeleteFileFromRecordField",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id",
+        "Field": {
+          "lit": "Attachment"
+        }
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"DELETE FILE done\""
+      }
+    },
+    {
+      "act": "DeleteMultipleEntityRecords",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "InputRecords": "recs.Select(Function(r) r.Id).ToList()",
+        "FailedRecords": "failedIds"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"DELETE MANY failed=\" & failedIds.Count.ToString()"
+      }
+    },
+    {
+      "act": "DeleteEntityRecord",
+      "typeArg": "DataService.Entities.IrProbeItem",
+      "props": {
+        "EntityId": "New Guid(\"8a52022e-c2df-f111-91f2-7c1e521513a8\")",
+        "RecordId": "rec.Id"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"DELETE done\""
+      }
+    }
+  ]
+}
