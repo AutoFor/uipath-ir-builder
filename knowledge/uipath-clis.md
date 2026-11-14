@@ -9,7 +9,7 @@ UiPath の CLI は 5 つある。このマシン（DESKTOP）に全部入れて�
 
 | やりたいこと | 使う CLI | 理由 |
 | --- | --- | --- |
-| 生成した XAML の式まで、build の前に早く確かめる | **`uipcli package analyze`**（`node tools/verify/analyze.mjs <P>`） | 式をコンパイルする。SSH から動く。1 プロジェクト 4〜6 秒 |
+| 生成した XAML の式まで、build の前に早く確かめる | **`uipcli package analyze`**（`node tools/verify/analyze.mjs <P>`。`verify.mjs` も build / run の前に自動で流す） | 式をコンパイルする。SSH から動く。1 プロジェクト 4〜8 秒 |
 | RPA の build / run（ロボットで動かす） | `uip rpa`（`tools/verify/queue-run.mjs` 経由） | 今の verify の仕組み。SSH からは窓口を通す |
 | テナントの操作（デプロイ・ジョブ・トリガー・接続・Data Fabric） | `uip` | ほかの CLI より扱える範囲が広い |
 | API ワークフロー・Maestro・ソリューション・Studio Web | `uip` | ほかの CLI には無い |
@@ -57,6 +57,11 @@ uipcli solution pack | deploy | upload-package | …
   - `tools/verify/analyze.mjs` がこれを読んで、エラーがあれば 1 で終わる。
 - **プロジェクトのフォルダに書き込む**（`.local`、`.codedworkflows`、`.objects`、`.project`、`.settings`）。`analyze.mjs` は写しで流す。
 - 古い `.local` が残っていると、消したファイル（`CodedMain.cs` など）を参照して `CS0234` で落ちる。写すときに `.local` と `.codedworkflows` を除く。
+- **`verify.mjs` に組み込んだ**（2026-11-14）。
+  - 生成のあと、build / run の前に流す。エラーのあるファイルは NG、ほかは SKIP にし、build / run はしない。
+  - 壊れた IR は 6 秒ほどで NG になった（今までは build を待っていた）。通る IR は analyze 8 秒のあと、XAML と C# の run まで OK。
+  - XAML にエラーがあると、同じ誤りのある C#（`.cs`）のエラーは出なかった。XAML を直すと、次に C# のエラーが出るはず。
+  - 止めるときは `--no-analyze`。uipcli が入っていなければ注意を出して飛ばす。
 - **analyze が通っても、run が通る保証はない**（実行時の値の誤り、UI の要素、Orchestrator の資源は見ない）。build と run は今までどおり `queue-run.mjs` で確かめる。
 - 規則の指摘（ST-USG-020「Log Message が無い」、TA-DBP-002「テストケースが無い」など）は、生成器の誤りではないことが多い。`--rules` で見られる。
 

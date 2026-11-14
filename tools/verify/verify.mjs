@@ -11,6 +11,11 @@
 //   --report <dir>    結果の置き場所（既定 out/verify/<n>）
 //
 //   --no-coded        IR から C# を作らない（XAML だけ）
+//   --no-analyze      build / run の前の uipcli の analyze（式のコンパイル）を流さない
+//
+// 生成したあと、build / run の前に uipcli package analyze（tools/verify/analyze.mjs）でプロジェクト全体を確かめる。
+// エラー（式のコンパイル・XAML の読み込み）があれば、そのファイルを NG にし、build / run はしない（プロジェクトごとコンパイルするので、ほかも落ちる）。
+// uipcli が入っていなければ、注意を出して今までどおり build / run する（knowledge/uipath-clis.md）。
 //   --use-project     作業用プロジェクトの project.json の版のカタログを使う（gen.ts / gen-coded.ts の --project。--template で版を変えたプロジェクトを試すとき）
 //   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
 //
@@ -36,6 +41,7 @@ import { randomUUID } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { analyzeProject } from "./analyze.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const uipJs = process.env.UIP_CLI_JS ?? join(process.env.APPDATA ?? "", "npm", "node_modules", "@uipath", "cli", "dist", "index.js");
@@ -53,6 +59,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--timeout") opt.timeout = Number(argv[++i]);
   else if (a === "--report") opt.report = argv[++i];
   else if (a === "--no-coded") opt.noCoded = true;
+  else if (a === "--no-analyze") opt.noAnalyze = true;
   else if (a === "--use-project") opt.useProject = true;
   else if (a === "--imports-from") opt.importsFrom = resolve(argv[++i]);
   else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
@@ -223,8 +230,32 @@ for (const f of files.filter((x) => extname(x).toLowerCase() === ".xaml")) {
   results.push(r);
 }
 
+// ---- analyze（uipcli）：build / run の前に、式までコンパイルして確かめる ----
+let analyzeFailed = false;
+if (!opt.noAnalyze && results.some(targetReady)) {
+  const a = analyzeProject(projDir);
+  if (a.missing) console.log(`注意: analyze を飛ばした（${a.missing}）`);
+  else if (a.fatal) { console.log(`注意: analyze が結果を返さなかった（build / run は続ける）`); writeFileSync(join(logDir, "_analyze.txt"), a.fatal); }
+  else {
+    writeFileSync(join(logDir, "_analyze.json"), JSON.stringify({ seconds: a.seconds, errors: a.errors, rules: a.rules }, null, 2));
+    const fmt = (e) => `${e.file}${e.activity ? ` / ${e.activity}` : ""}: ${e.message}`;
+    const ready = results.filter(targetReady);
+    const owner = (e) => ready.find((r) => basename(r.target).toLowerCase() === e.file.toLowerCase());
+    // どのファイルのものか分からないエラー（project.json など）は全部のファイルに付ける
+    const orphans = a.errors.filter((e) => !owner(e));
+    for (const r of ready) {
+      const mine = [...a.errors.filter((e) => owner(e) === r), ...orphans];
+      r.analyze = { ok: !mine.length, seconds: a.seconds, errors: mine.map(fmt) };
+    }
+    analyzeFailed = a.errors.length > 0;
+    if (analyzeFailed) for (const r of ready) if (r.analyze.ok) r.analyzeSkip = "ほかのファイルの analyze のエラーで build / run しなかった";
+  }
+}
+
 // ---- build / run ----
-if (opt.buildOnly) {
+if (analyzeFailed) {
+  // 何もしない（エラーは r.analyze、ほかは r.analyzeSkip）
+} else if (opt.buildOnly) {
   // "buildAlone": true のファイルは、プロジェクトに1つだけ置いて別に build する（Wait 系が別々のファイルにあると分析が落ちる。AUT-1074、knowledge/persistence.md）
   const alone = opt.pack ? [] : results.filter((r) => targetReady(r) && sidecar(r.file).buildAlone); // --pack はファイルを残す（1つずつ渡す）
   const hold = (r, on) => { if (on) renameSync(r.target, `${r.target}.held`); else renameSync(`${r.target}.held`, r.target); };
@@ -283,7 +314,7 @@ if (opt.buildOnly) {
 }
 
 // --pack：Helm を使うので窓口の中で流す。パッケージ名は作業用プロジェクトの project.json の name
-if (opt.pack) {
+if (opt.pack && !analyzeFailed) {
   mkdirSync(opt.pack, { recursive: true });
   const p = uip(["rpa", "pack", projDir, opt.pack, ...(opt.packVersion ? ["--package-version", opt.packVersion] : []), "--output", "json"], "_pack");
   if (p.envelope?.Result !== "Success") die(`pack に失敗: ${summarize(p)}`);
@@ -303,7 +334,7 @@ const summary = {
 };
 writeFileSync(join(reportDir, "report.json"), JSON.stringify(summary, null, 2));
 writeFileSync(join(reportDir, "report.md"), markdown(summary));
-for (const r of summary.files) console.log(`${r.status.padEnd(4)} ${r.file}${r.status === "NG" ? "  " + reason(r) : r.skipped ? "  " + r.skipped : ""}`);
+for (const r of summary.files) console.log(`${r.status.padEnd(4)} ${r.file}${r.status === "NG" ? "  " + reason(r) : r.analyzeSkip ? "  " + r.analyzeSkip : r.skipped ? "  " + r.skipped : ""}`);
 console.log(`\n${summary.ok ? "すべて OK" : "NG あり"}（${summary.seconds} 秒）→ ${relative(process.cwd(), join(reportDir, "report.md"))}`);
 process.exit(summary.ok ? 0 : 1);
 
@@ -457,6 +488,8 @@ function targetReady(r) { return (r.gen ? r.gen.ok : true) && r.target && exists
 function statusOf(r) {
   if (r.gen && !r.gen.ok) return "NG";
   if (r.check && !r.check.ok) return "NG";
+  if (r.analyze && !r.analyze.ok) return "NG";
+  if (r.analyzeSkip) return "SKIP";
   if (r.build && !r.build.ok) return "NG";
   if (r.skipped || r.run?.skipped) return "SKIP";
   if (r.run && !r.run.ok) return "NG";
@@ -466,6 +499,7 @@ function statusOf(r) {
 function reason(r) {
   if (r.gen && !r.gen.ok) return `生成: ${r.gen.issues.join("; ")}`;
   if (r.check && !r.check.ok) return `チェッカー: ${r.check.errors.join("; ")}`;
+  if (r.analyze && !r.analyze.ok) return `analyze: ${r.analyze.errors.join("; ")}`;
   if (r.build && !r.build.ok) return `build: ${r.build.errors.join("; ")}`;
   if (r.run && !r.run.ok) return r.run.missing?.length && !r.run.error ? `期待したログが無い: ${r.run.missing.join(", ")}` : `run: ${r.run.error}`;
   return "";
@@ -477,7 +511,7 @@ function markdown(s) {
   for (const r of s.files) {
     const sec = r.run?.seconds ?? r.build?.seconds ?? "";
     const via = r.gen?.notes?.filter((x) => x.startsWith("CODED_VIA_XAML")).length;
-    const note = r.status === "NG" ? reason(r) : r.skipped ? `Coded にしない: ${r.skipped}` : r.run?.skipped ? `run しない: ${r.run.skipped}` : r.check?.warnings?.length ? `警告 ${r.check.warnings.length} 件` : via ? `XAML 経由 ${via} 件` : "";
+    const note = r.status === "NG" ? reason(r) : r.analyzeSkip ? r.analyzeSkip : r.skipped ? `Coded にしない: ${r.skipped}` : r.run?.skipped ? `run しない: ${r.run.skipped}` : r.check?.warnings?.length ? `警告 ${r.check.warnings.length} 件` : via ? `XAML 経由 ${via} 件` : "";
     out.push(`| ${r.status} | ${r.file} | ${r.kind} | ${sec} | ${note.replaceAll("|", "\\|").replace(/\r?\n/g, " ")} |`);
   }
   for (const r of s.files) {
@@ -488,6 +522,8 @@ function markdown(s) {
       for (const e of r.check.errors) out.push(`- エラー: ${e}`);
       for (const w of r.check.warnings) out.push(`- 警告: ${w}`);
     }
+    if (r.analyze) out.push(`analyze: ${r.analyze.ok ? "OK" : "NG"}`, ...r.analyze.errors.map((e) => `- ${e}`), "");
+    if (r.analyzeSkip) out.push(r.analyzeSkip, "");
     if (r.build) out.push(`build: ${r.build.ok ? "OK" : "NG"}`, ...r.build.errors.map((e) => `- ${e}`));
     if (r.run?.skipped) out.push(`run しない: ${r.run.skipped}`);
     else if (r.run) {

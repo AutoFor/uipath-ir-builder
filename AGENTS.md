@@ -93,7 +93,7 @@ node tools/ir/gen.ts <P>/ir/Main.json <P>/ir/Greet.json --project <P> --out <P> 
 - IR は1つずつ並べて渡す（gen.ts はフォルダも `*.json` も受け取らない）
 - 「〜のカタログが無い」という注意は、そのパッケージのアクティビティを使わなければ気にしなくてよい
 - エラーが出たら、メッセージを読んで IR を直し、通るまで繰り返す。エラーを避けるために XAML を手で書かない。IR が正しいのに通らないなら、道具を直す（下の「道具を育てる」）
-- 生成した XAML の式まで確かめたいときは `node tools/verify/analyze.mjs <P>`（uipcli の package analyze。式をコンパイルし、未定義の変数などを数秒で出す。SSH から動く。プロジェクトは写しで流す）。通れば 5. の build / run に進む
+- 生成した XAML の式まで確かめたいときは `node tools/verify/analyze.mjs <P>`（uipcli の package analyze。式をコンパイルし、未定義の変数などを数秒で出す。SSH から動く。プロジェクトは写しで流す）。5. の verify も build / run の前に自動で流す
 - Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）
   - 対応表（`mappings/`）の無いアクティビティと、Coded API の無いパッケージ（Mail、Office 365、WebAPI、SAP BAPI、Data Service、Testing 23.4.1 など）のアクティビティは、XAML にして C# から `RunWorkflow` で呼ぶ。注意 `CODED_VIA_XAML` が出る。仕組みと落とし穴は [knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)
     - 子の無いアクティビティ：`<--out>/_activities/<アクティビティ名>.xaml`（形が違えば `<アクティビティ名>_<ハッシュ>.xaml`）。アクティビティ 1 つだけを置いた汎用の XAML で、値は C# から引数（`in_<Prop>` など）で渡す。出力・入出力はいつも引数にする。同じ形なら使い回す
@@ -112,6 +112,7 @@ node tools/verify/verify.mjs --name <作業名> --template <P> --use-project --n
 ```
 
 - 結果は `out/verify/<作業名>/report.md`。ログも見られる
+- verify は build / run の前に uipcli の analyze（式のコンパイル）を流す。エラーがあればそのファイルを NG にし、build / run をせずに数秒で終わる（`--no-analyze` で止める。uipcli が無ければ飛ばす）
 - 期待するログを `<P>/ir/Main.expected.log` に1行1件で書いておくと、出たログと突き合わせる（`[Information] こんにちは` のようにレベルから書くとレベルも比べる）
 - 入力引数は `<P>/ir/Main.verify.json` に `{ "args": { "in_Name": "太郎" } }`
 - **このマシン（DESKTOP）では、`uip` も verify.mjs も SSH から直接動かさない**。`verify.mjs` を `tools/verify/queue-run.mjs` に置き換えて、引数はそのまま渡す（run の窓口が画面のセッションで動かす）
