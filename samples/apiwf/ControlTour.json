@@ -48,6 +48,10 @@
   },
   "body": [
     {
+      "name": "開始のログ",
+      "log": "`items=${$workflow.input.items.length} limit=${$workflow.input.limit}`"
+    },
+    {
       "id": "pick",
       "name": "大きいものを選ぶ",
       "js": "return $workflow.input.items.filter(x => x.price >= 100);"
@@ -127,6 +131,113 @@
         "loops": "$context.variables.n",
         "caught": "$context.variables.caught",
         "picked": "@pick.map(x => x.name)"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "name": "上限 500 で Break（GOLD）",
+      "inputs": {
+        "items": [
+          {
+            "name": "a",
+            "price": 50
+          },
+          {
+            "name": "b",
+            "price": 200
+          },
+          {
+            "name": "c",
+            "price": 300
+          },
+          {
+            "name": "d",
+            "price": 900
+          },
+          {
+            "name": "e",
+            "price": 150
+          }
+        ],
+        "limit": 500
+      },
+      "expected": {
+        "total": 500,
+        "tier": "GOLD",
+        "loops": 3,
+        "caught": "Worker operation failed: boom",
+        "picked": [
+          "b",
+          "c",
+          "d",
+          "e"
+        ]
+      }
+    },
+    {
+      "name": "上限 1000 で全部足す",
+      "inputs": {
+        "items": [
+          {
+            "name": "a",
+            "price": 50
+          },
+          {
+            "name": "b",
+            "price": 200
+          },
+          {
+            "name": "c",
+            "price": 300
+          },
+          {
+            "name": "d",
+            "price": 900
+          },
+          {
+            "name": "e",
+            "price": 150
+          }
+        ],
+        "limit": 1000
+      },
+      "expected": {
+        "total": 1550,
+        "tier": "GOLD",
+        "loops": 3,
+        "caught": "Worker operation failed: boom",
+        "picked": [
+          "b",
+          "c",
+          "d",
+          "e"
+        ]
+      }
+    },
+    {
+      "name": "小さいものだけ（SILVER）",
+      "inputs": {
+        "items": [
+          {
+            "name": "x",
+            "price": 120
+          },
+          {
+            "name": "y",
+            "price": 10
+          }
+        ],
+        "limit": 1000
+      },
+      "expected": {
+        "total": 120,
+        "tier": "SILVER",
+        "loops": 3,
+        "caught": "Worker operation failed: boom",
+        "picked": [
+          "x"
+        ]
       }
     }
   ]

@@ -1,0 +1,13 @@
+{
+  "httpRetry": { "maxRetries": 2, "delayMs": 500, "strategy": "exponential", "statusCodes": [503] },
+  "outputs": { "status": "number", "elapsedMs": "number", "message": "string" },
+  "variables": { "started": { "type": "number", "default": 0 }, "message": { "type": "string", "default": "" } },
+  "body": [
+    { "assign": "started", "value": "Date.now()" },
+    { "try": [
+        { "id": "flaky", "name": "503 を返す GET", "stub": "5c4cc855-b42a-37e6-b910-de8588998fce",
+          "inputs": { "method": { "lit": "GET" }, "url": { "lit": "https://postman-echo.com/status/503" } } }
+      ], "as": "err", "catch": [ { "assign": "message", "value": "$err.title" } ] },
+    { "response": { "status": "@flaky?.statusCode ?? 0", "elapsedMs": "Date.now() - $context.variables.started", "message": "$context.variables.message" } }
+  ]
+}

@@ -32,15 +32,17 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 
 | 見本 | 中身 | 確かめたこと |
 | --- | --- | --- |
-| `ControlTour.json` | JavaScript、ForEach、If、Break、Assign、DoWhile、Try/Catch、Wait、Response | 手元の run（`--no-auth`）、デプロイして Orchestrator のジョブ、Studio Web の Debug、Flow の apiWorkflow から呼ぶ |
+| `ControlTour.json` | Log Message、JavaScript、ForEach、If、Break、Assign、DoWhile、Try/Catch、Wait、Response。`tests`（評価の 3 件） | 手元の run（`--no-auth`）、評価（`evals.mjs` で 3 件 PASS）、デプロイして Orchestrator のジョブ（Log Message は Orchestrator のログに出た）、Studio Web の Debug、Flow の apiWorkflow から呼ぶ、時刻のトリガー・API のトリガーで起動 |
 | `HttpTour.json` | HTTP Request の GET と POST（GET の結果を POST の本文に入れる） | 手元の run（`--no-auth`） |
 | `ConnectorTour.json` | Integration Service のコネクタ（Data Fabric の Query Entity Records）。会社のテナントの接続 | 手元の run（ログイン） |
 | `FileTour.json` | File to Base64、Base64 to File（参照から・文字列から） | 手元の run（ログイン、`--input-file` / `--output-dir`）。元のファイルと同じ中身に戻った |
+| `RetryTour.json` | HTTP の再試行（`httpRetry`。指数で 2 回）。503 を返す GET を Try/Catch で受ける | 手元の run（`--no-auth`）。500 ms・1000 ms 待って 2 回やり直し、「HTTP Status: 503」で Catch に入った |
 
 ### IR の書き方
 
 ```json
-{ "inputs": { "items": "array", "doc": "file" }, "outputs": { "total": "number" },
+{ "httpRetry": { "maxRetries": 2 }, "tests": [ { "name": "…", "inputs": { … }, "expected": { … } } ],
+  "inputs": { "items": "array", "doc": "file" }, "outputs": { "total": "number" },
   "variables": { "total": { "type": "number", "default": 0 } },
   "body": [ { "id": "pick", "name": "表示名", "js": "return …;" }, … ] }
 ```
@@ -51,6 +53,7 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 | --- | --- |
 | `assign` / `value` | Assign |
 | `js` | JavaScript |
+| `log` / `level`（`info`・`warning`・`error`。既定は `info`） | Log Message |
 | `if` / `then` / `else` | If |
 | `forEach` / `item` / `index` / `body` | For Each |
 | `doWhile` / `body` | Do While |
@@ -84,6 +87,31 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 - **Break**：`break: "true"`（文字列）。`set` を付けない。付けると `validate` が落ちる。ループの外は `BREAK_OUTSIDE_LOOP` で弾く。
 - **コネクタの入力**：リテラルは素のまま。`${'…'}` にすると Studio Web が保存で消す。式は `${…}`。
 - **file の入力・出力**：`#/definitions/job-attachment`（JobAttachment の参照）にする。
+- **Log Message**：Studio Web が保存する形と同じにする。中身は JavaScript の `console.log`（Info）・`console.warn`（Warning）・`console.error`（Error）の 1 行で、`metadata.activityType: "LogMessage"`。
+  - リテラルは `console.log("…")` になる。
+  - 式は `console.log(<式>)` になり、`metadata.propertyModes.message: "expression"` が付く。
+  - export を持たないので、次の手順の `$input` は使わない。
+  - CLI 1.204.0 の `validate` は `LogMessage` を知らず「Unknown activityType 'LogMessage'」で Failure にする（知っているのは `call` を使う古い `CustomLog`）。`run` とクラウドでは動く。
+
+### HTTP の再試行（`httpRetry`）
+
+- ワークフローの一番上の `httpRetryConfig` になる（Studio Web の「Retry on Failure」）。効くのは **GET の HTTP Request だけ**。
+- 書かない項目は既定値：`maxRetries` 3、`delayMs` 1000、`networkErrors` true、`statusCodes` [408, 429, 500, 502, 503, 504]、`strategy` "constant"、`respectRetryAfter` true。
+- `multiplier`（既定 2）は `strategy: "exponential"` のときだけ付く。範囲を外れた値は `BAD_RETRY` で弾く。
+- 再試行しても失敗すると、Try/Catch のエラーの `title` が「HTTP Status: 503」のようになる。
+
+### 評価（`tests`）
+
+- IR の `tests` から、Studio Web の Evaluations パネルが読むファイルを書く。
+  - `evals/default/eval-sets/evaluation-set.json`
+  - `evals/default/evaluators/exact-match-evaluator.json`（`uipath-exact-match`）
+- 行の id は名前から決まるので、生成し直しても変わらない。ファイルがすでにあれば、行だけを入れ替える。
+- `expected` は Response の値そのもの。キーの大文字小文字まで比べる。
+- `node tools/apiwf/evals.mjs <プロジェクト> [--auth]` で、行ごとに `uip api-workflow run` を流して判定する。
+  - 判定はパネルと同じ（厳密に等しいか。キーの順は見ない）。
+  - 値はデバッグのログの Response から取る。CLI の `Data` はキーを PascalCase にするので使わない。
+  - 終了コード：0 = 全部 PASS、1 = FAIL か ERROR、2 = 使い方の間違い・行が無い。
+- トライアルのテナントの Studio Web には Evaluations パネルが無かった（機能の切り替えで隠れている）。CLI の判定で確かめる。
 
 ## Studio Web の往復で分かったこと
 
@@ -107,6 +135,20 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
   - 動かすと値はそのまま渡り、結果も正しい。
   - `tools/maestro/verify.mjs` が compile のあとに直す（`fixProcessInputTypes`）。
 - **API ワークフローの配列の入力**：`items` の型まで JSON Schema で書く。書かないと、Studio Web では `String[]` に見える。
+
+## トリガー（Orchestrator）
+
+デプロイしたプロセスにトリガーを付ける。トライアルのテナントで確かめた。
+
+- **時刻**：
+  - `uip or triggers create --type time --name <名前> --release-key <プロセスの Key> --folder-path <フォルダ> --cron "0 0/1 * 1/1 * ? *" --time-zone "Tokyo Standard Time" --runtime-type Serverless --input-arguments '{…}'`
+  - タイムゾーンは Windows の ID。IANA の `Asia/Tokyo` は HTTP 400 になる。
+  - 毎分起動し、ジョブの Source は `Schedule` だった。
+- **API（HTTP）**：
+  - `uip or triggers create --type api --name <名前> --release-key <Key> --folder-path <フォルダ> --slug <slug> --method Post --calling-mode AsyncRequestReply --runtime-type Serverless`
+  - URL は `https://cloud.uipath.com/<組織>/<テナント>/orchestrator_/t/<フォルダの Key>/<slug>`。Bearer のトークンを付け、本文に入力の JSON を入れて呼ぶ。
+  - AsyncRequestReply は 202 → `Location` を GET して 303 → 200 で、Response の値が返る（4 秒ほど）。ジョブの Source は `HttpTrigger`。
+  - 見る・消すときは `--type api` が要る（`triggers get`・`delete`）。消すのは `--yes` も要る。
 
 ## 動かすときの注意
 

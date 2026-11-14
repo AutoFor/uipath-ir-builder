@@ -15,8 +15,8 @@
 // 終了コード: 0 = OK、1 = IR の誤り、2 = 使い方の間違い
 
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 
 export type Lit = { lit: string };
 export type Val = string | number | boolean | null | Lit | Val[] | { [k: string]: Val };
@@ -25,6 +25,7 @@ type SchemaType = string | Record<string, unknown>;
 export type Step =
   | ({ assign: string; value: Val } & Common)
   | ({ js: string } & Common)
+  | ({ log: Val; level?: "info" | "warning" | "error" } & Common)
   | ({ if: string; then?: Step[]; else?: Step[] } & Common)
   | ({ forEach: string; item?: string; index?: string; body: Step[] } & Common)
   | ({ doWhile: string; body: Step[] } & Common)
@@ -45,8 +46,15 @@ export type Stubber = (typeId: string, opts: { inputs: Record<string, unknown>; 
 
 type Common = { id?: string; name?: string };
 
+/** HTTP の再試行（GET だけ）。書かない項目は Studio Web の「Retry on Failure」の既定値 */
+export type HttpRetry = { maxRetries?: number; delayMs?: number; networkErrors?: boolean; statusCodes?: number[]; strategy?: "constant" | "linear" | "exponential"; maxDelayMs?: number; multiplier?: number; respectRetryAfter?: boolean };
+/** Evaluations のテストの 1 件。expected は Response の値そのもの（キーの大文字小文字も同じ） */
+export type TestCase = { name: string; inputs?: Record<string, unknown>; expected: unknown };
+
 export type Ir = {
   name?: string;
+  httpRetry?: HttpRetry;
+  tests?: TestCase[];
   inputs?: Record<string, SchemaType>;
   outputs?: Record<string, SchemaType>;
   variables?: Record<string, SchemaType | { type: string; default?: unknown }>;
@@ -116,7 +124,7 @@ function assignValue(v: Val, refs: (s: string) => string): unknown {
 }
 
 const KIND_PREFIX: Record<string, string> = {
-  assign: "Assign", js: "Javascript", if: "If", forEach: "For_Each", doWhile: "Do_While", break: "Break", try: "Try_Catch",
+  assign: "Assign", js: "Javascript", log: "Log_Message", if: "If", forEach: "For_Each", doWhile: "Do_While", break: "Break", try: "Try_Catch",
   wait: "Wait", response: "Response", fileToBase64: "FileToBase64", base64ToFile: "Base64ToFile", sequence: "Sequence",
 };
 const KINDS = [...Object.keys(KIND_PREFIX), "raw", "stub"];
@@ -198,6 +206,15 @@ export function generate(ir: Ir, projectId?: string, stubber?: Stubber): { workf
           const code = R((s as { js: string }).js);
           if (!/\b(return|throw)\b/.test(code)) add(p, "JS_NO_RETURN", "JavaScript は return で値を返す（throw だけでもよい）");
           return [{ [key]: { run: { script: { code, language: "javascript", arguments: ARGS } }, export: { as: outExport(key) }, metadata: meta("JsInvoke", "JavaScript") } }];
+        }
+        case "log": {
+          // Studio Web の Log Message（2026-06）。中身は console.log / warn / error を呼ぶ JavaScript。値は返さない（export なし）
+          const l = s as { log: Val; level?: string };
+          const fn = ({ info: "log", warning: "warn", error: "error" } as Record<string, string>)[l.level ?? "info"];
+          if (!fn) { add(p, "BAD_LEVEL", "level は info / warning / error"); return []; }
+          const lit = isLit(l.log);
+          const code = `console.${fn}(${lit ? JSON.stringify((l.log as Lit).lit) : jsExpr(l.log, R)})`;
+          return [{ [key]: { run: { script: { code, language: "javascript", arguments: ARGS } }, metadata: meta("LogMessage", "Log Message", lit ? {} : { propertyModes: { message: "expression" } }) } }];
         }
         case "if": {
           const f = s as { if: string; then?: Step[]; else?: Step[] };
@@ -296,6 +313,7 @@ export function generate(ir: Ir, projectId?: string, stubber?: Stubber): { workf
     });
 
   const userSteps = build(ir.body, "body", { depth: 0, names: new Set() });
+  const retry = ir.httpRetry ? httpRetryConfig(ir.httpRetry, add) : undefined;
   const variables = Object.fromEntries(Object.entries(ir.variables ?? {}).map(([k, v]) => [k, schemaOf(v as SchemaType)]));
   const workflow: Record<string, unknown> = {
     document: {
@@ -308,10 +326,62 @@ export function generate(ir: Ir, projectId?: string, stubber?: Stubber): { workf
     },
     ...(ir.inputs ? { input: objSchema(ir.inputs, "Inputs") } : {}),
     ...(ir.outputs ? { output: objSchema(ir.outputs, "Outputs") } : {}),
+    ...(retry ? { httpRetryConfig: retry } : {}),
     do: [{ Sequence_1: { do: [WORKFLOW_START, ...userSteps], metadata: { activityType: "Sequence", displayName: "Sequence", fullName: "Sequence" } } }],
     evaluate: { mode: "strict", language: "javascript" },
   };
   return { workflow, issues };
+}
+
+/** httpRetryConfig を作る（既定値は Studio Web の「Retry on Failure」をオンにしたときの値） */
+export function httpRetryConfig(r: HttpRetry, add: (path: string, code: string, message: string) => void = () => {}): Record<string, unknown> {
+  const strategy = r.strategy ?? "constant";
+  const out: Record<string, unknown> = {
+    maxRetries: r.maxRetries ?? 3,
+    delayMs: r.delayMs ?? 1000,
+    networkErrors: r.networkErrors ?? true,
+    statusCodes: r.statusCodes ?? [408, 429, 500, 502, 503, 504],
+    backoff: { strategy, ...(r.maxDelayMs !== undefined ? { maxDelayMs: r.maxDelayMs } : {}), ...(strategy === "exponential" ? { multiplier: r.multiplier ?? 2 } : {}) },
+    respectRetryAfter: r.respectRetryAfter ?? true,
+  };
+  const n = out.maxRetries as number, d = out.delayMs as number;
+  if (n < 1 || n > 30) add("httpRetry.maxRetries", "BAD_RETRY", "maxRetries は 1〜30");
+  if (d < 0 || d > 900000) add("httpRetry.delayMs", "BAD_RETRY", "delayMs は 0〜900000");
+  if (r.multiplier !== undefined && strategy !== "exponential") add("httpRetry.multiplier", "BAD_RETRY", "multiplier は strategy が exponential のときだけ");
+  const codes = out.statusCodes as number[];
+  if (new Set(codes).size !== codes.length || codes.some((c) => c < 100 || c > 599)) add("httpRetry.statusCodes", "BAD_RETRY", "statusCodes は 100〜599 で重ならない");
+  return out;
+}
+
+/** Evaluations のファイル（evals/default/…）。Studio Web の Evaluations パネルと同じ形。既にあるファイルは id などを残して評価の行だけ入れ替える */
+export const EVAL_SET = "evals/default/eval-sets/evaluation-set.json";
+export const EVALUATOR = "evals/default/evaluators/exact-match-evaluator.json";
+export function evalFiles(tests: TestCase[], current: { set?: Record<string, any>; evaluator?: Record<string, any> } = {}): Record<string, unknown> {
+  const evaluator = current.evaluator ?? {
+    version: "1.0", id: "exact-match-eval-001", name: "Exact Match", description: "Exact Match", evaluatorTypeId: "uipath-exact-match",
+    evaluatorConfig: { name: "Exact Match", targetOutputKey: "*", defaultEvaluationCriteria: { expectedOutput: {} } },
+  };
+  const prev = new Map<string, any>((current.set?.evaluations ?? []).map((e: any) => [e.name, e]));
+  const set = {
+    ...(current.set ?? { version: "1.0", id: "eval-set-001", name: "Dataset" }),
+    evaluatorRefs: ["exact-match-evaluator"],
+    evaluations: tests.map((t) => ({
+      ...(prev.get(t.name) ?? {}),
+      id: prev.get(t.name)?.id ?? stableId(t.name),
+      name: t.name,
+      inputs: t.inputs ?? {},
+      evaluationCriterias: { "exact-match-evaluator": { expectedOutput: t.expected } },
+    })),
+  };
+  return { [EVAL_SET]: set, [EVALUATOR]: evaluator };
+}
+function stableId(name: string): string {
+  // 名前から決まる UUID の形の id（生成し直しても変わらない）
+  let h = 2166136261;
+  const hex: string[] = [];
+  for (let i = 0; i < 32; i++) { h = Math.imul(h ^ name.charCodeAt(i % Math.max(1, name.length)) ^ i, 16777619) >>> 0; hex.push((h & 15).toString(16)); }
+  const x = hex.join("");
+  return `${x.slice(0, 8)}-${x.slice(8, 12)}-4${x.slice(13, 16)}-8${x.slice(17, 20)}-${x.slice(20, 32)}`;
 }
 
 /** entry-points.json の input / output を、ワークフローのスキーマに合わせる（Studio Web が引数を出すため） */
@@ -362,6 +432,13 @@ function main() {
   if (print) process.stdout.write(text);
   if (project) {
     writeFileSync(wfPath!, text);
+    if (ir.tests?.length) {
+      const read = (p: string) => (existsSync(join(resolve(project), p)) ? JSON.parse(readFileSync(join(resolve(project), p), "utf8")) : undefined);
+      for (const [p, v] of Object.entries(evalFiles(ir.tests, { set: read(EVAL_SET), evaluator: read(EVALUATOR) }))) {
+        mkdirSync(dirname(join(resolve(project), p)), { recursive: true });
+        writeFileSync(join(resolve(project), p), JSON.stringify(v, null, 2) + "\n");
+      }
+    }
     const epPath = join(resolve(project), "entry-points.json");
     if (existsSync(epPath)) writeFileSync(epPath, JSON.stringify(entryPoints(JSON.parse(readFileSync(epPath, "utf8")), workflow), null, 2) + "\n");
     console.log(`OK ${file} -> ${wfPath}`);

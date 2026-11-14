@@ -102,6 +102,20 @@ test("stub：SlotKey をキーに、@id は ExportBucketKey、入力のリテラ
   assert.deepEqual(generate({ body: [{ stub: "T" }] }).issues.map((i) => i.code), ["NO_STUBBER"]);
 });
 
+test("Log Message：console.log / warn / error、リテラルは文字列、式は propertyModes、export なし", () => {
+  const { workflow, issues } = generate({ body: [{ log: { lit: "hello \"x\"" } }, { log: "`n=${$workflow.input.n}`", level: "warning" }, { log: { lit: "e" }, level: "error" }] });
+  assert.deepEqual(issues, []);
+  const a = step(workflow, 1).Log_Message_1, b = step(workflow, 2).Log_Message_2, c = step(workflow, 3).Log_Message_3;
+  assert.equal(a.run.script.code, 'console.log("hello \\"x\\"")');
+  assert.equal(a.metadata.activityType, "LogMessage");
+  assert.equal(a.metadata.propertyModes, undefined);
+  assert.equal(a.export, undefined);
+  assert.equal(b.run.script.code, "console.warn(`n=${$workflow.input.n}`)");
+  assert.deepEqual(b.metadata.propertyModes, { message: "expression" });
+  assert.equal(c.run.script.code, 'console.error("e")');
+  assert.equal(generate({ body: [{ log: "x", level: "debug" as any }] }).issues[0].code, "BAD_LEVEL");
+});
+
 test("jsExpr：文字列のリテラルは ' をエスケープ", () => {
   assert.equal(jsExpr({ lit: "it's" }, id), "'it\\'s'");
   assert.equal(jsExpr([1, { lit: "a" }], id), "[1, 'a']");
