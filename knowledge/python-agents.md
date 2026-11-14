@@ -12,7 +12,7 @@ UiPath のエージェントを Python で作るときに分かったこと（20
   - 雛形と JSON（`entry-points.json`、`bindings.json`、`project.uiproj`）は、`new` と `init` が Python のコードから自動で作る。
   - AI が書くのは `main.py` だけで、それはふつうの LangGraph の Python。IR を挟んでも短くも安全にもならない。
   - 守るべき約束事（下の「書くときの約束」）を、この文書と見本で渡す。
-- **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`、アセットと Data Fabric を読む関数は `samples/pyagent/sdk-probe/`。手順は下の「作り方」。
+- **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`、アセットと Data Fabric を読む関数は `samples/pyagent/sdk-probe/`、人の承認を挟むエージェントは `samples/pyagent/hitl-agent/`。手順は下の「作り方」。
 - **フレームワークは LangGraph**（`uipath-langchain`）。スキルの第一の推奨で、人のタスク（HITL）やプロセスの呼び出しの形がいちばんそろっている。
 - **LLM の API キーは要らない**。UiPath の LLM Gateway を通るので、テナントで使えるモデル（Claude・GPT・Gemini）がそのまま使える。
 - **単純なエージェント**（道具を呼ぶだけ・人の確認を挟むだけ）なら、Studio Web の low-code のエージェント（`agent.json`、`uip agent`）の方が公式の推奨に合う。Python にするのは、独自のグラフ、外部のライブラリ、複雑な HITL、コードでの評価が要るとき。
@@ -94,6 +94,28 @@ Python の関数（LLM を使わない）から Playwright で DOM を操作し�
 - 見本は、資格情報を読んでも値を返さず、読めたかどうかと文字数だけを返す。パスワードを出力やログに出さない。
 - 試しに作ったアセット・レコード・プロセス・パッケージは消した。
 
+## 人の承認を挟む（HITL。見本 hitl-agent）
+
+`samples/pyagent/hitl-agent/`。経費の申請を受け、上限（`limit`）以下なら自動で承認し、超えたら Action Center のタスクで人に承認・却下してもらい、その結果で分岐して終わる。
+
+- **書き方**：ノードの中で `task = interrupt(CreateEscalation(title=…, data={…}, app_name=…, app_folder_path=…))`（`from uipath.platform.common import CreateEscalation`）。
+  - 止まって、再開すると `task` に完了したタスクが返る。`task.action`（`Approve` / `Reject`。ボタンの名前）、`task.data`（人が書いた値）、`task.completed_by_user`（`displayName` などの dict）。
+  - 承認・却下で分けたいときは `CreateEscalation`。`CreateTask` は `data` しか返らず、どちらを押したか分からない（スキルの決まり）。
+- **Action Center のアプリが要る**。`app_name` を書かないと `Failed to create HITL action: appName or appKey is required` で落ちる。
+  - 見本の画面は `approval-app.json`（申請者・金額・用途を見せ、コメントを書いて「承認する」「却下する」）。`tools/apps/coded-action.ts` で作る（[apps.md](apps.md)）。
+  - `data` のキーは、アプリの入力（`dir: in`）の名前と合わせる。合わないと画面の欄が空になる。
+  - 出し方：`npm run build` → `uip codedapp pack dist -n <アプリ> -v 1.0.0` → `uip codedapp publish -n <アプリ> -v 1.0.0 -t Action` → `uip codedapp deploy -n <アプリ> --folder-key <フォルダの Key>`。
+- **手元で動かす**（トライアルで確かめた）：
+  1. `uip codedagent run agent '{…}'`：タスクができて止まる。出力のファイルには、止まったところの中身（`CreateEscalation` の値）が入る。
+  2. 人がタスクを完了する。
+  3. `uip codedagent run agent --resume`：続きから動き、`{"decision":"approved","note":"出張なので承認"}` が返った。タスクがまだ終わっていなければ、もう一度止まるだけ。
+- **クラウド**：`invoke` したジョブはタスクを作って `Suspended` になり、タスクを完了すると自動で再開して Successful になった（却下で `{"decision":"rejected","decided_by":"<完了した人の表示名>","note":"…"}`）。
+- **タスクを CLI で完了する**（人の代わりに試すとき）：
+  - タスクは割り当てられていない（Unassigned）と完了できない（「This action is no longer assigned to you」）。先に `uip tasks assign <Id> --user-id <ユーザーの Id>` で自分に割り当てる。
+  - ユーザーの Id は `uip tasks users --folder-key <フォルダの Key>`（`--folder-id` は受け取らない）。
+  - 完了は `uip tasks complete <Id> --type AppTask --folder-id <フォルダの Id> --action Approve --data '{…}'`。
+- 片付け：プロセスとパッケージ（ほかの見本と同じ）、アプリは `uip codedapp delete --display-name <アプリ> --folder-key <Key> --yes`。publish したアプリのパッケージは残る（`uip` に消すコマンドが無い）。
+
 ## 書くときの約束（守らないと落ちる）
 
 - `from uipath.platform import UiPath`。`UiPath()` と LLM は**関数の中で作る**。モジュールの最上位で作ると `init` が落ちる。
@@ -125,7 +147,7 @@ LangGraph で決まった形があるもの（スキルの `references/coded/cap
 | MCP のサーバーの道具 | `open_mcp_tools` |
 | トレース | LangGraph は自動。ほかは `@traced` |
 
-確かめたのは「SDK でプロセスを呼んで待つ道具」だけ。`interrupt` による止めて再開、HITL、RAG、MCP は手で動かしていない。
+確かめたのは「SDK でプロセスを呼んで待つ道具」と、`CreateEscalation` による人の承認（下の「人の承認を挟む」）。`InvokeProcess` の止めて再開、RAG、MCP は手で動かしていない。
 
 ## ほかのフレームワーク
 

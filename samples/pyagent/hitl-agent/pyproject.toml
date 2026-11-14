@@ -1,0 +1,14 @@
+[project]
+name = "hitl-agent"
+version = "0.0.1"
+description = "上限を超えた経費を Action Center で人に承認してもらうエージェント（見本）"
+authors = [{ name = "uipath-ir-builder" }]
+dependencies = [
+    "uipath-langchain[bedrock,vertex]>=0.19.0, <0.20.0",
+]
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "uipath-dev>=0.0.87",
+]

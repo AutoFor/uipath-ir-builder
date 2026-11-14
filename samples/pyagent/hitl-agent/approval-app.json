@@ -1,0 +1,16 @@
+{
+  "app": "hitl-expense-approval",
+  "kind": "action",
+  "title": "経費の承認",
+  "subtitle": "上限を超えた経費の申請。承認するか却下するかを選ぶ。",
+  "fields": [
+    { "name": "applicant", "dir": "in", "type": "string", "required": true, "label": "申請者", "section": "申請" },
+    { "name": "amount", "dir": "in", "type": "number", "required": true, "label": "金額", "currency": "JPY", "section": "申請" },
+    { "name": "purpose", "dir": "in", "type": "string", "label": "用途", "section": "申請" },
+    { "name": "comment", "dir": "out", "type": "string", "control": "textarea", "label": "コメント", "placeholder": "判断の理由" }
+  ],
+  "outcomes": [
+    { "name": "Reject", "label": "却下する", "validate": false },
+    { "name": "Approve", "label": "承認する", "primary": true }
+  ]
+}
