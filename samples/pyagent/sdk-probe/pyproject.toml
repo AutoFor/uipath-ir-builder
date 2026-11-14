@@ -1,0 +1,9 @@
+[project]
+name = "sdk-probe"
+version = "0.0.1"
+description = "アセット・資格情報・Data Fabric を Python の SDK で読む関数（見本）"
+authors = [{ name = "uipath-ir-builder" }]
+dependencies = [
+    "uipath>=2.15.2, <2.16.0"
+]
+requires-python = ">=3.11"

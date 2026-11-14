@@ -12,7 +12,7 @@ UiPath のエージェントを Python で作るときに分かったこと（20
   - 雛形と JSON（`entry-points.json`、`bindings.json`、`project.uiproj`）は、`new` と `init` が Python のコードから自動で作る。
   - AI が書くのは `main.py` だけで、それはふつうの LangGraph の Python。IR を挟んでも短くも安全にもならない。
   - 守るべき約束事（下の「書くときの約束」）を、この文書と見本で渡す。
-- **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`。手順は下の「作り方」。
+- **始め方**：見本を写して直す。エージェントは `samples/pyagent/quote-agent/`、Playwright でブラウザを操作する関数は `samples/pyagent/playwright-form/`、アセットと Data Fabric を読む関数は `samples/pyagent/sdk-probe/`。手順は下の「作り方」。
 - **フレームワークは LangGraph**（`uipath-langchain`）。スキルの第一の推奨で、人のタスク（HITL）やプロセスの呼び出しの形がいちばんそろっている。
 - **LLM の API キーは要らない**。UiPath の LLM Gateway を通るので、テナントで使えるモデル（Claude・GPT・Gemini）がそのまま使える。
 - **単純なエージェント**（道具を呼ぶだけ・人の確認を挟むだけ）なら、Studio Web の low-code のエージェント（`agent.json`、`uip agent`）の方が公式の推奨に合う。Python にするのは、独自のグラフ、外部のライブラリ、複雑な HITL、コードでの評価が要るとき。
@@ -72,6 +72,22 @@ Python の関数（LLM を使わない）から Playwright で DOM を操作し�
   - 向く：画面の無い（headless）取得や入力を、ロボットなしにクラウドだけで回したいとき。LLM に判断させながら操作したいとき。
   - 向かない：社内のサイト（クラウドから届かない）、ログインの画面や二段階認証、デスクトップのアプリ。これらはロボットで動く RPA（UI Automation。この道具の IR の生成器）を使う。
   - パスワードは Orchestrator の資格情報のアセットから読める（`UiPath().assets.retrieve_credential`）。試していない。
+
+## アセットと Data Fabric を読む（見本 sdk-probe）
+
+`samples/pyagent/sdk-probe/`。Python の関数から、Orchestrator のアセットと Data Fabric の表を読む。トライアルのテナントで、手元の run とクラウドのジョブの両方で確かめた。
+
+| 読むもの | 書き方 | 結果 |
+| --- | --- | --- |
+| テキストのアセット | `await uip.assets.retrieve_async("名前", folder_path="Shared")` の `.value` | 値が読めた |
+| Data Fabric のレコードの一覧 | `entity = await uip.entities.retrieve_by_name_async("表の名前")` → `await uip.entities.list_records_async(entity.id, limit=50)` | 足した 2 件が読めた。列は表の列名（`Title`、`Amount`）で取れる |
+| Data Fabric の SQL | `await uip.entities.query_entity_records_async("SELECT Title, Amount FROM 表 WHERE Amount >= 500")` | 条件に合う 1 件だけが返った。DECIMAL の列は `880.0` のように小数になる |
+| 資格情報のアセット | `await uip.assets.retrieve_credential_async("名前", folder_path=…)` → 復号したパスワード | **未確認**（試しの資格情報を作っていない） |
+
+- 手元の run は 5.6 秒。
+- クラウドのジョブ（個人ワークスペースで動く）からも、`Shared` のアセットと tenant の表が読めた。フォルダが違っても `folder_path` を書けば読める（デプロイした本人の権限で動くため、と考えられる。ロボットのアカウントで動かす場合は未確認）。
+- 見本は、資格情報を読んでも値を返さず、読めたかどうかと文字数だけを返す。パスワードを出力やログに出さない。
+- 試しに作ったアセット・レコード・プロセス・パッケージは消した。
 
 ## 書くときの約束（守らないと落ちる）
 
