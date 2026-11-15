@@ -230,6 +230,10 @@ test("コンテキスト：インデックスは名前で、Data Fabric はフ�
   assert.deepEqual(df.entitySet[0], { id: "id-T", referenceKey: "id-T", name: "T", folderId: "folder-key", folderDisplayName: "Shared", description: null, entityType: "native" });
   assert.equal((result!.resources.Files as any).contextType, "attachments");
   assert.equal(generate(ir({ contexts: [{ index: "x", folder: "S", mode: "DeepRag" as any }] }), BASE, ALL).problems[0].code, "BAD_MODE");
+  // Structured は 2026-09 に廃止：Data Fabric へ案内する
+  const retired = generate(ir({ contexts: [{ index: "x", folder: "S", mode: "structured" as any }] }), BASE, ALL).problems[0];
+  assert.equal(retired.code, "RETIRED_MODE");
+  assert.match(retired.message, /dataFabric/);
 });
 
 test("Integration Service：固定の値も入力のスキーマに残し（enum を選んだ値に）、results[*] はそのままのキー", () => {

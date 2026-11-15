@@ -91,7 +91,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | ・Integration Service | `{ "integration": "<connector の key>", "activity": "<ObjectName>", "values": { "固定する項目": 値 } }`。活動は `uip is typecache activities <key>`、接続は既定のもの（`connection` で Id か名前） |
 | ・MCP | `{ "mcp": "<slug>", "tools": ["使う道具"] }`。AgentHub の MCP サーバー（`uip agenthub mcp list`）。`tools` を書かなければ全部（動的） |
 | ・IXP | `{ "ixp": "<IXP のプロジェクト>", "tag": "staging" }`。タグ（staging / live）の付いたモデルだけ使える（`uip ixp projects publish <名前> --model-version <版> --tag staging`） |
-| `contexts` | `{ "index": "<インデックス名>", "folder": "Shared" }`（RAG。`mode` は semantic / structured / deeprag / batchtransform）、`{ "dataFabric": ["表"], "folder": "Shared" }`（フォルダの表だけ）、`{ "attachments": true, "name": "…" }` |
+| `contexts` | `{ "index": "<インデックス名>", "folder": "Shared" }`（RAG。`mode` は semantic / deeprag / batchtransform。Structured は 2026-09 に廃止され、表のデータは Data Fabric のコンテキストで引く。生成器は `structured` を `RETIRED_MODE` で止める）、`{ "dataFabric": ["表"], "folder": "Shared" }`（フォルダの表だけ）、`{ "attachments": true, "name": "…" }` |
 | `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action。書類の確認は `{ "validate": "<IXP の道具の名前>", "bucket": "<バケット>", "bucketFolder": "Shared" }`（バケットは生成器が `resources add` でソリューションに取り込む） |
 | `memory` | `[{ "space": "<memory space>", "folder": "Shared", "fields": { "入力の名前": 重み } }]`。space は先に画面で作る。生成器は `uip agent memory add` を呼ぶ |
 | `resources` | ほかの `resource.json` をそのまま |

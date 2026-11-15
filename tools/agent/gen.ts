@@ -86,7 +86,7 @@ export type AgentIR = {
 };
 
 export type Context =
-  | { index: string; folder: string; name?: string; description?: string; mode?: "semantic" | "structured" | "deeprag" | "batchtransform"; resultCount?: number; threshold?: number; fileExtension?: string; queryDescription?: string }
+  | { index: string; folder: string; name?: string; description?: string; mode?: "semantic" | "deeprag" | "batchtransform"; resultCount?: number; threshold?: number; fileExtension?: string; queryDescription?: string }
   | { dataFabric: string[]; folder: string; name?: string; description?: string }
   | { attachments: true; name: string; description?: string };
 
@@ -340,7 +340,8 @@ function toolResource(t: Tool, i: number, lookup: ProcessLookup | undefined, pro
 
 // ---------- コンテキスト ----------
 
-const MODES = new Set(["semantic", "structured", "deeprag", "batchtransform"]);
+// Structured は 2026-09 に廃止（表のデータは Data Fabric のコンテキストで引く）。batchtransform は文書の Contexts のページに無いが、テナントで動いた形なので残す
+const MODES = new Set(["semantic", "deeprag", "batchtransform"]);
 
 function contextResource(c: Context, i: number, entities: EntityLookup | undefined, project: string | undefined, probs: Problem[]): Record<string, unknown> | undefined {
   const p = `contexts[${i}]`;
@@ -348,7 +349,8 @@ function contextResource(c: Context, i: number, entities: EntityLookup | undefin
   if ("index" in c) {
     const name = c.name ?? c.index.replace(/[^A-Za-z0-9_]/g, "_");
     const mode = c.mode ?? "semantic";
-    if (!MODES.has(mode)) { probs.push({ path: `${p}.mode`, code: "BAD_MODE", message: "mode は semantic / structured / deeprag / batchtransform（小文字）" }); return undefined; }
+    if (mode === "structured") { probs.push({ path: `${p}.mode`, code: "RETIRED_MODE", message: "検索方法 Structured は 2026-09 に廃止。表のデータは { \"dataFabric\": [\"表\"], \"folder\": \"…\" } のコンテキストで引く" }); return undefined; }
+    if (!MODES.has(mode)) { probs.push({ path: `${p}.mode`, code: "BAD_MODE", message: "mode は semantic / deeprag / batchtransform（小文字）" }); return undefined; }
     const settings: Record<string, unknown> = {
       retrievalMode: mode,
       query: { variant: "dynamic", description: c.queryDescription ?? "Query for retrieval" },
