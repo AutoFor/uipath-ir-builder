@@ -50,7 +50,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - **Script の戻り値**：デバッグの結果では `outputs.response` に入るが、式からは `$vars.<id>.output.<field>` で読めた
 - **`.flow` の中の式は `=js:` で始まる**。固定値の欄に式を埋めるときは `{{ }}`。条件の式に `return` は書かない
 - **Script の中では外と通信できない**（`fetch` などは無い）。外を呼ぶなら HTTP のノード
-- **HTTP のノード**：SDK 6.66.5 の `http({ managed: false })` は `core.action.http`（v1）を出し、`check` が `HTTP_V1_RETIRED` の warning を出す（レジストリは v2 だけ）。それでもテナントで動いた（下の表）。4xx は失敗ではなく成功の道に来る。失敗で分けたいなら `managed: true`
+- **HTTP のノードは `http({ managed: true })`（v2）で書く**。今の HTTP Request（v2）は Integration Service の汎用 HTTP（`uipath-uipath-http`）を通り、**相手が 2xx 以外を返すと失敗になる**（`IntSvcVendorRequestFailed` 102021、相手の状態コードは `error.status`）。`onError` で拾える。4xx は再試行しない（ここまで文書。v2 の失敗の道はテナントでまだ確かめていない）。SDK の `http()` には次の設定がある：`branches`（`{ name, when }`。状態コードなどで出口 `branch-<name>` を分ける。上から順に見る）、`retryCount`（5xx・429・通信エラーだけ再試行。既定 0）、`timeout`（ISO 8601。既定 `PT15M`）
+  - `http({ managed: false })` は退役した v1（`core.action.http`）を出し、`check` が `HTTP_V1_RETIRED` の warning を出す（レジストリは v2 だけ）。テナントではまだ動いたが、4xx も成功の道に来て（`statusCode: 404` の成功）、`onError` は走らない（`HTTP_ONERROR_V1`）。新しく書かない
 - **Data Fabric の 4 ノードは、エラーの道を付けられない**（Terminate も）。落ちると run は Faulted で止まり、Automate の同時 50 の枠を使い続ける
 - **Data Fabric の出力は「生きた参照」**：読むたびにクエリをやり直す。ループや Transform に渡したときだけ、その時点の写しになる。Query の `multiple` は `output.results[]`、上限 1000 件
 - **Merge を Decision（branch）の後ろに置かない**（走らない側を待ち続ける）。並列の後ろだけ
@@ -162,7 +163,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN の Script の戻り値は `scriptResponse` か | **`=result.response`**（`ScriptGateway`） |
 | Terminate は Completed か Failed か | Flow の `terminate` は **Completed**（`LoopTour`） |
 | Data Fabric のノードにエラーの道は付くか | 付かない（SDK も同じ） |
-| 抽出の出力は `ExtractionResult` か `result` か | 2026-07 に `result` に変わった（リリースノート）。未確認 |
+| 抽出の出力は `ExtractionResult` か `result` か | **ノードで違う**。Published のモデルのノード（`uipath.ixp.<プロジェクト>.…`、`serviceType: "IXP.Extraction"`）は `ExtractionResult`：テナントのレジストリ（`uip maestro flow registry get <NodeType>` の `outputDefinition`）がそう定義し、実行でも `output.ExtractionResult.ResultsDocument` だった（2026-11-16）。Studio Web の「Extract document」（`IDP.Extraction`）は `ExtractDocumentOutput` の `result`（`version` / `type` / `result` / `taxonomy` / `metadata`）。2026-07-07 のリリースノートの「`=ExtractionResult` → `=result`」は後者の話 |
 | BPMN の multi-instance で今の要素は `iterator.item` か（SDK とドキュメント） | **`itemVar: "iterator[0]"` と `inputs: { cur: "=iterator[0].item" }`、スクリプトでは `cur`**（`BpmnTour`）。SDK の「inputs の名前はスクリプトから読めない」も、この場合は当たらない |
 | Inclusive の合流は「動いた辺だけ待つ」か | 当たった道と `default` の道が全部動き、合流は全部を待って進んだ（`BpmnEvents`） |
 | Automate のプロジェクトが本当に Automate として扱われるか | Studio Web で「製品: Maestro Automate」と出た（`operate.json` の `Lite`） |
