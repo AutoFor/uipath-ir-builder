@@ -51,6 +51,21 @@ uip codedagent invoke agent '{"question":"…"}' --profile trial   # クラウ�
   - Linux のコンテナで動く（ログのパスが `/tmp/home/...`）。
 - 片付け：`uip or processes delete <Key> --yes` と、`uip or packages delete <名前>:<版> --feed-id <個人ワークスペースのフィード> --yes`。フィードの Id は `uip or feeds list` の「Orchestrator Personal Workspace Feed」。
 
+## 関数（Coded Function）は Coded Agent とは別の製品
+
+LLM を使わない Python の関数は、公式の文書では **UiPath Functions**（2026-06 に Preview）という別の製品で、Coded Agent とは課金も出し方も違う。この文書の見本（playwright-form・sdk-probe）は関数だが、作ったときは Coded Agent と同じ手順（`uip codedagent deploy`）で出した。
+
+| | Coded Agent | 関数（Functions） |
+| --- | --- | --- |
+| 作る | `uip codedagent new` | Python：`uipath new <名前> --type function`。JS / TS：`uip function new <名前> -l ts|js`（`uipath.json` の `functions`） |
+| 出す | `uip codedagent deploy` | pack → publish → Orchestrator のフォルダにプロセスとして deploy（手で、かソリューション：`uip solution project import` → `resources refresh`）。Python は `uipath pack` / `uipath publish`、JS / TS は `uip function pack` / `publish --feed-id`。publish だけではまだ動かせない |
+| 呼ぶ | ジョブ・Flow のノード・low-code の道具 | Maestro の Service Task、Studio の Run Job、Orchestrator API、ジョブのトリガー（JS / TS で `method`・`path` を書いたものは HTTP でも） |
+| 課金 | 1 回 1 Agent Unit か 0.2 Platform Units | **実行時間**。サーバーレスの Standard（2 GB）で 12 分 30 秒が 1 Platform Unit（Small 25 分、Medium 6 分 15 秒、Large 2 分 30 秒）。ジョブは **15 秒単位で切り上げ**（20 秒なら 30 秒）。自分のロボットの Production (Unattended) なら Unattended のライセンスを使い、単位は使わない。LLM などは別に数える |
+
+- 版は `pyproject.toml`（JS / TS は `package.json`）から取る。新しい版を publish したら、プロセスか Service Task の結び付けを上げる
+- `uip codedagent deploy` で出したもの（この文書の見本）が関数の課金になるかは確かめていない
+- 出典：functions の user-guide の about-functions・licensing・packaging-and-publishing。JS / TS の関数は Linear の AUT-1195
+
 ## Playwright でブラウザを操作する（見本 playwright-form）
 
 Python の関数（LLM を使わない）から Playwright で DOM を操作し、Orchestrator のジョブとして動かせた。
@@ -156,14 +171,14 @@ LangGraph で決まった形があるもの（スキルの `references/coded/cap
 | LangGraph | `uipath-langchain`（0.19.11） | 第一の推奨。手で確かめたのはこれ |
 | LlamaIndex | `uipath-llamaindex`（0.6.3） | |
 | OpenAI Agents | `uipath-openai-agents`（0.1.2） | HITL とプロセスの呼び出しの形が無い。入力に `messages` が要る |
-| 関数（エージェントでない） | `uipath` だけ（`new --type function`） | LLM を使わない処理。ログインせずに手元で `run` できた |
+| 関数（エージェントでない） | `uipath` だけ（`new --type function`） | LLM を使わない処理。ログインせずに手元で `run` できた。製品は Functions で、課金と出し方が違う |
 
 SDK の文書には PydanticAI・Google ADK・Microsoft Agent Framework・Claude Agent SDK（`uipath-claude-sdk`）の連携も載っているが、試していない。
 
 ## 呼び出し方・課金・状態
 
 - **呼び出し元**：Orchestrator のジョブ（API・トリガー）、Maestro Flow のノード（`uipath.core.agent.<key>`）、low-code のエージェントの道具。low-code と違い、Flow の中への埋め込み（inline）はできない。
-- **課金**：1 回 1 Agent Unit か 0.2 Platform Units（Standard。公式の licensing のページ）。LLM の呼び出しは LLM Gateway 側。
+- **課金**：Coded Agent は 1 回 1 Agent Unit か 0.2 Platform Units（Standard。公式の licensing のページ）。関数は実行時間で数える（上の「関数（Coded Function）は Coded Agent とは別の製品」）。LLM の呼び出しは LLM Gateway 側。
 - **状態**：Studio Web 上の coded agent と Coded Function は Preview。Python の会話型エージェントは「本番向けではない。low-code を使う」とされている。
 - **未確認**：`uip codedagent pack` / `publish` を直接使えるか（スキルは「wrapper が止める」、CLI の文書は「素通し」で食い違う）。今回は `deploy` だけを使った。
 
