@@ -140,9 +140,10 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - **`uip agent eval run start` はクラウドで必ず `failed`（0 件）になる**（1.204.0）。
   - 画面は `startMultipleEvaluators?solutionId=…&debugProjectId=<エージェントの Id>` を送るが、CLI は `debugProjectId` を付けない。道具の無い雛形でも、評価器のモデルを変えても落ちた。
   - 評価は画面の再生ボタンで流し、結果を `uip agent eval run list / results --set "<セット名>" --path <フォルダ>` で読む。
-- **デプロイ後の評価（実行時の評価、2026-10 に Preview）は `uip eval` にある**（独立した `@uipath/eval-tool`。`uip or eval` ではない。1.204.0 に入っている）。サブコマンドは `execute-and-evaluate`・`run`（list / get / results）・`eval-set`・`evaluation`・`evaluator`・`schedule`・`simulatable-components`。どれもプロセスの Key（`uip or processes list --all-folders`）で指す。テナントで `uip eval eval-set list --process-key …` が通るのは確かめた（評価を流すのはまだ）。画面は `agents_` のエージェントの Evaluations。
+- **デプロイ後の評価（実行時の評価、2026-10 に Preview）は `uip eval` にある**（独立した `@uipath/eval-tool`。`uip or eval` ではない。1.204.0 に入っている）。サブコマンドは `execute-and-evaluate`・`run`（list / get / results）・`eval-set`・`evaluation`・`evaluator`・`schedule`・`simulatable-components`。どれもプロセスの Key（`uip or processes list --all-folders`）で指す。画面は `agents_` のエージェントの Evaluations。
+  - **テナントで流せた**（2026-11-16、IR の 5 件の評価を持つ小さなエージェントを `Shared/<フォルダ>` にデプロイして）。5 件で 59.6 秒、Score 1。わざと期待を違えた 1 件を足すと、その件だけ 0 で Score 0.83（6 件・83.6 秒）。手順は下の「デプロイ後の評価を CLI で流す」
   - 文書の中身：画面は Datasets・Evaluators・Eval runs・Schedules。評価器は Contains Text、LLM Judge（Output / Strict JSON / Trajectory / Simulation）、Tool Call（Arguments / Count / Order / Output）。Review runs から本番の実行をデータセットに足せる。副作用のある道具と HITL は Static mock か Generated response でシミュレートする（`simulatable-components` で一覧）。評価はパッケージとは別に保存するので、変えても再発行は要らない。スケジュールでは Trajectory を使えない。Maestro は対象外
-  - 作るときの評価（`uip agent eval`、`evals/`）とは別物
+  - 作るときの評価（`uip agent eval`、`evals/`）とは別物。**パッケージに入れた `evals/` は、デプロイしても実行時の評価には入らない**（デプロイ直後の `eval-set list`・`evaluator list` は空）
 - **`expected` の無い評価のケースは、既定の評価器（出力の比較）がエラー**になる（「non-empty expected output」）。振る舞いだけを見るケースは、振る舞いの評価器の点だけが付く。生成器は注意を出す。
 - **`uip agent review` は評価が 5 件未満で FAIL**（`NO_EVALS`・`TOO_FEW_EVALS`）。
 - **組み込みの道具（`type: "internal"`）に `location` を書かない**。`"solution"` にすると validate が `folderPath "solution_folder"` を求めて落ちる。
@@ -208,6 +209,25 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 
 - 項目は「実行のトレース ＋ フィードバック」をまるごと持つ（1 件 13KB ほど）。手で書くより、実行してフィードバックを付け、`uip agent memory item add --feedback-id` で入れる方が早い
 - 別のテナントへ移すときに使う（公式の文書では「別の memory space やテナントへ」）
+
+## デプロイ後の評価を CLI で流す
+
+```bash
+K=<プロセスの Key>        # uip or processes list --folder-path <デプロイ先> の Key
+FK=<デプロイ先のフォルダの Key>
+uip eval evaluator create --process-key $K --workload-id $K --folder-key $FK --name Exact   --evaluator-type-id uipath-exact-match --evaluator-config name:Exact --version 1.0
+#   → EvaluatorId と ExternalId が返る
+uip eval eval-set create --process-key $K --workload-id $K --folder-key $FK --name Smoke --evaluator-refs <ExternalId>
+uip eval evaluation create --process-key $K --eval-set-id <EvalSetId> --folder-key $FK --name "…"   --inputs {text:…} --expected-output {<出力の項目>:…}
+uip eval execute-and-evaluate --process-key $K --eval-set-id <EvalSetId>     # → EvalSetRunId
+uip eval run get <EvalSetRunId> --process-key $K                           # Status: running → completed、Score（0〜1）
+uip eval run results <EvalSetRunId> --process-key $K                       # 件ごとの Scores
+```
+
+- **`--workload-id` はプロセスの Key でよかった**（どの文書・ヘルプにも何を渡すか書いていない）
+- **eval set の `--evaluator-refs` には評価器の `ExternalId` を渡す**。`EvaluatorId` を渡すと作るのは通るが、`execute-and-evaluate` が「Evaluator with externalId … not found」で断る（`eval-set update <Id> --evaluator-refs <ExternalId>` で直せる）。結果の `Scores[].EvaluatorId` は `EvaluatorId` の方
+- `run results` の `Output` は空（`{}`）だった。出力そのものは見えない
+- 1 件ごとにエージェントのジョブが動く（Agent Units か Platform Units を使う）。LLM の評価器（`uipath-llm-judge-…`）は `evaluatorConfig` に `prompt`・`model`・`targetOutputKey` が要る（スキルの文書。試していない）
 
 ## 片付け
 
