@@ -173,6 +173,42 @@ export function fixProcessInputTypes(text) {
   return { text: changed.length ? JSON.stringify(flow, null, 2) : text, changed };
 }
 
+/**
+ * SDK 6.66.5 の HTTP ノード（v2、`http({ managed: true })` → `core.action.http.v2`）は、テナントの動きと 2 つ食い違う（2026-11-16 に確かめた）。
+ * 1. 応答の状態コードは `output.code`（SDK と check は `statusCode` とする。テナントの output は { code, headers, body }）
+ * 2. 分岐（branches）の条件は `=js:` で始めないと評価されず、いつも既定の出口に行く（SDK は付けない）
+ * v2 のノードを指す `$vars.<id>.output.statusCode` を `.code` に直し、分岐の条件に `=js:` を付ける。直した所の一覧を返す（knowledge/maestro.md）
+ */
+export function fixHttpV2(text) {
+  const flow = JSON.parse(text);
+  const changed = [];
+  const v2 = (flow.nodes ?? []).filter((n) => n.type === "core.action.http.v2").map((n) => n.id);
+  if (!v2.length) return { text, changed };
+  const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`\\$vars\\.(${v2.map(esc).join("|")})\\.output\\.statusCode\\b`, "g");
+  const walk = (v, at) => {
+    if (typeof v === "string") {
+      const t = v.replace(re, (_m, id) => `$vars.${id}.output.code`);
+      if (t !== v) changed.push(at);
+      return t;
+    }
+    if (Array.isArray(v)) return v.map((x, i) => walk(x, `${at}[${i}]`));
+    if (v && typeof v === "object") { for (const k of Object.keys(v)) v[k] = walk(v[k], at ? `${at}.${k}` : k); return v; }
+    return v;
+  };
+  for (const n of flow.nodes ?? []) {
+    walk(n, `nodes[${n.id}]`);
+    if (!v2.includes(n.id)) continue;
+    for (const b of n.inputs?.branches ?? []) {
+      if (typeof b.conditionExpression === "string" && b.conditionExpression && !b.conditionExpression.startsWith("=js:")) {
+        b.conditionExpression = `=js:${b.conditionExpression}`;
+        changed.push(`${n.id}.branches.${b.name ?? b.id}`);
+      }
+    }
+  }
+  return { text: changed.length ? JSON.stringify(flow, null, 2) : text, changed: [...new Set(changed)] };
+}
+
 /** 工程の結果をまとめて、ファイルの判定を出す */
 export function judge(steps, strict) {
   const counts = { errors: 0, warnings: 0 };
@@ -233,7 +269,8 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
     if (step.name === "compile" && info.family === "flow" && existsSync(artifact)) {
       const fixed = fixProcessInputTypes(readFileSync(artifact, "utf8"));
-      if (fixed.changed.length) writeFileSync(artifact, fixed.text);
+      const http = fixHttpV2(fixed.text);
+      if (fixed.changed.length || http.changed.length) writeFileSync(artifact, http.text);
     }
   }
   const target = artifact;

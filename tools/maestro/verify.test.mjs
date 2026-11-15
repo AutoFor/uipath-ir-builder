@@ -244,3 +244,23 @@ test("fixProcessInputTypes：プロセスを呼ぶノードの配列・オブジ
   assert.deepEqual(props, { items: { type: "array" }, opt: { type: "object" }, name: { type: "string" }, n: { type: "number" } });
   assert.deepEqual(fixProcessInputTypes(JSON.stringify({ nodes: [], definitions: [] })).changed, []);
 });
+
+test("fixHttpV2：v2 の HTTP の状態コードを output.code に直し、分岐の条件に =js: を付ける", async () => {
+  const { fixHttpV2 } = await import("./verify.mjs");
+  const flow = {
+    nodes: [
+      { id: "routed", type: "core.action.http.v2", inputs: { branches: [{ id: "a", name: "a", conditionExpression: "$vars.routed.output.statusCode === 202" }, { id: "b", name: "b", conditionExpression: "=js:true" }] },
+        model: { expansion: { cond: "=js:vars.routed.output?.statusCode >= 400" } } },
+      { id: "old", type: "core.action.http", inputs: {} },
+      { id: "s", type: "core.logic.script", inputs: { script: "return [$vars.routed.output.statusCode, $vars.old.output.statusCode, $vars.routedX.output.statusCode];" } },
+    ],
+  };
+  const r = fixHttpV2(JSON.stringify(flow));
+  const out = JSON.parse(r.text);
+  assert.deepEqual(out.nodes[0].inputs.branches.map((b) => b.conditionExpression), ["=js:$vars.routed.output.code === 202", "=js:true"]);
+  // 定義の展開（$ の無い vars.）と、v1 のノード・別のノードは変えない
+  assert.equal(out.nodes[0].model.expansion.cond, "=js:vars.routed.output?.statusCode >= 400");
+  assert.equal(out.nodes[2].inputs.script, "return [$vars.routed.output.code, $vars.old.output.statusCode, $vars.routedX.output.statusCode];");
+  assert.ok(r.changed.includes("routed.branches.a"));
+  assert.deepEqual(fixHttpV2(JSON.stringify({ nodes: [{ id: "old", type: "core.action.http" }] })).changed, []);
+});

@@ -50,7 +50,12 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - **Script の戻り値**：デバッグの結果では `outputs.response` に入るが、式からは `$vars.<id>.output.<field>` で読めた
 - **`.flow` の中の式は `=js:` で始まる**。固定値の欄に式を埋めるときは `{{ }}`。条件の式に `return` は書かない
 - **Script の中では外と通信できない**（`fetch` などは無い）。外を呼ぶなら HTTP のノード
-- **HTTP のノードは `http({ managed: true })`（v2）で書く**。今の HTTP Request（v2）は Integration Service の汎用 HTTP（`uipath-uipath-http`）を通り、**相手が 2xx 以外を返すと失敗になる**（`IntSvcVendorRequestFailed` 102021、相手の状態コードは `error.status`）。`onError` で拾える。4xx は再試行しない（ここまで文書。v2 の失敗の道はテナントでまだ確かめていない）。SDK の `http()` には次の設定がある：`branches`（`{ name, when }`。状態コードなどで出口 `branch-<name>` を分ける。上から順に見る）、`retryCount`（5xx・429・通信エラーだけ再試行。既定 0）、`timeout`（ISO 8601。既定 `PT15M`）
+- **HTTP のノードは `http({ managed: true })`（v2）で書く**。今の HTTP Request（v2）は Integration Service の汎用 HTTP（`uipath-uipath-http`）を通る。テナントで確かめた（2026-11-16、見本 `samples/maestro/coverage/HttpV2.flow.ts`、相手は httpbin.org）：
+  - **2xx 以外は失敗になり、`onError` に来る**（404 で確かめた）。失敗した step の `$vars.<id>` は `{ error: true, output: { code: "404", message: "Integration Services resource not found", detail: "Unified HttpRequest failed with status code '404' …", category: "User", status: 404, element: "<id>" } }`。文書の `IntSvcVendorRequestFailed`（102021）は出ず、`code` は状態コードの文字列だった。`onError` の後ろは `<id>ErrorEnd` で終わり、本線の続きは走らない
+  - **成功の output は `{ code, headers, body }`。状態コードは `code`**。SDK 6.66.5 と `check` は `statusCode` とし、`.code` を読むと `HTTP_READ_UNKNOWN_FIELD` で止める。そのまま `statusCode` で書けば、`verify.mjs` の compile の後で `fixHttpV2` が `$vars.<v2 の id>.output.statusCode` を `.code` に直す
+  - **分岐（`branches: [{ name, condition }]`）は動く**。出口は `branch-<name>`（`.stepToList("branch-<name>", …)`。合流は `.stepToRef("<id>")`）。ただし **SDK は条件に `=js:` を付けず、付けないと条件が評価されずにいつも既定の出口に行く**。これも `fixHttpV2` が付ける。文書の例も `$vars.<id>.output.code === 200`
+  - 失敗の中身（`$vars.<id>.output`）は、`check` / `validate` が「`error` しか無い」とみなして、読むと止める（`STEP_READ_WITHOUT_OUTPUT`・`EXPRESSION_DIAGNOSTIC`。`h.err("status")` も validate が落とす）。読む方法はまだ無い
+  - `retryCount`（5xx・429・通信エラーだけ再試行。既定 0）と `timeout`（ISO 8601。既定 `PT15M`）は書けて通る（効き目は確かめていない）
   - `http({ managed: false })` は退役した v1（`core.action.http`）を出し、`check` が `HTTP_V1_RETIRED` の warning を出す（レジストリは v2 だけ）。テナントではまだ動いたが、4xx も成功の道に来て（`statusCode: 404` の成功）、`onError` は走らない（`HTTP_ONERROR_V1`）。新しく書かない
 - **Data Fabric の 4 ノードは、エラーの道を付けられない**（Terminate も）。落ちると run は Faulted で止まり、Automate の同時 50 の枠を使い続ける
 - **Data Fabric の出力は「生きた参照」**：読むたびにクエリをやり直す。ループや Transform に渡したときだけ、その時点の写しになる。Query の `multiple` は `output.results[]`、上限 1000 件
@@ -83,7 +88,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | BPMN：Script task、Exclusive（既定の道）、入力 | — | テナント | `ScriptGateway.bpmn` |
 | Case：ステージ、ルール、タイマーのタスク | — | テナント | `samples/maestro/TimerCase.case` |
 | `delay` | テナント | テナント | `ControlTour` |
-| `http`（managed: false） | テナント | テナント | `ControlTour` |
+| `http`（managed: false、退役した v1） | テナント | テナント | `ControlTour` |
+| `http`（managed: true、v2）：成功・`branches`・2xx 以外の失敗 | テナント | テナント | `HttpV2` |
 | `subflow` | テナント | テナント | `ControlTour` |
 | `onError` | テナント | テナント | `ControlTour` |
 | `mock`、`terminate` | テナント | テナント | `LoopTour` |
