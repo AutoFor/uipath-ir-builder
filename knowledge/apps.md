@@ -52,6 +52,7 @@ uip codedapp publish -t Action   /   uip codedapp deploy -n <app> --folder-key <
 - `type`：`string` / `number` / `integer` / `boolean` / `array`（`items`）/ `object`（`properties`）/ `file`。`format` は `string` にだけ `date` か `uuid`。uip codedapp の検証器（`JsonActionSchemaValidator`）と同じ規則で調べる
 - `label`、`section`、`hidden`、`control`、`options`、`placeholder`、`min` / `max`、`currency` は画面だけのもの（`action-schema.json` には入らない。`description` は入る）
 - `outcomes`：`validate: false` は必須が空でも押せる（差し戻しなど）。`primary` が右端の目立つボタン（無ければ最後のもの）
+- 名前は `inputs`・`outputs`・`inOuts`・`outcomes` の 4 つをまたいで 1 回だけ。フィールドと outcome を同じ名前（例：フィールド `Approve` と outcome `Approve`）にすると、初めての `uip codedapp publish` と、そのアプリを入れたソリューションの初めての install で「The action schema uses the same property name more than once」と断られる。生成器は `APP_NAME` で止める（公式の文書の action schema の決まり）
 
 型と部品：
 

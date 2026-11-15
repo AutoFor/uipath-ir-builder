@@ -72,7 +72,7 @@ export function check(app: ActionApp): Issue[] {
   (app.fields ?? []).forEach((f, i) => {
     const at = `fields[${i}]`;
     if (!IDENT.test(f.name ?? "") || TS_RESERVED.has(f.name)) add(`${at}.name`, "APP_NAME", `name "${f.name}" は英数字の識別子（TypeScript の予約語は不可）`);
-    if (names.has(f.name)) add(`${at}.name`, "APP_NAME", `"${f.name}" が重なっている（inputs / outputs / inOuts をまたいで 1 つ）`);
+    if (names.has(f.name)) add(`${at}.name`, "APP_NAME", `"${f.name}" が重なっている（inputs / outputs / inOuts / outcomes をまたいで 1 つ）`);
     names.add(f.name);
     if (!["in", "out", "inout"].includes(f.dir)) add(`${at}.dir`, "APP_DIR", "dir は in / out / inout");
     checkProp(f, at, add);
@@ -89,6 +89,8 @@ export function check(app: ActionApp): Issue[] {
   (app.outcomes ?? []).forEach((o, i) => {
     if (!o.name || /["'`\\]/.test(o.name)) add(`outcomes[${i}].name`, "APP_NAME", "outcome の name が要る（引用符は不可）");
     if (outs.has(o.name)) add(`outcomes[${i}].name`, "APP_NAME", `outcome "${o.name}" が重なっている`);
+    // 根の名前は outcomes も含めて 1 回だけ。フィールドと同じ名前は、初めての publish・install で「The action schema uses the same property name more than once」になる
+    else if (names.has(o.name)) add(`outcomes[${i}].name`, "APP_NAME", `outcome "${o.name}" がフィールドの名前と重なっている（inputs / outputs / inOuts / outcomes をまたいで 1 つ）`);
     outs.add(o.name);
   });
   return issues;

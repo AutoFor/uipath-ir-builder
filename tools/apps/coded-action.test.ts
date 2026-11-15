@@ -47,6 +47,8 @@ test("検証：名前、部品、書けない型", () => {
   assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "file", hidden: true }])), []);
   assert.deepEqual(codes(base([], [])), ["APP_SHAPE"]);
   assert.deepEqual(codes(base([], [{ name: "A" }, { name: "A" }])), ["APP_NAME"]);
+  // outcome とフィールドも同じ名前にできない（outcomes を含めた 4 つで 1 回）
+  assert.deepEqual(codes(base([{ name: "Approve", dir: "out", type: "boolean" }], [{ name: "Approve" }])), ["APP_NAME"]);
   assert.deepEqual(codes({ ...base([]), kind: "web" as "action" }), ["APP_KIND"]);
 });
 
