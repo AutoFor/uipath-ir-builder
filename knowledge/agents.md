@@ -140,7 +140,9 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - **`uip agent eval run start` はクラウドで必ず `failed`（0 件）になる**（1.204.0）。
   - 画面は `startMultipleEvaluators?solutionId=…&debugProjectId=<エージェントの Id>` を送るが、CLI は `debugProjectId` を付けない。道具の無い雛形でも、評価器のモデルを変えても落ちた。
   - 評価は画面の再生ボタンで流し、結果を `uip agent eval run list / results --set "<セット名>" --path <フォルダ>` で読む。
-- **`uip or eval`（実行時の評価）は 1.204.0 に無い**。スキルの文書は先の版のもの。デプロイ後の評価は `agents_` のエージェントの Evaluations から。
+- **デプロイ後の評価（実行時の評価、2026-10 に Preview）は `uip eval` にある**（独立した `@uipath/eval-tool`。`uip or eval` ではない。1.204.0 に入っている）。サブコマンドは `execute-and-evaluate`・`run`（list / get / results）・`eval-set`・`evaluation`・`evaluator`・`schedule`・`simulatable-components`。どれもプロセスの Key（`uip or processes list --all-folders`）で指す。テナントで `uip eval eval-set list --process-key …` が通るのは確かめた（評価を流すのはまだ）。画面は `agents_` のエージェントの Evaluations。
+  - 文書の中身：画面は Datasets・Evaluators・Eval runs・Schedules。評価器は Contains Text、LLM Judge（Output / Strict JSON / Trajectory / Simulation）、Tool Call（Arguments / Count / Order / Output）。Review runs から本番の実行をデータセットに足せる。副作用のある道具と HITL は Static mock か Generated response でシミュレートする（`simulatable-components` で一覧）。評価はパッケージとは別に保存するので、変えても再発行は要らない。スケジュールでは Trajectory を使えない。Maestro は対象外
+  - 作るときの評価（`uip agent eval`、`evals/`）とは別物
 - **`expected` の無い評価のケースは、既定の評価器（出力の比較）がエラー**になる（「non-empty expected output」）。振る舞いだけを見るケースは、振る舞いの評価器の点だけが付く。生成器は注意を出す。
 - **`uip agent review` は評価が 5 件未満で FAIL**（`NO_EVALS`・`TOO_FEW_EVALS`）。
 - **組み込みの道具（`type: "internal"`）に `location` を書かない**。`"solution"` にすると validate が `folderPath "solution_folder"` を求めて落ちる。

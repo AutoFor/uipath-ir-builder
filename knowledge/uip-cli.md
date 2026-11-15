@@ -36,12 +36,14 @@
 
 - `--output json` の結果は `{ Result, Code, Data, Message, Instructions }` の形。
   - 失敗は `Result: "Failure"`。理由は `Message` と `Instructions` に出る。終了コードだけで判断しない。
-- **`Data` はキーを PascalCase にする**ことがある（`uip api-workflow run` の Response、`uip tasks get` の値、`bpmn debug` の結果）。
+- **`Data` のキーは PascalCase にそろえる**（文書の global-options の仕様）。元のデータのキーも変わる（`uip api-workflow run` の Response、`uip tasks get` の値、`bpmn debug` の結果）。`--output-filter` で付けた名前も変わる（`{n:Name}` → `N`）。
   - 元のキーの大文字小文字が要るなら、別の所から読む。
     - API ワークフロー：デバッグのログ、またはジョブの `OutputArguments`。
     - タスク：`components` の中身。
 - 一部のコマンドは JSON の前にログの行を出す（`maestro case debug` など）。最初の `{` から読む。
-- `--output-filter` で JMESPath を当てられる（例：`"[?contains(Name,'x')].{n:Name,k:Key}"`）。
+- `--output-filter` で JMESPath を当てられる（例：`--limit 200 --output-filter "[?contains(Name,'x')].{n:Name,k:Key}"`）。
+  - **1.200.0 から、`--limit` に既定値のあるコマンド（多くの list は 50）では `--limit` を明示しないと `ValidationError`（`invalid_argument`、「--output-filter requires an explicit --limit」）で断られる**（1.204.0 の `or folders list` で確かめた）。絞り込みは読んだ分にしか効かないので、全件を見たいなら十分大きい `--limit` を付ける。
+  - 無い項目を指すと、空の結果と `[WARN] … Available fields: …` が出る（項目名は PascalCase）。
 
 ## 消す・壊すコマンド
 
