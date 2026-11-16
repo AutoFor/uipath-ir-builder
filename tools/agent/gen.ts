@@ -602,8 +602,42 @@ function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: 
 export type Generated = { agent: Record<string, unknown>; resources: Record<string, Record<string, unknown>>; evals: EvalCase[] };
 
 /** IR からエージェントの中身を作る。base は既にある agent.json（init が作ったもの） */
-export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?: ProcessLookup; appLookup?: AppLookup; entityLookup?: EntityLookup; isLookup?: IsLookup; mcpLookup?: McpLookup; project?: string } = {}): { result?: Generated; problems: Problem[] } {
+// 文書にある「使えない組み合わせ」（AUT-1191。agents の user-guide の tools-activities・limitations・analyze-files・
+// working-with-files・agents-in-flow-limitations・define-arguments）。errors は止める、warnings は注意だけ
+const WEB_SEARCH = /websearch/i;
+export function combos(ir: AgentIR, opts: { inline?: boolean } = {}): { errors: Problem[]; warnings: Problem[] } {
+  const errors: Problem[] = [], warnings: Problem[] = [];
+  const tools = ir.tools ?? [];
+  const gemini = /gemini/i.test(ir.model ?? "");
+  const isFile = (f: Field | undefined) => f === "file" || f === "file[]" || (typeof f === "object" && f !== null && ((f as any).type === "file" || (f as any).type === "file[]"));
+  const fileIns = Object.entries(ir.input ?? {}).filter(([, f]) => isFile(f)).map(([k]) => k);
+  tools.forEach((t, i) => {
+    const p = `tools[${i}]`;
+    if (gemini && "integration" in t) errors.push({ path: p, code: "GEMINI_IS_TOOL", message: "Gemini のモデルでは Integration Service の活動の道具が無効になる。モデルを変えるか、道具を外す" });
+    if (opts.inline) {
+      if ("mcp" in t) errors.push({ path: p, code: "INLINE_UNSUPPORTED", message: "flow の中のエージェントでは MCP の道具を使えない" });
+      if ("ixp" in t) errors.push({ path: p, code: "INLINE_UNSUPPORTED", message: "flow の中のエージェントでは IXP の道具を使えない（flow の IXP のノードを使う）" });
+      if ("integration" in t && WEB_SEARCH.test(t.activity)) errors.push({ path: p, code: "INLINE_UNSUPPORTED", message: "flow の中のエージェントでは Web Search を使えない" });
+    }
+  });
+  if (fileIns.length) {
+    const canFile = tools.some((t) => "process" in t || "ixp" in t || ("builtin" in t && t.builtin !== "create-file"));
+    if (!canFile) warnings.push({ path: "input", code: "NO_FILE_TOOL", message: `ファイルの入力（${fileIns.join(", ")}）を処理できる道具が無い。API ワークフロー・MCP・Integration Service の活動・エスカレーションはファイルを受けない。RPA・IXP・Analyze Files などを足す` });
+    if (gemini && tools.some((t) => "builtin" in t && t.builtin === "analyze-attachments"))
+      warnings.push({ path: "model", code: "GEMINI_FILES", message: "Gemini の Analyze Files は csv・txt・md・html だけを文書として読み、pdf は画像として扱う" });
+  }
+  // 自律型は、ユーザープロンプトで参照しない入力がエージェントに見えない
+  if (ir.conversational !== true && ir.user) {
+    const used = new Set(tokenize(ir.user).filter((t) => t.type === "variable").map((t) => /^input\.([A-Za-z_][A-Za-z0-9_]*)/.exec(t.rawString)?.[1]));
+    for (const k of Object.keys(ir.input ?? {})) if (!used.has(k)) warnings.push({ path: `input.${k}`, code: "UNUSED_INPUT", message: `入力 "${k}" を user で {{input.${k}}} として参照していない。参照しない入力はエージェントに見えない` });
+  }
+  return { errors, warnings };
+}
+
+export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?: ProcessLookup; appLookup?: AppLookup; entityLookup?: EntityLookup; isLookup?: IsLookup; mcpLookup?: McpLookup; project?: string; inline?: boolean } = {}): { result?: Generated; problems: Problem[]; warnings?: Problem[] } {
   const probs: Problem[] = [];
+  const combo = combos(ir, { inline: opts.inline });
+  probs.push(...combo.errors);
   if (!ir.name) probs.push({ path: "name", code: "MISSING", message: "name が要る" });
   if (!ir.system) probs.push({ path: "system", code: "MISSING", message: "system（システムプロンプト）が要る" });
   const conv = ir.conversational === true;
@@ -703,7 +737,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
     ],
   };
   if (guardrails.length) agent.guardrails = guardrails; else delete agent.guardrails;
-  return { result: { agent, resources, evals: ir.evals ?? [] }, problems: [] };
+  return { result: { agent, resources, evals: ir.evals ?? [] }, problems: [], warnings: combo.warnings };
 }
 
 // ---------- CLI を呼ぶ ----------
@@ -943,11 +977,13 @@ function main(argv: string[]): number {
   }
   const ir = readJson(irPath) as AgentIR;
   const report = (probs: Problem[]) => { for (const p of probs) console.error(`NG ${p.path}: [${p.code}] ${p.message}`); return 1; };
+  const notes = (ws: Problem[] | undefined) => { for (const w of ws ?? []) console.error(`注意 ${w.path}: [${w.code}] ${w.message}`); };
 
   if (!project) {
     const base = { version: "1.2.0", settings: {}, metadata: { storageVersion: "50.0.0", isConversational: ir.conversational === true, showProjectCreationExperience: false, targetRuntime: "pythonAgent" }, type: "lowCode", projectId: "<uip agent init が付ける>" };
-    const { result, problems } = generate(ir, base);
+    const { result, problems, warnings } = generate(ir, base, { inline });
     if (!result) return report(problems);
+    notes(warnings);
     console.log(JSON.stringify(result.agent, null, 2));
     return 0;
   }
@@ -969,8 +1005,9 @@ ${init.text}`); return 1; }
   }
   const solution = findSolution(dirname(dir));
   const base = readJson(join(dir, "agent.json"));
-  const { result, problems } = generate(ir, base, { lookup: cliLookup(profile, solution ?? dir), appLookup: appLookup(profile, solution), entityLookup: entityLookup(profile), isLookup: isLookup(profile), mcpLookup: mcpLookup(profile, solution ?? dir), project: dir });
+  const { result, problems, warnings } = generate(ir, base, { lookup: cliLookup(profile, solution ?? dir), appLookup: appLookup(profile, solution), entityLookup: entityLookup(profile), isLookup: isLookup(profile), mcpLookup: mcpLookup(profile, solution ?? dir), project: dir, inline });
   if (!result) return report(problems);
+  notes(warnings);
 
   writeProject(dir, ir, result, { inline });
   if (inline) {

@@ -102,6 +102,9 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 
 - `resources/` と評価のファイルは IR が正本。IR から消したものは消える。id（resource・評価・ガードレール）は前のものを引き継ぐ
 - 生成の前に止めるもの：入力に無い `{{input.x}}`、無いリソースへの `@{…}`、`{{x}}` の形、評価のケースの入出力の名前、見つからない・複数のフォルダにあるプロセス、アプリに無い結果、受け手の無いエスカレーション、活動に無い項目、サーバーに無い MCP の道具
+- 文書にある使えない組み合わせ（`combos()`、AUT-1191）：
+  - 止める：Gemini のモデルと Integration Service の活動の道具（`GEMINI_IS_TOOL`。道具が無効になる）、flow の中のエージェントの MCP・IXP・Web Search（`INLINE_UNSUPPORTED`）
+  - 注意だけ：ファイルの入力があるのに、受けられる道具（RPA などのプロセス・IXP・組み込みの Analyze Files など）が無い（`NO_FILE_TOOL`。API ワークフロー・MCP・IS の活動・エスカレーションはファイルを受けない）、Gemini の Analyze Files（`GEMINI_FILES`。pdf は画像として読む）、自律型で user から参照しない入力（`UNUSED_INPUT`。エージェントに見えない）
 - `to-ir.ts` は省略形に戻せるものを戻し（プロセス・組み込み・Integration Service・MCP・コンテキスト・エスカレーション・メモリ・ガードレール）、戻せないものは `raw` で持つ。リソースは名前の順に並ぶ
 - 道具・コンテキスト・エスカレーションの書き方は、Studio Web で同じものを足して取り出した形に合わせてある（下の「落とし穴」）
 

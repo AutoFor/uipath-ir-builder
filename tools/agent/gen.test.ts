@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { generate, tokenize, writeProject, type AgentIR, type AppLookup, type EntityLookup, type IsLookup, type McpLookup, type ProcessLookup } from "./gen.ts";
+import { combos, generate, tokenize, writeProject, type AgentIR, type AppLookup, type EntityLookup, type IsLookup, type McpLookup, type ProcessLookup } from "./gen.ts";
 import { toIR } from "./to-ir.ts";
 
 // uip agent init が作る agent.json の要るところ
@@ -329,4 +329,25 @@ test("古い RPA のプロセスの .NET の引数を JSON Schema にする", as
     in_Name: { type: "string" }, in_Count: { type: "number" }, in_Ok: { type: "boolean" },
     in_Tags: { type: "array", items: { type: "string" } }, in_At: { type: "string", format: "date-time" }, in_Table: { type: "string" },
   } });
+});
+
+test("combos：文書にある使えない組み合わせを止め、注意を出す（AUT-1191）", () => {
+  const codes = (r: { errors: { code: string }[]; warnings: { code: string }[] }) => ({ e: r.errors.map((x) => x.code), w: r.warnings.map((x) => x.code) });
+  const web = { integration: "uipath-uipath-airdk", activity: "v2::webSearch" } as const;
+  // Gemini × Integration Service の道具
+  assert.deepEqual(codes(combos(ir({ model: "gemini-2.5-flash", tools: [web] }))).e, ["GEMINI_IS_TOOL"]);
+  assert.deepEqual(codes(combos(ir({ model: "gpt-5.4", tools: [web] }))).e, []);
+  // flow の中：MCP・IXP・Web Search
+  assert.deepEqual(codes(combos(ir({ tools: [{ mcp: "m" }, { ixp: "p", tag: "live" }, web, { builtin: "create-file" }] }), { inline: true })).e, ["INLINE_UNSUPPORTED", "INLINE_UNSUPPORTED", "INLINE_UNSUPPORTED"]);
+  assert.deepEqual(codes(combos(ir({ tools: [{ mcp: "m" }] }))).e, []);
+  // ファイルの入力を処理できる道具が無い
+  const fileIr = (tools: AgentIR["tools"], model?: string) => ir({ model, user: "{{input.doc}}", input: { doc: "file" }, tools });
+  assert.deepEqual(codes(combos(fileIr([{ mcp: "m" }]))).w, ["NO_FILE_TOOL"]);
+  assert.deepEqual(codes(combos(fileIr([{ builtin: "analyze-attachments" }]))).w, []);
+  assert.deepEqual(codes(combos(fileIr([{ builtin: "analyze-attachments" }], "gemini-2.5-pro"))).w, ["GEMINI_FILES"]);
+  // user で参照しない入力
+  assert.deepEqual(codes(combos(ir({ input: { text: "string", extra: "string" } }))).w, ["UNUSED_INPUT"]);
+  assert.deepEqual(codes(combos(ir({ conversational: true, user: undefined, input: { extra: "string" } }))).w, []);
+  // generate は errors で止め、warnings を返す
+  assert.equal(generate(ir({ model: "gemini-2.5-flash", tools: [web] }), BASE, ALL).problems[0].code, "GEMINI_IS_TOOL");
 });
