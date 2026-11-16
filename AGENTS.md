@@ -43,7 +43,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 
 - 書き方の手本は `samples/ir/<パッケージ>/<クラス名>.min.json`（必須だけ）と `.full.json`（全部入り）。まずこれを写して直す
 - アクティビティの一覧はカタログ `catalog/<パッケージ>/<版>.json` の `activities[].className`
-- パッケージごとの注意は `knowledge/`（Excel は `excel.md`、Testing は `testing.md`、UI 操作は [docs/worker-guide.md](docs/worker-guide.md) の 8.）
+- パッケージごとの注意は `knowledge/`（Excel は `excel.md`、Testing は `testing.md`、UI 操作は [docs/worker-guide.md](docs/worker-guide.md) の 8.、Healing Agent と ScreenPlay は [knowledge/healing-screenplay.md](knowledge/healing-screenplay.md)）
 - 書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)
 - UiPath Apps（Action Center のタスクの画面など）を作るときは [knowledge/apps.md](knowledge/apps.md)。Coded Action App は `node tools/apps/coded-action.ts <app.json> --out <dir>`（IR は `samples/apps/expense-review.json` を写して直す）。ローコードの RPA アプリ（Studio Web）は `node tools/apps/rpa-app.ts <app.json> --uis <file.uis>` → `uip solution upload <file.uis>`（IR は `samples/apps/rpa-app-request.json`、Data Fabric の表を使う見本は `samples/apps/work-calendar.json`。フォルダを upload に渡さない）
 - **Orchestrator・Automation Cloud を操作するときは、CLI（`uip`）→ API（`node tools/platform/cloud-api.mjs`）→ 画面の順に選ぶ**。画面は人に頼む。Chrome で AI が操作するのは、人がよいと言ったときだけ。どの操作がどれでできるかは [knowledge/cloud-ops.md](knowledge/cloud-ops.md)
