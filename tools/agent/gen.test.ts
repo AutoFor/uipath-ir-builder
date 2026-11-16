@@ -361,3 +361,11 @@ test("受け手：メールのほかに、利用者・グループの GUID、グ
   assert.equal(recipientResource({ team: "x" } as any), undefined);
   assert.equal(recipientIR({ type: 9, value: "x" }), undefined);
 });
+
+test("harness：advanced は settings.mode に入り、ガードレールと一緒なら止める（AUT-1190）", () => {
+  const r = generate(ir({ harness: "advanced" }), BASE, ALL);
+  assert.equal((r.result!.agent.settings as any).mode, "advanced");
+  assert.equal((generate(ir(), BASE, ALL).result!.agent.settings as any).mode, "standard");
+  assert.equal(generate(ir({ harness: "advanced", guardrails: [{ promptInjection: 0.5 } as any] }), BASE, ALL).problems[0].code, "ADVANCED_GUARDRAILS");
+  assert.equal(generate(ir({ harness: "turbo" as any }), BASE, ALL).problems[0].code, "BAD_HARNESS");
+});

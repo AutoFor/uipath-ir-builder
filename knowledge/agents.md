@@ -83,6 +83,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | `name`・`description` | `project.uiproj` の Name・Description になる |
 | `conversational` | `true` で会話型。既にあるプロジェクトと違えば止める（会話型と自律型は作り直す） |
 | `model`・`temperature`・`maxTokens`・`maxIterations` | 書かなければ init のまま。モデルは `uip agent model list --profile <名前>` で選ぶ（init の既定は古い） |
+| `harness` | `"advanced"` で Advanced harness（Preview）。`settings.mode` が `advanced` になる（既定 `standard`）。2026-11-17 に trial で validate → debug が通った（`engine` は `basic-v2` のまま）。文書の制約：ガードレールと一緒に使えない（生成器が `ADVANCED_GUARDRAILS` で止める）、画面で切り替えると道具の Static / Argument の値とモデルごとの設定が消える、一部の IS の活動と Clone as coded が使えない、Analyze Files は要らない（ファイルは作業場に入る）、プレビュー中は料金が半額 |
 | `system`・`user` | 本文。`{{input.名前}}` で入力、`@{tools.名前}`・`@{contexts.名前}`・`@{escalations.名前}` でリソースを指す。`contentTokens` は生成器が作る。会話型は `user` を書かない |
 | `input`・`output` | `{ "名前": "string" }` か JSON Schema。`"file"`・`"file[]"` はファイル（job-attachment）。入力は既定で必須（`"required": false` で外す）、出力は `"required": true` を書いたものだけ必須 |
 | `tools` | 下の 5 つと `{ "raw": {resource.json} }` |

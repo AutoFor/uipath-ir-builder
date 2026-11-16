@@ -65,6 +65,8 @@ export type AgentIR = {
   temperature?: number;
   maxTokens?: number;
   maxIterations?: number;
+  /** Advanced harness（Preview）にするか。settings.mode が "advanced" になる。ガードレールとは一緒に使えない */
+  harness?: "standard" | "advanced";
   description?: string;
   system: string;
   user?: string;
@@ -657,6 +659,8 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
   const probs: Problem[] = [];
   const combo = combos(ir, { inline: opts.inline });
   probs.push(...combo.errors);
+  if (ir.harness !== undefined && ir.harness !== "standard" && ir.harness !== "advanced") probs.push({ path: "harness", code: "BAD_HARNESS", message: "harness は standard か advanced" });
+  if (ir.harness === "advanced" && ir.guardrails?.length) probs.push({ path: "guardrails", code: "ADVANCED_GUARDRAILS", message: "Advanced harness ではガードレールを使えない（起動のとき「Guardrails are not yet supported for advanced agents.」で落ちる）" });
   if (!ir.name) probs.push({ path: "name", code: "MISSING", message: "name が要る" });
   if (!ir.system) probs.push({ path: "system", code: "MISSING", message: "system（システムプロンプト）が要る" });
   const conv = ir.conversational === true;
@@ -746,7 +750,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
       temperature: ir.temperature ?? s.temperature ?? 0,
       engine: s.engine ?? (conv ? "conversational-v1" : "basic-v2"),
       maxIterations: ir.maxIterations ?? s.maxIterations,
-      mode: s.mode ?? "standard",
+      mode: ir.harness ?? s.mode ?? "standard",
     },
     inputSchema,
     outputSchema,

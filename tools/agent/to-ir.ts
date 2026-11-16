@@ -151,6 +151,7 @@ export function toIR(dir: string): AgentIR {
   if (uiproj.Description) ir.description = uiproj.Description;
   if (conv) ir.conversational = true;
   Object.assign(ir, { model: s.model, temperature: s.temperature, maxTokens: s.maxTokens, maxIterations: s.maxIterations });
+  if (s.mode === "advanced") ir.harness = "advanced";
   // 本文は contentTokens から組み直す（古い形では content が {{Content}}、トークンが input.Content のことがある）
   ir.system = textOf(sys);
   if (!conv) ir.user = textOf(usr);
