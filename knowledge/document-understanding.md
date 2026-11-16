@@ -113,7 +113,7 @@ UiPath.DocumentUnderstanding.Activities の「Extract Document Data」を IR で
 
 ### 上限
 
-- **設計時**（13）：Flow の Extract は 1 フィールド グループ 32 項目、名前 64 文字、指示 4,096 文字、文書の合計 200 MB。UCD は名前 128 文字、指示 2,048 文字、1 プロジェクト 200 文書。生成器はまだこの上限を確かめていない。
+- **設計時**（13）：Flow の Extract は 1 フィールド グループ 32 項目、名前 64 文字、指示 4,096 文字、文書の合計 200 MB。UCD は名前 128 文字、指示 2,048 文字、1 プロジェクト 200 文書。Flow の Extract の上限は、`tools/maestro/verify.mjs` が `EXTRACT_LIMIT`（error）で止める（`extract-limits.mjs`）。
 - **実行時**（14）：IXP は GPT-4o で 50 ページ、Gemini で 500 ページまで。値が約 200 を超えると token の上限に当たりやすく、出現と信頼度が 0 で返る（対策は Extraction strategy を Advanced。約 1,200 値まで）。DU API の同期の抽出・分類は 5 ページ、非同期は 500 ページ・150 MB（digitization は 160 MB）。DU のプロジェクトは Helix の実行時 100 ページ、既製のモデルは 20 ページ、並列 10 件。
 - **データの残り方**（37）：digitization の結果と文書は 7 日。非同期の抽出・分類の結果は 24 時間、同期は残らない。確かめのデータは Storage Bucket。Delete API（preview）で `documentId` ごとに消せる。
 
