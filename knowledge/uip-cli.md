@@ -128,6 +128,13 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
 - **`uip rpa build` / `run` と `tools/verify/verify.mjs` を SSH から直接動かさない**。
   - SSH は High の権限・セッション 0 で、run が落ちる。
   - `tools/verify/queue-run.mjs` に置き換える。画面のセッションの窓口が動かす。
+- **`uip rpa run --remote`（Orchestrator の Unattended ロボットで流す）も SSH からは落ちる**（2026-11-17、Sorahane Trial の `Default Serverless` に Unattended の枠を付け、Portable のプロジェクトで確かめた）。
+  - `uip rpa remote configure --folder-path Shared --machine "Default Serverless" --remote-run-only` は通る。
+  - `run --remote` と `remote exec --command` は、どちらも「アクセスが拒否されました」で落ちた。ジョブはできていない。
+  - `--remote` でも、Orchestrator のトークンは**この PC のロボット（`UiPath.Service.UserHost`）から取る**（`StudioOperations.GetAccessToken`）。そのとき、ロボットが Helm のプロセスを開こうとする（`RegisterClientProcess`）。
+  - SSH の Helm は管理者・セッション 0 で、ロボットは RDP のセッションで管理者なしなので、開けずに落ちる。ふつうの run と同じ原因。`--profile` のトークンは使われない。
+  - 試していないもの：DESKTOP をサービスモード（`UiRobotSvc`）にしたときに、SSH の Helm からロボットに頼めるか。
+- `uip` が SSH から起こした Helm（`UiPath.Studio.Helm`、セッション 0）は、終わっても残り、プロジェクトのフォルダ（`.local\.jit`）をつかむ。試しのフォルダを消す前に止める（自分が起こしたものだけ）。
 - `uip` の Orchestrator・ソリューション・`api-workflow run` などの、ロボットを使わないコマンドは SSH から動く。
 - `uip maestro registry prepare` は `uip` が PATH に要る。また `tools/maestro`（SDK のあるフォルダ）で動かす。
 - 手元の `uip api-workflow run` をリポジトリのフォルダで流すと、`MODULE_NOT_FOUND`（`[worker eval]`）が出る。結果は Success なので気にしない。
