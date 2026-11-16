@@ -86,10 +86,13 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
   - フォルダ名 `.variations` は、`UiPath.Project.dll` の文字列（`VariationsFolderName` の近く）から取った。Studio の Project パネルでは「Test Data」と出る。
 - 手元の run（`uip rpa run`）はデータを読まない。値は `<名前>.verify.json` の `args` で渡す（見本は 2 行目の値）。行ごとに流すのは Studio の Test Explorer と Orchestrator のテストセット。
 - **Coded のテストケースにはつなげない**（fileInfoCollection に載せないので、`dataVariationFilePath` を付ける所が無い）。`gen-coded.ts` は `data` を使わず、注意 `TESTCASE_NO_DATA` を出す。In 引数は `Execute` の引数になる。
-- `uip rpa test-data add-variation`（データのファイルをテストケースにつなぐ CLI）は、Studio（GUI）が入っていないと「Studio does not support rpa-tool」で断る。このマシンは Helm だけなので使えない。
+- `uip rpa test-data add-variation`（データのファイルをテストケースにつなぐ CLI）は、Studio（GUI）が入っていないと「Studio does not support rpa-tool」で断る（Helm だけのときに確かめた）。
+- **Studio 26.10 で開いて確かめた**（2026-11-16、作業用プロジェクト `uipath-ir-probe-tcdata2-run`）：
+  - Test Explorer に `TestCase_Data (3)` と 3 行（`(1) price: 120, quantity: 3, expected: 360` など）が出て、3 行とも流れて通った。
+  - Studio は `project.json` と `.variations\TestCase_Data.json` を一字も書き換えなかった（生成器の `dataVariationFilePath` の書き方のままでよい）。
+  - Studio は開いたときに `.variations\config.json`（`{"dataVariationFileInfo":[{"filePath":".variations\\TestCase_Data.json","dataVariationType":"File"}]}`）を自分で作る。生成器はこのファイルを作らない（Studio が `dataVariationFilePath` から作り直すので要らない）。
 
 確かめていないこと：
 
 - Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
-- データ駆動のテストを Studio で開いて「Test Data」に出るか、Test Explorer で行の数（`TestCase_Data (3)`）が出るか。`.variations` の場所と `dataVariationFilePath` の書き方（区切りの `\`）は、Studio に書かせて比べていない。
 - Test Manager への publish と、Orchestrator のテストセットでの実行（行ごとに流れるか）。
