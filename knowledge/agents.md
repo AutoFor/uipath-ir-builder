@@ -93,11 +93,11 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | ・MCP | `{ "mcp": "<slug>", "tools": ["使う道具"] }`。AgentHub の MCP サーバー（`uip agenthub mcp list`）。`tools` を書かなければ全部（動的） |
 | ・IXP | `{ "ixp": "<IXP のプロジェクト>", "tag": "staging" }`。タグ（staging / live）の付いたモデルだけ使える（`uip ixp projects publish <名前> --model-version <版> --tag staging`） |
 | `contexts` | `{ "index": "<インデックス名>", "folder": "Shared" }`（RAG。`mode` は semantic / deeprag / batchtransform。Structured は 2026-09 に廃止され、表のデータは Data Fabric のコンテキストで引く。生成器は `structured` を `RETIRED_MODE` で止める）、`{ "dataFabric": ["表"], "folder": "Shared" }`（フォルダの表だけ）、`{ "attachments": true, "name": "…" }` |
-| `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action。`recipients` はメールの文字列のほか、`{ "group": "グループ名" }`・`{ "groupId": "GUID" }`・`{ "userId": "GUID" }`・`{ "assetEmail": "アセット名" }`・`{ "assetGroup": "アセット名" }`（resource の `type` 5・2・1・4・6。スキルの escalation.md の形。テナントではメールだけ確かめた。グループの割り当てはデバッグでは効かない）。書類の確認は `{ "validate": "<IXP の道具の名前>", "bucket": "<バケット>", "bucketFolder": "Shared" }`（バケットは生成器が `resources add` でソリューションに取り込む） |
+| `escalations` | `{ "app": "<Action Center のアプリ>", "recipients": ["メール"], "outcomes": { "reject": "end" }, "title": "…" }`。アプリはソリューションの中か、デプロイ済みの Workflow Action。`recipients` はメールの文字列のほか、`{ "group": "グループ名" }`・`{ "groupId": "GUID" }`・`{ "userId": "GUID" }`・`{ "assetEmail": "アセット名", "folder": "Shared" }`・`{ "assetGroup": "アセット名", "folder": "Shared" }`・`{ "argEmail": "入力の名前" }`・`{ "argGroup": "入力の名前" }`（resource の `type` 5・2・1・4・6・7・8。アセットは `assetName`＋`folderPath`、入力は `argumentName` で書く。スキルの guardrails.md の Recipient shapes。テナントではメールだけ確かめた。グループの割り当てはデバッグでは効かない）。書類の確認は `{ "validate": "<IXP の道具の名前>", "bucket": "<バケット>", "bucketFolder": "Shared" }`（バケットは生成器が `resources add` でソリューションに取り込む） |
 | `memory` | `[{ "space": "<memory space>", "folder": "Shared", "fields": { "入力の名前": 重み } }]`。space は先に画面で作る。生成器は `uip agent memory add` を呼ぶ |
 | `resources` | ほかの `resource.json` をそのまま |
 | （flow の中） | `--inline-in-flow` を付けると、`--project` は `<flow のフォルダ>/<UUID>`（無ければ flow のフォルダを渡すと `uip agent init --inline-in-flow` で作る）。リソースのフォルダは名前ではなく id、refresh は flow の `bindings_v2.json` に bindings を書き、ソリューションの手順（refresh・resources add）は飛ばす。flow 側のノードは [maestro.md](maestro.md) |
-| `guardrails` | `{ "pii": ["Email"], "action": "log" }`、`{ "harmful": [...] }`、`{ "promptInjection": 0.5 }`、`{ "raw": {...} }` |
+| `guardrails` | `{ "pii": ["Email"], "action": "log" }`、`{ "harmful": [...] }`、`{ "promptInjection": 0.5 }`、`{ "ip": ["Text", "Code"] }`（IP 保護。実行の後だけ）、`{ "userPromptAttacks": true }`（実行の前だけ、Llm）、`{ "judge": "ルール", "model": "<モデル>", "positive": [], "negative": [], "threshold": 2 }`（LLM as Judge。ルール 4,000 字・例 2 つずつ 1,000 字まで。別に料金）、`{ "raw": {...} }`。`action: "log"` には `severity`（Info / Warning / Error、既定 Warning）。引数の形は `uip agent guardrails list` に合わせ、trial で validate が通った（2026-11-17）。Escalate の動作と、道具ごとのカスタムガードレールは `raw` で書く |
 | `evals` | 既定の評価セットのケース：`name`・`inputs`・`expected`・`behavior`（振る舞いの評価器に渡す期待） |
 | `evalFiles` | 既定のほかの評価セット・評価器のファイル（`to-ir.ts` がテンプレートから取り込む） |
 
@@ -192,6 +192,38 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
   - フィードバックをメモリに入れるのは `uip agent memory item add <名前> --memory-type episodic --feedback-id <Id>`。`agents_` の Feedback の行のアイコンを押しただけでは入らなかった。
   - Memory spaces の画面には Import / Export がある。
 - **Studio Web のクラウドのプロジェクトの Id は、ローカルの `.uipx` の Project Id とも `agent.json` の `projectId` とも違う**ことがある。画面で開く URL の Id は、トレースの `agentId`（`designer/<agentId>?solutionId=…`）。
+
+## 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1201）
+
+公式の文書（agents の user-guide・release-notes）で分かり、まだテナントで試していないもの。番号は AUT-1201 の表の番号。
+
+### 動かす場所・権限
+
+- **フォルダの要件**（22）：共有フォルダで動かすには、unattended robot の identity をフォルダに割り当てる（robot のライセンスは使わない）。エスカレーションのアプリを開くとそのフォルダでジョブが動くので、serverless robot か、unattended / testing のマシンテンプレートが要る。
+- **会話型は unified runtime に移った**（23、2026-07）：Cloud の利用者の identity で動く（インデックスなどに利用者の権限が要る）。フォルダには serverless のマシンテンプレートを割り当てる（匿名のチャンネルだけ unattended robot）。並列の道具の呼び出しは 1 つずつ。1 回の応答が 1 つのジョブ。エスカレーションの間は会話が止まる。
+- **RPA からエージェントを呼ぶのは Run Job 活動**（24）：UiPath.System.Activities 25.4.2 から（Run Agent も動くが、検索しても Run Job が入る）。ファイルの入力には Studio Desktop 2025.10.0 以上が要る。エージェントを変えたら再発行して、Orchestrator のプロセスを upgrade する。
+- **Studio Web のポリシーの制約**（21、2026-09 に GA）：最小のスコア、温度の上限、応答のトークンの上限、HITL のエスカレーション必須、反復の上限。作るときと実行のときの両方で効き、新しい版は満たさないと発行できない。生成器の `temperature`・`maxTokens`・`maxIterations` が引っかかりうる。
+- **2026-12-02 から、coded agents も agents の AI Trust Layer の設定と LLM の構成に従う**（34）。Enable Agents が無効だと coded agents もモデルを呼べない。coded agents だけの BYOM の構成は使われなくなる（[python-agents.md](python-agents.md)）。
+
+### 上限・決まり
+
+- **ファイル**（29）：Analyze Files は 1 ファイル 30 MB まで（数の上限は無い）。会話型のアップロードは 5 MB まで（画像と PDF）。Anthropic のモデルは、特殊文字や続いた空白の入ったファイル名を拒む。
+- **トレースの保持**（31）：既定は 90 日。AI Trust Layer の TTL で 1 日か 7 日にできる。フィードバックかメモリの付いたトレースは TTL で消えない。見るには Logs.View（無ければ Jobs.View で一部だけ）。
+- **メモリ**（30）：エピソードの項目の入力は編集できない（消して足し直す）。Feedback の画面と、メモリに足す画面は 30 日分だけ。CMK の暗号化は memory space を作るときだけ決められる。メモリに入るのは、エージェントの実行のスパンに付けたフィードバックだけ。重複の検出（Replace / Merge / Add anyway）、項目の有効・無効、Memory playground（エージェントを動かさずに当たりを試す）がある。
+- **Clone as coded**（32）：自律型だけ。LangGraph の形。ガードレールは写らない。advanced は不可。一方向（戻せない）。何度でも複製できる。
+- **電話（Voice）**（37）：通話は 10 分まで。録音は無い。人への転送はできない。Automation Cloud だけ。
+
+### モデル・評価・レビュー
+
+- **モデル**（36）：Premium（Claude Opus 4.7・GPT-5.5。1 回 0.4 Platform Units か 2 Agent Units）、gemini-3.5-flash。**Community と Standard Trial の組織は、既定では BYO のモデルしか使えない**（Sorahane Trial で gpt-5.4-mini が動いたので、この組織では使える設定になっている）。
+- **評価の画面**（28）：評価セットの設定で、モデルと温度の組み合わせを並べて比べる。Optimize（パスは 10 まで、自律型だけ）。Fetch runtime traces（フィードバックした実行を取り込む）。Generate new evaluation set。JSON の Import。公開前の目安は評価 30 件以上・スコア 70% 以上（`uip agent review` の 5 件とは別）。
+- **デプロイ後の評価**（20）：上の「落とし穴」と「デプロイ後の評価を CLI で流す」に書いた。
+- **Agent score は Agent review に変わった**（38、2026-10-08）：Autopilot が Critical / Warning / Improvement を出し、A〜F で採点して、同じ会話で直す。Autopilot Agent（コーディングエージェント）が既定で、Classic に切り替えられる。`uip agent review` の点（PASS 100）とは別物。
+- **自前の安全サービスのガードレール**（35、2026-10、Preview）：Azure AI Language・Azure Content Safety・Noma。管理者が AI Trust Layer に入れると、BYO の印付きで並ぶ。IR では `raw` でしか書けない。
+
+### Teams
+
+- **Teams のチャンネル**（27）：共有のアプリは、Teams の Apps で「UiPath Autopilot」を Add（1 対 1 のチャットだけ）。専用のアプリは、Channels タブの「Create a Teams App」→ manifest の ZIP を Teams に上げる（カスタムアプリを上げる権限が要る。Azure Bot の用意に 3〜5 分。名前は 42 字まで）。チャンネルで @ するには、組織の管理者の「Register external client」と、フォルダの unattended robot が要る。標準のチャンネルだけ（2026-10）。
 
 ## メモリの Export / Import の形
 

@@ -111,8 +111,8 @@ function guardrailToIR(g: any): Guardrail {
   const param = (id: string) => (g.validatorParameters ?? []).find((p: any) => p.id === id)?.value;
   const act = g.action?.$actionType;
   if (act !== "block" && act !== "log") return raw;
-  if (act === "log" && g.action.severityLevel !== "Warning") return raw;
   const common: Record<string, unknown> = { action: act };
+  if (act === "log" && g.action.severityLevel !== "Warning") common.severity = g.action.severityLevel;
   if (act === "block" && g.action.reason !== "Guardrail violation — execution blocked.") common.reason = g.action.reason;
   const uniform = (m: any, list: string[]) => {
     const vs = list.map(e => m?.[e]);
@@ -135,6 +135,20 @@ function guardrailToIR(g: any): Guardrail {
   }
   if (g.validatorType === "prompt_injection" && g.name === "Prompt injection guardrail" && typeof param("threshold") === "number") {
     return { promptInjection: param("threshold"), ...common } as Guardrail;
+  }
+  if (g.validatorType === "intellectual_property" && g.name === "IP protection guardrail" && Array.isArray(param("ipEntities"))) {
+    return { ip: param("ipEntities"), scopes: g.selector?.scopes ?? ["Agent"], ...common } as Guardrail;
+  }
+  if (g.validatorType === "user_prompt_attacks" && g.name === "User prompt attacks guardrail") {
+    return { userPromptAttacks: true, ...common } as Guardrail;
+  }
+  if (g.validatorType === "llm_as_judge" && g.name === "LLM as judge guardrail" && typeof param("guardrailText") === "string") {
+    const ir: Record<string, unknown> = { judge: param("guardrailText"), model: param("model"), scopes: g.selector?.scopes ?? ["Agent"], ...common };
+    if (param("positiveExamples")?.length) ir.positive = param("positiveExamples");
+    if (param("negativeExamples")?.length) ir.negative = param("negativeExamples");
+    if (param("threshold") !== 2) ir.threshold = param("threshold");
+    if (g.selector?.matchNames?.length) ir.tools = g.selector.matchNames;
+    return ir as Guardrail;
   }
   return raw;
 }

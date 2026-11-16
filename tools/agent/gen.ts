@@ -46,8 +46,16 @@ export type Tool =
 export type Guardrail =
   | { pii: string[]; threshold?: number; scopes?: string[]; tools?: string[]; action?: "block" | "log"; name?: string; reason?: string }
   | { harmful: string[]; threshold?: number; scopes?: string[]; action?: "block" | "log"; name?: string; reason?: string }
-  | { promptInjection: number; action?: "block" | "log"; name?: string; reason?: string }
+  | { promptInjection: number; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
+  /** 知的財産（IP protection）。実行の後だけ。Agent か Llm */
+  | { ip: ("Text" | "Code")[]; scopes?: ("Agent" | "Llm")[]; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
+  /** User prompt attacks。実行の前だけ。Llm */
+  | { userPromptAttacks: true; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
+  /** LLM as Judge。judge はルール（4,000 字まで）、model は判定のモデル、例は 2 つずつ・各 1,000 字まで、threshold は 0〜6（既定 2）。別に料金がかかる */
+  | { judge: string; model: string; positive?: string[]; negative?: string[]; threshold?: number; scopes?: ("Agent" | "Llm" | "Tool")[]; tools?: string[]; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
   | { raw: Record<string, unknown> };
+/** action が log のときの重さ（既定 Warning） */
+export type Severity = "Info" | "Warning" | "Error";
 
 export type EvalCase = {
   name: string;
@@ -101,21 +109,39 @@ export type EntityLookup = (names: string[], folder: string) =>
 export type ValidationEscalation = { validate: string; bucket: string; bucketFolder: string; name?: string; description?: string; recipients?: Recipient[] };
 
 /**
- * タスクの受け手。文字列はメール（type 3）。ほかは resource の recipients[].type（スキル uipath-agents の escalation.md）：
- * 1 userId（利用者の GUID）、2 groupId（グループの GUID）、4 assetEmail（メールを入れたアセットの名前）、
- * 5 group（グループの名前）、6 assetGroup（グループの名前を入れたアセットの名前）
+ * タスクの受け手。文字列はメール（type 3）。ほかは resource の recipients[].type（スキル uipath-agents の guardrails.md の
+ * 「Recipient shapes」。エスカレーションも同じ形）：
+ * 1 { userId }（利用者の GUID）、2 { groupId }（グループの GUID）、5 { group }（グループの名前）、
+ * 4 { assetEmail, folder }・6 { assetGroup, folder }（メール・グループ名を入れたアセットと、そのフォルダ）、
+ * 7 { argEmail }・8 { argGroup }（メール・グループ名を入れたエージェントの入力。"user.email" のような点の道）
  */
-export type Recipient = string | { userId: string } | { groupId: string } | { assetEmail: string } | { group: string } | { assetGroup: string };
-const RECIPIENT_TYPES: [string, number][] = [["userId", 1], ["groupId", 2], ["assetEmail", 4], ["group", 5], ["assetGroup", 6]];
-export function recipientResource(r: Recipient): { type: number; value: string } | undefined {
+export type Recipient = string | { userId: string } | { groupId: string } | { group: string }
+  | { assetEmail: string; folder: string } | { assetGroup: string; folder: string } | { argEmail: string } | { argGroup: string };
+type RecipientRes = { type: number; value?: string; assetName?: string; folderPath?: string; argumentName?: string };
+export function recipientResource(r: Recipient): RecipientRes | undefined {
   if (typeof r === "string") return { type: 3, value: r };
-  for (const [k, type] of RECIPIENT_TYPES) if (k in r && typeof (r as any)[k] === "string") return { type, value: (r as any)[k] };
+  const o = r as Record<string, string>;
+  if (typeof o.userId === "string") return { type: 1, value: o.userId };
+  if (typeof o.groupId === "string") return { type: 2, value: o.groupId };
+  if (typeof o.group === "string") return { type: 5, value: o.group };
+  if (typeof o.assetEmail === "string" && typeof o.folder === "string") return { type: 4, assetName: o.assetEmail, folderPath: o.folder };
+  if (typeof o.assetGroup === "string" && typeof o.folder === "string") return { type: 6, assetName: o.assetGroup, folderPath: o.folder };
+  if (typeof o.argEmail === "string") return { type: 7, argumentName: o.argEmail };
+  if (typeof o.argGroup === "string") return { type: 8, argumentName: o.argGroup };
   return undefined;
 }
-export function recipientIR(x: { type: number; value: string }): Recipient | undefined {
-  if (x.type === 3) return x.value;
-  const k = RECIPIENT_TYPES.find(([, t]) => t === x.type)?.[0];
-  return k ? ({ [k]: x.value } as Recipient) : undefined;
+export function recipientIR(x: RecipientRes): Recipient | undefined {
+  switch (x.type) {
+    case 3: return x.value;
+    case 1: return x.value ? { userId: x.value } : undefined;
+    case 2: return x.value ? { groupId: x.value } : undefined;
+    case 5: return x.value ? { group: x.value } : undefined;
+    case 4: return x.assetName ? { assetEmail: x.assetName, folder: x.folderPath ?? "" } : undefined;
+    case 6: return x.assetName ? { assetGroup: x.assetName, folder: x.folderPath ?? "" } : undefined;
+    case 7: return x.argumentName ? { argEmail: x.argumentName } : undefined;
+    case 8: return x.argumentName ? { argGroup: x.argumentName } : undefined;
+  }
+  return undefined;
 }
 
 export type Escalation = {
@@ -384,6 +410,7 @@ function contextResource(c: Context, i: number, entities: EntityLookup | undefin
     return { $resourceType: "context", id: keepId(name), referenceKey: null, name, description: c.description ?? "", contextType: "index", folderPath: c.folder, indexName: c.index, settings };
   }
   if ("dataFabric" in c) {
+    if (c.dataFabric.length > 5) probs.push({ path: `${p}.dataFabric`, code: "TOO_MANY_ENTITIES", message: "Data Fabric のコンテキストは 5 つの表まで（文書の agent-contexts）" });
     const name = c.name ?? "Entities";
     if (!entities) { probs.push({ path: p, code: "NEED_TENANT", message: "Data Fabric のコンテキストは --project で生成する（表を探す）" }); return undefined; }
     const found = entities(c.dataFabric, c.folder);
@@ -424,7 +451,7 @@ function argsSchema(args: Arg[]): { schema: Record<string, unknown>; mapping: Re
 function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefined, project: string | undefined, probs: Problem[]): Record<string, unknown> | undefined {
   const p = `escalations[${i}]`;
   if (!e.recipients?.length) probs.push({ path: `${p}.recipients`, code: "NO_RECIPIENT", message: "タスクを受ける人を 1 つ以上書く（メール、または { group } など。空だとタスクがどこにも行かない）" });
-  (e.recipients ?? []).forEach((r, j) => { if (!recipientResource(r)) probs.push({ path: `${p}.recipients[${j}]`, code: "BAD_RECIPIENT", message: "受け手はメールの文字列か、{ userId } / { groupId } / { assetEmail } / { group } / { assetGroup } のどれか" }); });
+  (e.recipients ?? []).forEach((r, j) => { if (!recipientResource(r)) probs.push({ path: `${p}.recipients[${j}]`, code: "BAD_RECIPIENT", message: "受け手はメールの文字列か、{ userId } / { groupId } / { group } / { assetEmail, folder } / { assetGroup, folder } / { argEmail } / { argGroup } のどれか" }); });
   if (!lookup) { probs.push({ path: p, code: "NEED_TENANT", message: "エスカレーションは --project で生成する（アプリを探す）" }); return undefined; }
   const found = lookup(e.app, e.folder);
   if ("error" in found) { probs.push({ path: p, code: "APP_NOT_FOUND", message: found.error }); return undefined; }
@@ -590,7 +617,7 @@ function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: 
   if ("raw" in g) return g.raw;
   const action = (g.action ?? "block") === "block"
     ? { $actionType: "block", reason: g.reason ?? "Guardrail violation — execution blocked." }
-    : { $actionType: "log", severityLevel: "Warning" };
+    : { $actionType: "log", severityLevel: (g as { severity?: Severity }).severity ?? "Warning" };
   const base = (name: string, description: string, validatorType: string, validatorParameters: unknown[], selector: Record<string, unknown>) =>
     ({ $guardrailType: "builtInValidator", id: old[name] ?? randomUUID(), name, description, validatorType, validatorParameters, action, enabledForEvals: true, selector });
   if ("pii" in g) {
@@ -614,7 +641,31 @@ function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: 
     return base(g.name ?? "Prompt injection guardrail", "Detects prompt injection and jailbreak attempts in LLM calls", "prompt_injection",
       [{ $parameterType: "number", id: "threshold", value: g.promptInjection }], { scopes: ["Llm"] });
   }
-  probs.push({ path: `guardrails[${i}]`, code: "BAD_GUARDRAIL", message: "pii / harmful / promptInjection / raw のどれかを書く" });
+  // 引数の形はテナントの uip agent guardrails list（Validator・Parameters）に合わせた（AUT-1201 の 7）
+  if ("ip" in g) {
+    return base(g.name ?? "IP protection guardrail", "Detects intellectual property in the output", "intellectual_property",
+      [{ $parameterType: "enum-list", id: "ipEntities", value: g.ip }], { scopes: g.scopes ?? ["Agent"] });
+  }
+  if ("userPromptAttacks" in g) {
+    return base(g.name ?? "User prompt attacks guardrail", "Detects attacks in the user prompt", "user_prompt_attacks", [], { scopes: ["Llm"] });
+  }
+  if ("judge" in g) {
+    if (g.judge.length > 4000) probs.push({ path: `guardrails[${i}].judge`, code: "TOO_LONG", message: "judge（ルール）は 4,000 字まで" });
+    for (const k of ["positive", "negative"] as const) {
+      const ex = g[k] ?? [];
+      if (ex.length > 2 || ex.some((s) => s.length > 1000)) probs.push({ path: `guardrails[${i}].${k}`, code: "TOO_MANY", message: "例は 2 つまで、各 1,000 字まで" });
+    }
+    const selector: Record<string, unknown> = { scopes: g.scopes ?? ["Agent"] };
+    if (g.tools?.length) selector.matchNames = g.tools;
+    return base(g.name ?? "LLM as judge guardrail", "Judges the content against a custom rule", "llm_as_judge", [
+      { $parameterType: "text", id: "guardrailText", value: g.judge },
+      { $parameterType: "enum", id: "model", value: g.model },
+      { $parameterType: "text-list", id: "positiveExamples", value: g.positive ?? [] },
+      { $parameterType: "text-list", id: "negativeExamples", value: g.negative ?? [] },
+      { $parameterType: "number", id: "threshold", value: g.threshold ?? 2 },
+    ], selector);
+  }
+  probs.push({ path: `guardrails[${i}]`, code: "BAD_GUARDRAIL", message: "pii / harmful / promptInjection / ip / userPromptAttacks / judge / raw のどれかを書く" });
   return undefined;
 }
 
@@ -660,6 +711,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
   const combo = combos(ir, { inline: opts.inline });
   probs.push(...combo.errors);
   if (ir.harness !== undefined && ir.harness !== "standard" && ir.harness !== "advanced") probs.push({ path: "harness", code: "BAD_HARNESS", message: "harness は standard か advanced" });
+  if (ir.conversational === true && (ir.guardrails ?? []).some((g) => "promptInjection" in g)) probs.push({ path: "guardrails", code: "CONVERSATIONAL_PROMPT_INJECTION", message: "会話型では、エージェントの段の Prompt injection のガードレールを使えない（文書の conversational-agents-limitations）" });
   if (ir.harness === "advanced" && ir.guardrails?.length) probs.push({ path: "guardrails", code: "ADVANCED_GUARDRAILS", message: "Advanced harness ではガードレールを使えない（起動のとき「Guardrails are not yet supported for advanced agents.」で落ちる）" });
   if (!ir.name) probs.push({ path: "name", code: "MISSING", message: "name が要る" });
   if (!ir.system) probs.push({ path: "system", code: "MISSING", message: "system（システムプロンプト）が要る" });
@@ -793,8 +845,10 @@ export function cliLookup(profile: string | undefined, cwd: string): ProcessLook
     let inputSchema = parse(spec.InputArgumentsSchemaV2 ?? spec.inputArgumentsSchemaV2);
     let outputSchema = parse(spec.OutputArgumentsSchemaV2 ?? spec.outputArgumentsSchemaV2);
     // 古い RPA のプロセスは V2 が無く、.NET の型の配列（Arguments.Input / Output）だけを持つ。JSON Schema に直す
-    if (!inputSchema) { const raw = parse(spec.InputArgumentsSchema ?? spec.inputArgumentsSchema); if (Array.isArray(raw)) inputSchema = dotnetArgsToSchema(raw); }
-    if (!outputSchema) { const raw = parse(spec.OutputArgumentsSchema ?? spec.outputArgumentsSchema); if (Array.isArray(raw)) outputSchema = dotnetArgsToSchema(raw); }
+    const unsupported: string[] = [];
+    if (!inputSchema) { const raw = parse(spec.InputArgumentsSchema ?? spec.inputArgumentsSchema); if (Array.isArray(raw)) { inputSchema = dotnetArgsToSchema(raw); unsupported.push(...unsupportedDotnetArgs(raw)); } }
+    if (!outputSchema) { const raw = parse(spec.OutputArgumentsSchema ?? spec.outputArgumentsSchema); if (Array.isArray(raw)) { outputSchema = dotnetArgsToSchema(raw); unsupported.push(...unsupportedDotnetArgs(raw)); } }
+    if (unsupported.length) console.error(`注意 プロセス "${name}" の引数に、エージェントの道具で使えない型がある（文書の tools-processes）：${unsupported.join(", ")}`);
     for (const s of [inputSchema, outputSchema]) if (s) delete s.title;
     return { key: row.Key, name: row.Name, type: String(row.Type), folder: row.Folder, inputSchema, outputSchema };
   };
@@ -803,6 +857,17 @@ export function cliLookup(profile: string | undefined, cwd: string): ProcessLook
 /** .NET の型の引数の並び（[{ name, type: "System.String, System.Private.CoreLib, …", required }]）を JSON Schema にする。
  *  型の対応はスキルの solution-files.md：String → string、Int32 / Int64 / Decimal / Double → number、Boolean → boolean、ほかは string。
  *  配列（String[] など）は array にする */
+// 文書（tools-processes）で、エージェントの道具の古い RPA のプロセスに使える引数の型。ほかは使えないか失敗する（AUT-1201 の 10）
+const AGENT_ARG_TYPES = new Set(["String", "Char", "Byte", "SByte", "UInt16", "Int16", "UInt32", "Int32", "UInt64", "Int64", "Double", "Single", "Decimal", "Boolean", "Object"]);
+/** 使えない型の引数の名前と型（配列は中の型で判断する） */
+export function unsupportedDotnetArgs(args: { name: string; type?: string }[]): string[] {
+  return args.flatMap((a) => {
+    const full = String(a.type ?? "System.String").split(",")[0].trim();
+    const short = full.includes("`") ? "Object" : full.split(".").pop()!.replace(/(\[\])+$/, "");
+    return AGENT_ARG_TYPES.has(short) ? [] : [`${a.name}（${full}）`];
+  });
+}
+
 export function dotnetArgsToSchema(args: { name: string; type?: string; required?: boolean }[]): Record<string, unknown> {
   const one = (short: string): Record<string, unknown> => {
     if (short.endsWith("[]")) return { type: "array", items: one(short.slice(0, -2)) };

@@ -352,11 +352,15 @@ test("combos：文書にある使えない組み合わせを止め、注意を�
   assert.equal(generate(ir({ model: "gemini-2.5-flash", tools: [web] }), BASE, ALL).problems[0].code, "GEMINI_IS_TOOL");
 });
 
-test("受け手：メールのほかに、利用者・グループの GUID、グループの名前、アセットを書ける（AUT-1189）", async () => {
+test("受け手：メールのほかに、利用者・グループの GUID、グループの名前、アセット、入力の引数を書ける（AUT-1189）", async () => {
   const { recipientResource, recipientIR } = await import("./gen.ts");
-  const all = ["a@example.com", { userId: "u-1" }, { groupId: "g-1" }, { assetEmail: "ApproverEmail" }, { group: "Approvers" }, { assetGroup: "ApproverGroup" }] as const;
+  const all = ["a@example.com", { userId: "u-1" }, { groupId: "g-1" }, { assetEmail: "ApproverEmail", folder: "Shared" }, { group: "Approvers" }, { assetGroup: "ApproverGroup", folder: "Shared/T" }, { argEmail: "approver" }, { argGroup: "team.group" }] as const;
   const res = all.map((r) => recipientResource(r as any));
-  assert.deepEqual(res.map((r) => r!.type), [3, 1, 2, 4, 5, 6]);
+  assert.deepEqual(res.map((r) => r!.type), [3, 1, 2, 4, 5, 6, 7, 8]);
+  // アセットは value ではなく assetName と folderPath、入力の引数は argumentName（スキルの guardrails.md）
+  assert.deepEqual(res[3], { type: 4, assetName: "ApproverEmail", folderPath: "Shared" });
+  assert.deepEqual(res[6], { type: 7, argumentName: "approver" });
+  assert.equal(recipientResource({ assetEmail: "x" } as any), undefined); // folder が要る
   assert.deepEqual(res.map((r) => recipientIR(r!)), all);
   assert.equal(recipientResource({ team: "x" } as any), undefined);
   assert.equal(recipientIR({ type: 9, value: "x" }), undefined);
@@ -368,4 +372,43 @@ test("harness：advanced は settings.mode に入り、ガードレールと一�
   assert.equal((generate(ir(), BASE, ALL).result!.agent.settings as any).mode, "standard");
   assert.equal(generate(ir({ harness: "advanced", guardrails: [{ promptInjection: 0.5 } as any] }), BASE, ALL).problems[0].code, "ADVANCED_GUARDRAILS");
   assert.equal(generate(ir({ harness: "turbo" as any }), BASE, ALL).problems[0].code, "BAD_HARNESS");
+});
+
+test("文書の決まり：Data Fabric は 5 表まで、会話型の Prompt injection、古い RPA の引数の型（AUT-1201）", async () => {
+  const { unsupportedDotnetArgs } = await import("./gen.ts");
+  const six = ["A", "B", "C", "D", "E", "F"];
+  assert.ok(generate(ir({ contexts: [{ dataFabric: six, folder: "Shared" }] }), BASE, ALL).problems.some((p) => p.code === "TOO_MANY_ENTITIES"));
+  assert.ok(generate({ name: "C", conversational: true, system: "s", guardrails: [{ promptInjection: 0.5 } as any] } as AgentIR, { ...BASE, metadata: { ...BASE.metadata, isConversational: true } }, ALL).problems.some((p) => p.code === "CONVERSATIONAL_PROMPT_INJECTION"));
+  assert.deepEqual(unsupportedDotnetArgs([
+    { name: "a", type: "System.String, System.Private.CoreLib" },
+    { name: "b", type: "System.Int32[], System.Private.CoreLib" },
+    { name: "c", type: "System.DateTime, System.Private.CoreLib" },
+    { name: "d", type: "System.Data.DataTable, System.Data.Common" },
+  ]), ["c（System.DateTime）", "d（System.Data.DataTable）"]);
+});
+
+test("ガードレールの省略形：IP 保護・User prompt attacks・LLM as Judge と log の重さを書けて、to-ir で戻る（AUT-1201 の 7）", () => {
+  const gs = [
+    { ip: ["Text", "Code"], action: "log", severity: "Error" },
+    { userPromptAttacks: true },
+    { judge: "個人の悪口を言わない", model: "gpt-5.4-mini-2026-03-17", positive: ["丁寧な返事"], threshold: 4, scopes: ["Tool"], tools: ["Probe"] },
+  ] as any[];
+  const r = generate(ir({ guardrails: gs }), BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  const out = r.result!.agent.guardrails as any[];
+  assert.deepEqual(out.map((g) => g.validatorType), ["intellectual_property", "user_prompt_attacks", "llm_as_judge"]);
+  assert.deepEqual(out[0].action, { $actionType: "log", severityLevel: "Error" });
+  assert.deepEqual(out[1].selector, { scopes: ["Llm"] });
+  assert.deepEqual(out[2].selector, { scopes: ["Tool"], matchNames: ["Probe"] });
+  const proj = scaffold();
+  try {
+    writeFileSync(join(proj, "agent.json"), JSON.stringify({ ...r.result!.agent }));
+    const back = toIR(proj).guardrails as any[];
+    assert.deepEqual(back, [
+      { ip: ["Text", "Code"], scopes: ["Agent"], action: "log", severity: "Error" },
+      { userPromptAttacks: true, action: "block" },
+      { judge: "個人の悪口を言わない", model: "gpt-5.4-mini-2026-03-17", scopes: ["Tool"], action: "block", positive: ["丁寧な返事"], threshold: 4, tools: ["Probe"] },
+    ]);
+  } finally { rmSync(proj, { recursive: true, force: true }); }
+  assert.equal(generate(ir({ guardrails: [{ judge: "x".repeat(4001), model: "m" } as any] }), BASE, ALL).problems[0].code, "TOO_LONG");
 });
