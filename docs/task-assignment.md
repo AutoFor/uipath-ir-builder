@@ -167,6 +167,7 @@ Case の (a)(b)(c) は重なって起動し、もう1組もできた（タスク
 
 - **ユーザーの割り当ては3形式とも効いた**。Case は SDK が書く `assignmentCriteria: "user"` のままで効く
 - **グループの全員（`AllUsers` 相当）は、3形式とも未割り当てのまま**。タスクの条件も `SingleUser` のままで、`TaskAssignees` は空。エンジンはグループ名を受け取っている（`uip traces spans get` の `hitlTaskConfiguredAssignee` が `Automation Developers`）のに、タスクに反映されない。同じグループで `Workload` は割り当たるので、グループの権限の問題ではないように見える（推定）。原因は未確認。画面は見ていないので、`AllUsers` の意味の未割り当てが API では `SingleUser` と見えるだけ、という可能性は残る
+  - **文書で分かったこと（2026-11-17、AUT-1197）**：エージェントのエスカレーションの文書に「デバッグではグループの割り当てが効かない。デプロイしてから確かめる」とある。ここの試しはどれもデバッグ（個人用ワークスペース）だったので、これが未割り当ての理由とみられる。デプロイした版での確認はまだ。
 - **`Workload` は Flow、BPMN、Case で割り当たった**（担当は本人。グループの人間のメンバーが本人だけのため）。`RoundRobin` は流していない
 - `fixtures/assign/AssignGroup.*.ts` のグループ指定（Flow の `group`、Case の `type: 1`）は `AllUsers` なので、未割り当てになる。人に割り当てたいときは `workload` を使う
 - 窓口 `verify.mjs` に warning `TASK_GROUP_ALL_USERS` を足した（Flow の `group`/`staticGroupName`、BPMN と Case の `AllUsers`）

@@ -72,6 +72,7 @@ uip codedapp publish -t Action   /   uip codedapp deploy -n <app> --folder-key <
 - 見本（14 フィールド、全部の型と部品）を作り、`npm install --offline`（このマシンの npm のキャッシュだけ）→ `tsc`（strict、`noUnusedLocals`）→ `vite build` が通った。版は react 19.3.1、vite 8.3.5、`@uipath/coded-action-app` 1.0.0
 - `uip codedapp pack` で `.nupkg` ができ、`content/action-schema.json` が入った。スキーマはスキルの `validate-action-schema.js` も通る
 - まだ：Action Center で開くこと（publish / deploy は人に確かめてから）、SDK のサービス（Data Fabric、添付の表示など）、Coded Web App
+- **publish しなくても Action Center で試せる**（文書、AUT-1197。まだ試していない）：手元で `npm run dev`（localhost）のまま、`https://<host>/<org>/<tenant>/actions_/debug/coded-action-app` を開く。外部アプリ（OAuth）のリダイレクト URI に `https://<host>/<orgId>/<tenantId>/actions_`（名前ではなく GUID の形）を足しておく。
 
 ## ローコードの Apps
 

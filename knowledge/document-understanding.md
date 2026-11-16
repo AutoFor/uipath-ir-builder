@@ -71,3 +71,11 @@ UiPath.DocumentUnderstanding.Activities の「Extract Document Data」を IR で
 - 2026-11-14 に 3.3.0 で run すると、抽出が `Internal Server Error ... [UnexpectedInternalServerError]` で落ちた。
 - 公式の文書は 3.6.0-preview 以降を求める。Studio Web で依存を 3.6.0-preview にすると、「Installing dependencies」から 5 分以上進まず、試せなかった。
 - Flow のノードで実行したときの INVALID_DOCUMENT と合わせると、Preview のモデルは実行時に呼ぶ経路がまだ通らない。
+
+### 文書で分かったこと（2026-11-17、AUT-1197）
+
+- **Extract ノードのモデルは DU API v2（`api-version=2`）で呼ぶ**（文書）。呼び方は、タグで呼ぶ（`documentTypeId` は `00000000-…`）か、extractorId（`gpt_ixp_<版>`）で呼ぶかの 2 つ。上の 500 は v1 の形（`DocType` が `default_extractor`）で呼んだときのもので、これだけでは「サーバーの抽出が落ちている」とは決められない。
+- **RPA から呼ぶには、DU.Activities 3.6.0-preview 以上と、ソリューションの中のモデルと、「Use Solution Resources」が要る**（文書）。上の 3.3.0 の試しは条件を満たしていない。
+- **Flow で作ったモデルは、テナントの DU API v2 のプロジェクトの一覧（`GET /du_/api/framework/projects?api-version=2`）に出ない**（2026-11-17、Sorahane Trial。出たのは Predefined の 3 つと IXP の `ixp_trial_invoices` だけ）。ソリューションの資源として扱われ、外からは呼べないとみられる。
+- INVALID_DOCUMENT の中身は、Orchestrator の IXP models → Runs → trace の Files で、入力・プロンプト・出力が見られる（文書）。AI Trust Layer の Audit には IXP の名前で記録される（無ければ異常）。
+- **DU API v2 は 2026-06-26 に GA**。v1 から変わって壊れる点：キーが PascalCase（上の一覧も `Projects`・`Id`）、タグの経路が `/projects/{id}/tags/{tag}/…`、Discovery が `taxonomy` を返す、IXP の結果が `FieldGroup` になった。

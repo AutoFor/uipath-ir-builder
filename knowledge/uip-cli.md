@@ -69,6 +69,26 @@ uip solution packages delete <名前> <版> --yes
 - **ソリューションに複数のプロジェクトがあると、全部が一緒にデプロイされる**。1 つだけ出したいときは、そのプロジェクトだけを入れた写しを作り、`.uipx` の `Projects` も絞ってから pack する。
 - 直したら版を上げて pack・publish し、`deploy upgrade` で入れ替える。
 - `deploy upgrade` は `<Key>` を渡せば、名前やパッケージは自動で引く。
+### デプロイの落とし穴（AUT-1196。文書は Solutions Management の user-guide、CLI は 1.204 の `--help` で確かめた）
+
+- **`deploy run` は Success でも有効になっていないことがある**。資源に Orchestrator での設定が要るときは `ActivationStatus: NeedsSetupToActivate` と、残りの資源・手順を返す。もう一度 deploy しない。設定してから `uip solution deploy activate <名前>`。
+  - `--skip-activate` で「Inactive (Ready to activate)」のまま置ける。状態は `uip solution deploy status <名前か Key>`。
+  - 同じ `--name` で `run` すると、そのデプロイを上書きする（版を変えるなら `upgrade`）。
+- **版の変更（upgrade・downgrade）の前に、画面の「Deactivate solution」でトリガーと動いているジョブを止める**（文書）。
+  - 新しい版に無い部品は、環境からも消える。ロールバックしてもデータは戻らない。
+  - downgrade では、エンティティ・選択肢・Webhook は消えない。
+  - 資源が消える版の変更は、画面では「Delete and deploy」の確認が要る。文書は API に `--acknowledge-permanent-deletion` があると書くが、1.204 の `deploy upgrade --help` には無い（資源が消える upgrade は試していない）。
+  - 前に断られた upgrade の下書きが残っていると、次の upgrade が止まる。`deploy upgrade --discard-draft` で捨てる。
+- **デプロイの状態ごとにできること**（文書）：「Inactive (Needs setup to activate)」は upgrade できない。Draft は install か削除だけ。失敗すると自動でロールバックし、それも失敗すると「Failed rollback」になる。
+- **ソリューションに入らないもの**（文書）：
+  - API トリガーと、Integration Service のイベントのトリガー。デプロイしたあと、別に作る（下の「トリガー」、[api-workflow.md](api-workflow.md)）。
+  - Studio Web で作るときの Webhook と、Orchestrator のライブラリ。
+  - テナントの Data Fabric の表（フォルダの表だけ入る）。
+  - 接続の資格情報（接続そのものは入るが、行き先で接続し直す）。
+  - トリガーは、エントリーポイント 1 つに 1 つまで。
+- **RPA アプリを含むソリューション**：アプリはテナントのフィードにだけ publish できる。アプリを activate しないと、ソリューションの activation が失敗する（文書）。
+- 画面のデプロイの「Activate immediately」と「Set up runtime」はどちらも既定で on。CLI では、前者は `--skip-activate` を付けないときに当たる。後者に当たる選択肢は `deploy run --help` に無い。
+
 - Studio Web との出し入れ：
   - 取り込みは `uip solution upload <ファイル>.uis`（フォルダを渡すと `.local` が落ちる。[apps.md](apps.md)）。
   - 取り出しは `uip solution download <ソリューションの Id> -d <dir> --extract`。Studio Web で足した活動の JSON の形を知るのに使える。
