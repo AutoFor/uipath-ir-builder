@@ -28,6 +28,7 @@ import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
 import { allUsersTasks, unassignedTasks } from "./task-assign.mjs";
+import { extractLimitIssues } from "./extract-limits.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -292,17 +293,20 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
 // 割り当て先の無い人のタスク（AUT-1090）。未割り当てでも動くので error にしない。--strict では NG になる
 function checkAssign(family, artifact) {
   const started = Date.now();
-  let names, all;
+  let names, all, limits = [];
   try {
     const text = readFileSync(artifact, "utf8");
     names = unassignedTasks(family, text);
     all = allUsersTasks(family, text);
+    if (family === "flow") limits = extractLimitIssues(text);
   } catch {
     return { status: "skip", ms: Date.now() - started, diagnostics: [], reason: "成果物が読めない（validate の結果を見る）" };
   }
   const diagnostics = names.map((where) => ({ level: "warning", code: "TASK_UNASSIGNED", where, message: "人のタスクに割り当て先が無い。未割り当てで作られる（docs/task-assignment.md）" }));
   diagnostics.push(...all.map((where) => ({ level: "warning", code: "TASK_GROUP_ALL_USERS", where, message: "グループの全員への割り当ては、デバッグでは効かない（文書。個人ワークスペースのデバッグの実測でも未割り当てのままだった）。デプロイしてから確かめる。Workload はデバッグでも割り当たった（docs/task-assignment.md）" })));
-  return { status: diagnostics.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
+  // Extract の項目の定義の上限（AUT-1203 の 13）。Studio Web が拒むので error にする
+  diagnostics.push(...limits.map(({ where, message }) => ({ level: "error", code: "EXTRACT_LIMIT", where, message: `${message}（IXP の flow-user-guide の faq-design-time）` })));
+  return { status: limits.length ? "ng" : diagnostics.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
 }
 
 // テナントの一覧は、1回の実行で1度だけ読む
