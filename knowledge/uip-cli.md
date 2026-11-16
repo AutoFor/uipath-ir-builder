@@ -133,7 +133,8 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
   - `run --remote` と `remote exec --command` は、どちらも「アクセスが拒否されました」で落ちた。ジョブはできていない。
   - `--remote` でも、Orchestrator のトークンは**この PC のロボット（`UiPath.Service.UserHost`）から取る**（`StudioOperations.GetAccessToken`）。そのとき、ロボットが Helm のプロセスを開こうとする（`RegisterClientProcess`）。
   - SSH の Helm は管理者・セッション 0 で、ロボットは RDP のセッションで管理者なしなので、開けずに落ちる。ふつうの run と同じ原因。`--profile` のトークンは使われない。
-  - 試していないもの：DESKTOP をサービスモード（`UiRobotSvc`）にしたときに、SSH の Helm からロボットに頼めるか。
+  - **DESKTOP をサービスモード（`UiRobotSvc` を LocalSystem で入れて起動）にしても同じ**（2026-11-17）。Studio の run は、サービスではなく、RDP のセッションの `UserHost`（`AttendedServiceProxy`）に回るため。確かめた後、サービスは外して元に戻した。
+  - SSH から run するには、管理者でない Helm を起こすしかない。今は `tools/verify/queue-run.mjs`（RDP の窓口）を使う。
 - `uip` が SSH から起こした Helm（`UiPath.Studio.Helm`、セッション 0）は、終わっても残り、プロジェクトのフォルダ（`.local\.jit`）をつかむ。試しのフォルダを消す前に止める（自分が起こしたものだけ）。
 - `uip` の Orchestrator・ソリューション・`api-workflow run` などの、ロボットを使わないコマンドは SSH から動く。
 - `uip maestro registry prepare` は `uip` が PATH に要る。また `tools/maestro`（SDK のあるフォルダ）で動かす。
