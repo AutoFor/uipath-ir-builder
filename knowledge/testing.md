@@ -45,7 +45,15 @@ AUT-1113。サンプルは `samples/ir/UiPath.Testing.Activities/`、対応表�
   - ArgumentsBridge だけを外す
   - ArgumentsBridge の Input を外す
 
-  Modern の NGetText（UIAutomation 26.10.3）の出力を 23.4.1 が見つけられないのかもしれない。Studio で作った XAML と比べる必要がある。1 つの XAML の検証エラーでプロジェクト全体の build が落ちるので、23.4.1 のプロジェクトでは今は使わない
+  Modern の NGetText（UIAutomation 26.10.3）の出力を 23.4.1 が見つけられないのかもしれない。1 つの XAML の検証エラーでプロジェクト全体の build が落ちるので、23.4.1 のプロジェクトでは NGetText を入れない
+
+- **23.4.1 でも、UI でないアクティビティなら動いた**（2026-11-17、`out/verify/vca24rt*-run/`。System 24.10.7 の `ReadTextFile`、`OutputArgument` は `Content`）。
+  - build は通る。つまり build のエラーは NGetText（UIAutomation 26.10.3）との組み合わせのせい。
+  - ただし run で、**ActivityToTest の中の式と出力の受け先が「コンパイルする必要があります」（`NotSupportedException`）で落ちる**。23.4.1 は中のアクティビティを、式をコンパイルせずに別に動かすらしい。
+    - `FileName="p"`（変数）→ 落ちた。
+    - `FileName` を文字（`{ "lit": "C:\\…\\vca24.txt" }`）にし、`Content="content"` を残す → 受け先で落ちた。
+    - `Content` の受け先と `ArgumentsBridge` を外す → `Verification passed`、`ok=True`。
+  - 23.4.1 で使うなら、ActivityToTest には**文字の値だけを入れ、出力の受け先と ArgumentsBridge を書かない**。25.10.1 ではこの制限は無い（上の形で run OK）。
 
 ## CompareText・ComparePdfDocuments・CreateComparisonRule（2026-11-17、AUT-1118〜1120）
 
