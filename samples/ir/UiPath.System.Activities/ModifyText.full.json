@@ -2,7 +2,7 @@
   "workflow": "ModifyText_Full",
   "variables": [
     {
-      "name": "out",
+      "name": "result",
       "type": "String"
     }
   ],
@@ -14,7 +14,7 @@
         "SourceText": {
           "lit": "  hello  "
         },
-        "OutputText": "out"
+        "OutputText": "result"
       },
       "body": [
         {
@@ -68,8 +68,8 @@
       "props": {
         "Level": "Info",
         "Message": {
-          "vb": "\"[\" & out & \"]\"",
-          "cs": "\"[\" + out + \"]\""
+          "vb": "\"[\" & result & \"]\"",
+          "cs": "\"[\" + result + \"]\""
         }
       }
     }

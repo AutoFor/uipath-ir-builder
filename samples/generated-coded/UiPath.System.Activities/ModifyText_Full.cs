@@ -14,12 +14,12 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            String out = default;
+            String result = default;
             // 文字列を順に加工する
             // ModifyText はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い。個々の加工は ChangeCase / FindAndReplace などで書き分ける））ので XAML 経由（coded/_xaml/ModifyText_Full_1.xaml）
-            var __xaml1 = RunWorkflow("coded/_xaml/ModifyText_Full_1.xaml", new Dictionary<string, object> { ["out"] = out });
-            out = (String)__xaml1["out"];
-            Log(message: Convert.ToString("[" + out + "]"), level: UiPath.CodedWorkflows.LogLevel.Info);
+            var __xaml1 = RunWorkflow("coded/_xaml/ModifyText_Full_1.xaml", new Dictionary<string, object> { ["result"] = result });
+            result = (String)__xaml1["result"];
+            Log(message: Convert.ToString("[" + result + "]"), level: UiPath.CodedWorkflows.LogLevel.Info);
         }
     }
 }

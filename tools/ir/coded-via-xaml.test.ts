@@ -227,3 +227,13 @@ test("汎用の XAML：必須の入力がオーバーロードの組で分かれ
   assert.deepEqual(r.issues, []);
   assert.deepEqual(r.xamls.map((x) => x.path.replace(/_[0-9a-f]{6}\.xaml$/, "_<hash>.xaml")), ["coded/_activities/RenameFileX.xaml", "coded/_activities/RenameFileX_<hash>.xaml"]);
 });
+
+test("C# の予約語（out など）の変数名・引数名は CS_NAME", () => {
+  const wf: Workflow = {
+    workflow: "K", arguments: [{ name: "class", dir: "In", type: "String" }],
+    variables: [{ name: "out", type: "String" }, { name: "outPath", type: "String" }],
+    body: [{ act: "Sequence", variables: [{ name: "int", type: "Int32" }], body: [] }],
+  } as Workflow;
+  const r = generateCoded(wf, cat, maps, { namespace: "N" });
+  assert.deepEqual(r.issues.filter((i) => i.code === "CS_NAME").map((i) => i.path).sort(), ["arguments[0]", "body[0].variables[0]", "variables[0]"].sort());
+});

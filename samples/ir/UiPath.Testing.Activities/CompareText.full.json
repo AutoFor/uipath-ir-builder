@@ -1,0 +1,52 @@
+{
+  "workflow": "CompareText_Full",
+  "variables": [
+    { "name": "rule", "type": "UiPath.Testing.Activities.Models.ComparisonRule" },
+    { "name": "withRule", "type": "Boolean" },
+    { "name": "plain", "type": "Boolean" },
+    { "name": "diffs", "type": "IEnumerable<UiPath.Testing.Activities.Models.Difference>" },
+    { "name": "outPath", "type": "String", "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uta-compare-text-full.html\")" }
+  ],
+  "body": [
+    {
+      "act": "CreateComparisonRule",
+      "name": "数字を無視する規則",
+      "props": {
+        "ComparisonRuleType": "RegexRule",
+        "RuleName": { "lit": "numbers" },
+        "Pattern": { "lit": "\\d+" },
+        "UsePlaceholder": true,
+        "ContinueOnError": false,
+        "ComparisonRule": "rule"
+      }
+    },
+    {
+      "act": "CompareText",
+      "name": "規則つきで比べる",
+      "props": {
+        "BaselineText": { "lit": "Order 123 done" },
+        "TargetText": { "lit": "Order 456 done" },
+        "ComparisonType": "Word",
+        "WordSeparators": { "lit": " " },
+        "RulesList": { "vb": "New List(Of UiPath.Testing.Activities.Models.ComparisonRule) From {rule}", "cs": "new List<UiPath.Testing.Activities.Models.ComparisonRule> { rule }" },
+        "OutputFilePath": "outPath",
+        "ContinueOnFailure": true,
+        "Result": "withRule"
+      }
+    },
+    {
+      "act": "CompareText",
+      "name": "規則なしで比べる",
+      "props": {
+        "BaselineText": { "lit": "Order 123 done" },
+        "TargetText": { "lit": "Order 456 done" },
+        "ComparisonType": "Word",
+        "OutputFilePath": "outPath",
+        "ContinueOnFailure": true,
+        "Result": "plain",
+        "Differences": "diffs"
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": { "vb": "\"withRule=\" & withRule.ToString & \" plain=\" & plain.ToString & \" diffs=\" & diffs.Count.ToString", "cs": "\"withRule=\" + withRule.ToString() + \" plain=\" + plain.ToString() + \" diffs=\" + diffs.Count().ToString()" } } }
+  ]
+}

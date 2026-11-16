@@ -16,7 +16,7 @@ import type { Workflow, Node, Value, Issue } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs, requiredRefs, scopeRefs, usingScope, versionLess, UIA_APP_TYPE } from "./mapping.ts";
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
-import { vbToCs, vbDefaultToCs, csType } from "./vb2cs.ts";
+import { vbToCs, vbDefaultToCs, csType, csKeywords } from "./vb2cs.ts";
 import { itemNames, validate } from "./validate.ts";
 import { genericActivity, viaXamlArgs, viaXamlWorkflow, type GenericActivity } from "./coded-via-xaml.ts";
 import { objToCs } from "./uia.ts";
@@ -74,6 +74,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     add(`arguments.${a.name}`, "CODED_INOUT", `InOut 引数 "${a.name}" は Coded では書けない（In と Out に分ける）`));
   const ret = outs.length === 0 ? "void" : outs.length === 1 ? csType(outs[0].type) : `(${outs.map((a) => `${csType(a.type)} ${a.name}`).join(", ")})`;
 
+  // C# の予約語（out など）の名前は、変数にも引数にも使えない（C# の build が「; が必要です」で落ちる）
+  function keyword(name: string, at: string) {
+    if (csKeywords.has(name)) add(at, "CS_NAME", `名前 ${name} は C# の予約語なので、Coded では使えない。名前を変える`);
+  }
+  (wf.arguments ?? []).forEach((a, i) => keyword(a.name, `arguments[${i}]`));
   const scope = new Map((wf.arguments ?? []).map((a) => [a.name, a.type] as [string, string]));
   const d = 3;
   for (const a of outs) emit(d, `${csType(a.type)} ${a.name} = default;`);
@@ -132,6 +137,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   }
 
   function declare(name: string, type: string, def: string | undefined, depth: number, at: string, sc: Map<string, string>) {
+    keyword(name, at);
     let init = "default";
     if (def !== undefined) {
       const r = vbDefaultToCs(def, type, sc);

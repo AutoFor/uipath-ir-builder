@@ -47,6 +47,20 @@ AUT-1113。サンプルは `samples/ir/UiPath.Testing.Activities/`、対応表�
 
   Modern の NGetText（UIAutomation 26.10.3）の出力を 23.4.1 が見つけられないのかもしれない。Studio で作った XAML と比べる必要がある。1 つの XAML の検証エラーでプロジェクト全体の build が落ちるので、23.4.1 のプロジェクトでは今は使わない
 
+## CompareText・ComparePdfDocuments・CreateComparisonRule（2026-11-17、AUT-1118〜1120）
+
+見本は `samples/ir/UiPath.Testing.Activities/CompareText.{min,full}.json`、`ComparePdfDocuments.{min,full}.json`、`CreateComparisonRule.min.json`。XAML も C# も run OK（25.10.1）。
+
+- `ComparisonType` は `Line`・`Word`・`Character`（既定 XAML は `Line`）。`ContinueOnFailure` の既定は True で、違っていても止まらず `Result` が False になる。
+- 規則は `CreateComparisonRule` で作り、`RulesList`（`List<ComparisonRule>`）に渡す。`ComparisonRuleType` は `RegexRule`（既定）か `WildcardRule`。
+  - `RegexRule` の `\d+` で「Order 123 done」と「Order 456 done」が同じになった（規則なしの `Word` では違いが 4 件）。
+  - `WildcardRule` の `file_*` で「see file_01」と「see file_99」が同じになった。
+- 型は `UiPath.Testing.Activities.Models.ComparisonRule`・`Difference`（`Differences` は `IEnumerable<Difference>`）。`types-xaml.ts` に足した。
+- `ComparePdfDocuments` の `BaselinePath`・`TargetPath` は `IResource`。見本は `PathExists` の `Resource` で `ILocalResource` を取って渡す。
+  - 見本の PDF は、ワークフローの中で `WriteTextFile`（`Encoding` は `us-ascii`）で 1 行だけの PDF をテキストとして書く。外のファイルは要らない。
+  - `OutputFolderPath` に差分の HTML が出る。`IncludeImages` は既定 True（見本では False）。
+- Coded の API（`testing.CompareText`・`ComparePdfDocuments`）はあるが、規則などは `CompareTextOptions` で渡す形で、中身を確かめていないので対応表は作らない。C# は XAML 経由（`CODED_VIA_XAML`）で run OK。
+
 ## IR で書かない内部用のアクティビティ（2026-11-17）
 
 カタログで browsable=false（ツールボックスに出ない）の 5 つのうち、次の 4 つは IR の対応をしない。人が Studio で置くことも無い。

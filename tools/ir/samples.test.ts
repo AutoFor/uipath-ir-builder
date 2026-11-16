@@ -132,10 +132,6 @@ for (const f of files("samples/ir", ".json")) {
 // 式の言語が C# の XAML。直せない式（名前付き引数など）があるものは CS_EXPR、C# の予約語の変数名は CS_NAME になる。そのうち C# でも試すものは、両方を書いた版を samples/ir-csharp/ に置く
 const csExprErrors: Record<string, string[]> = {
   "samples/ir/VbExpressions.json": ["CS_EXPR"], // 名前付き引数
-  // 変数名 out（C# の予約語）
-  "samples/ir/UiPath.System.Activities/ModifyText.full.json": ["CS_EXPR", "CS_NAME"],
-  "samples/ir/UiPath.System.Activities/ModifyText.min.json": ["CS_EXPR", "CS_NAME"],
-  "samples/ir/UiPath.System.Activities/ToUpperLowerTextModification.min.json": ["CS_EXPR", "CS_NAME"],
 };
 const csSnapshot = (f: string) => /^samples\/ir\/[^/]+$/.test(rel(f)) || rel(f).startsWith("samples/ir-csharp/");
 for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", ".json")]) {

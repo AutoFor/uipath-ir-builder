@@ -1,0 +1,86 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="ComparePdfDocuments_Full" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform"
+xmlns:uta="clr-namespace:UiPath.Testing.Activities;assembly=UiPath.Testing.Activities"
+xmlns:utam="clr-namespace:UiPath.Testing.Activities.Models;assembly=UiPath.Testing.Activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Testing.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>UiPath.Testing.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="ComparePdfDocuments_Full" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="upr:ILocalResource" Name="a" />
+      <Variable x:TypeArguments="upr:ILocalResource" Name="b" />
+      <Variable x:TypeArguments="utam:ComparisonRule" Name="rule" />
+      <Variable x:TypeArguments="x:Boolean" Name="withRule" />
+      <Variable x:TypeArguments="x:Boolean" Name="plain" />
+      <Variable x:TypeArguments="scg:IEnumerable(utam:Difference)" Name="diffs" />
+    </Sequence.Variables>
+    <ui:WriteTextFile DisplayName="元の PDF を書く" Encoding="us-ascii" FileName="output\uta-base.pdf" Text="%PDF-1.4&#xA;1 0 obj&#xA;&lt;&lt; /Type /Catalog /Pages 2 0 R &gt;&gt;&#xA;endobj&#xA;2 0 obj&#xA;&lt;&lt; /Type /Pages /Kids [3 0 R] /Count 1 &gt;&gt;&#xA;endobj&#xA;3 0 obj&#xA;&lt;&lt; /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources &lt;&lt; /Font &lt;&lt; /F1 5 0 R &gt;&gt; &gt;&gt; &gt;&gt;&#xA;endobj&#xA;4 0 obj&#xA;&lt;&lt; /Length 45 &gt;&gt;&#xA;stream&#xA;BT /F1 14 Tf 72 760 Td (Order 123 done) Tj ET&#xA;endstream&#xA;endobj&#xA;5 0 obj&#xA;&lt;&lt; /Type /Font /Subtype /Type1 /BaseFont /Helvetica &gt;&gt;&#xA;endobj&#xA;xref&#xA;0 6&#xA;0000000000 65535 f &#xA;0000000009 00000 n &#xA;0000000058 00000 n &#xA;0000000115 00000 n &#xA;0000000241 00000 n &#xA;0000000336 00000 n &#xA;trailer&#xA;&lt;&lt; /Size 6 /Root 1 0 R &gt;&gt;&#xA;startxref&#xA;406&#xA;%%EOF&#xA;" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" />
+    <ui:WriteTextFile DisplayName="数字だけ違う PDF を書く" Encoding="us-ascii" FileName="output\uta-target.pdf" Text="%PDF-1.4&#xA;1 0 obj&#xA;&lt;&lt; /Type /Catalog /Pages 2 0 R &gt;&gt;&#xA;endobj&#xA;2 0 obj&#xA;&lt;&lt; /Type /Pages /Kids [3 0 R] /Count 1 &gt;&gt;&#xA;endobj&#xA;3 0 obj&#xA;&lt;&lt; /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources &lt;&lt; /Font &lt;&lt; /F1 5 0 R &gt;&gt; &gt;&gt; &gt;&gt;&#xA;endobj&#xA;4 0 obj&#xA;&lt;&lt; /Length 45 &gt;&gt;&#xA;stream&#xA;BT /F1 14 Tf 72 760 Td (Order 789 done) Tj ET&#xA;endstream&#xA;endobj&#xA;5 0 obj&#xA;&lt;&lt; /Type /Font /Subtype /Type1 /BaseFont /Helvetica &gt;&gt;&#xA;endobj&#xA;xref&#xA;0 6&#xA;0000000000 65535 f &#xA;0000000009 00000 n &#xA;0000000058 00000 n &#xA;0000000115 00000 n &#xA;0000000241 00000 n &#xA;0000000336 00000 n &#xA;trailer&#xA;&lt;&lt; /Size 6 /Root 1 0 R &gt;&gt;&#xA;startxref&#xA;406&#xA;%%EOF&#xA;" sap2010:WorkflowViewState.IdRef="WriteTextFile_2" />
+    <ui:PathExists Path="output\uta-base.pdf" PathType="File" Resource="[a]" sap2010:WorkflowViewState.IdRef="PathExists_1" />
+    <ui:PathExists Path="output\uta-target.pdf" PathType="File" Resource="[b]" sap2010:WorkflowViewState.IdRef="PathExists_2" />
+    <uta:CreateComparisonRule ComparisonRule="[rule]" ComparisonRuleType="RegexRule" ContinueOnError="False" DisplayName="数字を無視する規則" Pattern="\d+" RuleName="numbers" UsePlaceholder="True" sap2010:WorkflowViewState.IdRef="CreateComparisonRule_1" />
+    <uta:ComparePdfDocuments BaselinePath="[a]" ComparisonType="Word" ContinueOnFailure="True" DisplayName="規則つきで比べる" IgnoreIdenticalItems="True" IgnoreImagesLocation="False" IncludeImages="False" OutputFolderPath="output" Result="[withRule]" RulesList="[New List(Of UiPath.Testing.Activities.Models.ComparisonRule) From {rule}]" TargetPath="[b]" sap2010:WorkflowViewState.IdRef="ComparePdfDocuments_1" />
+    <uta:ComparePdfDocuments BaselinePath="[a]" ComparisonType="Word" ContinueOnFailure="True" Differences="[diffs]" DisplayName="規則なしで比べる" IgnoreIdenticalItems="True" IgnoreImagesLocation="False" IncludeImages="False" OutputFolderPath="output" Result="[plain]" TargetPath="[b]" sap2010:WorkflowViewState.IdRef="ComparePdfDocuments_2" />
+    <ui:LogMessage Level="Info" Message="[&quot;withRule=&quot; &amp; withRule.ToString &amp; &quot; plain=&quot; &amp; plain.ToString &amp; &quot; diffs=&quot; &amp; diffs.Count.ToString]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+  </Sequence>
+</Activity>

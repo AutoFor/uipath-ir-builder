@@ -104,6 +104,10 @@ const simple: Record<string, [string, Record<string, string>]> = {
   MailMessage: ["snm:MailMessage", { snm: "clr-namespace:System.Net.Mail;assembly=System.Net.Mail" }],
   // UiPath.Testing.Activities のテストデータキュー（型は UiPath.Testing.dll にある。23.4.1・25.10.1 とも）
   "UiPath.Testing.Core.TestDataQueueItem": ["utc:TestDataQueueItem", { utc: "clr-namespace:UiPath.Testing.Core;assembly=UiPath.Testing" }],
+  // CompareText・ComparePdfDocuments・CreateComparisonRule の型（UiPath.Testing.Activities.dll。25.10.1）
+  "UiPath.Testing.Activities.Models.ComparisonRule": ["utam:ComparisonRule", { utam: "clr-namespace:UiPath.Testing.Activities.Models;assembly=UiPath.Testing.Activities" }],
+  "UiPath.Testing.Activities.Models.Difference": ["utam:Difference", { utam: "clr-namespace:UiPath.Testing.Activities.Models;assembly=UiPath.Testing.Activities" }],
+  "UiPath.Testing.Activities.Models.SemanticDifferences": ["utam:SemanticDifferences", { utam: "clr-namespace:UiPath.Testing.Activities.Models;assembly=UiPath.Testing.Activities" }],
   // スコープの delegate の引数の型（SAP BAPI の SapApplicationScope、Office 365 の Office365ApplicationScope）
   "UiPath.SAP.BAPI.ConnectionService.IConnectionService": ["usbc:IConnectionService", { usbc: "clr-namespace:UiPath.SAP.BAPI.ConnectionService;assembly=UiPath.SAP.BAPI" }],
   "Microsoft.Graph.GraphServiceClient": ["mg:GraphServiceClient", { mg: "clr-namespace:Microsoft.Graph;assembly=Microsoft.Graph" }],

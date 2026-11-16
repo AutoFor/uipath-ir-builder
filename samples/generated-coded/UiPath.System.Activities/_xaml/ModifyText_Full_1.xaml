@@ -9,7 +9,7 @@ xmlns:ns0="clr-namespace:UiPath.Core.Activities.TextModifications;assembly=UiPat
 xmlns:ui="http://schemas.uipath.com/workflow/activities"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property Name="out" Type="InOutArgument(x:String)" />
+    <x:Property Name="result" Type="InOutArgument(x:String)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -65,7 +65,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="ModifyText_Full_1" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <ui:ModifyText DisplayName="文字列を順に加工する" OutputText="[out]" SourceText="  hello  " sap2010:WorkflowViewState.IdRef="ModifyText_1">
+    <ui:ModifyText DisplayName="文字列を順に加工する" OutputText="[result]" SourceText="  hello  " sap2010:WorkflowViewState.IdRef="ModifyText_1">
       <ui:ModifyText.Body>
         <ActivityAction>
           <Sequence DisplayName="実行" sap2010:WorkflowViewState.IdRef="Sequence_2">
