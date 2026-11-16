@@ -65,7 +65,9 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 | UiPath.WebAPI.Activities | 1.20.1 | 8 | 8 |
 | UiPath.DataService.Activities | 26.10.1 | 12 | 12 |
 
-まだ無いもの（手元にクロスプラットフォームの DLL が無い）：UiPath.UIAutomation.Activities 25.10.33 / 26.10.3、UiPath.Mail.Activities 1.21.1、UiPath.SAP.BAPI.Activities 3.0.1、UiPath.System.Activities 24.10.7 / 26.2.6。これらの版を使うプロジェクトは、クロスプラットフォームに移そうとすると「カタログが無い」で止まる。UiPath.IntegrationService.Activities は Windows のカタログも無い。
+まだ無いもの（手元にクロスプラットフォームの DLL が無い）：UiPath.UIAutomation.Activities 25.10.33 / 26.10.3、UiPath.System.Activities 24.10.7 / 26.2.6。
+
+**パッケージにクロスプラットフォームの DLL がそもそも無いもの**（2026-11-17、NuGet のキャッシュの `lib` で確かめた。クロスプラットフォームでは使えない）：UiPath.Mail.Activities 1.21.1（`net461`・`net6.0-windows7.0` だけ。2.12.10 には `net6.0` があり、カタログもある）、UiPath.SAP.BAPI.Activities 3.0.1（`net8.0-windows7.0` だけ）。これらの版を使うプロジェクトは、クロスプラットフォームに移そうとすると「カタログが無い」で止まる。UiPath.IntegrationService.Activities は Windows のカタログも無い。
 
 - パッケージのクロスプラットフォーム版に、Windows のカタログの DLL の一部が無いことがある。そのアセンブリのアクティビティはクロスプラットフォームに無い（`extract-portable.sh` が「〜はクロスプラットフォームに無い」と出す）
 
@@ -89,4 +91,8 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 
 - `LogMessage` と `Assign` だけのワークフローを Windows → クロスプラットフォーム → Windows と移し、どちらも run の窓口で build が通った。戻した XAML は元と文字まで同じ
 - オブジェクトリポジトリを使う UI 操作のプロジェクト（`NApplicationCard`、`NClick`、`NTypeInto` と `$ref`）をクロスプラットフォームに移し、Main と Sub の build が通った
-- まだ見ていないもの：クロスプラットフォームでの run、C# のプロジェクトの移行
+- **クロスプラットフォームでの run も通った**（2026-11-17）。
+  - 手元：`uip rpa init --target-framework Portable` で作った作業用プロジェクト `C:\Users\Public\uipath-ir-probe-portable`（依存は System・Testing・UIAutomation。WebAPI 2.5.2 はカタログが無いので外した）を `--template` にして、AddDataRow・WriteTextFile・ReadTextFile・CompareText の XAML が run の窓口で OK。
+  - クラウド：Portable のテスト用プロジェクトを、Sorahane Trial の `Default Serverless` で Test Manager のテストとして流して OK（[testing.md](testing.md)）。Windows のプロジェクトは、このクラウドのロボットでは流れない。
+- **C#（Coded）は、この作業用プロジェクトでは build が落ちた**：「型または名前空間の名前 'CodedWorkflow' が見つかりません」。`uip rpa init` の Portable の空のプロジェクトには、Coded の土台（Studio が作る `.codedworkflows` など）が無いためとみられる。Studio で Coded のファイルを 1 つ足して保存したプロジェクトなら通るかは、まだ見ていない。
+- まだ見ていないもの：C# のプロジェクトの移行、サブフォルダの XAML の取り込み

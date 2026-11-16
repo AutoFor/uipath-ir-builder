@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"\u30a2\u30af\u30bb\u30b7\u30d3\u30ea\u30c6\u30a3 \u30c1\u30a7\u30c3\u30af\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NAccessibilityCheck AccessibilityResults=\"{x:Null}\" DisplayName=\"\u30a2\u30af\u30bb\u30b7\u30d3\u30ea\u30c6\u30a3 \u30c1\u30a7\u30c3\u30af\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

@@ -107,7 +107,7 @@ XAML 経由の C#（`CODED_VIA_XAML`）：
 - System（`samples/ir/` 直下と System.Activities を含む 320 件。v24 のカタログで検証を通らない 50 件は除いた。24.10.7 に無いアクティビティ・プロパティ、必須の違い（CopyFile の Path など）、`.objects.json` に Filter の型が無い、の版の違い）
   - XAML：run 227 件 OK、93 件は noRun（build だけ）、NG 0
   - C#：138 件 OK、166 件 SKIP（`NO_CODED_API` と noRun）、NG 16。うち 5 件は 24.10.7 の API に引数が無い（`DeleteQueueItems` などの `timeoutMS`。チェッカーの `NO_OVERLOAD`）、11 件は Copy / Delete / Move 系のサンプルで、最初の `system.WriteTextFile(file: LocalResource.FromPath(...))` が「... doesn't exist」で落ちる（26.10.0 では通る。24.10.7 の API は無いファイルに書けない。対応表の版の差で、XAML 経由とは関係ない）
-- UIAutomation（build だけ。369 件のうち 24 件は除いた：OCR / CV の 23 件は「UiPath.CoreIPC 2.0.1 以上を入れる」で build が落ちる（テンプレートの依存の問題）、CellScope_Full は「Value is not in list or the entered selector is invalid」（未調査。26.10.3 の既定 XAML を取っていない））
+- UIAutomation（build だけ。369 件のうち 24 件は除いた：OCR / CV の 23 件は「UiPath.CoreIPC 2.0.1 以上を入れる」で build が落ちる（テンプレートの依存の問題）、CellScope_Full は「Value is not in list or the entered selector is invalid」→ 2026-11-17 に解決：26.10.3 は `ColumnName` が `ColumnNames` の一覧に無いと検証で止める（26.10.6 は止めない）。見本の一覧に `ColumnName` の値を入れて、v24 でも build が通った）
   - XAML：345 件 build OK
   - C#：64 件 build OK、277 件 SKIP（Classic など `NO_CODED_API`）、NG 4（`BlockUserInput` / `UnblockUserInput` が 26.10.3 の API に無い）
 

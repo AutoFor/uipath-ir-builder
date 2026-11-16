@@ -114,6 +114,25 @@ rmSync(reportDir, { recursive: true, force: true });
 mkdirSync(logDir, { recursive: true });
 
 // --default-xaml <クラス名> --out <ファイル>：Studio の既定 XAML を取って保存する（uip も Helm を使うので窓口を通す）
+// --default-xaml @<一覧のファイル> --out <フォルダ>：1 行 1 つの完全クラス名（型引数があれば `1）をまとめて取り、<フォルダ>/<クラス名>.json に書く
+if (opt.defaultXaml?.startsWith("@")) {
+  if (!opt.out) die("--out <フォルダ> が要る");
+  const outDir = resolve(opt.out);
+  mkdirSync(outDir, { recursive: true });
+  const names = readFileSync(resolve(opt.defaultXaml.slice(1)), "utf8").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  let ng = 0;
+  for (const cls of names) {
+    const r = spawnSync(process.execPath, [uipJs, "rpa", "activities", "get-default-xaml", "--activity-class-name", cls, "--project-dir", projDir, "--output", "json"], { cwd: projDir, encoding: "utf8", maxBuffer: 64 << 20, timeout: opt.timeout * 1000 });
+    const out = r.stdout ?? "";
+    let ok = false;
+    try { ok = JSON.parse(out.slice(Math.max(0, out.search(/^\{/m))) || "{}").Result === "Success"; } catch {}
+    const short = cls.split(".").pop().replace(/`\d+$/, "");
+    if (ok) { writeFileSync(join(outDir, `${short}.json`), out); console.log(`OK ${cls}`); }
+    else { ng++; console.log(`NG ${cls}: ${out.slice(0, 200).replace(/\s+/g, " ")}`); }
+  }
+  console.log(`${names.length - ng} / ${names.length} 件 -> ${outDir}`);
+  process.exit(ng ? 1 : 0);
+}
 if (opt.defaultXaml) {
   const r = spawnSync(process.execPath, [uipJs, "rpa", "activities", "get-default-xaml", "--activity-class-name", opt.defaultXaml, "--project-dir", projDir, "--output", "json"], { cwd: projDir, encoding: "utf8", maxBuffer: 64 << 20, timeout: opt.timeout * 1000 });
   const ok = JSON.parse((r.stdout ?? "").slice(Math.max(0, (r.stdout ?? "").search(/^\{/m))) || "{}").Result === "Success";

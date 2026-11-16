@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"AppendItemToCollection&lt;Object&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:uasc=\"clr-namespace:UiPath.Activities.System.Collections;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uasc:AppendItemToCollection x:TypeArguments=\"x:Object\" Collection=\"{x:Null}\">\r\n    <uasc:AppendItemToCollection.Items>\r\n      <scg:List x:TypeArguments=\"InArgument(x:Object)\" Capacity=\"0\" />\r\n    </uasc:AppendItemToCollection.Items>\r\n  </uasc:AppendItemToCollection>\r\n</Activity>"
+  }
+}

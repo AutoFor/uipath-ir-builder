@@ -70,8 +70,8 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
           <ui:CellScope ColumnName="CARRID" ContinueOnError="False" RowNumber="2" SendTelemetryOnlyOnFailure="False" sap2010:WorkflowViewState.IdRef="CellScope_1">
             <ui:CellScope.ColumnNames>
               <scg:List x:TypeArguments="x:String" Capacity="4">
+                <x:String>CARRID</x:String>
                 <x:String>MATNR</x:String>
-                <x:String>WERKS</x:String>
               </scg:List>
             </ui:CellScope.ColumnNames>
             <ui:CellScope.Target>

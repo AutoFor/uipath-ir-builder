@@ -131,7 +131,11 @@ node tools/compare-default-xaml.mjs --generated samples/generated/<pkg> --activi
 # 版ごとの置き場に取るとき（--template はその版を依存にしたプロジェクト）
 node tools/verify/queue-run.mjs --name <作業名> --template <プロジェクト> --default-xaml <完全クラス名> --out knowledge/default-xaml/<PackageId>/<version>/<ClassName>.json samples/ir/Greet.json
 node tools/compare-default-xaml.mjs --generated <生成した XAML> --activity <ClassName> --defaults-dir knowledge/default-xaml/<PackageId>/<version>
+# まとめて取るとき：1 行 1 つの完全クラス名（型引数があれば `1）のファイルを @ で渡し、--out はフォルダ
+node tools/verify/queue-run.mjs --name <作業名> --template <プロジェクト> --timeout 120 --default-xaml @<一覧> --out knowledge/default-xaml/<PackageId>/<version>
 ```
+
+- 2026-11-17 に、v24 のテンプレート（`C:\Users\Public\uipath-ir-probe-v24`）で System 24.10.7 の 151 個と UIAutomation 26.10.3 の 92 個（版なしの置き場にあるクラスのうち、その版のカタログにあるもの）を、この形で取った
 
 - すべては取り直さない。差分で「default が変わった」「種類が変わった」「プロパティが増えた」アクティビティと、サンプルで使っているアクティビティのうち既定値を持つもの（UI の `N*` など）に絞る
 - 食い違いは生成器かカタログの判断（`knowledge/default-xaml/` の既定値）で直す

@@ -47,10 +47,10 @@
           "lists": {
             "ColumnNames": [
               {
-                "lit": "MATNR"
+                "lit": "CARRID"
               },
               {
-                "lit": "WERKS"
+                "lit": "MATNR"
               }
             ]
           }

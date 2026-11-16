@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"OpenApplication\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:OpenApplication ApplicationWindow=\"{x:Null}\" Arguments=\"{x:Null}\" FileName=\"{x:Null}\" Selector=\"{x:Null}\" TimeoutMS=\"{x:Null}\" WorkingDirectory=\"{x:Null}\">\r\n    <ui:OpenApplication.Body>\r\n      <ActivityAction x:TypeArguments=\"x:Object\">\r\n        <ActivityAction.Argument>\r\n          <DelegateInArgument x:TypeArguments=\"x:Object\" Name=\"ContextTarget\" />\r\n        </ActivityAction.Argument>\r\n        <Sequence DisplayName=\"\u5b9f\u884c\" />\r\n      </ActivityAction>\r\n    </ui:OpenApplication.Body>\r\n  </ui:OpenApplication>\r\n</Activity>"
+  }
+}
