@@ -66,6 +66,23 @@ uipcli solution pack | deploy | upload-package | …
 - **analyze が通っても、run が通る保証はない**（実行時の値の誤り、UI の要素、Orchestrator の資源は見ない）。build と run は今までどおり `queue-run.mjs` で確かめる。
 - 規則の指摘（ST-USG-020「Log Message が無い」、TA-DBP-002「テストケースが無い」など）は、生成器の誤りではないことが多い。`--rules` で見られる。
 
+### `uip rpa analyze` と比べた（2026-11-17、AUT-1199）
+
+公式は `uip rpa analyze` を `uipcli package analyze` の後継としている。同じ Windows・VB のプロジェクトの写しで比べた。
+
+| 試したこと | `uipcli package analyze`（analyze.mjs） | `uip rpa analyze` |
+| --- | --- | --- |
+| Main.xaml に未定義の変数 | `BC30451: 'undefinedMain' is not declared` | 同じ `BC30451`。ほかに注意 `UIP_CODED_NS`（Coded の名前空間を import していない） |
+| テストケースの XAML（fileInfoCollection に載ったもの）に未定義の変数 | **見逃した**（エラー 0） | **見逃した**（エラー 0）。`uip rpa build` も Success |
+| 時間 | 6〜14 秒 | 9 秒 |
+| 終了コード | エラーがあっても 0（結果の JSON を読む） | エラーがあっても 0、`Result` も `Success`。`Data.Summary.Error` と `Data.Findings[]`（`Level`・`ErrorCode`・`FilePath`・`Description`）を読む |
+| プロジェクトに書くもの | `.local` など | `.local`・`.codedworkflows`・`.project` など。写しで流す |
+| SSH から | 動く。Helm を使わない | 動く。ただし**管理者・セッション 0 の Helm を起こして残す**（run の窓口の邪魔になる。使ったら止める） |
+| 規則の指摘 | 14 件（同じプロジェクト） | 警告 6 件（規則の組が違う） |
+
+- **結論：式のコンパイルの確かめとしては代わりになるが、`analyze.mjs` は uipcli のままにする**。uipcli は Helm を起こさないので、SSH から流しても run の窓口に響かない。uipcli が無い PC では `uip rpa analyze` で同じことができる。
+- **テストケースの XAML の式の誤りは、analyze でも build でも見つからない**。Studio はテストケースを別の DLL（`<プロジェクト>_<テストケース>.dll`）にするので、run のときにコンパイルするのかもしれない（未確認）。テストケースは run（`queue-run.mjs`）まで流して確かめる。
+
 ### pack
 
 - `package pack` で `.nupkg` ができた（5 秒ほど）。中でコンパイルもする。

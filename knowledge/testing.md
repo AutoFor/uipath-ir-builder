@@ -72,6 +72,7 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
   - `fileName` はプロジェクトからの相対パスで、区切りは `\`。
   - Studio はテストケースの XAML を、ほかと別の DLL（`<プロジェクト>_<テストケース>.dll`）にする。それでも `uip rpa run` で動く。
   - XAML に印が無いので、XAML を取り込む（`import-xaml.ts`）と `testCase` は戻らない。
+  - **テストケースの XAML の式の誤り（未定義の変数など）は、`uipcli package analyze` でも `uip rpa analyze` でも `uip rpa build` でも見つからない**（2026-11-17。ふつうのワークフローなら BC30451 が出る。[uipath-clis.md](uipath-clis.md)）。テストケースは run まで流して確かめる。
 - Coded は `[Workflow]` の代わりに `[TestCase]` を付ける。Given / When / Then は名前付きの Sequence なので、`// Given` などの行になる。
   - **Coded のテストケースは fileInfoCollection に載せない**。`coded\TestCase_Gwt.cs` を載せると、Studio が run のために作る包み（`.local\install\coded\<名前>+<名前>Activity.cs`）がクラスを見つけられず、`uip rpa run` が「型または名前空間の名前 'TestCase_Gwt' が名前空間 'CatalogProbeNet8' に存在しません」で落ちた。載せなければ `[TestCase]` だけで run が通った（`out/verify/tcgwt-run/` と `tcgwt2-run/`）。`testCase` の `id` と `status` は Coded では使わない。
 - テストのプロジェクト（project.json の `designOptions.outputType` が `Tests`）を作るのは、ほかのプロジェクトと同じく人が Studio で行う。テストケースは Process のプロジェクトにも置ける（verify の作業用プロジェクトは Process で、そこで確かめた）。
