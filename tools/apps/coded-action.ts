@@ -209,7 +209,7 @@ export function formTsx(app: ActionApp): string {
 
   return `// tools/apps/coded-action.ts が IR（${app.app}）から作った。手で直さない
 import { useState, useEffect } from 'react';
-${anyText || used.size ? "import type { ChangeEvent } from 'react';\n" : ""}import { Theme } from '@uipath/coded-action-app';
+${anyText || used.size ? "import type { ChangeEvent } from 'react';\n" : ""}import { MessageSeverity, Theme } from '@uipath/coded-action-app';
 import { codedActionAppService } from '../uipath';
 import './Form.css';
 import './Parts.css';
@@ -257,7 +257,7 @@ ${handlers.join("\n\n")}${handlers.length ? "\n\n" : ""}  // 必須の記入が�
   const isFormValid =
     !isReadOnly${reqs.map((f) => ` &&\n    ${requiredCheck(f)}`).join("")};
 
-${outcomes.map((o) => `  const ${o.fn} = async () => {\n    await codedActionAppService.completeTask(${js(o.name)}, formData);\n  };`).join("\n")}
+${outcomes.map((o) => `  const ${o.fn} = async () => {\n    try {\n      await codedActionAppService.completeTask(${js(o.name)}, formData);\n    } catch (e) {\n      // 完了に失敗したら、Action Center の中で人に知らせる\n      codedActionAppService.showMessage(\`完了できませんでした：\${e instanceof Error ? e.message : String(e)}\`, MessageSeverity.Error);\n    }\n  };`).join("\n")}
 
   return (
     <div className="review-app">

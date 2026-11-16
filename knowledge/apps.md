@@ -247,3 +247,36 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 - **アプリのプロジェクト**（33）：Main のワークフローもトリガーも無い。App Events に Submit Action（アクション アプリ）もある。アプリを消すと、使っているワークフローも消える。
 - **デバッグ**（38）：動いているアプリで Shift+4 を押すと、アプリの中のログを JSON で取れる。On local machine と On cloud、Debug step-by-step がある。エラーがあるとデバッグのボタンが押せない。
 - **戻し方**（39）：Cloud Workspace は閉じたときと 40 分ごとに自動のスナップショットができ、Change history から戻せる。publish の履歴の Restore は、その版に全部のプロジェクトを戻す。
+
+## Apps・Action Center の文書で分かったこと（2026-11-15 の突き合わせ、AUT-1208）
+
+番号は AUT-1208 の表の番号。1 は AUT-1187、2 は AUT-1197、3・9 は AUT-1193 で扱った。テナントではまだ試していない。
+
+### タスクとジョブ
+
+- **アクション アプリは、タスクを開いたときにジョブとして動く**（4）：作っただけでは始まらない。動かすフォルダに Serverless のロボットか、Unattended・Testing のランタイムが要る。開いているアプリ 1 つがランタイムを 1 つ使い、足りないと Pending のまま約 1 分で「Orchestrator job exception」。Studio Web のものは Serverless を Medium にするのが勧め。Coded Action App（静的なサイト）に当てはまるかは書かれていない。
+- **RPA アプリの code-behind は Serverless で、最長 15 分**（5）：約 12 分で状態を新しいプロセスに移そうとする。長い処理は Run Job で別のジョブにする。アプリから動かせる Unattended のオートメーションは Serverless のものだけ。Studio Web のアプリはルールを使えず、イベントのワークフローで書く。
+- **人のタスクの画面の選び方**（14）：Quick Form task（2026-08-31 からプレビュー。Maestro・Agents 用。アプリもデプロイも費用も要らない。スキーマはプロセスと一緒に版が上がる）／Action App（決まった見た目・込み入った動き・複数のプロセスで共用）／Form task（form.io、1 MB まで、Studio Desktop の Form Designer で作る）。RPA の `CreateUserAction` は Action App だけ。
+
+### Coded Action App
+
+- **プロパティの名前を変えると、前のタスクは古い名前のまま**（8）：アプリを両方の名前に対応させてから publish する。読んで書くプロパティは `inputs` と `outputs` に分けず `inOuts` に 1 つ置く。IR の `name` を直して作り直すときに効く。
+- **SDK でできること**（17）：`getTask`・`setTaskData`（変更を知らせ Save を押せるようにする）・`completeTask`・`showMessage(msg, MessageSeverity)`。生成する `Form.tsx` は、`completeTask` が失敗したら `showMessage` で Error を出す（前は `await` するだけで、人には何も見えなかった）。
+- **ライセンス**（15）：作業者には組織のメンバーであることに加えて、Action Center を使えるユーザー ライセンスが要る。Coded Web App を開くだけなら要らない。作る・デプロイするのは無料。ローコードのアプリはデプロイごとに 1 つと数える（Unified Pricing）。
+- **既知の制限**（16）：外部アプリを使って SDK でほかのサービスを呼ぶアプリは、Assistant（Desktop）では認証に失敗する（Web では動く）。DESKTOP のロボットの Assistant でタスクを開いて試すときに当たる。
+- **スキル**（18、2026-09-16 GA）：`uipath-coded-apps` と `uipath-human-in-the-loop`。`coded-action.ts` の CSS とテンプレートは前者から写したので、スキルの版が上がったら比べ直す。
+
+### Coded App の運用
+
+- **Studio Web のソリューションに入れる**（6）：Studio Web で Coded App のプロジェクトを作ると `webAppManifest.json` だけができる。手元で build して `uip codedapp push --project-id <id>`（ビルドの結果と `bindings_v2.json` が送られ、Studio Web では読むだけ。pull は無い）。版はソリューションと一緒に上がる。routing name が重なると install が落ちる（2026-10-26 から検査が先に知らせる）。routing name は 64 文字まで。まだ試していない。
+- **Apps の REST API**（7、2026-07-02 から、PAT は 07-28 から）：ベース `https://cloud.uipath.com/{orgId}/apps_/default/api/v1/default`、ヘッダー `X-UiPath-Internal-TenantId`（フォルダの操作は `X-UiPath-FolderKey` も）。スコープ `Apps` / `Apps.Read` / `Apps.Write`（deploy・edit・upgrade には `OR.Folders.Read` も）。publish したアプリと版の一覧、Coded App の publish（`models/apps/codedapp/publish`）、版を指定した deploy（`models/{appSystemName}/publish/versions/{version}/deploy`）、まとめて最新版、デプロイの編集・削除、routing name の空きの確認。RPA アプリの publish は無い（Studio Web かソリューション）。Public Sector と Dedicated では使えない。呼ぶなら `tools/platform/cloud-api.mjs`（[cloud-ops.md](cloud-ops.md)）。`uip` のトークンで通るかは未確認。
+- **2026-10 の修正で片付けが楽になった**（11）：Orchestrator で Coded App のパッケージを消すと、Apps でもその版の publish が取り消される。publish した版を消すと前の版が今の版になる。同じ Coded App が 2 つできる不具合は 10-26 に直った。Orchestrator の App versions に出るのは VB のアプリだけ。「Orchestrator から Coded App を deploy できる」は 10-30 に「まだできない」と訂正された。
+- **パッケージにプロジェクトのファイルがあると、新しいデプロイが落ちる**（12、2026-10-26）：`node_modules`・`.next`・`.angular`・`content/package.json` など。`uip codedapp pack` も同じ検査をする。この道具の手順は `pack dist` なので当たらない。プロジェクトの根を pack しない理由はこれ。
+- **Coded Web App**（13）：外部アプリ（Non-confidential、user スコープ）が要る。URL は `https://<org>.uipath.host/<app>`（許可するのは `<org>.uipath.host` と `api.uipath.com`）。スコープを変えたらデプロイし直してサインインし直す。組織の名前に `_` があると、デプロイし直したあとはハイフンの URL でしか認証が通らない。リダイレクト URI は 50 個まで。手元で動かすときは localhost の URL を足す。アプリそのものにはフォルダの RBAC が効かない（組織のメンバーなら開ける）。関数をバックエンドにできる（[functions.md](functions.md)）。
+- **Dedicated**（20、2026-09-17 から）：Apps が 2026-09-24 の版に上がるまでは CLI 1.202.0（新しい CLI は互換を壊している）。SDK は `uipath-typescript` 1.7.1、`@uipath/coded-action-app` 1.0.0 以上。`baseUrl` は Dedicated の URL。アプリの URL は CLI が返す。Public Sector・スイス・UAE などでは Coded App を使えない。
+
+### ローコードのアプリ（RPA アプリ）
+
+- **VB の式は 2026-10-06 から .NET 10 でコンパイルされる**（10）：ソリューション パッケージからデプロイしたアプリは作ったときのランタイムで動き、activation で作り直すアプリは .NET 10 になる（式が通らないとそこで止まる）。2 桁の年 30〜49 を `CDate`・`DateValue`・`Convert.ToDateTime`・`DateTime.Parse` で日付にすると 2035 年になる（前は 1935 年）。式で日付を作るときは 4 桁の年にする。
+- **名前の決まり**（19）：ページ・部品・プロセス・連携の名前に日本語は使えない（VB の制限。変数の名前と値には使える）。App の変数の名前は英字で始まる英数字・`_`・`$`、128 文字まで。`rpa-app.ts` の検査は英字で始まる英数字と `_` にした（前は `_` で始まる名前も通していた）。
+- **テキストボックスのパスワード入力**（21、2026-10-26）：Text の型に「Hide characters」。`rpa-app.ts` の `textbox` にはまだ無い。項目の名前は書き出しを見てから足す。

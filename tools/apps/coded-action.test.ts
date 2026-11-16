@@ -101,3 +101,9 @@ test("書くファイル：決まった骨組みと、テンプレートの CSS 
   assert.ok(!/^[^/\n]*initialize\(/m.test(f["src/uipath.ts"])); // 注釈の中だけ
   assert.equal(f["src/components/Form.css"], readFileSync(join(root, "templates", "coded-action-app", "Form.css"), "utf8"));
 });
+
+test("完了に失敗したらメッセージを出す", () => {
+  const t = formTsx(base([], [{ name: "Approve" }]));
+  assert.match(t, /showMessage\(.*MessageSeverity\.Error\)/);
+  assert.match(t, /import \{ MessageSeverity, Theme \}/);
+});

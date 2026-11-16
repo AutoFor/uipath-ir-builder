@@ -84,7 +84,8 @@ export function entitiesOf(store: Store | undefined): Map<string, Entity> {
 }
 const STEP_KEYS = ["set", "open", "create", "update", "delete", "query", "if"] as const;
 const usesEntities = (steps: Step[]): boolean => steps.some((s: Json) => "create" in s || "update" in s || "delete" in s || "query" in s || ("if" in s && (usesEntities(s.then) || usesEntities(s.else ?? []))));
-const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
+// 文書：英字で始まる英数字と _。日本語は VB の制限で使えない（AUT-1208 の 19）
+const IDENT = /^[A-Za-z][A-Za-z0-9_]*$/;
 const VB_RESERVED = new Set(["and", "as", "boolean", "byref", "byval", "call", "case", "catch", "class", "const", "date", "decimal", "dim", "do", "double", "each", "else", "end", "error", "false", "finally", "for", "function", "get", "if", "in", "integer", "is", "let", "long", "loop", "me", "mod", "module", "new", "next", "not", "nothing", "object", "of", "on", "or", "property", "public", "rem", "return", "select", "set", "short", "single", "static", "step", "stop", "string", "sub", "then", "to", "true", "try", "until", "when", "while", "with"]);
 
 type Json = any;

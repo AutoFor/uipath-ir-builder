@@ -177,3 +177,7 @@ test("IR の型：DataService.Entities.<表> は de:<表>（DataService.DataServ
   const l = toXamlType("IList<DataService.Entities.WorkCalendar>") as any;
   assert.equal(l.text, "scg:IList(de:WorkCalendar)");
 });
+
+test("名前は _ で始められない", () => {
+  assert.deepEqual(codes(one([{ type: "label", name: "_A" }])), ["APP_NAME"]);
+});
