@@ -9,7 +9,8 @@ export type Workflow = {
   // テストケースにする（knowledge/testing.md の「テストケース」）。XAML は project.json の designOptions.fileInfoCollection に載せ、
   // Coded は [TestCase] を付ける（fileInfoCollection には載せない）。id は Test Manager とつなぐ testCaseId（無ければ project.json の既存の値か新しい GUID）。
   // status は editingStatus（既定 Publishable。InProgress は publish に入らない）。id と status は XAML だけで使う
-  testCase?: boolean | { id?: string; status?: "Publishable" | "InProgress" };
+  // data はデータ駆動のテストの行（キーは In 引数の名前）。.variations\<名前>.json に書き、dataVariationFilePath でつなぐ（XAML だけ）
+  testCase?: boolean | { id?: string; status?: "Publishable" | "InProgress"; data?: Record<string, string | number | boolean | null>[] };
   // テストケースの Given / When / Then。書くと body の代わりに、その名前の Sequence を 3 つ並べる（body と一緒には書けない）
   given?: Node[];
   when?: Node[];

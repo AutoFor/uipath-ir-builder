@@ -1,0 +1,34 @@
+{
+  "workflow": "TestCase_Data",
+  "testCase": {
+    "status": "Publishable",
+    "data": [
+      { "price": 120, "quantity": 3, "expected": 360 },
+      { "price": 50, "quantity": 2, "expected": 100 },
+      { "price": 7, "quantity": 6, "expected": 42 }
+    ]
+  },
+  "arguments": [
+    { "name": "price", "dir": "In", "type": "Int32" },
+    { "name": "quantity", "dir": "In", "type": "Int32" },
+    { "name": "expected", "dir": "In", "type": "Int32" }
+  ],
+  "variables": [
+    { "name": "total", "type": "Int32" }
+  ],
+  "given": [
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"price=\" & price.ToString & \" quantity=\" & quantity.ToString" } }
+  ],
+  "when": [
+    { "act": "Assign", "typeArg": "Int32", "props": { "To": "total", "Value": "price * quantity" } }
+  ],
+  "then": [
+    {
+      "act": "VerifyExpressionWithOperator",
+      "name": "合計が期待どおりか",
+      "typeArg": "Int32",
+      "props": { "FirstExpression": "total", "Operator": "Equality", "SecondExpression": "expected" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"total=\" & total.ToString" } }
+  ]
+}

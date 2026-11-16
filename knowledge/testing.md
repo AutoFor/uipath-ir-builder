@@ -67,8 +67,29 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
   - **Coded のテストケースは fileInfoCollection に載せない**。`coded\TestCase_Gwt.cs` を載せると、Studio が run のために作る包み（`.local\install\coded\<名前>+<名前>Activity.cs`）がクラスを見つけられず、`uip rpa run` が「型または名前空間の名前 'TestCase_Gwt' が名前空間 'CatalogProbeNet8' に存在しません」で落ちた。載せなければ `[TestCase]` だけで run が通った（`out/verify/tcgwt-run/` と `tcgwt2-run/`）。`testCase` の `id` と `status` は Coded では使わない。
 - テストのプロジェクト（project.json の `designOptions.outputType` が `Tests`）を作るのは、ほかのプロジェクトと同じく人が Studio で行う。テストケースは Process のプロジェクトにも置ける（verify の作業用プロジェクトは Process で、そこで確かめた）。
 
+### データ駆動のテスト
+
+`testCase.data` に行を書くと、同じテストケースを行ごとの値で流すテストになる。見本は `samples/ir/UiPath.Testing.Activities/TestCase.data.json`。
+
+```json
+"testCase": { "data": [ { "price": 120, "quantity": 3, "expected": 360 }, { "price": 50, "quantity": 2, "expected": 100 } ] },
+"arguments": [
+  { "name": "price", "dir": "In", "type": "Int32" }, { "name": "quantity", "dir": "In", "type": "Int32" }, { "name": "expected", "dir": "In", "type": "Int32" }
+]
+```
+
+- 行のキーはテストケースの **In 引数の名前**。値は文字列・数値・真偽値・null だけ（Studio のテストデータも基本の型だけ編集できる）。違えば `TESTCASE` のエラー。
+- `gen.ts` が行を `.variations\<テストケース>.json` に書き、fileInfoCollection のそのテストケースに `dataVariationFilePath` を付ける。`data` を消すと、この道具が付けた `dataVariationFilePath` を外す（ファイルは残る）。Studio で付けたほかのデータ（Excel から取り込んだものなど）は残す。
+- 形の出どころ（Studio が無いマシンなので、Studio に書かせてはいない）：
+  - UiPath.Testing.Activities 25.10.1 の XBrowser Test Template。`templates.json` に `"DataVariationFilePath": "XBrowserTemplateDataVariation.json"`、その中身は `[{"Browser":"Chrome"},{"Browser":"Firefox"},{"Browser":"Edge"}]` で、テストケースには In 引数 `Browser` がある。
+  - Helm の `UiPath.Project.dll` の `TestCaseFileInfo`（fileInfoCollection の 1 件）は `EditingStatus`・`TestCaseId`・`DataVariationFilePath`・`ExecutionTemplatePath`・`DependentTestCaseIds`・`TestCaseType`（`TestCase` / `TestDataSetup`）・`ExecutionTemplateType`・`ExecutionTemplateInvokeIsolated` を持つ。
+  - フォルダ名 `.variations` は、`UiPath.Project.dll` の文字列（`VariationsFolderName` の近く）から取った。Studio の Project パネルでは「Test Data」と出る。
+- 手元の run（`uip rpa run`）はデータを読まない。値は `<名前>.verify.json` の `args` で渡す（見本は 2 行目の値）。行ごとに流すのは Studio の Test Explorer と Orchestrator のテストセット。
+- **Coded のテストケースにはつなげない**（fileInfoCollection に載せないので、`dataVariationFilePath` を付ける所が無い）。`gen-coded.ts` は `data` を使わず、注意 `TESTCASE_NO_DATA` を出す。In 引数は `Execute` の引数になる。
+- `uip rpa test-data add-variation`（データのファイルをテストケースにつなぐ CLI）は、Studio（GUI）が入っていないと「Studio does not support rpa-tool」で断る。このマシンは Helm だけなので使えない。
+
 確かめていないこと：
 
 - Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
-- データ駆動のテスト（テストデータの変化。Studio は `Tests\Data\` などに JSON を置く）。まだ作れない。
-- Test Manager への publish と、Orchestrator のテストセットでの実行。
+- データ駆動のテストを Studio で開いて「Test Data」に出るか、Test Explorer で行の数（`TestCase_Data (3)`）が出るか。`.variations` の場所と `dataVariationFilePath` の書き方（区切りの `\`）は、Studio に書かせて比べていない。
+- Test Manager への publish と、Orchestrator のテストセットでの実行（行ごとに流れるか）。

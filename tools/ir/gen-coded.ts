@@ -30,7 +30,7 @@ import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
 import { loadSelected, runSelection, noCodedApiPackages, projectLanguage, projectRootImports } from "./versions.ts";
 import type { Workflow } from "./types.ts";
-import { expandTestCase } from "./testcase.ts";
+import { expandTestCase, codedTestCaseIssues } from "./testcase.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -85,7 +85,8 @@ for (const f of files) {
     const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck } });
     issues.push(...r.issues);
     code = r.code;
-    warns = r.warnings;
+    // Coded のテストケースにはデータ駆動のテストをつなげない（data は使わず、注意だけ出す）
+    warns = [...r.warnings, ...codedTestCaseIssues(wf)];
     // XAML 経由の XAML を作る（C# の式に直せないものは、そのノードの場所のエラーにする）
     if (!r.issues.length) for (const x of r.xamls) {
       const g = generateChecked(x.wf, cat, { rootImports, language });
