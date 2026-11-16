@@ -47,6 +47,19 @@ AUT-1113。サンプルは `samples/ir/UiPath.Testing.Activities/`、対応表�
 
   Modern の NGetText（UIAutomation 26.10.3）の出力を 23.4.1 が見つけられないのかもしれない。Studio で作った XAML と比べる必要がある。1 つの XAML の検証エラーでプロジェクト全体の build が落ちるので、23.4.1 のプロジェクトでは今は使わない
 
+## IR で書かない内部用のアクティビティ（2026-11-17）
+
+カタログで browsable=false（ツールボックスに出ない）の 5 つのうち、次の 4 つは IR の対応をしない。人が Studio で置くことも無い。
+
+| アクティビティ | 何か | 代わり |
+| --- | --- | --- |
+| `AddTestDataQueueItem` | 古い「Add Test Data Queue Item」。表示名が新しいものと同じ | `NewAddTestDataQueueItem` |
+| `Mocks.MockActivity` | Studio のモックのファイル（`<名前>.mock.xaml`）を作るときに Studio が置く入れ物 | モックは Studio の「Mock」の機能で作る |
+| `Coverage.CoverageMergeActivity` | テストセットの実行の終わりに、カバレッジを集めるためにロボットが使う | テストセットを流せば自動で動く |
+| `QueryEntitiesFilterActivity` | Data Fabric の表の絞り込みを組み立てる内部の部品（表示名が無い） | Data Service の `QueryEntityRecords` |
+
+残りの 1 つ `ArgumentsBridge` は、VerifyControlAttribute の `ArgumentsBridgeActivity` の中身として書く（上の「VerifyControlAttribute の形」）。単独では使わない。
+
 ## テストケース（XAML と Coded）（2026-11-16）
 
 IR に `"testCase"` を書くと、テストケースとして作る。見本は `samples/ir/UiPath.Testing.Activities/TestCase.gwt.json`、仕組みは `tools/ir/testcase.ts`。
