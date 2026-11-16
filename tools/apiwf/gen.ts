@@ -86,14 +86,24 @@ const JOB_ATTACHMENT = {
   required: ["ID"],
   "x-uipath-resource-kind": "JobAttachment",
 };
-function schemaOf(t: SchemaType | { type: string; default?: unknown }): Record<string, unknown> {
-  if (typeof t === "string") return t === "file" ? { $ref: "#/definitions/job-attachment" } : { type: t };
-  return { ...t };
+// Studio Web の型（String / Number / Integer / Boolean / Object / Array / Date-time / Date / Time。文書の managing-api-workflows）。
+// 日付と時刻は JSON Schema では string ＋ format。末尾の ! は必須（Required）。オブジェクトで書くなら required: true（AUT-1204 の 13）
+const FORMATS: Record<string, string> = { "date-time": "date-time", date: "date", time: "time" };
+const isRequired = (t: SchemaType) => (typeof t === "string" ? t.endsWith("!") : t.required === true);
+export function schemaOf(t: SchemaType | { type: string; default?: unknown }): Record<string, unknown> {
+  if (typeof t === "string") {
+    const s = t.replace(/!$/, "");
+    if (s === "file") return { $ref: "#/definitions/job-attachment" };
+    return FORMATS[s] ? { type: "string", format: FORMATS[s] } : { type: s };
+  }
+  const { required: _r, ...rest } = t as Record<string, unknown>;
+  return rest;
 }
-const objSchema = (props: Record<string, SchemaType> | undefined, title: string) => {
+export const objSchema = (props: Record<string, SchemaType> | undefined, title: string) => {
   const properties = Object.fromEntries(Object.entries(props ?? {}).map(([k, v]) => [k, schemaOf(v)]));
-  const hasFile = Object.values(props ?? {}).includes("file");
-  return { schema: { format: "json", document: { type: "object", properties, title, ...(hasFile ? { definitions: { "job-attachment": JOB_ATTACHMENT } } : {}) } } };
+  const required = Object.entries(props ?? {}).filter(([, v]) => isRequired(v)).map(([k]) => k);
+  const hasFile = Object.values(props ?? {}).some((v) => typeof v === "string" && v.replace(/!$/, "") === "file");
+  return { schema: { format: "json", document: { type: "object", properties, title, ...(required.length ? { required } : {}), ...(hasFile ? { definitions: { "job-attachment": JOB_ATTACHMENT } } : {}) } } };
 };
 
 const isLit = (v: unknown): v is Lit => typeof v === "object" && v !== null && !Array.isArray(v) && Object.keys(v).length === 1 && "lit" in v;

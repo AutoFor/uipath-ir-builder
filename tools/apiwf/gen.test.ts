@@ -128,3 +128,16 @@ test("見本の IR は全部 issue なしで生成できる", () => {
     assert.deepEqual(issues, [], f);
   }
 });
+
+test("入出力の型：日付と時刻は string＋format、! は必須（AUT-1204 の 13）", async () => {
+  const { objSchema, schemaOf } = await import("./gen.ts");
+  assert.deepEqual(schemaOf("date-time"), { type: "string", format: "date-time" });
+  assert.deepEqual(schemaOf("date!"), { type: "string", format: "date" });
+  assert.deepEqual(schemaOf("integer"), { type: "integer" });
+  assert.deepEqual(schemaOf({ type: "number", required: true, default: 1 }), { type: "number", default: 1 });
+  const d = objSchema({ a: "string!", b: "number", c: { type: "boolean", required: true }, f: "file!" }, "Input").schema.document as any;
+  assert.deepEqual(d.required, ["a", "c", "f"]);
+  assert.deepEqual(d.properties.f, { $ref: "#/definitions/job-attachment" });
+  assert.ok(d.definitions["job-attachment"]);
+  assert.equal("required" in (objSchema({ a: "string" }, "Input").schema.document as any), false);
+});

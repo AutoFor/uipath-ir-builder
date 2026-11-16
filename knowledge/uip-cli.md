@@ -92,7 +92,18 @@ uip solution packages delete <名前> <版> --yes
   - 接続の資格情報（接続そのものは入るが、行き先で接続し直す）。
   - トリガーは、エントリーポイント 1 つに 1 つまで。
 - **RPA アプリを含むソリューション**：アプリはテナントのフィードにだけ publish できる。アプリを activate しないと、ソリューションの activation が失敗する（文書）。
-- 画面のデプロイの「Activate immediately」と「Set up runtime」はどちらも既定で on。CLI では、前者は `--skip-activate` を付けないときに当たる。後者に当たる選択肢は `deploy run --help` に無い。
+- **uninstall で消えないもの**（文書。AUT-1204 の 8）：エンティティ・選択肢・Webhook は消えない。uninstall のあとも、デプロイは Inactive のまま一覧に残る（消すには Delete。CLI は `uip solution deploy delete`）。2026-10-13 から、動いているジョブ（Pending・Running・Suspended など）があると「Uninstall validation failed」で始まらない（Force Uninstall はジョブを止めない）。
+- **既にあるリソースにつなぐ**（10）：デプロイのとき、同じ名前の Asset・Storage bucket・Webhook・Queue があると、つなぐか・足りない項目だけ足すか・名前を変えるかを選ぶ。CLI では `deploy config link`（下の「まだ使っていないコマンド」）。前の版が入れたリソースをつなぎ替えると、元のリソースとデータは消える。
+- **デバッグのデプロイ**（18）：Studio Web のデバッグは個人ワークスペースに `Debug_<ソリューション名>` を作る。30 日続けて使わないと、自動で uninstall される（戻せない）。
+- **フォルダのフィード**（19、2026-10-14）：ソリューションを、テナントでなくフォルダのフィードに publish・deploy できる（CLI は「今後対応」）。そのパッケージは、そのフォルダの下にだけデプロイできる。
+- **権限**（20）：テナントの役割が要る（フォルダの権限だけでは足りない）。Solutions Administrator はデプロイまで、Solutions Contributor はパッケージの管理だけ。publish は `SolutionPackages.Create`（テナント）か `FolderSolutionPackages.Create`（個人・フォルダ）、deploy は `SolutionDeployments.Create` か入れる先の `FolderSolutionDeployments.Create`、uninstall は Delete と Edit の両方。
+- **Data Fabric の表**（21）：フォルダの表とソリューションの連携は 2026-09-23 に GA。テナントの表・選択肢がソリューションに入るのは「publish した VB の App の依存」としてだけ。
+- **デプロイしたあとの値**（23）：Orchestrator で直接直すと Solutions の記録とずれる。画面の Edit configuration で直す（パッケージで configurable にした項目だけ）。
+- **使っている版のパッケージは消せない**（24）：`solution packages delete` は、先に uninstall しないと落ちるはず。
+- **別のテナントに移す**（30）：入れる先のテナントで、パッケージの中の全部のリソースのサービスが有効なこと（有効にしたら 30 分待って upload）。Orchestrator の Solutions > Projects（Solutions builder）なら、publish 済みのものを集めてソリューションを作れる（Webhook とライブラリはこちらでしか入らない）。バインディングの解決は Orchestrator の Package Requirements のタブだけ。
+- **1 プロジェクトだけ publish**（31）：Studio Web では RPA とアプリのプロジェクトを右クリックの「Publish project」で NuGet にできる。
+- **2026-04-13 の修正**（35）：新しい版に、今のデプロイが既に入れたリソースが含まれていると upgrade が落ちていた。今は publish のときに衝突を調べ、どのリソースかを出す（外して publish し直す）。
+- 画面のデプロイの「Activate immediately」と「Set up runtime」はどちらも既定で on。Set up runtime は、テナントに既定の実行マシンが無いと Serverless の実行環境を用意する（Default Serverless のテンプレートがフォルダに付く）。CLI では、前者は `--skip-activate` を付けないときに当たる。後者に当たる選択肢は `deploy run --help` に無い。
 
 - Studio Web との出し入れ：
   - 取り込みは `uip solution upload <ファイル>.uis`（フォルダを渡すと `.local` が落ちる。[apps.md](apps.md)）。

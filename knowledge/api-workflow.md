@@ -181,3 +181,20 @@ uip or jobs start <プロセスの Key> --input-arguments '{…}'        # Orche
 - **手元の run のノイズ**：リポジトリのフォルダで動かすと `MODULE_NOT_FOUND`（`[worker eval]`）が出るが、結果は Success。
 - **Orchestrator で動かす**：デプロイしたプロセスは `ProcessType: "Api"`。`uip or jobs get <ジョブ>` の `OutputArguments` に Response の値が JSON で入る。
 - **課金の集計**：実行の課金は 1 時間ほど遅れて集計される（公式の文書）。
+
+## 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1204）
+
+番号は AUT-1204 の表の番号。印の無いものは、まだテナントで試していない。
+
+- **入出力のスキーマの型**（13）：Studio Web の型は String / Number / Integer / Boolean / Object / Array / Date-time / Date / Time、プロパティごとに Required。IR では `"date-time"`・`"date"`・`"time"` が `{ type: "string", format: … }` になり、末尾の `!`（`"string!"`）か `{ …, "required": true }` で必須になる（`required` の配列。2026-11-17 に手元の validate と run が通った）。
+- **出力のスキーマは強制されない**（17）：Response にスキーマに無いキーがあっても、足りなくても失敗しない。呼ぶ側が結果を待たないなら Response は省いてよい。
+- **Script**（15）：30 秒で打ち切り。Script から API は呼べない（HTTP Request を使う）。
+- **Try Catch のエラー**（16）：`{ type, title, status, detail, data }`。`$error.status` で HTTP の状態コードが取れる。
+- **外への通信**（25）：Manual 認証の HTTP Request は Serverless のロボットから、コネクタとコネクタで認証する HTTP は Integration Service から出る。相手が IP で絞るなら両方の IP を許可する。
+- **HTTP**（26）：Content-Type は `application/json` と `application/x-www-form-urlencoded`。Body は GET・OPTIONS・HEAD で使えない。Base URL のある接続では Request URL を相対パスで書く。
+- **課金**（27）：Flex では 1 回 15 API calls。2026-09-18 までは活動ごとに Integration Activities で課金されていた。ジョブの詳細の Consumption 欄は 2026-07 から隠れている（合計は Admin → Licenses → Consumables）。
+- **呼ぶ方法**（28）：エージェントの Tools の API workflow、Studio の RPA の Run Job、Maestro BPMN の「Start and wait for API workflow」。Maestro は API ワークフローの中の接続を聞いてこない。
+- **2026-10 の修正**（36）：CLI やエージェントで作った API ワークフローの正しい式に出ていた誤った警告が 10-14 に直った。設定ファイルが無いまま作った API ワークフローの publish の「Corrupted solution package」は、10-01 から開くと作り直す（知識の `invalid_project_folder` と同じ系統かもしれない）。
+- **公式の skill**（37）：`uipath-api-workflow` が 2026-09-16 に GA。gen.ts はこの skill の references を形の出典にしているので、skill の版が上がったら見直す。
+- **管理者の設定**（40）：named user のライセンス、Orchestrator と Integration Service、個人ワークスペース、「Automatically configure Serverless machines in Personal Workspace for Studio Web users」、SignalR の scalability。会社のテナントでデバッグできないときに見る。
+- まだ IR に無いもの：Do While の「Limit」（14。回す回数の上限。JSON の形をテナントで取る必要がある）。

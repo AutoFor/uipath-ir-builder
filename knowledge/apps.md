@@ -231,3 +231,19 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 - そのうえで、XAML の `Apps.app.*` / `Apps.form.*` の `AssemblyReference` を消し、`.entities` と `JitCustomTypes*.json` も入れずに送ると、Studio Web が DLL を作り直し、XAML の参照も足す。`Controls.MainPage.Text.Value`、`AppVariable.ApplicantName` は通った（ボタンのあるページの DLL は、その XAML を開くと作られる）
 - **別のページを開く（Open Apps Page）は、開く先のページの DLL が無いと「Selected page is not accessible」**（ページの選択肢も空になる）。開く先のページを開くだけ、ページのタイトルを変えるだけ、そのページにイベントを足すだけでは作られなかった。そのページの式（ラベルの文字）を Studio Web で直したら DLL ができ、エラーが消えた。`Apps.root.dll` に、DLL のできたページだけが並ぶ
 - 部品の `automationId`（Studio Web のファイル id）は取り込みで変わるが、`workflowPath` で開けるので、古いままでもボタンから XAML を開けた
+
+## 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1204）
+
+番号は AUT-1204 の表の番号。まだテナントで試していない。
+
+- **RPA アプリを出す**（1）：アプリはテナントのフィードにだけ publish できる（個人ワークスペースとフォルダのフィードには出せない）。Orchestrator の Apps のページで Deploy app する。ソリューションにアプリがあると、案内のリンクからアプリを activate しないと activation が失敗する。Serverless は Medium を勧める。
+- **Studio Web で RPA・アプリを直すには手元の Assistant が要る**（6）：STS 2026.0.190 以上か LTS 2025.10.15 以上。Windows では JavaScript Robot Add-on が要る（Unattended のインストールでは既定で入らない）。2026-11-09 から Auto-login が既定で on。
+- **Studio Web が開ける RPA プロジェクトは .NET 8 だけ**（29、2026-11-06）。.NET 6 と .NET 10 は「Studio Desktop で開く」と出る（`uip rpa init` の既定は net10.0。Studio Web で開くなら `--dotnet-version net8.0`）。
+- **表・ドロップダウンのデータ**（11）：部品の「Data source」→「Create workflow」が Query Entity Records を置く（正式な形）。Edit Grid は Row modified で Update Entity Record（`MainPage.EditGrid.SelectedItem.Id`）。rpa-app.ts は App の変数の list とボタンの query だけ。
+- **ドロップダウンの選択肢**（12）：List source に `{"v1","v2"}.ToListSource()` か `New List(Of String) From {…}.ToListSource()`。Multiselect とラジオも同じ。
+- **日付の型（Date）の値はタイムゾーンが要る**（34）：`DateTimeKind.Unspecified` は ISO でないとして弾かれる（`Local` か `Utc`）。上の `Value.Value.ToDateTime(TimeOnly.MinValue)` は Unspecified になる。
+- **アプリでできないこと**（22）：`Fetch` / `FetchOne`（Query Entity Record を使う）、エンティティの選択肢（choice set）と `GetChoiceSet` / `GetChoiceSetValue`、Autopilot でエンティティから作る、Studio Desktop で開く、ページの export・import、Public App。rpa-app-entities.ts は選択肢の列を扱わない。
+- **部品**（32）：rpa-app.ts が作れないもの：ラジオ・Multiselect・Switch・Slider・File Uploader・Email・Rich Text、Edit Grid・Custom List・Tabs・Header・Divider・Image・IFrame・Document Viewer、Container・Page Container。
+- **アプリのプロジェクト**（33）：Main のワークフローもトリガーも無い。App Events に Submit Action（アクション アプリ）もある。アプリを消すと、使っているワークフローも消える。
+- **デバッグ**（38）：動いているアプリで Shift+4 を押すと、アプリの中のログを JSON で取れる。On local machine と On cloud、Debug step-by-step がある。エラーがあるとデバッグのボタンが押せない。
+- **戻し方**（39）：Cloud Workspace は閉じたときと 40 分ごとに自動のスナップショットができ、Change history から戻せる。publish の履歴の Restore は、その版に全部のプロジェクトを戻す。
