@@ -111,6 +111,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | Case：ステージ 3 つ、前のステージの完了で入る、タスク 2 つを並べて動かす、必須のステージで完了 | — | テナント | `CaseTour.case` |
 | `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。WEBHOOK 方式でデバッグでは動かない。デプロイすると行の作成で起動した（10 節） | デプロイで起動した（`event-bindings.mjs` で整える。10 節） | `EventWait`、`deploy/DfEvent` |
 | 定期実行のトリガー（デプロイ） | テナント（5 分ごとに動いた） | — | `deploy/Nightly` |
+| 定期実行の Cron（デプロイ、AUT-1192） | テナント（2026-11-17、Sorahane Trial の個人ワークスペース。`0 * * * * ?` で毎分 12 秒ごろに動き、3 回とも Successful） | — | `deploy/CronTick` |
 | `queueItem` | テナント（試しのキューに項目ができた） | — | `deploy/QueueTour` |
 | BPMN の Call activity（`startAgenticProcess`）と戻り値 | — | テナント | `deploy/Parent`、`deploy/Child` |
 | ビジネスルール（`businessRule`、DMN） | — | 評価できた（DMN 1.3、`.uirule` を直す。10 節） | `deploy/RuleCall`、`deploy/Tier` |
@@ -200,6 +201,10 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 
 - **定期実行のトリガーの Flow は、そのままでは publish できない**。`solution pack` が作る nupkg の `entry-points.json` で、定期実行の入口の `uniqueId` が `"start"`（GUID でない）になり、`solution publish` が `1205 Corrupted solution package: No entry points defined for project <id>` で拒む。会話・イベントのトリガーや BPMN の入口は GUID なので通る。`tools/maestro/fix-entry-points.py` で GUID に直すと通った
 - **デプロイすると、定期実行は本当に動いた**（5 分ごと。Orchestrator のジョブの `Source` が `Schedule`、Automate の flow として成功）
+- **Cron でも書ける**（AUT-1192）。SDK 6.66.5 の `scheduled({ every })` は、`every` が Quartz の Cron（6〜7 項目、秒から始まる）なら、トリガーを 1.2 の定義（`timerType: "timeCycle"`、`timerValue: "<Cron>"`）で書く。ISO の繰り返し（`R/PT5M`）は今までどおり 1.1。
+  - **タイムゾーンは書けない**。テナントの登録簿（`uip maestro flow registry get core.trigger.scheduled`）の最新も 1.2 で、項目は `timerType`・`timerValue` だけ。動いた時刻は UTC だった。
+  - 文書は「タイムゾーンは必須、既定は UTC」と書くが、今の定義には無い。日本時間の「毎朝 9 時」は UTC の 0 時の `0 0 0 * * ?` と書く（日本には夏時間が無いので、ずれない）。
+  - 前の実行が終わらないうちに次の時刻が来たときに、飛ばすか待たせるかは、デプロイの設定の Concurrency で決まる（文書。試していない）。
 - **`flow init --automate` でソリューションに足すと、process の resource の `runtimeProfile` は `Standard` のまま**。Studio Web で作った Automate のソリューションも `Standard` だったので、Automate かどうかは project の `operate.json` の `profile: "Lite"` で決まると見ている
 - `deploy run` は `--folder-name` が要る（`--personal-workspace` でも）。フォルダは `<個人ワークスペース>/<フォルダ名>`。`rules` のコマンドはこのフォルダをパスで見つけられず（Folder not found）、`--folder-key` なら通った。フォルダの Key は `uip or jobs get <ジョブ>` の `FolderKey`
 - **BPMN の Call activity（`startAgenticProcess`）で、デプロイ済みの別の BPMN を呼んで待てた**（要素の種類は `CallActivity`）。入力は `input: { n: 21 }`、戻りは `outputs: { whole: "=result", doubled: "=result.doubled" }` で `{ doubled: 42 }` と `42` が入った

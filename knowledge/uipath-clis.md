@@ -16,6 +16,7 @@ UiPath の CLI は 5 つある。このマシン（DESKTOP）に全部入れて�
 | CI/CD（GitHub Actions などで pack・deploy・テスト） | `uipcli` | CI のプラグインがこれを使う。外部アプリの認証（`-A -I -S`）で動く |
 | ローコードのエージェント（`agent.json`） | `uip agent`（`node tools/agent/gen.ts` が中で呼ぶ。[agents.md](agents.md)） | 雛形・移行・点検・評価・実行がそろう。ほかの CLI には無い |
 | Python の Coded Agent・関数 | `uipath`（Python） | Python の実行環境（`run`・`dev`・`eval`・Studio Web との `push` / `pull`）を持つ |
+| JS / TS の関数（`defineFunction`） | `uip function`（[functions.md](functions.md)） | 雛形・手元の実行・pack がそろう。出すのは `uip or packages upload`（`function publish` は 403 だった） |
 | XAML の XML・型の壊れだけを見る | `UiPath.Studio.CommandLine analyze` | 式は見ない。`uipcli` の analyze で足りるので、普段は使わない |
 | ロボットのある機械で、その場で動かす | `UiRobot execute` | SSH からは動かない。普段は使わない |
 
