@@ -301,7 +301,7 @@ function checkAssign(family, artifact) {
     return { status: "skip", ms: Date.now() - started, diagnostics: [], reason: "成果物が読めない（validate の結果を見る）" };
   }
   const diagnostics = names.map((where) => ({ level: "warning", code: "TASK_UNASSIGNED", where, message: "人のタスクに割り当て先が無い。未割り当てで作られる（docs/task-assignment.md）" }));
-  diagnostics.push(...all.map((where) => ({ level: "warning", code: "TASK_GROUP_ALL_USERS", where, message: "グループの全員への割り当ては、個人ワークスペースの実測で未割り当てのままだった。Workload は割り当たった（docs/task-assignment.md）" })));
+  diagnostics.push(...all.map((where) => ({ level: "warning", code: "TASK_GROUP_ALL_USERS", where, message: "グループの全員への割り当ては、デバッグでは効かない（文書。個人ワークスペースのデバッグの実測でも未割り当てのままだった）。デプロイしてから確かめる。Workload はデバッグでも割り当たった（docs/task-assignment.md）" })));
   return { status: diagnostics.length ? "warn" : "ok", ms: Date.now() - started, diagnostics };
 }
 

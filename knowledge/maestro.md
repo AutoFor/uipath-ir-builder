@@ -245,3 +245,53 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 ### まだのもの
 
 - 文書の抽出の `dynamicExtract`（実行時の SingleExtract が INVALID_DOCUMENT。Studio Web だけで作った Flow でも同じなので、サービス側を待つ）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
+
+## 11. 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1202）
+
+公式の文書（maestro・maestro-automate）で分かり、まだテナントで試していないもの。番号は AUT-1202 の一覧の番号。テナントで確かめたら、上の節に移す。
+
+### 動き・上限
+
+- **Automate の上限は目安**（6）：24 時間・同時 50 は fair use の目安で、超えても止まらず失敗にもならない。Automate の run は、終わってから 30 日で Maestro から消える（Orchestrate は既定 30 日、管理者が 1〜180 日にできる）。Orchestrator のジョブとトレース（既定 90 日）は両方同じ。Automate の run は Maestro API と Process optimization の対象外。失敗した段からの Retry と Cancel はできる。
+- **Automate の run の見え方**（37）：失敗した run は Faulted で待ち、Orchestrator では Running のまま（Stop / Kill / Duplicate job ができる）。Instance management の Run は入力を取らない（入力がある Flow は Start job から）。Studio Web の Manage → Versions から前の版を出し直せる。
+- **Data Fabric の Query**（4）：Record limit の既定は 100（最大 1000）。101 件以上あると黙って切れる。Sort を付けないと返る組が毎回変わりうる。Records to skip（既定 0）。Single record は当たりが 2 件以上だと失敗する。
+- **コネクタのイベントを待つ段**（15）：接続の側で 5 分ごとにイベントを確かめる（間隔は接続を編集して変える）。Data Fabric のイベント（`waitForEvent`）が遅れて見える理由。
+- **スロットリング**（29）：1 つのインスタンスが短い間に多くの段を動かすと遅くされる（エラーにはならず、データも失われない）。Action history に Throttled が残る。止められない。
+- **要素ごとの再試行**（23）：Backoff は Static / Linear / Exponential（base 1〜5）、Max duration、Retry on errors。実行するタスク（Service・Agent・API Workflow・Queue Item など）にだけ付けられ、ゲートウェイと待ちのイベントには付けられない。2026-10-30 から、範囲の外の値は Issues に出る。
+- **Loop**（25）：Parallel では繰り返しが同時に動き、順番は保証されない。Break on condition は順番に動かすときだけ効く。繰り返す配列はループの始めに固定される。Loop にもエラーの道を付けられる。SDK には `parallel` と `b.break()` がある。
+- **サブフローと並列**（26）：サブフローの中の Terminate は、そのサブフローだけを終える（親は続く）。サブフローの中の変数は `$vars.<subflow>.<変数>` で読む。並列の枝の中で変えた変数は、ほかの枝に見えない。Merge は「Match all cases」の Switch の後では動いた枝だけを待ち、どれかの枝が落ちると Merge もエラーになる。待ちに期限は無い。
+- **Script ノード**（27）：`$metadata`（`InstanceId` など）が使える。`fetch`・`XMLHttpRequest`・`WebSocket`・`eval`・`Function`・`indexedDB`・`caches` は使えない。大きなデータは時間切れや上限に当たる。
+- **ファイル**（38）：ファイルは変数に入らず参照で渡る。Job Attachment（既定、Orchestrator の保持方針に従う）と Data Fabric のファイル欄は、互いに置き換えられない。
+- **API Workflow ノード**（24）：呼び先の必須の入力が欠けていても Flow は何も言わない。呼び先が先にデプロイされていないと、実行時に「The job's associated process could not be found」。
+
+### 2026-10-30 の変更（D）
+
+- **BPMN と Case は、必須の変数が空だとデバッグも止まる**（7。以前は publish だけ）。`debug.mjs` で流していたものが上がらなくなる場合がある。
+- **Quick Form にエラーの道を付けられる**（8）。SDK の `hitl` が `onError` を通すかは確かめていない。
+- **Validate extraction ノード**（22、Preview）：同じ Flow の中で Extract document として作った Extract だけに付けられる。Published のモデル（`ixpExtract`）には付けられない。
+- **エラーの境界イベントのある BPMN を CLI で pack できる**（32。以前は Studio Web で開いて保存し直す必要があった）。
+- **音声**（36）：`callContext` に `from`・`to`（電話番号）が入る。Voice agent からエスカレーションの出口が無くなった（人の段は後ろに置く）。Call context を結ばないと約 25 秒の無音で切れる。serverless のマシンが割り当てられていないと、ツールが全部エラー。
+
+### 課金・権限・運用
+
+- **ビジネスルール**（10）：1 回評価するごとに 0.2 Platform Units（Flex は 1 Agent Unit）。Orchestrator の Business Rules は、使っているプロセスをデプロイし直さずに直せる（Edit で File を差し替える。保存した後は版を変えられない）。引数の名前は英字・数字・`_` だけで、先頭は英字か `_`。
+- **無償（Unlicensed / Express）の利用者**（9）：Automate の文書は、Studio Desktop からのデプロイ・IXP・個人ワークスペースへの 2 本目以降のデプロイ・Action Center にライセンスが要るとする。Orchestrate の Unified Pricing の文書は、Flow の GA でこれらを開いたと書く（2 つの文書で書き方が違う）。Community の `ixp deployments create` が 403 だったのは、利用者のライセンスの種類で説明できるかもしれない。
+- **子のプロセスを動かすアカウント**（16）：既定ではフォルダで空いているアカウントで動く。指定するには、Orchestrator のプロセスの Package Requirements → Execution settings で Runtime type・Account（Run as myself もある）・Machine を決める。
+- **Case を動かす権限**（17）：Triggers.view / create のほか、Maestro の画面で変数の値を見るのに Logs.view（Automation User に入っていない）。Case App から操作するなら Apps.view / edit / create。
+- **Case が完了しても、Orchestrator ではプロセスが Running のまま**（18。Reopen のため）。状態は Case App で見る。SLA のタイマーは Pause の間は止まる。Retry は、失敗したタスクか遷移だけをやり直す。
+- **Case の `runOnlyOnce`**（11）：タスクの既定は false で、再入場のたびに動き直す。true にすると前の出力を残して動かない。ステージに true を付けると、そのステージには戻れない。
+- **グループの割り当て**（2）：デバッグではグループの割り当ては効かない（[../docs/task-assignment.md](../docs/task-assignment.md)）。Workload と Round Robin はローカルのグループだけ（AD のグループは拒まれる）。エラーは `NoUsersFoundInLocalGroup`・`NoEligibleUsersFoundInGroup`。
+
+### ノード・機能（まだ見本に無い）
+
+- **HTTP Webhook**（12）：ノードが渡す URL に要求が来ると、run が始まるか、待っていた run が進む。Filter を付けられる。出力の形は最初の要求が来るまで分からない。デプロイしないと届かない。SDK の関数一覧に無い。
+- **Flow のキュー**（13）：Queue trigger がある（1 つのキューで起動できる Flow は 1 本だけ）。キューのノードには Delete queue items と Set transaction status もある。
+- **BPMN のキューの開始イベント**（14）：1 つの項目が 1 つのインスタンスを始める（バッチは 1 に固定）。InProgress のまま 24 時間で Abandoned。終わりに Set transaction status が要る。Get queue items は新しい順に 100 件まで、Bulk add は 1 回 15,000 件まで。Wait for queue event には期限が無い（境界のタイマーを付ける）。
+- **評価**（20）：Flow の評価セットはノード単位か Flow 単位のどちらか。評価器は決定的なもの（Contains・Exact match・JSON similarity）、LLM のもの（semantic similarity・strict JSON similarity・Trajectory）、ツールの呼び出しを見るもの（ノード単位だけ）。デバッグの run からデータを取り込める。BPMN の評価は Preview で、ノード単位も CLI も無い。CLI は `uip maestro flow eval`（[uip-cli.md](uip-cli.md)）。
+- **Function ノード**（21、2026-09-17、Preview）：Python・JS・TS の coded function を呼ぶ。BPMN は Service task の「Start and wait for Function」（06-19）。関数は `uip function` で作れる（[functions.md](functions.md)）。
+- **BPMN の Custom instance ID**（30）：開始イベントの General で、インスタンスの名前を式で決める（開始の直後に 1 回だけ評価。Insights と Process Mining では探せない）。生成器では扱っていない。
+- **BPMN の Data Fabric の式**（31）：2026-07-03 から、エンティティ名と `?folderPath=` にバインディングや変数を書ける（`datafabric[bindings.EntityName?folderPath=bindings.FolderKey][...]`）。09-03 から、絞り込みの値の `=js:` が評価される。
+- **Maestro API**（28）：Swagger は `https://cloud.uipath.com/{org}/{tenant}/pims_/api/swagger`。CaseApp v3 で ad-hoc タスクを起こす（`tasks/trigger`）、ケースを閉じる（`close`）、ケースの状態を読む。どれも `X-UIPATH-FolderKey` が要る。呼ぶときは `node tools/platform/cloud-api.mjs ... --service pims_`（[cloud-ops.md](cloud-ops.md)）。
+- **要約ノード**（35）：1,000 ページまでの文書を扱い、出典付きで答える。
+- **画面と開発の道具**（33・34）：BPMN の Simulate はタスクを動かさず、ゲートウェイの道を人が選ぶ。デバッグでブレークポイントを置き、止まっている間に変数を直せる（Studio Web だけ）。VS Code の UiPath Maestro Orchestrate 拡張で `.flow` を見て直せ、検証が Problems に出る（`UiPath: Package` / `Deploy`）。Studio Desktop でも Flow を作れる（Data Fabric のノードは無い）。
+- **公式の skill**（19）：`uip skills install` で入る `uipath-maestro-flow`（09-16 に GA）、`uipath-maestro-case`・`uipath-maestro-bpmn`（Preview）。この道具では、作るのは SDK のソースと `verify.mjs`、skill は CLI の使い方の参照として読む（AGENTS.md の Maestro の行）。
