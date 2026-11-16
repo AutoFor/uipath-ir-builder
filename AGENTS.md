@@ -117,6 +117,7 @@ node tools/verify/verify.mjs --name <作業名> --template <P> --use-project --n
 ```
 
 - 結果は `out/verify/<作業名>/report.md`。ログも見られる
+- 多くのファイルを run するときは `--build-once` を付ける。先に 1 回だけ build し、各 run の検証と build（`uip rpa run --skip-build`）を飛ばす。6 ファイルで 59 秒 → 36 秒だった。build が落ちたら、いつもの run に戻る
 - verify は build / run の前に uipcli の analyze（式のコンパイル）を流す。エラーがあればそのファイルを NG にし、build / run をせずに数秒で終わる（`--no-analyze` で止める。uipcli が無ければ飛ばす）
 - 期待するログを `<P>/ir/Main.expected.log` に1行1件で書いておくと、出たログと突き合わせる（`[Information] こんにちは` のようにレベルから書くとレベルも比べる）
 - 入力引数は `<P>/ir/Main.verify.json` に `{ "args": { "in_Name": "太郎" } }`

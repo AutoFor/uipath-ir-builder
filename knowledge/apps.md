@@ -222,7 +222,7 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 ### 取り込み（`uip solution upload`）で確かめたこと
 
 - 書き出しの SolutionId と ProjectId を新しくし、ページの式（ラベルの文字）を書き換えて `upload` すると、新しいソリューションとして入り、Studio Web で書き換えたとおりに出る。`.entities` と `JitCustomTypes*.json` を消しても開ける（Studio Web が DLL を作り直す）
-- 取り込んだソリューションへの上書き（`upload` をもう一度）は HTTP 500（`.project/…` が見つからない）で通らなかった
+- 取り込んだソリューションへの上書き（`upload` をもう一度）は HTTP 500（`.project/…` が見つからない）で通らなかった。2026-11-17 に Flow だけのソリューション（`.uis` ではなくフォルダ）で試すと、2 回目は `Action: Overwritten` で通った（1.204。文書のとおり、上書きの前に戻せる版を残す。`--no-snapshot` で残さない、`--force` で有無の確認を飛ばす）。RPA アプリの `.uis` での上書きは試し直していない
 
 #### イベント（XAML）を生かすには
 

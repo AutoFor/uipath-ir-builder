@@ -60,6 +60,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--report") opt.report = argv[++i];
   else if (a === "--no-coded") opt.noCoded = true;
   else if (a === "--no-analyze") opt.noAnalyze = true;
+  else if (a === "--build-once") opt.buildOnce = true; // run の前に 1 回だけ build し、各 run に --skip-build を付ける（AUT-1207 の 12）
   else if (a === "--use-project") opt.useProject = true;
   else if (a === "--imports-from") opt.importsFrom = resolve(argv[++i]);
   else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
@@ -315,11 +316,18 @@ if (analyzeFailed) {
   // 次の実行のために戻す必要はない（prepareProject が消す）。.held は残ると無駄なので消す
   for (const r of alone) rmSync(`${r.target}.held`, { force: true });
 } else {
+  // --build-once：先にプロジェクト全体を 1 回 build し、通れば各 run の検証と build を飛ばす
+  let skipBuild = false;
+  if (opt.buildOnce) {
+    const b = uip(["rpa", "build", projDir, "--output", "json"], "_build-once");
+    skipBuild = b.envelope?.Result === "Success";
+    if (!skipBuild) console.log("--build-once：build が通らなかったので、各 run で build する");
+  }
   for (const r of results) {
     if (!targetReady(r)) continue;
     const side = sidecar(r.file);
     if (side.noRun) { r.run = { skipped: side.noRun }; continue; }
-    const args = ["rpa", "run", "--file-path", r.target, "--project-dir", projDir, "--log-level", "Information", "--output", "json"];
+    const args = ["rpa", "run", "--file-path", r.target, "--project-dir", projDir, "--log-level", "Information", "--output", "json", ...(skipBuild ? ["--skip-build"] : [])];
     if (side.args) {
       const af = join(logDir, `${safe(r.file)}.args.json`);
       writeFileSync(af, JSON.stringify(side.args));

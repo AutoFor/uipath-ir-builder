@@ -21,6 +21,8 @@
 - 既定のログインは会社の組織（autofor / DefaultTenant）。
 - トライアルの組織は `uip login --profile trial` で別にログインし、コマンドごとに `--profile trial` を付ける。付け忘れると会社のテナントに対して動く。
 - `uip login status` で、どの組織・テナントかを確かめる。
+- **ログインの資格情報は、今のフォルダから上へたどって探す**（`./.uipath/`、その親…、最後に `~/.uipath/`）。`uip codedapp pack` は既定で `./.uipath/` に書くので、その下で `uip` を動かすと、探す先が変わるおそれがある。どれが使われるかは `uip login which`（文書。AUT-1207 の 24）。
+- **版の決まり方**：`~/.uipath/config.json` の `core.version` に正確な版を書くと固定、`MAJOR.MINOR`（この PC は `1.204`）ならその系列のパッチを自動で追う、書かなければ最新。固定するなら `uip config set version 1.204.0`（文書。AUT-1207 の 22）。
 - プロファイルの中身（`~/.uipath/profiles/<名前>/.auth`）にはトークンがある。表示しない・コミットしない。
 - テナントにサービスが無いと `Service: du not found` などになる。`uip admin tenants services list` で確かめる（[maestro.md](maestro.md) の IXP の節）。
 
@@ -36,7 +38,8 @@
 ## 出力の読み方
 
 - `--output json` の結果は `{ Result, Code, Data, Message, Instructions }` の形。
-  - 失敗は `Result: "Failure"`。理由は `Message` と `Instructions` に出る。終了コードだけで判断しない。
+  - 失敗の `Result` は `Failure` のほか、`ConfigError`・`AuthenticationError`・`ValidationError`・`TimeoutError` がある。終了コードは `Result` で決まる（0〜4、取り消しは 130。文書の exit-codes）。手元で見たのは Success 0、Failure 1、ValidationError 3。例外は `uip tm wait` で、時間切れでも 2 を返す。
+  - 失敗にはいつも `ErrorCode`（`not_found`・`invalid_argument`・`rate_limited` など）と `Retry`（`RetryWillNotFix` など）が付き、`Context`・`Warning`・`Log` が付くこともある。理由は `Message` と `Instructions` に出る。終了コードだけで判断しない。
 - **`Data` のキーは PascalCase にそろえる**（文書の global-options の仕様）。元のデータのキーも変わる（`uip api-workflow run` の Response、`uip tasks get` の値、`bpmn debug` の結果）。`--output-filter` で付けた名前も変わる（`{n:Name}` → `N`）。
   - 元のキーの大文字小文字が要るなら、別の所から読む。
     - API ワークフロー：デバッグのログ、またはジョブの `OutputArguments`。
@@ -51,6 +54,8 @@
 - 取り返しのつかないコマンドは `--yes` が要る。付けないと「Confirmation required」の Failure になり、何も起きない。
   - 対象の例：`triggers delete`、`solution deploy uninstall`、`solution packages delete`、`is connections delete`。
 - **`df records delete` は `--yes` に加えて `--reason "<理由>"` も要る**。
+- **`df entities delete` は `--confirm` と `--reason` が要る**（`--yes` ではない。1.204 の help で確かめた）。`entities update` でフィールドを消すときも `--reason` が要る（文書）。
+- **`df entities list` の既定はテナントの表だけ**。フォルダの表は `--folder-key <GUID>`、両方なら `--include-folders`（2 つは一緒に使えない）。
 - 消すのは自分が作った試しのものだけ。人のもの・前からあるものを消すときは、先に人に確かめる。
 
 ## ソリューション（pack・publish・deploy）
@@ -129,6 +134,7 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
   - Orchestrator の画面で作る。
   - `triggers list` にも出ない。
   - 作り方と、入力に来るキーは [api-workflow.md](api-workflow.md) の「トリガー」。
+- **`uip or triggers history <Key> --folder-path <フォルダ>`** は、起動に失敗した記録（ライセンスが無い、マシンが無い など）を返す。文書では、イベントのトリガーにも効く（Key から種類を判断する。1.204 の help にある。試していない）。
 
 ## Integration Service（コネクタ・接続）
 
@@ -136,6 +142,7 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
 - 接続を新しく作るのは OAuth の同意を伴うので、人に確かめてから（画面か `uip is connections create`）。
 - コネクタの Key は推測しない。`uip is connectors list --filter "<製品名>"` で引く（例：Data Fabric は `uipath-uipath-dataservice`）。
 - イベントの対象は `uip is triggers objects <コネクタ> CREATED --connection-id <Id>` で見られる。
+- **`uip is triggers describe <コネクタ> <CREATED|UPDATED|DELETED> <オブジェクト> [--connection-id <Id>]`** は、イベントの出力の項目、絞り込める項目、polling か webhook かを返す（1.204 の help にある）。入力に来るキーを、動かす前に調べられる。
 
 ## Data Fabric
 
@@ -158,6 +165,7 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
 - `uip` が SSH から起こした Helm（`UiPath.Studio.Helm`、セッション 0）は、終わっても残り、プロジェクトのフォルダ（`.local\.jit`）をつかむ。試しのフォルダを消す前に止める（自分が起こしたものだけ）。
 - `uip` の Orchestrator・ソリューション・`api-workflow run` などの、ロボットを使わないコマンドは SSH から動く。
 - `uip maestro registry prepare` は `uip` が PATH に要る。また `tools/maestro`（SDK のあるフォルダ）で動かす。
+- **SSH から `uip rpa` の `--help` を流しても、管理者の Helm が起きて残る**（2026-11-17。窓口の run が「アクセスが拒否されました」になった）。help を見たあとも、自分が起こした Helm を止める。
 - 手元の `uip api-workflow run` をリポジトリのフォルダで流すと、`MODULE_NOT_FOUND`（`[worker eval]`）が出る。結果は Success なので気にしない。
 
 ## ヘルプと実際が食い違っていたもの
@@ -168,3 +176,22 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
 | `or triggers list` | Integration Service のイベントも見られる（スキル） | 出ない |
 | `api-workflow validate` | — | Studio Web の `LogMessage` と、Studio Web が保存した Break の `set` を Failure にする。`run` とクラウドでは動く |
 | `solution deploy upgrade` | — | 版は `--version`（`deploy run` は `--package-version`） |
+| `tm run --type package`（AUT-1207 の 27） | 文書：上げたパッケージのテストケースを全部流し、失敗なら 1 で終わる | 1.204 に `tm run` は無い。`tm testsets run` ＋ `tm wait` で流す（[testing.md](testing.md)） |
+| `solution pack --project`（AUT-1207 の 23） | 文書：ソリューションの中の 1 つのプロジェクトだけを `.nupkg` にする | 1.204 の help に無い。1 つだけ出すときは、今までどおり写しを作るか、`uip rpa pack` ＋ `or packages upload` |
+| `df entities delete` | 文書：`-y` と `--reason` | 1.204 は `--confirm` と `--reason` |
+| `maestro flow migrate --dry-run`（AUT-1207 の 18） | — | 生成器の `.flow` はもう今の版（1.9 → 1.9）。ノードの任意の移行が 4 つ出た（Triggers の見本） |
+| `function publish --feed-id` | — | テナントのフィードに 403。`or packages upload` は通る（[functions.md](functions.md)） |
+
+## 1.204 にあるが、まだ使っていないコマンド（AUT-1207）
+
+文書（uipath-cli の user-guide）と `--help` で、あることだけ確かめたもの。使うときに試して、ここから上の節に移す。
+
+| コマンド | 何に使えるか |
+| --- | --- |
+| `uip solution deploy config get / set / link / unlink` ＋ `deploy run --config-file` | デプロイで資源を毎回新しく作らず、既にある資源を使う（`config set --all conflictFixingAction UseExisting`）。接続は `authenticationType` を `ConfigurableByUsers` か `AuthenticateAfterDeployment` にできる |
+| `uip api-workflow bindings sync --workflow <Workflow.json>` | Studio Web で開かなかった API ワークフローの `bindings_v2.json` を、コネクタの活動から作る（`solution resources refresh` の前） |
+| `uip rpa validate --file-path <ファイル> --min-severity error` | ファイルごとの診断を構造化して返す（verify は今、build の生の出力から拾っている）。Helm を使うので窓口を通す |
+| `uip maestro flow eval`（evaluator・set・add・simulation・`run start --wait`・results・compare） | Flow の評価セットを CLI で作って流す |
+| `uip maestro bpmn debug-instance variables / variables-all / incidents` | BPMN のデバッグの変数と失敗を読む（[maestro.md](maestro.md)） |
+
+- 1.201.0 から `uip maestro bpmn refresh` は Integration Service の接続も足す（`update-metadata` は非推奨）。1.199.0 から `bpmn validate` は Studio Web の canvas の規則も見る（文書のリリースノート）。

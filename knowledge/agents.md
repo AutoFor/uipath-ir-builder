@@ -151,7 +151,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - **`expected` の無い評価のケースは、既定の評価器（出力の比較）がエラー**になる（「non-empty expected output」）。振る舞いだけを見るケースは、振る舞いの評価器の点だけが付く。生成器は注意を出す。
 - **`uip agent review` は評価が 5 件未満で FAIL**（`NO_EVALS`・`TOO_FEW_EVALS`）。
 - **組み込みの道具（`type: "internal"`）に `location` を書かない**。`"solution"` にすると validate が `folderPath "solution_folder"` を求めて落ちる。
-- **`debug` はソリューションを Studio Web に上げる**。初回は `.uipx` の `SolutionId` が Studio Web の Id に書き換わり、次からは同じソリューションを上書きする。`eval run start` が読む `SolutionStorage.json` は `debug` / `upload` では作られない（`--solution-id` を渡す。`download --extract` には入っている）。
+- **`debug` はソリューションを Studio Web に上げる**。初回は `.uipx` の `SolutionId` が Studio Web の Id に書き換わり、次からは同じソリューションを上書きする。`eval run start` が読む `SolutionStorage.json` は `debug` / `upload` では作られない（`--solution-id` を渡す。`download --extract` には入っている）。文書は「`upload` が自動で書く」とするが、2026-11-17 に 1.204 で upload しても作られなかった（AUT-1207 の 8）。
 - **デプロイ済みのプロセスを道具にしたソリューションを deploy すると、そのプロセスもデプロイ先のフォルダに入る**（price-agent では `Shared/PriceAgentTest` に Probe もできた）。
 - **Studio Web で開いて保存すると変わるもの**：
   - 会話型に `settings.voice`（音声のモデル）が足される。
