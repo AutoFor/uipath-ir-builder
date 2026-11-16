@@ -96,7 +96,25 @@ export type EntityLookup = (names: string[], folder: string) =>
   | { error: string };
 
 /** 書類の確認（Document Validation Task）。IXP の道具の抽出結果を人に確かめてもらう。bucket は書類を置くストレージ */
-export type ValidationEscalation = { validate: string; bucket: string; bucketFolder: string; name?: string; description?: string; recipients?: string[] };
+export type ValidationEscalation = { validate: string; bucket: string; bucketFolder: string; name?: string; description?: string; recipients?: Recipient[] };
+
+/**
+ * タスクの受け手。文字列はメール（type 3）。ほかは resource の recipients[].type（スキル uipath-agents の escalation.md）：
+ * 1 userId（利用者の GUID）、2 groupId（グループの GUID）、4 assetEmail（メールを入れたアセットの名前）、
+ * 5 group（グループの名前）、6 assetGroup（グループの名前を入れたアセットの名前）
+ */
+export type Recipient = string | { userId: string } | { groupId: string } | { assetEmail: string } | { group: string } | { assetGroup: string };
+const RECIPIENT_TYPES: [string, number][] = [["userId", 1], ["groupId", 2], ["assetEmail", 4], ["group", 5], ["assetGroup", 6]];
+export function recipientResource(r: Recipient): { type: number; value: string } | undefined {
+  if (typeof r === "string") return { type: 3, value: r };
+  for (const [k, type] of RECIPIENT_TYPES) if (k in r && typeof (r as any)[k] === "string") return { type, value: (r as any)[k] };
+  return undefined;
+}
+export function recipientIR(x: { type: number; value: string }): Recipient | undefined {
+  if (x.type === 3) return x.value;
+  const k = RECIPIENT_TYPES.find(([, t]) => t === x.type)?.[0];
+  return k ? ({ [k]: x.value } as Recipient) : undefined;
+}
 
 export type Escalation = {
   /** Action Center のアプリの名前（ソリューションの中か、デプロイ済み） */
@@ -104,8 +122,8 @@ export type Escalation = {
   folder?: string;
   name?: string;
   description?: string;
-  /** タスクを受ける人のメールアドレス（1 人以上） */
-  recipients: string[];
+  /** タスクを受ける人（1 つ以上）。文字列はメール。グループなどは Recipient の形 */
+  recipients: Recipient[];
   /** 結果（アプリの outcomes）ごとに、エージェントが続けるか（continue）止まるか（end）。書かなければ全部 continue */
   outcomes?: Record<string, "continue" | "end">;
   title?: string;
@@ -403,7 +421,8 @@ function argsSchema(args: Arg[]): { schema: Record<string, unknown>; mapping: Re
 
 function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefined, project: string | undefined, probs: Problem[]): Record<string, unknown> | undefined {
   const p = `escalations[${i}]`;
-  if (!e.recipients?.length) probs.push({ path: `${p}.recipients`, code: "NO_RECIPIENT", message: "タスクを受ける人のメールアドレスを 1 つ以上書く（空だとタスクがどこにも行かない）" });
+  if (!e.recipients?.length) probs.push({ path: `${p}.recipients`, code: "NO_RECIPIENT", message: "タスクを受ける人を 1 つ以上書く（メール、または { group } など。空だとタスクがどこにも行かない）" });
+  (e.recipients ?? []).forEach((r, j) => { if (!recipientResource(r)) probs.push({ path: `${p}.recipients[${j}]`, code: "BAD_RECIPIENT", message: "受け手はメールの文字列か、{ userId } / { groupId } / { assetEmail } / { group } / { assetGroup } のどれか" }); });
   if (!lookup) { probs.push({ path: p, code: "NEED_TENANT", message: "エスカレーションは --project で生成する（アプリを探す）" }); return undefined; }
   const found = lookup(e.app, e.folder);
   if ("error" in found) { probs.push({ path: p, code: "APP_NOT_FOUND", message: found.error }); return undefined; }
@@ -439,7 +458,7 @@ function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefi
       outcomeMapping: Object.fromEntries(outcomes.map(o => [o, e.outcomes?.[o] ?? "continue"])),
       argumentProperties: {},
       properties: { resourceKey: found.key, appName: found.name, folderName: found.folder, appVersion: s.version || 1, isActionableMessageEnabled: false, actionableMessageMetaData: null },
-      recipients: (e.recipients ?? []).map(v => ({ type: 3, value: v })),
+      recipients: (e.recipients ?? []).map(recipientResource).filter(Boolean),
       taskTitle: title,
       taskTitleV2: { type: "textBuilder", tokens: tokenize(title) },
       labels: [],
@@ -551,7 +570,7 @@ function validationResource(e: ValidationEscalation, i: number, ir: AgentIR, pro
       id: oldRes?.channels?.[0]?.id ?? randomUUID(), name: "Channel", description: "Channel description",
       inputSchema: { type: "object", properties: {} }, inputSchemaDotnetTypeMapping: null,
       outputSchema: { type: "object", properties: {} }, outputSchemaDotnetTypeMapping: null,
-      outcomeMapping: null, recipients: (e.recipients ?? []).map(v => ({ type: 3, value: v })), type: "actionCenter",
+      outcomeMapping: null, recipients: (e.recipients ?? []).map(recipientResource).filter(Boolean), type: "actionCenter",
       properties: { appName: null, appVersion: 1, folderName: null, resourceKey: null, isActionableMessageEnabled: false, actionableMessageMetaData: null },
       argumentProperties: {},
     }],

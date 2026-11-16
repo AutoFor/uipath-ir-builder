@@ -351,3 +351,13 @@ test("combos：文書にある使えない組み合わせを止め、注意を�
   // generate は errors で止め、warnings を返す
   assert.equal(generate(ir({ model: "gemini-2.5-flash", tools: [web] }), BASE, ALL).problems[0].code, "GEMINI_IS_TOOL");
 });
+
+test("受け手：メールのほかに、利用者・グループの GUID、グループの名前、アセットを書ける（AUT-1189）", async () => {
+  const { recipientResource, recipientIR } = await import("./gen.ts");
+  const all = ["a@example.com", { userId: "u-1" }, { groupId: "g-1" }, { assetEmail: "ApproverEmail" }, { group: "Approvers" }, { assetGroup: "ApproverGroup" }] as const;
+  const res = all.map((r) => recipientResource(r as any));
+  assert.deepEqual(res.map((r) => r!.type), [3, 1, 2, 4, 5, 6]);
+  assert.deepEqual(res.map((r) => recipientIR(r!)), all);
+  assert.equal(recipientResource({ team: "x" } as any), undefined);
+  assert.equal(recipientIR({ type: 9, value: "x" }), undefined);
+});
