@@ -184,6 +184,8 @@ node tools/verify/verify.mjs --name <作業名> --template <P> --use-project --n
 最初に、その AGENTS.md を読んで、その手順に従う。
 
 - AI が書くのは ir\*.json だけ。*.xaml と *.cs は生成したもので、手で直さない
+- 公式の UiPath のスキル（uipath-rpa など）が入っていても、*.xaml と *.cs を直接書き換えない。スキルは CLI の使い方の参照として読み、作るのは道具の生成器にする
+- Studio で開いたまま生成しない（Studio と生成器が同じファイルを上書きし合う）
 - 道具が足りなければ道具を直し、テストを通して、道具のフォルダでコミット・push してから生成し直す（道具の AGENTS.md の「道具を育てる」）
 - 生成: node tools/ir/gen.ts <このフォルダ>\ir\Main.json <このフォルダ>\ir\<ほかの IR>.json --project <このフォルダ> --out <このフォルダ>（道具のフォルダで実行。IR は1つずつ並べる。*.json は展開されない）
 ```

@@ -148,3 +148,10 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
 確かめていないこと：
 
 - Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
+
+## Playwright のテストを Test Manager に載せる（文書。AUT-1205 の 35）
+
+- 流れ：`uip tm project create` → `set-default-folder` → `uip tm pack --project-path . --type playwright …` → `uip or packages upload` → `uip tm testsets run`（Playwright の project は `--playwright-projects`）。
+- 要るもの：CLI 1.203.0 以上（1.204 の `uip tm` に `pack` がある）、`package-lock.json`、ロボットのアカウントに Test Executor のロール（無いと結果が Test Manager に届かない）。
+- 直したあとに `uip tm executions retry` を使うと、古い版で流し直してしまう。
+- まだ試していない。`samples/pyagent/playwright-form` のような Playwright の資産の行き先の 1 つ。

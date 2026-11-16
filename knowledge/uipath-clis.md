@@ -113,3 +113,14 @@ uipath auth / pack / publish / deploy / push / pull / eval / dev
 - **SSH から `execute` は「アクセスが拒否されました」で動かない**（`uip rpa run` と同じ）。画面のセッションで動かす。
 - **`pack` は「Could not find Studio Command-Line application!」で動かない**（同じ機械に Studio 26.10 が入っているのに見つけない。理由は調べていない）。pack は `uipcli` か `uip` を使う。
 - `version` は動く（26.10.0.0）。
+
+## 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1205）
+
+- **`uip` とスキルは、その日最初の対象のコマンドで自動で更新される**（8）：上げたら元のコマンドをやり直す。メジャー版はまたがない。止めるのは、版を固定して入れたとき、CI で環境変数の認証のとき、Studio に付いた CLI、`UIPATH_CLI_DISABLE_VERSION_SYNC` のとき。verify の結果が CLI の版で変わりうる（この PC でも、出力に「Updating UiPath CLI and skills」が出ることがある）。
+- **資格情報の取り方の順**（9）：`UIPATH_CLI_ENFORCE_ROBOT_AUTH` があればロボットのセッション → `UIPATH_CLI_ENABLE_ENV_AUTH` があれば環境変数 → `uip login` で保存したもの（`--profile`）→ 無ければ同じ機械のロボットのセッション。`--profile` を付けてそのプロファイルが無いときは、ほかに落ちずに「ログインしていない」になる。DESKTOP にはロボットがあるので、プロファイルが無いと 4 番に落ちうる。
+- **テレメトリー**（28）：`uip` とスキルが呼んだ道具の名前・時間・成否・拡張子・エージェントの種類・利用者の Id / テナント / 組織を、UiPath の Application Insights（西ヨーロッパ）に送る（中身・出力・パスは送らない）。止めるときは `UIPATH_TELEMETRY_DISABLED=1`。
+- **Claude Code のスキルは global にしか入らない**（29）：`--agent claude --local` は失敗する。プロジェクトごとに分けられないので、プロジェクト側の AGENTS.md で「XAML を直接書かない」と抑える（AGENTS.md のひな形に書いた。7）。
+- **公式のスキルとこの道具**（39）：GA は `uipath-rpa`・`uipath-agents`・`uipath-api-workflow`・`uipath-coded-apps`・`uipath-maestro-flow`・`uipath-human-in-the-loop`・`uipath-troubleshoot`、Preview は `uipath-functions`・`uipath-review`・`uipath-maestro-bpmn` / `case`。この道具では、作るのは生成器（RPA・API ワークフロー・エージェント・Maestro・Apps）、スキルは CLI の使い方の参照。`uipath-review`（読むだけの点検）と `uipath-troubleshoot` は、verify の後の点検や失敗の調査に使ってよい。
+- **Studio の Terminal Panel**（37）：エージェントのファイルの変更がその場でデザイナーに出る。Studio と生成器で同時に直さない（ひな形に書いた）。
+- **Python の版**（38）：Functions は 3.10 以上、公式のインストーラーは 3.11〜3.14 を入れる。この PC は 3.13.5。
+- **SDK のガイド**（40）：カスタムアクティビティの作り方、Studio の Activities SDK（Workflow Analyzer の規則など）、Robot JS SDK（`@uipath/robot`）。この道具のカタログは公式のパッケージの DLL から作っていて、社内のカスタムアクティビティは扱っていない。
