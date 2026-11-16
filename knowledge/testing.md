@@ -92,7 +92,14 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
   - Studio は `project.json` と `.variations\TestCase_Data.json` を一字も書き換えなかった（生成器の `dataVariationFilePath` の書き方のままでよい）。
   - Studio は開いたときに `.variations\config.json`（`{"dataVariationFileInfo":[{"filePath":".variations\\TestCase_Data.json","dataVariationType":"File"}]}`）を自分で作る。生成器はこのファイルを作らない（Studio が `dataVariationFilePath` から作り直すので要らない）。
 
+- **Test Manager のテストセットで流して確かめた**（2026-11-17、Sorahane Trial、Test Manager のプロジェクト `IRPD`）：
+  - `uip rpa pack <プロジェクト> <出力先> --output-type Tests` で作ったパッケージを、テナントのフィードに上げ、Shared にプロセスを作り、`uip tm testcases link-automation` でテストケースにつないで、`uip tm testsets run` で流した。
+  - テストケース 1 つが、行ごとに 3 つのテストケース ログ（`VariationId` が `1`・`2`・`3`）と 3 つのジョブに分かれ、3 行とも Passed。ジョブのログは `price=120 quantity=3` → `total=360`、`price=50 quantity=2` → `total=100`、`price=7 quantity=6` → `total=42` で、行の値が In 引数に入った。
+  - Orchestrator の画面ではテストセットを作れなかった（Orchestrator の Test Automation は廃止で、Test Manager を使うよう出る）。
+  - ジョブの `RuntimeType` は `TestAutomation`。マシンの Testing の枠（`TestAutomationSlots`）が 0 だと保留中のまま。
+  - **Windows のプロジェクトのテストは、`Default Serverless`（クラウドのロボット）では流れない**。枠を 1 にしても保留中のままだった。クロスプラットフォーム（`targetFramework: Portable`）のテスト用プロジェクトにすると、すぐ流れた。
+  - 使ったプロジェクトは `uip rpa init --template-id TestAutomationProjectTemplate --target-framework Portable` で作った（人に頼まれて作った）。テンプレートは `UiPath.WebAPI.Activities` 2.5.2 と `UiPath.UIAutomation.Activities` を依存に入れ、`TestCase.xaml`（InProgress）を置く。WebAPI のこの版はカタログが無く `gen.ts` が断るので、依存とテンプレートのテストケースを外してから生成した。
+
 確かめていないこと：
 
 - Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
-- Test Manager への publish と、Orchestrator のテストセットでの実行（行ごとに流れるか）。
