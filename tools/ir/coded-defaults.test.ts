@@ -16,6 +16,7 @@ import { CATALOG_FILES, importXaml, repoRoot as root, xamlDefaultProps } from ".
 import type { Mapping } from "./mapping.ts";
 import { loadMappings } from "./mapping.ts";
 import type { Workflow } from "./types.ts";
+import { expandTestCase } from "./testcase.ts";
 
 const cat = loadCatalog(root, CATALOG_FILES);
 const { maps } = loadMappings(root);
@@ -123,7 +124,7 @@ test("元の IR の C# と、取り込んだ IR の C# は、順番と書き方�
   let compared = 0;
   const diffs: string[] = [];
   for (const f of irs) {
-    const wf = JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")) as Workflow;
+    const wf = expandTestCase(JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")) as Workflow).wf;
     if (!wf.workflow) continue;
     const xaml = join(root, "samples", "generated", dirname(relative(dir, f)), `${wf.workflow}.xaml`);
     if (!existsSync(xaml)) continue;
@@ -132,7 +133,8 @@ test("元の IR の C# と、取り込んだ IR の C# は、順番と書き方�
     const a = coded(wf);
     const r = importXaml(readFileSync(xaml, "utf8"), cat);
     if (!r.wf) continue;
-    const b = coded(r.wf);
+    // テストケースかどうかは XAML ではなく project.json に書かれるので、取り込みには元の testCase を引き継ぐ
+    const b = coded(wf.testCase === undefined ? r.wf : { ...r.wf, testCase: wf.testCase });
     if (a.issues.length || b.issues.length) {
       if (JSON.stringify(a.issues.map((i) => i.code)) !== JSON.stringify(b.issues.map((i) => i.code))) diffs.push(`${wf.workflow}: C# を作れるかが違う（元 ${a.issues.map((i) => i.code)} / 取り込み ${b.issues.map((i) => i.code)}）`);
       continue;

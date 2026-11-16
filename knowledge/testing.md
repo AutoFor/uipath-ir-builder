@@ -37,3 +37,38 @@ AUT-1113。サンプルは `samples/ir/UiPath.Testing.Activities/`、対応表�
   - ArgumentsBridge の Input を外す
 
   Modern の NGetText（UIAutomation 26.10.3）の出力を 23.4.1 が見つけられないのかもしれない。Studio で作った XAML と比べる必要がある。1 つの XAML の検証エラーでプロジェクト全体の build が落ちるので、23.4.1 のプロジェクトでは今は使わない
+
+## テストケース（XAML と Coded）（2026-11-16）
+
+IR に `"testCase"` を書くと、テストケースとして作る。見本は `samples/ir/UiPath.Testing.Activities/TestCase.gwt.json`、仕組みは `tools/ir/testcase.ts`。
+
+```json
+{
+  "workflow": "TestCase_Gwt",
+  "testCase": { "status": "Publishable" },
+  "variables": [{ "name": "total", "type": "Int32" }],
+  "given": [ … ],
+  "when":  [ … ],
+  "then":  [ { "act": "VerifyExpressionWithOperator", "typeArg": "Int32", "props": { … } } ]
+}
+```
+
+- `"testCase": true` か `{ "id": "<GUID>", "status": "Publishable" | "InProgress" }`。
+  - `status` は既定で `Publishable`。`InProgress` のテストケースは publish したパッケージに入らない。
+  - `id` は Test Manager とつなぐ `testCaseId`。書かなければ、project.json にある値を引き継ぎ、無ければ新しい GUID を振る（作り直しても変わらない）。
+- `given` / `when` / `then` は、その名前の Sequence を 3 つ並べた body に開く。`body` と一緒には書けない。`body` だけのテストケースも書ける。
+- **テストケースの XAML は、ふつうのワークフローと同じ形**。Studio のテンプレート（`%LOCALAPPDATA%\UiPath\Helm\<版>\ProjectTemplates\Test Automation Project\<Windows|Portable>\<言語>\TestCase.xaml`）も、Comment が 1 つあるだけの Sequence だった。
+- **XAML のテストケースかどうかは project.json の `designOptions.fileInfoCollection` で決まる**（`{ editingStatus, testCaseId, fileName }`）。
+  - `gen.ts` は、`--out`（かその親、または `--project`）に project.json があれば、ここに載せる。テストケースでなくなった IR は外す。
+  - `fileName` はプロジェクトからの相対パスで、区切りは `\`。
+  - Studio はテストケースの XAML を、ほかと別の DLL（`<プロジェクト>_<テストケース>.dll`）にする。それでも `uip rpa run` で動く。
+  - XAML に印が無いので、XAML を取り込む（`import-xaml.ts`）と `testCase` は戻らない。
+- Coded は `[Workflow]` の代わりに `[TestCase]` を付ける。Given / When / Then は名前付きの Sequence なので、`// Given` などの行になる。
+  - **Coded のテストケースは fileInfoCollection に載せない**。`coded\TestCase_Gwt.cs` を載せると、Studio が run のために作る包み（`.local\install\coded\<名前>+<名前>Activity.cs`）がクラスを見つけられず、`uip rpa run` が「型または名前空間の名前 'TestCase_Gwt' が名前空間 'CatalogProbeNet8' に存在しません」で落ちた。載せなければ `[TestCase]` だけで run が通った（`out/verify/tcgwt-run/` と `tcgwt2-run/`）。`testCase` の `id` と `status` は Coded では使わない。
+- テストのプロジェクト（project.json の `designOptions.outputType` が `Tests`）を作るのは、ほかのプロジェクトと同じく人が Studio で行う。テストケースは Process のプロジェクトにも置ける（verify の作業用プロジェクトは Process で、そこで確かめた）。
+
+確かめていないこと：
+
+- Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
+- データ駆動のテスト（テストデータの変化。Studio は `Tests\Data\` などに JSON を置く）。まだ作れない。
+- Test Manager への publish と、Orchestrator のテストセットでの実行。

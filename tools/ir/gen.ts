@@ -10,15 +10,18 @@
 //     --imports-from <xaml> ルートの imports / AssemblyReference を、この XAML から取る（--project より優先）
 //     --language <CSharp|VisualBasic>  式の言語（既定 VisualBasic）。C# では VB の式を C# に直して書く。直せない式は検証エラー（CS_EXPR）
 //   どちらも無ければ、既定の版のカタログと BlankTemplate の imports を使う
+//   テストケース（IR の "testCase"）は、--out か --project に project.json があれば designOptions.fileInfoCollection に載せる
+//   （テストケースでなくなった IR は外す。tools/ir/testcase.ts）
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate } from "./validate.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadSelected, projectLanguage, projectRootImports, readRootImportsFile, runSelection, VersionError } from "./versions.ts";
 import type { Workflow } from "./types.ts";
 import { expandRefs } from "./objrepo.ts";
+import { expandTestCase, findProjectDir, registerTestCases, type TestCaseEntry } from "./testcase.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -50,11 +53,13 @@ const { cat, rootImports, language } = runSelection(() => {
   return { cat, rootImports: imp.imports, language };
 });
 let failed = false;
+const written: TestCaseEntry[] = [];
 for (const f of files) {
-  // objs の { "$ref": ... }（オブジェクトリポジトリ）を、--project の .objects の中身にする
-  const ex = expandRefs(JSON.parse(readFileSync(f, "utf8")) as Workflow, cat, project);
+  // テストケースの Given / When / Then を body に開き、objs の { "$ref": ... }（オブジェクトリポジトリ）を、--project の .objects の中身にする
+  const tc = expandTestCase(JSON.parse(readFileSync(f, "utf8")) as Workflow);
+  const ex = expandRefs(tc.wf, cat, project);
   const wf = ex.wf;
-  let issues = ex.issues.length ? ex.issues : validate(wf, cat);
+  let issues = tc.issues.length ? tc.issues : ex.issues.length ? ex.issues : validate(wf, cat);
   // C# の式に直せないものも検証エラーとして出す（生成してみないと分からないので、--check でも生成する）
   const r = issues.length ? undefined : generateChecked(wf, cat, { rootImports, language });
   if (r) issues = r.issues;
@@ -67,6 +72,14 @@ for (const f of files) {
   if (checkOnly) { console.log(`OK ${f}`); continue; }
   const path = join(outDir!, `${wf.workflow}.xaml`);
   writeFileSync(path, "﻿" + r!.xaml, "utf8");
+  written.push({ fileName: `${wf.workflow}.xaml`, wf });
   console.log(`OK ${f} -> ${path}`);
+}
+// テストケースを project.json に載せる（--out がプロジェクトのとき。fileName はそこからの相対パス）
+const pd = outDir && !checkOnly ? findProjectDir(outDir, project) : undefined;
+if (pd && written.length) {
+  const rel = relative(pd, outDir!).replace(/\\/g, "/");
+  const changed = registerTestCases(pd, written.map((w) => ({ ...w, fileName: rel ? `${rel}/${w.fileName}` : w.fileName })));
+  if (changed.length) console.log(`project.json のテストケース: ${changed.join(", ")}`);
 }
 process.exit(failed ? 1 : 0);

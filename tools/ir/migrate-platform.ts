@@ -26,6 +26,7 @@ import { expandRefs } from "./objrepo.ts";
 import { resolve, type Catalog } from "./catalog.ts";
 import { loadSelected, projectLanguage, projectPlatform, projectRootImports, readProject, VersionError, type Platform, type RootImports } from "./versions.ts";
 import type { Issue, Workflow } from "./types.ts";
+import { expandTestCase } from "./testcase.ts";
 const isSidecar = (f: string) => /\.(verify|expected|args)\.json$/i.test(f); // gen.ts と同じ（gen.ts は読み込むと動き出すので写す）
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -85,7 +86,7 @@ export function migratePlatform(project: string, to: Platform, opts: { dryRun?: 
   const irDir = join(project, "ir");
   const irs = existsSync(irDir) ? readdirSync(irDir).filter((f) => f.endsWith(".json") && f !== "repository.json" && !isSidecar(f)).map((f) => join(irDir, f)) : [];
   const wfs = new Map<string, Workflow>(); // IR のファイル -> 中身
-  for (const f of irs) wfs.set(f, JSON.parse(readFileSync(f, "utf8")));
+  for (const f of irs) wfs.set(f, expandTestCase(JSON.parse(readFileSync(f, "utf8"))).wf); // テストケースの Given / When / Then は body に開く
 
   // IR の無い XAML を取り込む（移る前のカタログで読む）
   const made = new Set([...wfs.values()].map((w) => resolvePath(project, `${w.workflow}.xaml`).toLowerCase()));

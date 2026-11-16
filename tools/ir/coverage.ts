@@ -18,6 +18,7 @@ import { loadMappings } from "./mapping.ts";
 import { isBuiltin } from "./generate-coded.ts";
 import { loadSelected, runSelection } from "./versions.ts";
 import type { Node, Workflow } from "./types.ts";
+import { expandTestCase } from "./testcase.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const projectIdx = process.argv.indexOf("--project");
@@ -38,7 +39,7 @@ function walkIr(dir: string) {
     const p = join(dir, e);
     if (statSync(p).isDirectory()) { walkIr(p); continue; }
     if (!e.endsWith(".json") || /\.(verify|expected|args)\.json$/i.test(e)) continue;
-    const wf = JSON.parse(readFileSync(p, "utf8").replace(/^﻿/, "")) as Workflow;
+    const wf = expandTestCase(JSON.parse(readFileSync(p, "utf8").replace(/^﻿/, "")) as Workflow).wf;
     const rel = p.slice(root.length + 1).replaceAll("\\", "/");
     wf.body.forEach((n) => visit(n, rel));
   }

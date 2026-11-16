@@ -21,6 +21,7 @@ import { itemNames, validate } from "./validate.ts";
 import { genericActivity, viaXamlArgs, viaXamlWorkflow, type GenericActivity } from "./coded-via-xaml.ts";
 import { objToCs } from "./uia.ts";
 import { xamlDefaultProps } from "./import-xaml.ts";
+import { isTestCase } from "./testcase.ts";
 
 export type CodedOptions = {
   namespace: string;
@@ -90,7 +91,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     `    // tools/ir/gen-coded.ts で IR（${wf.workflow}）から生成。手で直さず IR を直す`,
     `    public class ${wf.workflow} : CodedWorkflow`,
     "    {",
-    "        [Workflow]",
+    isTestCase(wf) ? "        [TestCase]" : "        [Workflow]",
     `        public ${ret} Execute(${ins.map((a) => `${csType(a.type)} ${a.name}`).join(", ")})`,
     "        {",
     ...body,

@@ -1,0 +1,25 @@
+{
+  "workflow": "TestCase_Gwt",
+  "testCase": { "status": "Publishable" },
+  "variables": [
+    { "name": "price", "type": "Int32" },
+    { "name": "quantity", "type": "Int32" },
+    { "name": "total", "type": "Int32" }
+  ],
+  "given": [
+    { "act": "Assign", "typeArg": "Int32", "props": { "To": "price", "Value": "120" } },
+    { "act": "Assign", "typeArg": "Int32", "props": { "To": "quantity", "Value": "3" } }
+  ],
+  "when": [
+    { "act": "Assign", "typeArg": "Int32", "props": { "To": "total", "Value": "price * quantity" } }
+  ],
+  "then": [
+    {
+      "act": "VerifyExpressionWithOperator",
+      "name": "合計が 360 か",
+      "typeArg": "Int32",
+      "props": { "FirstExpression": "total", "Operator": "Equality", "SecondExpression": "360" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"total=\" & total.ToString" } }
+  ]
+}

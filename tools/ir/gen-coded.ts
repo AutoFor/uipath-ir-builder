@@ -14,6 +14,10 @@
 //   対応表の無いアクティビティ（と、Coded API の無いパッケージ、対応表が「Coded API なし」、対応表の API がその版に無いアクティビティ）は、XAML にして C# から RunWorkflow で呼ぶ。
 //   子の無いものは 1つのアクティビティだけの汎用の XAML を <--out>/_activities/<ClassName>[_<形のハッシュ>].xaml に、子のあるものは部分木の XAML を <--out>/_xaml/<ワークフロー名>_<連番>.xaml に
 //   書き出し、C# からは RunWorkflow で呼ぶ（注意 CODED_VIA_XAML を出す。knowledge/coded-via-xaml.md）。XAML の式の言語は --project の expressionLanguage
+//
+//   テストケース（IR の "testCase"）は [TestCase] を付ける（Given / When / Then は名前付きの Sequence なので "// Given" などの行になる）。
+//   XAML と違い、project.json の fileInfoCollection には載せない（載せると Studio がそのクラスを別に扱い、uip rpa run が
+//   「型 … が名前空間 … に存在しません」で落ちた。knowledge/testing.md の「テストケース」）
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, relative, isAbsolute } from "node:path";
@@ -26,6 +30,7 @@ import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
 import { loadSelected, runSelection, noCodedApiPackages, projectLanguage, projectRootImports } from "./versions.ts";
 import type { Workflow } from "./types.ts";
+import { expandTestCase } from "./testcase.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -69,9 +74,10 @@ const apiCheck = (code: string) => {
 
 let failed = false;
 for (const f of files) {
-  const ex = expandRefs(JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")) as Workflow, cat, project);
+  const tc = expandTestCase(JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")) as Workflow);
+  const ex = expandRefs(tc.wf, cat, project);
   const wf = ex.wf;
-  const issues = ex.issues.length ? [...ex.issues] : validate(wf, cat);
+  const issues = tc.issues.length ? [...tc.issues] : ex.issues.length ? [...ex.issues] : validate(wf, cat);
   let code = "";
   let warns: { path: string; code: string; message: string }[] = [];
   const subs: { file: ViaXamlFile; xaml: string }[] = [];

@@ -28,6 +28,7 @@ import { loadMappings } from "./mapping.ts";
 import { checkSource, loadContext } from "../coded/check.ts";
 import { DEFAULT_CATALOG_FILES, noCodedApiPackages, sampleCatalogFiles } from "./versions.ts";
 import type { Workflow } from "./types.ts";
+import { expandTestCase } from "./testcase.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const update = !!process.env.UPDATE_SNAPSHOTS;
@@ -107,7 +108,7 @@ for (const dir of ["samples/ir", "samples/ir-csharp", "samples/ir-unbuildable", 
 for (const f of files("samples/ir", ".json")) {
   const sub = dirname(relative(join(root, "samples", "ir"), f));
   test(`IR ${rel(f)}`, () => {
-    const wf: Workflow = JSON.parse(read(f));
+    const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     const { cat, noApi } = catOf(f);
     assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
     if (hasSuspending(wf)) {
@@ -139,7 +140,7 @@ const csExprErrors: Record<string, string[]> = {
 const csSnapshot = (f: string) => /^samples\/ir\/[^/]+$/.test(rel(f)) || rel(f).startsWith("samples/ir-csharp/");
 for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", ".json")]) {
   test(`C# の XAML ${rel(f)}`, () => {
-    const wf: Workflow = JSON.parse(read(f));
+    const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     const { cat } = catOf(f);
     if (rel(f).startsWith("samples/ir-csharp/")) assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
     const r = generateChecked(wf, cat, { language: "CSharp" });
@@ -154,7 +155,7 @@ for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", 
 
 for (const f of files("samples/ir-unbuildable", ".json")) {
   test(`IR（build できない）${rel(f)}`, () => {
-    const wf: Workflow = JSON.parse(read(f));
+    const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     // 既定の版に無いパッケージは、そのカタログを読み直して objs の型（objectTypes）を入れ、終わったら既定の版に戻す
     const pkg = relative(join(root, "samples", "ir-unbuildable"), f).split(/[\\/]/)[0];
     const own = pkgCats.has(pkg);
@@ -174,7 +175,7 @@ for (const f of files("samples/ir-invalid", ".json")) {
   test(`IR（不正）${rel(f)}`, () => {
     const exp = f.replace(/\.json$/, ".expected.json");
     assert.ok(existsSync(exp), `${rel(exp)} が無い`);
-    const got = validate(JSON.parse(read(f)), cat).map((i) => i.code).sort();
+    const got = validate(expandTestCase(JSON.parse(read(f))).wf, cat).map((i) => i.code).sort();
     assert.deepEqual(got, codes(exp));
   });
 }
@@ -183,7 +184,7 @@ for (const f of files("samples/ir-invalid-coded", ".json")) {
   test(`IR（C# にできない）${rel(f)}`, () => {
     const exp = f.replace(/\.json$/, ".expected.json");
     assert.ok(existsSync(exp), `${rel(exp)} が無い`);
-    const wf: Workflow = JSON.parse(read(f));
+    const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     assert.deepEqual(validate(wf, cat), [], "XAML 側の検証は通るはず");
     const got = generateCoded(wf, cat, maps, { namespace: "CatalogProbeNet8" }).issues.map((i) => i.code).sort();
     assert.deepEqual(got, codes(exp));
