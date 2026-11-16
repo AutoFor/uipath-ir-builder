@@ -10,6 +10,7 @@
   - [dataservice.md](dataservice.md)
   - [persistence.md](persistence.md)
 - ここに書くのは、製品をまたいで何度もつまずいたことだけ。
+- CLI に無い操作を API や画面でどうするか（住み分け）は [cloud-ops.md](cloud-ops.md)。
 
 ## ほかの UiPath の CLI と使い分け
 
