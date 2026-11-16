@@ -107,6 +107,7 @@ function escalationToIR(r: any): Escalation | ValidationEscalation | undefined {
 /** 生成器の省略形で書けるガードレールは省略形に、ほかは raw に戻す */
 function guardrailToIR(g: any): Guardrail {
   const raw = { raw: g };
+  if (g.$guardrailType === "custom") return customToIR(g) ?? raw;
   if (g.$guardrailType !== "builtInValidator") return raw;
   const param = (id: string) => (g.validatorParameters ?? []).find((p: any) => p.id === id)?.value;
   const act = g.action?.$actionType;
@@ -151,6 +152,29 @@ function guardrailToIR(g: any): Guardrail {
     return ir as Guardrail;
   }
   return raw;
+}
+
+/** 道具ごとのカスタムガードレールを省略形に戻す。戻せない形（Tool が 1 つでない、escalate など）は undefined */
+function customToIR(g: any): Guardrail | undefined {
+  const names = g.selector?.matchNames ?? [];
+  if (g.selector?.scopes?.length !== 1 || g.selector.scopes[0] !== "Tool" || names.length !== 1) return undefined;
+  const act = g.action?.$actionType;
+  if (act !== "block" && act !== "log") return undefined;
+  const fields = (fs: any) => (fs?.$selectorType === "specific" ? { fields: fs.fields } : {});
+  const rules: any[] = [];
+  for (const r of g.rules ?? []) {
+    if (r.$ruleType === "always") rules.push({ always: r.applyTo });
+    else if (r.$ruleType === "word") rules.push({ word: r.operator, ...(r.value !== undefined ? { value: r.value } : {}), ...fields(r.fieldSelector) });
+    else if (r.$ruleType === "number") rules.push({ number: r.operator, value: r.value, ...fields(r.fieldSelector) });
+    else if (r.$ruleType === "boolean") rules.push({ boolean: "equals", value: r.value, ...fields(r.fieldSelector) });
+    else return undefined;
+  }
+  const ir: Record<string, unknown> = { tool: names[0], rules, action: act };
+  if (g.name !== `${names[0]} guardrail`) ir.name = g.name;
+  if (g.description) ir.description = g.description;
+  if (act === "block" && g.action.reason !== "Guardrail violation — execution blocked.") ir.reason = g.action.reason;
+  if (act === "log" && g.action.severityLevel !== "Warning") ir.severity = g.action.severityLevel;
+  return ir as Guardrail;
 }
 
 export function toIR(dir: string): AgentIR {

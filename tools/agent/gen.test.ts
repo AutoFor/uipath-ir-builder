@@ -412,3 +412,26 @@ test("ガードレールの省略形：IP 保護・User prompt attacks・LLM as 
   } finally { rmSync(proj, { recursive: true, force: true }); }
   assert.equal(generate(ir({ guardrails: [{ judge: "x".repeat(4001), model: "m" } as any] }), BASE, ALL).problems[0].code, "TOO_LONG");
 });
+
+test("道具ごとのカスタムガードレール：規則を書けて、to-ir で戻る。無い道具・比べ方は誤り（AUT-1201 の 8）", () => {
+  const tools = [{ process: "Probe", folder: "Shared" }] as any;
+  const g = { tool: "Probe", rules: [{ word: "contains", value: "CONFIDENTIAL" }, { number: "greaterThan", value: 100, fields: [{ path: "total", source: "output" }] }, { always: "input" }], action: "log", severity: "Info" };
+  const r = generate(ir({ tools, guardrails: [g as any] }), BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  const out = (r.result!.agent.guardrails as any[])[0];
+  assert.equal(out.$guardrailType, "custom");
+  assert.deepEqual(out.selector, { scopes: ["Tool"], matchNames: ["Probe"] });
+  assert.deepEqual(out.rules, [
+    { $ruleType: "word", fieldSelector: { $selectorType: "all" }, operator: "contains", value: "CONFIDENTIAL" },
+    { $ruleType: "number", fieldSelector: { $selectorType: "specific", fields: [{ path: "total", source: "output" }] }, operator: "greaterThan", value: 100 },
+    { $ruleType: "always", applyTo: "input" },
+  ]);
+  const proj = scaffold();
+  try {
+    writeFileSync(join(proj, "agent.json"), JSON.stringify(r.result!.agent));
+    assert.deepEqual(toIR(proj).guardrails, [g]);
+  } finally { rmSync(proj, { recursive: true, force: true }); }
+  const codes = (x: any) => generate(ir({ tools, guardrails: [x] }), BASE, ALL).problems.map((p) => p.code);
+  assert.deepEqual(codes({ tool: "Nope", rules: [{ always: "input" }] }), ["UNKNOWN_TOOL"]);
+  assert.deepEqual(codes({ tool: "Probe", rules: [{ word: "like", value: "x" }] }), ["BAD_OPERATOR"]);
+});

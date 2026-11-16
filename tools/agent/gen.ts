@@ -53,7 +53,15 @@ export type Guardrail =
   | { userPromptAttacks: true; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
   /** LLM as Judge。judge はルール（4,000 字まで）、model は判定のモデル、例は 2 つずつ・各 1,000 字まで、threshold は 0〜6（既定 2）。別に料金がかかる */
   | { judge: string; model: string; positive?: string[]; negative?: string[]; threshold?: number; scopes?: ("Agent" | "Llm" | "Tool")[]; tools?: string[]; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
+  /** 道具ごとのカスタムガードレール（$guardrailType: custom、Tool の 1 つだけ）。rules は AND */
+  | { tool: string; rules: CustomRule[]; action?: "block" | "log"; name?: string; description?: string; reason?: string; severity?: Severity }
   | { raw: Record<string, unknown> };
+/** カスタムガードレールの規則。fields を書かなければ全部の項目（$selectorType: all） */
+export type CustomRule =
+  | { always: "input" | "output" | "inputAndOutput" }
+  | { word: string; value?: string; fields?: { path: string; source: "input" | "output"; title?: string }[] }
+  | { number: string; value: number; fields?: { path: string; source: "input" | "output"; title?: string }[] }
+  | { boolean: "equals"; value: boolean; fields?: { path: string; source: "input" | "output"; title?: string }[] };
 /** action が log のときの重さ（既定 Warning） */
 export type Severity = "Info" | "Warning" | "Error";
 
@@ -665,7 +673,32 @@ function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: 
       { $parameterType: "number", id: "threshold", value: g.threshold ?? 2 },
     ], selector);
   }
-  probs.push({ path: `guardrails[${i}]`, code: "BAD_GUARDRAIL", message: "pii / harmful / promptInjection / ip / userPromptAttacks / judge / raw のどれかを書く" });
+  if ("tool" in g) {
+    // 形はスキル uipath-agents の guardrails.md の「Custom Guardrails」
+    const WORD = ["contains", "equals", "startsWith", "endsWith", "matchesRegex", "doesNotContain", "doesNotEqual", "doesNotStartWith", "doesNotEndWith", "isEmpty", "isNotEmpty"];
+    const NUM = ["equals", "doesNotEqual", "greaterThan", "greaterThanOrEqual", "lessThan", "lessThanOrEqual"];
+    if (!g.rules?.length) probs.push({ path: `guardrails[${i}].rules`, code: "MISSING", message: "rules を 1 つ以上書く" });
+    const sel = (fs?: { path: string; source: string; title?: string }[]) => (fs?.length ? { $selectorType: "specific", fields: fs } : { $selectorType: "all" });
+    const rules = (g.rules ?? []).map((r, j) => {
+      const at = `guardrails[${i}].rules[${j}]`;
+      if ("always" in r) return { $ruleType: "always", applyTo: r.always };
+      if ("word" in r) {
+        if (!WORD.includes(r.word)) probs.push({ path: at, code: "BAD_OPERATOR", message: `word の比べ方は ${WORD.join(" / ")}` });
+        return { $ruleType: "word", fieldSelector: sel(r.fields), operator: r.word, ...(r.word === "isEmpty" || r.word === "isNotEmpty" ? {} : { value: r.value ?? "" }) };
+      }
+      if ("number" in r) {
+        if (!NUM.includes(r.number)) probs.push({ path: at, code: "BAD_OPERATOR", message: `number の比べ方は ${NUM.join(" / ")}` });
+        return { $ruleType: "number", fieldSelector: sel(r.fields), operator: r.number, value: r.value };
+      }
+      if ("boolean" in r) return { $ruleType: "boolean", fieldSelector: sel(r.fields), operator: "equals", value: r.value };
+      probs.push({ path: at, code: "BAD_RULE", message: "always / word / number / boolean のどれかを書く" });
+      return undefined;
+    }).filter(Boolean);
+    const name = g.name ?? `${g.tool} guardrail`;
+    return { $guardrailType: "custom", id: old[name] ?? randomUUID(), name, description: g.description ?? "", enabledForEvals: true,
+      selector: { scopes: ["Tool"], matchNames: [g.tool] }, action, rules };
+  }
+  probs.push({ path: `guardrails[${i}]`, code: "BAD_GUARDRAIL", message: "pii / harmful / promptInjection / ip / userPromptAttacks / judge / tool / raw のどれかを書く" });
   return undefined;
 }
 
@@ -779,6 +812,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
   const toolNames = new Set(Object.values(resources).filter(r => r.$resourceType === "tool").map(r => String(r.name)));
   (ir.guardrails ?? []).forEach((g, i) => {
     if ("pii" in g) for (const n of g.tools ?? []) if (!toolNames.has(n)) probs.push({ path: `guardrails[${i}].tools`, code: "UNKNOWN_TOOL", message: `道具 "${n}" が無い` });
+    if ("tool" in g && !toolNames.has(g.tool)) probs.push({ path: `guardrails[${i}].tool`, code: "UNKNOWN_TOOL", message: `道具 "${g.tool}" が無い` });
   });
 
   // 評価のケース：入力の名前を確かめる
