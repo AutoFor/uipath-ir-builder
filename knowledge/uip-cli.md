@@ -153,6 +153,16 @@ uip or triggers delete <Key> [--type api] --folder-path <フォルダ> --yes
 - 接続を新しく作るのは OAuth の同意を伴うので、人に確かめてから（画面か `uip is connections create`）。
 - コネクタの Key は推測しない。`uip is connectors list --filter "<製品名>"` で引く（例：Data Fabric は `uipath-uipath-dataservice`）。
 - イベントの対象は `uip is triggers objects <コネクタ> CREATED --connection-id <Id>` で見られる。
+- **文書で分かったこと**（AUT-1206。まだ試していない）：
+  - **上限**（6）：応答は 12 MB まで（JSON でないファイルは 1 GB）。活動とトリガーは 120 秒で時間切れ。トリガーのイベント 1 件は 12 MB まで。外の側のエラーが 100 回続くとトリガーは自動で止まる（メールが来る。手で再開）。
+  - **ロボットには、接続のあるフォルダで Connections.View が要る**（7）。無いと無人のジョブが「The user does not have Connections.View permissions on the connection folder.」で落ちる。フォルダの権限は下のフォルダに伝わる。
+  - **接続を消すと、その接続のトリガーも消える**（8）。有効なトリガーがあると「400 Cannot delete connection with one or more triggers assigned」のこともある。片付けはトリガーを先に消す。
+  - **トリガーが拾うのは、作ったあとのレコードだけ**（9）。デバッグでは 1 時間さかのぼる。ポーリングの間隔は接続ごとに 1 つ（既定 5 分、1 分〜24 時間）。
+  - **ソリューションでは接続の資格情報は運ばれない**（5）：デプロイで Link to existing・Authenticate after deployment・Configurable by users から選ぶ。
+  - **課金**（26）：2026-09-18 から活動・HTTP・トリガーは課金されない。GenAI の活動とトリガーは例外で課金される（エージェントの Web Search など）。
+  - **管理者が作れる接続の種類を絞れる**（33、2026-10-14）：Automation Ops の Connectivity。`is connections create` が通らないときの原因になりうる。
+  - **外のアプリから IS の API を呼ぶ**（34）：どの要求にも `X-UIPATH-FolderKey` と、そのフォルダの Connections.View が要る。`IS.Connections.Read` は利用者のスコープだけ。
+  - **変更**：Slack の接続は bot のスコープ `chat:write` が必須（31、2026-05-20）。GenAI の Web Summary が Perplexity の Agent API に移った（32、2026-09-28）。2026-09-07 に、Flow を設定し直すと Data Fabric の活動の表が空になる不具合と、接続を消したあとのアンインストールの CNS1077 が直った（30）。
 - **`uip is triggers describe <コネクタ> <CREATED|UPDATED|DELETED> <オブジェクト> [--connection-id <Id>]`** は、イベントの出力の項目、絞り込める項目、polling か webhook かを返す（1.204 の help にある）。入力に来るキーを、動かす前に調べられる。
 
 ## Data Fabric
