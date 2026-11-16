@@ -23,10 +23,19 @@ AUT-1113。サンプルは `samples/ir/UiPath.Testing.Activities/`、対応表�
 
 | アクティビティ | 25.10.1 | 23.4.1 |
 | --- | --- | --- |
-| NewAddTestDataQueueItem、BulkAddTestDataQueue、GetTestDataQueueItem、GetTestDataQueueItems、DeleteTestDataQueueItems | XAML も C# も build OK（Orchestrator のテストデータキューが要るので run しない） | 同じ（C# は XAML 経由） |
-| AttachDocument | XAML も C# も run OK（テストケースの外でもエラーにならない） | 同じ（C# は XAML 経由） |
+| NewAddTestDataQueueItem、BulkAddTestDataQueue、GetTestDataQueueItem、GetTestDataQueueItems、DeleteTestDataQueueItems | XAML も C# も build OK。XAML は Test Manager のテストセットで流して OK（下を見る）。手元の run はしない | 同じ（C# は XAML 経由） |
+| AttachDocument | XAML も C# も run OK（テストケースの外でもエラーにならない）。XAML はテストセットで添付が付くのを確かめた | 同じ（C# は XAML 経由） |
 | VerifyControlAttribute | XAML も C# も run OK（C# は NApplicationCard ごと XAML 経由） | **build NG**：「選択したアクティビティには出力引数がありません」 |
 
+- **Test Manager のテストセットで流して確かめた（25.10.1、2026-11-17、Sorahane Trial）**。見本は `samples/ir/UiPath.Testing.Activities/TestCase.tdq.json`（流したものに、C# で状態を渡せるよう `TimeoutMs` を足した形。`MarkConsumed` は既定の True なので書かない。書いても XAML から取り込むと既定値として消え、C# の形が変わる）。流し方は下の「データ駆動のテスト」の Test Manager の項と同じ（Portable のテスト用プロジェクト、クラウドのロボット）。
+  - テストデータキュー `IRTestDataQueue` を Shared に作り（CLI が無いので Orchestrator の API `POST /odata/TestDataQueues`。スキーマは `customer` が string、`count` が integer）、1 つのテストケースで次を流した。どれも検証が通った。
+    - NewAddTestDataQueueItem：`ItemInformation` の Int32 の値は JSON の数値で入る（ログ `{"customer":"A-001","count":3}`）
+    - BulkAddTestDataQueue：DataTable の列名がスキーマの名前になる（2 行で `Number of items added: 2.`）
+    - GetTestDataQueueItems：`All` で 3 件、使用済みを 1 件作った後の `OnlyNotConsumed` で 2 件。表示名の TypeConverter が付いた `TestDataQueueItemStatus` も、生成器の書き方で効いた
+    - GetTestDataQueueItem（`MarkConsumed`）：`Dictionary<String, Object>` に入り、`item("count")` は 3
+    - DeleteTestDataQueueItems：全件を消して 0 件
+  - **DeleteTestDataQueueItems は、ロボットに `TestDataQueueItems.Delete` の権限が要る**。クラウドのロボット（`default robot`）の組み込みの役割 `Automation User` には Create・Edit・View しか無く、「You are not authorized!」で落ちた。Delete だけのフォルダーの役割を一時的に足すと通った。
+  - AttachDocument：テストケースの実行（Orchestrator の `TestCaseExecutions` の `TestCaseExecutionAttachments`）に `uta-attach.txt`（`text/plain`、タグ `ir`・`sample`）が付いた。クロスプラットフォームのロボットでも `Path.GetTempPath()` に書いたファイルを添付できた。
 - Coded（25.10.1）の対応表：`testing.AddTestDataQueueItem`、`BulkAddTestDataQueueItems`、`GetTestDataQueueItem`、`GetTestDataQueueItems`、`DeleteTestDataQueueItems`、`AttachDocument`。VerifyControlAttribute は Coded API が無い
 - テストデータキューの型 `UiPath.Testing.Core.TestDataQueueItem` は `UiPath.Testing.dll` にある（`types-xaml.ts` に足した）。IR の変数は `List<UiPath.Testing.Core.TestDataQueueItem>`
 - `GetTestDataQueueItems` の IdFilter・TestDataQueueItemStatus・Skip・Top を Coded で渡す形は timeoutMs も要る。C# にするときは TimeoutMs も書く

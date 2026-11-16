@@ -1,0 +1,88 @@
+{
+  "workflow": "TestCase_Tdq",
+  "testCase": { "status": "Publishable" },
+  "variables": [
+    { "name": "dt", "type": "DataTable", "default": "New DataTable()" },
+    { "name": "items", "type": "List<UiPath.Testing.Core.TestDataQueueItem>" },
+    { "name": "item", "type": "Dictionary<String, Object>" },
+    { "name": "path", "type": "String", "default": "System.IO.Path.Combine(System.IO.Path.GetTempPath(), \"uta-attach.txt\")" }
+  ],
+  "given": [
+    { "act": "AddDataColumn", "typeArg": "String", "props": { "ColumnName": { "lit": "customer" }, "DataTable": "dt" } },
+    { "act": "AddDataColumn", "typeArg": "Int32", "props": { "ColumnName": { "lit": "count" }, "DataTable": "dt" } },
+    { "act": "AddDataRow", "props": { "ArrayRow": "New Object() {\"B-002\", 5}", "DataTable": "dt" } },
+    { "act": "AddDataRow", "props": { "ArrayRow": "New Object() {\"C-003\", 7}", "DataTable": "dt" } },
+    {
+      "act": "NewAddTestDataQueueItem",
+      "name": "1 件追加",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" } },
+      "dicts": {
+        "ItemInformation": [
+          { "name": "customer", "dir": "In", "type": "String", "value": { "lit": "A-001" } },
+          { "name": "count", "dir": "In", "type": "Int32", "value": "3" }
+        ]
+      }
+    },
+    {
+      "act": "BulkAddTestDataQueue",
+      "name": "2 件まとめて追加",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "QueueItemsDataTable": "dt" }
+    },
+    {
+      "act": "GetTestDataQueueItems",
+      "name": "全件を取る",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "TestDataQueueItemStatus": "All", "TimeoutMs": 60000, "TestDataQueueItems": "items" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"all=\" & items.Count.ToString" } },
+    {
+      "act": "VerifyExpressionWithOperator", "name": "3 件ある", "typeArg": "Int32",
+      "props": { "FirstExpression": "items.Count", "Operator": "Equality", "SecondExpression": "3" }
+    }
+  ],
+  "when": [
+    {
+      "act": "GetTestDataQueueItem",
+      "name": "1 件取って使用済みにする",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "Output": "item" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"got=\" & item(\"customer\").ToString & \" count=\" & item(\"count\").ToString" } },
+    {
+      "act": "GetTestDataQueueItems",
+      "name": "未使用を取る",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "TestDataQueueItemStatus": "OnlyNotConsumed", "TimeoutMs": 60000, "TestDataQueueItems": "items" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"notConsumed=\" & items.Count.ToString" } },
+    {
+      "act": "VerifyExpressionWithOperator", "name": "未使用は 2 件", "typeArg": "Int32",
+      "props": { "FirstExpression": "items.Count", "Operator": "Equality", "SecondExpression": "2" }
+    },
+    { "act": "WriteTextFile", "name": "添付するファイルを書く", "props": { "FileName": "path", "Text": { "lit": "attach from TestCase_Tdq" } } },
+    {
+      "act": "AttachDocument",
+      "name": "ファイルを添付",
+      "props": { "FilePath": "path", "Tags": "New String() {\"ir\", \"sample\"}" }
+    }
+  ],
+  "then": [
+    {
+      "act": "GetTestDataQueueItems",
+      "name": "全件を取り直す",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "TestDataQueueItemStatus": "All", "TimeoutMs": 60000, "TestDataQueueItems": "items" }
+    },
+    {
+      "act": "DeleteTestDataQueueItems",
+      "name": "全件削除",
+      "props": { "FolderPath": { "lit": "Shared" }, "TestDataQueueItems": "items" }
+    },
+    {
+      "act": "GetTestDataQueueItems",
+      "name": "消えたか見る",
+      "props": { "FolderPath": { "lit": "Shared" }, "QueueName": { "lit": "IRTestDataQueue" }, "TestDataQueueItemStatus": "All", "TimeoutMs": 60000, "TestDataQueueItems": "items" }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"afterDelete=\" & items.Count.ToString" } },
+    {
+      "act": "VerifyExpressionWithOperator", "name": "0 件になった", "typeArg": "Int32",
+      "props": { "FirstExpression": "items.Count", "Operator": "Equality", "SecondExpression": "0" }
+    }
+  ]
+}
