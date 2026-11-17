@@ -205,6 +205,18 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     const groupOk = [...groups.values()].some((names) => names.filter((x) => isReq.has(x)).every((x) => given.has(x)) && (names.some((x) => isReq.has(x)) || names.some((x) => given.has(x))));
     for (const p of required.filter((p) => !given.has(p.name) && !(p.overloadGroups?.length && groupOk)))
       add(path, "REQUIRED_MISSING", `${a.className} の必須プロパティ "${p.name}" が無い`);
+
+    // Data Service の範囲（BaseEntityActivity、26.10.0 で GA。AUT-1194）：フォルダの表は、ソリューションの資源の key と名前で指す
+    // （スキル uipath-rpa の UiPath.DataService.Activities/overview.md の Solution Context）
+    if (a.props.some((p) => p.name === "ScopeValue") && a.props.some((p) => p.name === "SolutionEntityKey")) {
+      const sv = n.props?.ScopeValue;
+      const text = typeof sv === "string" ? sv : sv && typeof sv === "object" && "lit" in sv ? String((sv as { lit: unknown }).lit) : "";
+      const folder = /folder|フォルダー/i.test(text);
+      if (folder && !(given.has("SolutionEntityKey") && given.has("SolutionEntityName")))
+        add(path, "DS_SCOPE", `ScopeValue が Folder のときは SolutionEntityKey（ソリューションの表の資源の key）と SolutionEntityName が要る`);
+      if (!folder && (given.has("SolutionEntityKey") || given.has("SolutionEntityName")))
+        add(path, "DS_SCOPE", `SolutionEntityKey / SolutionEntityName はフォルダの表（ScopeValue が "Folder"）のときだけ書く`);
+    }
   }
 
   // 代入先は宣言済みの名前で始まること（a.b(0) のような式は先頭の名前だけ見る）

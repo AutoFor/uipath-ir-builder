@@ -57,6 +57,13 @@ App から使う形（表の部品、ボタンの手順）は [apps.md](apps.md)
   - Upload は `FilePath`（ローカルのパス）か `FileResource`。
   - Download は `FilePath`（保存先）で、`DownloadedFileResource`（`ILocalResource`）が出る。
 - 一括の作成・更新は、行の id を引き継ぐときに `.Id = r.Id` を入れる。
+- **範囲（Tenant / Folder。26.10.0 で GA、AUT-1194）**：どのアクティビティも `BaseEntityActivity` の `ScopeValue`・`SolutionEntityKey`・`SolutionEntityName` を持つ（カタログ 26.10.1）。
+  - テナントの表（今までの書き方）：`ScopeValue` を書かないか `"Tenant"`。`SolutionEntityKey`・`SolutionEntityName` は書かない。
+  - フォルダの表：`"ScopeValue": "\"Folder\""`、`"SolutionEntityKey": "\"<ソリューションの表の資源の key>\""`、`"SolutionEntityName": "\"<表の名前>\""`。実行時はアクティビティが `X-UiPath-FolderPath` を付けて、ソリューションのフォルダの表に当たる。見本は `samples/ir-unbuildable/UiPath.DataService.Activities/DeleteEntityRecord.folder.json`。
+  - 生成器の検査 `DS_SCOPE`：Folder なのに key か名前が無い、Tenant なのに key か名前がある、を止める。
+  - 出典：スキル uipath-rpa の `activity-docs/UiPath.DataService.Activities/overview.md` の「Solution Context」。DLL の表示名は Tenant / Folder（日本語の画面では テナント / フォルダー。Studio Web の RPA アプリは `ScopeValue="テナント"` と書いた）。
+  - フォルダの表はソリューションの中でだけ動く（手元のワークスペース・単体のプロジェクトでは Tenant だけ）。RPA アプリ（`rpa-app.ts`）はフォルダの表を使えないので Tenant のまま。
+  - まだ：フォルダの表を Studio で選んだときの XAML の実物（`SolutionEntityKey` に入る値の形、`bindings_v2.json` の `BoundEntityFolderPath`）と、ソリューションでの実行。
 
 ## 表の定義（.entities/EntitiesStore.json）
 

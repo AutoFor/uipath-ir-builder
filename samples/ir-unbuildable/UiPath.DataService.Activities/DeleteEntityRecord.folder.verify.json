@@ -1,0 +1,4 @@
+{
+  "unbuildable": "DeleteEntityRecord.min と同じ（型引数 TEntity にエンティティの型が要る）。フォルダの表（ScopeValue \"Folder\"）は、さらにソリューションの中でしか動かない（SolutionEntityKey はソリューションの表の資源の key）。AUT-1194",
+  "noRun": "Data Service のフォルダの表とソリューションが要るため"
+}

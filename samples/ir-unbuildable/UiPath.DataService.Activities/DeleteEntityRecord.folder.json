@@ -1,0 +1,19 @@
+{
+  "workflow": "DeleteEntityRecord_Folder",
+  "variables": [
+    { "name": "recordId", "type": "Guid", "default": "Guid.Empty" }
+  ],
+  "body": [
+    {
+      "act": "DeleteEntityRecord",
+      "typeArg": "Object",
+      "props": {
+        "EntityId": "Guid.Empty",
+        "RecordId": "recordId",
+        "ScopeValue": "\"Folder\"",
+        "SolutionEntityKey": "\"11111111-2222-3333-4444-555555555555\"",
+        "SolutionEntityName": "\"Expense\""
+      }
+    }
+  ]
+}

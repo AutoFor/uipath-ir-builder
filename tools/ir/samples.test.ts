@@ -202,3 +202,18 @@ for (const f of files("samples/coded-invalid", ".cs")) {
     assert.deepEqual(got, codes(exp));
   });
 }
+
+test("Data Service の範囲：Folder には SolutionEntityKey と SolutionEntityName が要り、Tenant には書かない（AUT-1194）", () => {
+  const ds = loadCatalog(root, sampleCatalogFiles(root, "UiPath.DataService.Activities"));
+  try {
+    const wf = (props: Record<string, string>): Workflow => ({ workflow: "W", body: [{ act: "DeleteEntityRecord", typeArg: "Object", props: { EntityId: "Guid.Empty", RecordId: "Guid.Empty", ...props } }] } as Workflow);
+    const codes = (p: Record<string, string>) => validate(wf(p), ds).map((i) => i.code);
+    assert.deepEqual(codes({ ScopeValue: '"Folder"', SolutionEntityKey: '"k"', SolutionEntityName: '"E"' }), []);
+    assert.deepEqual(codes({ ScopeValue: '"Folder"', SolutionEntityKey: '"k"' }), ["DS_SCOPE"]);
+    assert.deepEqual(codes({ ScopeValue: '"Tenant"', SolutionEntityKey: '"k"' }), ["DS_SCOPE"]);
+    assert.deepEqual(codes({ ScopeValue: '"Tenant"' }), []);
+    assert.deepEqual(codes({}), []);
+  } finally {
+    loadCatalog(root, DEFAULT_CATALOG_FILES);
+  }
+});
