@@ -317,8 +317,8 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 - **評価**（20）：Flow の評価セットはノード単位か Flow 単位のどちらか。評価器は決定的なもの（Contains・Exact match・JSON similarity）、LLM のもの（semantic similarity・strict JSON similarity・Trajectory）、ツールの呼び出しを見るもの（ノード単位だけ）。デバッグの run からデータを取り込める。BPMN の評価は Preview で、ノード単位も CLI も無い。CLI は `uip maestro flow eval`（[uip-cli.md](uip-cli.md)）。（→ 12 節：BPMN の評価は CLI に無い）
 - **Function ノード**（21、2026-09-17、Preview）：Python・JS・TS の coded function を呼ぶ。BPMN は Service task の「Start and wait for Function」（06-19）。関数は `uip function` で作れる（[functions.md](functions.md)）。（→ 12 節：Flow と BPMN の両方でテナントで動いた）
 - **BPMN の Custom instance ID**（30）：開始イベントの General で、インスタンスの名前を式で決める（開始の直後に 1 回だけ評価。Insights と Process Mining では探せない）。生成器では扱っていない。（→ 12 節：見本 InstanceId.bpmn でテナントで動いた）
-- **BPMN の Data Fabric の式**（31）：2026-07-03 から、エンティティ名と `?folderPath=` にバインディングや変数を書ける（`datafabric[bindings.EntityName?folderPath=bindings.FolderKey][...]`）。09-03 から、絞り込みの値の `=js:` が評価される。（→ 12 節：debug では datafabric が空で、動かせていない）
-- **Maestro API**（28）：Swagger は `https://cloud.uipath.com/{org}/{tenant}/pims_/api/swagger`。CaseApp v3 で ad-hoc タスクを起こす（`tasks/trigger`）、ケースを閉じる（`close`）、ケースの状態を読む。どれも `X-UIPATH-FolderKey` が要る。呼ぶときは `node tools/platform/cloud-api.mjs ... --service pims_`（[cloud-ops.md](cloud-ops.md)）。（→ 12 節：v1 は読めた。v3 の CaseApp は Case role が要る）
+- **BPMN の Data Fabric の式**（31）：2026-07-03 から、エンティティ名と `?folderPath=` にバインディングや変数を書ける（`datafabric[bindings.EntityName?folderPath=bindings.FolderKey][...]`）。09-03 から、絞り込みの値の `=js:` が評価される。（→ 12 節：trial では debug でもデプロイでも表が見えず、BPMN からは使えなかった）
+- **Maestro API**（28）：Swagger は `https://cloud.uipath.com/{org}/{tenant}/pims_/api/swagger`。CaseApp v3 で ad-hoc タスクを起こす（`tasks/trigger`）、ケースを閉じる（`close`）、ケースの状態を読む。どれも `X-UIPATH-FolderKey` が要る。呼ぶときは `node tools/platform/cloud-api.mjs ... --service pims_`（[cloud-ops.md](cloud-ops.md)）。（→ 12 節：v1 は読めた。v3 の CaseApp は Case app (Modern) が要り、trial では 403）
 - **要約ノード**（35）：1,000 ページまでの文書を扱い、出典付きで答える。（→ 4 節の表：trial で動いた）
 - **画面と開発の道具**（33・34）：BPMN の Simulate はタスクを動かさず、ゲートウェイの道を人が選ぶ。デバッグでブレークポイントを置き、止まっている間に変数を直せる（Studio Web だけ）。VS Code の UiPath Maestro Orchestrate 拡張で `.flow` を見て直せ、検証が Problems に出る（`UiPath: Package` / `Deploy`）。Studio Desktop でも Flow を作れる（Data Fabric のノードは無い）。
 - **公式の skill**（19）：`uip skills install` で入る `uipath-maestro-flow`（09-16 に GA）、`uipath-maestro-case`・`uipath-maestro-bpmn`（Preview）。この道具では、作るのは SDK のソースと `verify.mjs`、skill は CLI の使い方の参照として読む（AGENTS.md の Maestro の行）。
@@ -346,7 +346,13 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 
 - **キューの開始イベント・Set transaction status・Get queue items・Bulk add・Wait for queue event は、trial の BPMN の登録簿（`uip maestro bpmn registry list`）に無い**。あるのは Create queue item と Create and wait for queue item だけ。文書にはあるが、このテナントでは作れない
 - **Custom instance ID は動いた**（見本 `InstanceId.bpmn`）。Studio Web で開始イベントの General → Custom instance ID に入れて保存した形を `solution download` で読み、SDK で同じものを書いた：内部の変数 `.var("internalCustomInstanceId", "string", { name: "_internalCustomInstanceId", elementId: "start", custom: true, internal: true })` と、開始イベントの `payload: { type: "BPMN.Variables", outputRows: [{ name: "_internalCustomInstanceId", type: "string", source: "=<式>", var: "internalCustomInstanceId", custom: true }] }`。debug のインスタンスの `InstanceDisplayName`（`uip maestro bpmn debug-instance status`）が `注文-A-100` になった。validate は開始イベントで入力を読むところに `VARIABLE_NOT_SET` の warning を出すが、動く。Studio Web は欄に打った文字をそのまま `source` に書く（`=` を付けない）。式として確かめたのは `=` を付けた形
-- **Data Fabric の式（`datafabric.<表>["qes:…"]`）は debug では動かなかった**。テナントの表・フォルダの表（Shared）のどちらでも、表をソリューションの資源に入れても（`uip solution resources add --source remote --kind Entity`）、`datafabric.<表>`、`datafabric["<表>?folderPath=Shared"]`、`datafabric[vars.<変数>]`、`datafabric[bindings.<名前>]` のどれも `Property '<表>' not found against object of type …ExpressionDictionary` だった。何を宣言すれば辞書に入るかは分からない（SDK に書く手段が無く、Studio Web の Data manager にも表を足す欄が無い）。デプロイした実行では試していない
+- **Data Fabric の式（`datafabric.<表>["qes:…"]`）は、この trial では BPMN から使えなかった**（debug でも、デプロイした実行でも）。
+  - 表の場所：テナントの表とフォルダの表（Shared）の両方で試した。表をソリューションの資源に入れた形（`uip solution resources add --source remote --kind Entity`。デプロイするとデプロイ先のフォルダに同じ名前の空の表ができる）も試した。
+  - 書き方：`datafabric.<表>`、`datafabric["<表>?folderPath=Shared"]`、`datafabric[vars.<変数>]`、`datafabric[bindings.<名前>]`、`=js:` で絞り込みの値を組む形を試した。
+  - どれも `400300 Property '<表>' not found against object of type …ExpressionDictionary` だった。エンジンの `datafabric` の辞書に表が入っていない。
+  - Studio Web の BPMN にも、表を宣言する手段が無い。変数の型は Text・Number・Boolean・Object・Array・Date-time・Date・Time・Asset・Credential だけで、Data manager にも Script task のプロパティにも Data Fabric の項目が無い。
+  - CLI（`@uipath/maestro-tool`）の中で `datafabric[bindings.<表>?folderPath=bindings.<フォルダ>]["qes:…"]` を組むのは Case の生成器だけ。Case のエンティティのレコード（`type: "reference"` の変数と `reference: { referenceType: "dataFabric", entity, folder, queryMode, query }`）に使っている。文書の 2026-07-03 の変更は、この参照の仕組みのことと見ている。
+  - BPMN で Data Fabric を読むなら、Data Fabric のコネクタ（`.dataService()`、IS の接続が要る）を使う。
 - **評価（Preview）は CLI に無い**（`uip maestro bpmn` に `eval` が無い。Flow は `uip maestro flow eval`）。Studio Web の BPMN のプロジェクトには Datasets の欄（Run dataset・Manage evaluators）がある。流していない
 
 ### Flow の HTTP Webhook
@@ -361,6 +367,16 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
   - validate は `STRICT_BINDINGS_ABSENT` の warning を出す（QuickForm は binding が要らないので気にしなくてよい）
 - **Maestro API（pims_）**：Swagger は `node tools/platform/cloud-api.mjs GET /api/swagger/v1/swagger.json --service pims_`。パスは `/api/v…`（Swagger の `servers` が `/pims_/api`）。フォルダは `X-UIPATH-FolderKey` で指す（`cloud-api.mjs --folder-key` が付ける。個人ワークスペースの Key は Folders で引けないので、引けなくても付けて送る）。Git Bash からは `MSYS_NO_PATHCONV=1` を付ける（`/api/…` が Windows のパスに直される）
   - **v1 は読めた**（`Jobs.View` で通る）：`GET /api/v1/instances/<id>`、`GET /api/v1/cases/<id>/case-status`（ステージとタスクの状態）、`GET /api/v1/caseapp/instances/<id>/variables`（debug のインスタンスでも通る）
-  - **v3（CaseApp）は 403**（`PIMS-150011` / `150012` / `400037`）。debug でも、デプロイして `uip or jobs start` で動かしたものでも、`.caseApp()` で Case App を有効にしても同じ。Swagger の説明は「Authorized via Cases.ViewSummary at process scope」で、文書（case-app-permissions-reference）では **Case role**（Studio Web のケースの Case roles で作り、デプロイ後に Maestro の Processes → Access で人に割り当てる）が要る。SDK に Case role を書く手段が無い。`tasks/trigger`（ad-hoc のタスクを起こす。`Cases.RunAdhocTasks`）・`close`（`Cases.Close`）・`tasks/adhoc` は v3 にしか無いので、試せていない。v3 の一覧（`GET /api/v3/caseapp/instances`）は 200 で空を返す
+  - **v3（CaseApp）は、この trial では使えなかった**（403 の `PIMS-150011` / `150012` / `400037`）。試したこと（2026-11-17）：
+    - debug のインスタンスと、デプロイして `uip or jobs start` で動かしたインスタンスの両方で呼んだ。
+    - `.caseApp()` で Case app を有効にした。
+    - caseplan の `metadata` に Case role を書いた：`caseAppVersion: "v2"`（Case app (Modern)）と、`caseRoles: [{ id, name, actions: ["CaseManagement.Cases.ViewSummary", …], scope: "case" }]`。形は CLI の中のスキーマ（`CaseManagementCaseAppRoleSchema`）に合わせ、`uip maestro case validate` は通った。
+    - 自分に組み込みの役割（Case Owner・Case Observer）を、プロセスの範囲で割り当てた：`uip admin authorization roles assignments create --scope-path "/tenant/<テナント>/casemanagement/process/<プロセス>"`。プロセスの指し方は GUID・Key の文字列・大文字の 3 通り。Git Bash では `MSYS_NO_PATHCONV=1` が要る（付けないと `C:/Program Files/Git/tenant/…` で登録される）。
+  - どれでも 403 のままだった。分かったことは 4 つ：
+    - Studio Web は `caseAppVersion: "v2"` のケースを開いても Legacy の Case app の欄しか出さず、Case roles の画面が無い。Case app (Modern) は Preview（2026-11-11）で、このテナントでは有効になっていないと見ている。
+    - デプロイしても、ケースに書いた役割はテナントの役割として作られなかった（`roles list --role-type Custom` が 0 件）。
+    - Maestro のプロセスの画面には Instance management と Monitoring しか無く、Access のタブが無い。
+    - 組み込みの Case Owner には `CASEMANAGEMENT.CASES.VIEWSUMMARY` が入っていない。これを含む役割は CLI では作れない（Tenant の役割にすると「Role contains actions with a different ScopeType」。casemanagement は `--service` に渡せない）。
+  - Case app (Modern) が有効なテナントで、Studio Web の Case roles で作った形を `solution download` して確かめるまでは、`tasks/trigger`・`close` は試せない。
   - ad-hoc のタスクはソースで `.allowAdhocTasks()` とタスクの `entryWhen(rule("adhoc"))`（見本 `CaseApi.case`）
 - `uip maestro case process run` はインスタンスを作ったが、終わるまで返らなかった。デプロイしたケースは `uip or jobs start <プロセスの Key> --folder-key <Key>` で起こす方が扱いやすい
