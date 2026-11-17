@@ -2,7 +2,7 @@
 
 import type { Catalog, Activity, Prop } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
-import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue } from "./types.ts";
+import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue, CsExpr } from "./types.ts";
 import { toXamlType, EXPRESSION_IMPORTS } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
@@ -98,6 +98,8 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   const ids = new Map<string, number>();
   const lines: string[] = [];
   let extra = 0;
+  // C# だけの式（{ cs }。C# の XAML から取り込んだもの）は VB の XAML に書けない
+  if (!cs) for (const at of csOnlyPaths(wf)) issues.push({ path: at, code: "VB_EXPR", message: `C# だけの式は VB の XAML に書けない。{ "vb": "...", "cs": "..." } で VB の式も書く` });
 
   const prefixFor = (uri: string) => {
     let p = knownPrefixes[uri];
@@ -140,7 +142,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   };
   // 引数の要素（<InArgument> など）の中身。VB は [式]、C# は <mca:CSharpValue> / <mca:CSharpReference>（t は XAML の型表記）
   const argBody = (v: Value, t: string, ref: boolean, scope: Map<string, string>, at: string): string => {
-    if (!cs) return esc(`[${ref ? String(v) : exprText(v)}]`);
+    if (!cs) return esc(`[${ref && typeof v !== "object" ? String(v) : exprText(v)}]`);
     xmlns.set("mca", MCA);
     const k = ref ? "CSharpReference" : "CSharpValue";
     return `<mca:${k} x:TypeArguments="${t}">${esc(csText(v, scope, at))}</mca:${k}>`;
@@ -480,7 +482,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
       emit(depth, `</Variable>`);
       return;
     }
-    const d = v.default !== undefined ? ` Default="${esc(`[${v.default}]`)}"` : "";
+    const d = v.default !== undefined ? ` Default="${esc(`[${typeof v.default === "object" ? vbOf(v.default) : v.default}]`)}"` : "";
     emit(depth, `<Variable x:TypeArguments="${t}"${d} Name="${esc(v.name)}" />`);
   }
 
@@ -507,7 +509,7 @@ function attrValue(v: Value, p: Prop): string {
 function literalAttr(v: Value, p: Prop): string | undefined {
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "True" : "False";
-  if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
+  if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : vbOf(v));
   if (typeof v === "string" && p.enum?.includes(v)) return v;
   // フラグの enum（"Keyboard, Mouse"）も属性にそのまま書く
   if (typeof v === "string" && v.includes(",") && p.enum && v.split(",").every((x) => p.enum!.includes(x.trim()))) return v;
@@ -517,6 +519,18 @@ function literalAttr(v: Value, p: Prop): string | undefined {
   return undefined;
 }
 
+// { vb, cs } の VB の式。{ cs } だけのときは VB_EXPR を出したうえで cs をそのまま置く（XAML は作れるが build で落ちる）
+function vbOf(v: CsExpr): string { return v.vb ?? v.cs; }
+
+// IR の中の C# だけの式（{ cs }）の場所
+export function csOnlyPaths(x: unknown, at = ""): string[] {
+  if (Array.isArray(x)) return x.flatMap((y, i) => csOnlyPaths(y, `${at}[${i}]`));
+  if (!x || typeof x !== "object") return [];
+  const keys = Object.keys(x);
+  if (keys.length === 1 && keys[0] === "cs" && typeof (x as { cs: unknown }).cs === "string") return [at];
+  return keys.flatMap((k) => csOnlyPaths((x as Record<string, unknown>)[k], at ? `${at}.${k}` : k));
+}
+
 // C# の文字列リテラル
 function csLit(s: string): string {
   return '"' + s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/\t/g, "\\t") + '"';
@@ -524,7 +538,7 @@ function csLit(s: string): string {
 
 // VB の式にする。{ lit } は文字列リテラル
 function exprText(v: Value): string {
-  if (typeof v === "object") return "lit" in v ? `"${v.lit.replace(/"/g, '""')}"` : v.vb;
+  if (typeof v === "object") return "lit" in v ? `"${v.lit.replace(/"/g, '""')}"` : vbOf(v);
   if (typeof v === "boolean") return v ? "True" : "False";
   return String(v);
 }

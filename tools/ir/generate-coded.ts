@@ -12,7 +12,7 @@
 
 import type { Catalog } from "./catalog.ts";
 import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
-import type { Workflow, Node, Value, Issue } from "./types.ts";
+import type { Workflow, Node, Value, Issue, CsExpr } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs, requiredRefs, scopeRefs, usingScope, versionLess, UIA_APP_TYPE } from "./mapping.ts";
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
@@ -120,6 +120,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     return r.cs;
   }
   function lvalue(v: Value, at: string, sc: Map<string, string>): string {
+    if (typeof v === "object" && "cs" in v) return v.cs; // C# の XAML から取り込んだ代入先（dt.Rows[0]["A"] など）
     if (typeof v !== "string") { add(at, "CODED_EXPR", "代入先は変数名で書く"); return "_"; }
     return expr(v, at, sc);
   }
@@ -136,10 +137,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     return `Convert.ToString(${e})`;
   }
 
-  function declare(name: string, type: string, def: string | undefined, depth: number, at: string, sc: Map<string, string>) {
+  function declare(name: string, type: string, def: string | CsExpr | undefined, depth: number, at: string, sc: Map<string, string>) {
     keyword(name, at);
     let init = "default";
-    if (def !== undefined) {
+    if (typeof def === "object") init = def.cs; // C# の XAML から取り込んだ既定値
+    else if (def !== undefined) {
       const r = vbDefaultToCs(def, type, sc);
       if ("error" in r) add(at, "CODED_EXPR", `既定値 ${JSON.stringify(def)} を C# に直せない: ${r.error}`);
       else init = r.cs;

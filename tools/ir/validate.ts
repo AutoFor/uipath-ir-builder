@@ -229,9 +229,11 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
 
   // 代入先は宣言済みの名前で始まること（a.b(0) のような式は先頭の名前だけ見る）
   function checkLValue(v: Value, at: string, scope: Scope) {
-    if (typeof v !== "string") { add(at, "OUT_NOT_LVALUE", "出力先は変数名（式）で書く"); return; }
-    const head = v.match(/^[A-Za-z_]\w*/)?.[0];
-    if (!head || !scope.has(head)) add(at, "UNDECLARED_NAME", `出力先 "${v}" が宣言されていない`);
+    // { vb, cs } / { cs }（C# の XAML から取り込んだ dt.Rows(0).Item などの出力先）も、先頭の名前を見る
+    const text = typeof v === "string" ? v : typeof v === "object" && "cs" in v ? v.vb ?? v.cs : undefined;
+    if (text === undefined) { add(at, "OUT_NOT_LVALUE", "出力先は変数名（式）で書く"); return; }
+    const head = text.match(/^[A-Za-z_]\w*/)?.[0];
+    if (!head || !scope.has(head)) add(at, "UNDECLARED_NAME", `出力先 "${text}" が宣言されていない`);
   }
 }
 
@@ -273,5 +275,5 @@ export function isValueItem(v: unknown): v is Value {
   if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return true;
   if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
   const k = Object.keys(v).sort().join();
-  return k === "lit" || k === "cs,vb";
+  return k === "lit" || k === "cs,vb" || k === "cs";
 }

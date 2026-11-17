@@ -93,7 +93,7 @@ function scan(s: string, lang: "vb" | "cs", out: string[]) {
 // 値の式の文字列（{ lit } と数値・真偽値は式ではない）
 function texts(v: Value): [string, "vb" | "cs"][] {
   if (typeof v === "string") return [[v, "vb"]];
-  if (typeof v === "object" && v && "vb" in v) return [[v.vb, "vb"], [v.cs, "cs"]];
+  if (typeof v === "object" && v && "cs" in v) return v.vb !== undefined ? [[v.vb, "vb"], [v.cs, "cs"]] : [[v.cs, "cs"]];
   return [];
 }
 

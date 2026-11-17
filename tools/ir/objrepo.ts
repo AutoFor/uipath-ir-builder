@@ -99,7 +99,7 @@ export const screenSearchHash = (t: ObjValue) => netHash(litOf(t.Selector) || li
 
 const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const escText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const attrText = (v: Value) => (typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
+const attrText = (v: Value) => (typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb ?? v.cs);
 const itemType = (t: string) => {
   const m = t.match(/^System\.Collections\.Generic\.(?:IEnumerable|List|IList|ICollection)<(.+)>$/);
   return m ? (m[1] === "UiPath.UIAutomationNext.Contracts.ITarget" ? "UiPath.UIAutomationNext.Target" : m[1]) : undefined;
@@ -369,7 +369,7 @@ function literalOnly(v: ObjValue, t: ObjType | undefined, at: string, add: (p: s
     if (k === "Reference" || k === "ContentHash") { add(`${at}.${k}`, "REPO_SHAPE", `${k} はリポジトリが付ける。書かない`); continue; }
     if (Array.isArray(x)) { const it = objectTypes.get(itemType(p.type) ?? ""); x.forEach((e, i) => typeof e === "object" && !isValue(e) && literalOnly(e as ObjValue, it, `${at}.${k}[${i}]`, add)); continue; }
     if (!isValue(x)) { literalOnly(x as ObjValue, objectTypes.get(p.type), `${at}.${k}`, add); continue; }
-    if (typeof x === "object" && "vb" in x) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
+    if (typeof x === "object" && ("vb" in x || "cs" in x)) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
     if (typeof x === "string" && p.kind !== "prop" && !p.enum) add(`${at}.${k}`, "REPO_EXPR", `"${k}" に式 "${x}" は書けない。文字列なら { "lit": ... } で書く`);
   }
 }

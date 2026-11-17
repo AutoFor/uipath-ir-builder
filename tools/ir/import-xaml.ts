@@ -11,10 +11,13 @@
 // 方針:
 // - 値を黙って捨てない。捨てるものは dropped に、意味が変わるかもしれないものは warnings に、IR に書けないものは errors に入れる
 // - 捨ててよいもの（dropped）: ViewState、IdRef、HintSize、注釈、生成器が足し直す値（既定値、GUID）、{x:Null}（値なし）
-// - 書けないもの（errors）: C# の式、Flowchart、StateMachine、IR に無い要素構文、表に無い型
+// - 書けないもの（errors）: Flowchart、StateMachine、IR に無い要素構文、表に無い型
 // - 取り込んだあと checkRoundTrip で XAML を作り直して比べ、残った違いも warnings に出す
 //
-// {vb, cs} の cs は XAML に無いので戻らない。C# に直せない式は Coded の生成で CODED_EXPR になる（IR を手で直す）。
+// {vb, cs} の cs は VB の XAML に無いので戻らない。C# に直せない式は Coded の生成で CODED_EXPR になる（IR を手で直す）。
+// 式の言語が C# の XAML（ExpressionActivityEditor="C#"、式は <mca:CSharpValue> / <mca:CSharpReference>）は、
+// 式を { cs } にする。変数名・数値・文字列リテラルだけの式は VB と同じ形（素の文字列、{ lit }）にする（csValue）。
+// { cs } だけの IR からは VB の XAML を作れない（generate.ts の VB_EXPR）。C# の XAML と Coded は作れる。
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve as resolvePath } from "node:path";
@@ -228,6 +231,39 @@ type Ctx = {
   cat: Catalog;
 };
 
+// ---- C# の式 ----
+// argText は <mca:CSharpValue> の中身を "[\u0000式]" の形で返す（VB の [式] と区別するため。属性の [...] は C# のワークフローでも VB）
+const CS = "\u0000";
+const isCs = (e: string) => e.startsWith(CS);
+const IDENT = /^[\p{L}_][\p{L}\p{N}_]*$/u;
+
+// C# の文字列リテラル（"..."、@"..."）の中身。リテラルでなければ undefined
+function csLit(e: string): string | undefined {
+  const v = e.match(/^@"((?:[^"]|"")*)"$/);
+  if (v) return v[1].replace(/""/g, '"');
+  const m = e.match(/^"((?:[^"\\\r\n]|\\.)*)"$/);
+  if (!m) return undefined;
+  const ESC: Record<string, string> = { '"': '"', "\\": "\\", "'": "'", n: "\n", r: "\r", t: "\t", "0": "\0" };
+  let ok = true;
+  const s = m[1].replace(/\\(u[0-9a-fA-F]{4}|.)/g, (_, x: string) => {
+    if (x.length === 5) return String.fromCharCode(parseInt(x.slice(1), 16));
+    if (ESC[x] === undefined) ok = false;
+    return ESC[x] ?? "";
+  });
+  return ok ? s : undefined;
+}
+
+// C# の式 → IR の値。VB と同じ形で書けるもの（変数名、数値、文字列リテラル）はその形に、それ以外は { cs }
+function csValue(e: string, out: boolean): Value {
+  const x = e.trim();
+  if (IDENT.test(x)) return x;
+  if (out) return { cs: x };
+  if (/^-?\d+(\.\d+)?$/.test(x)) return x;
+  const l = csLit(x);
+  if (l !== undefined) return { lit: l };
+  return { cs: x };
+}
+
 // 属性（または要素の中身）の文字列 → IR の値。undefined は「値なし」
 function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   if (raw === "{x:Null}") { c.drop(at, "値なし", p.name); return undefined; }
@@ -241,7 +277,7 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   }
   const lit = raw.startsWith("{}") ? raw.slice(2) : raw;
   if (p.kind === "out" || p.kind === "inout") {
-    if (isBracket(raw)) return raw.slice(1, -1);
+    if (isBracket(raw)) { const e = raw.slice(1, -1); return isCs(e) ? csValue(e.slice(1), true) : e; }
     c.err(at, "OUT_NOT_EXPR", `"${p.name}"（出力）の値 ${JSON.stringify(raw)} が [変数] の形でない`);
     return undefined;
   }
@@ -256,6 +292,14 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   const isString = p.kind === "in" && p.type === "System.String";
   if (isBracket(raw)) {
     const e = raw.slice(1, -1);
+    if (isCs(e)) {
+      const x = e.slice(1).trim();
+      const v = csValue(x, false);
+      // String の入力の "[" で始まる文字列リテラルは、VB と同じく式のまま持つ（生成器が属性にすると式と区別できない）
+      if (typeof v === "object" && "lit" in v && isString && v.lit.startsWith("[")) return { cs: x };
+      if (BOOL.test(p.type) && /^(true|false)$/.test(x)) return x === "true";
+      return v;
+    }
     const l = vbLit(e);
     // String の入力は、生成器が { lit } を属性にそのまま書く。["abc"] の形を保つには式のままにする
     if (l !== undefined && (!isString || l.startsWith("["))) return { lit: l };
@@ -297,7 +341,11 @@ function argText(el: El, at: string, c: Ctx): string | undefined {
     if (e === undefined) c.err(at, "UNSUPPORTED_ELEMENT", `${k.name} に ExpressionText が無い`);
     return e === undefined ? undefined : `[${e}]`;
   }
-  if (/^CSharp(Value|Reference)$/.test(k.local)) { c.err(at, "CSHARP_EXPR", `C# の式は取り込めない: ${k.attrs.find((a) => a.local === "ExpressionText")?.value ?? k.text}`); return undefined; }
+  if (/^CSharp(Value|Reference)$/.test(k.local)) {
+    const e = k.attrs.find((a) => a.local === "ExpressionText")?.value ?? k.text;
+    if (!e.trim()) { c.err(at, "UNSUPPORTED_ELEMENT", `${k.name} の式が空`); return undefined; }
+    return `[${CS}${e}]`;
+  }
   if (k.local === "Literal" && k.uri === ACT) {
     const v = k.attrs.find((a) => a.local === "Value")?.value ?? k.text;
     return v;
@@ -338,7 +386,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
     if (a.uri === XMLNS) continue;
     if (a.uri === X && a.local === "Class") { wf.workflow = a.value; continue; }
     if (a.uri === MC) continue;
-    if (/ExpressionActivityEditor$/.test(a.local) && a.value === "C#") { c.err("Activity", "CSHARP_EXPR", "C# の式のワークフロー（ExpressionActivityEditor=C#）は取り込めない"); continue; }
+    if (/ExpressionActivityEditor$/.test(a.local) && a.value === "C#") { c.drop("Activity", "その他", a.name, a.value); continue; } // 式の言語。生成器が --project の言語で足し直す
     if (ignorableAttr(a, root) || a.local === "VisualBasic.Settings") { if (a.value !== "{x:Null}") c.drop("Activity", dropKind(a.name), a.name, a.value); continue; }
     if (a.local.startsWith(`${wf.workflow || "Main"}.`) || a.local.includes(".")) { c.warn("Activity", "ARGUMENT_DEFAULT", `引数の既定値など ${a.name}=${JSON.stringify(a.value)} は IR に書けないので捨てた`); continue; }
     c.warn("Activity", "UNKNOWN_ROOT_ATTR", `ルートの属性 ${a.name} を捨てた`);
@@ -537,7 +585,6 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
       for (const x of k.kids) if (ignorableEl(x)) c.drop(kat, dropKind(x.name), x.name);
       const only = kids.length === 1 && kids[0].local === "Null" && kids[0].uri === X;
       if (only || (!kids.length && !k.text.trim())) { c.drop(kat, "値なし", p.name); return; }
-      if (kids.some((x) => /^CSharp(Value|Reference)$/.test(x.local))) { c.err(kat, "CSHARP_EXPR", `C# の式は取り込めない`); return; }
 
       if (a.className === "TryCatch" && p.name === "Catches") { n.catches = kids.flatMap((x, i) => catchOf(x, `${kat}[${i}]`)); return; }
       if (p.name === "AssignOperations") { n.assigns = assigns(kids, kat); return; }
@@ -549,7 +596,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
         case "children": slot(p, (kids.length === 1 && /^(List|Collection)$/.test(kids[0].local) ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids).flatMap((x, i) => { const r = node(x, `${kat}/${x.local}[${i}]`, kidsScope(), innerGuid); return r ? [r] : []; })); return;
         case "child":
           // Activity<T> の子は、式（VisualBasicValue など）のことも、値を返すアクティビティ（AnchorBase.AnchorProvider の WaitUiElementAppear）のこともある
-          if (isExpressionChild(p) && !(kids.length === 1 && !/^(VisualBasic(Value|Reference)|Literal|Null)$/.test(kids[0].local))) { const t = argText(k, kat, c); if (t !== undefined) { const v = toValue(t, p, kat, c); if (v !== undefined) props[p.name] = v; } return; }
+          if (isExpressionChild(p) && !(kids.length === 1 && !/^(VisualBasic(Value|Reference)|CSharp(Value|Reference)|Literal|Null)$/.test(kids[0].local))) { const t = argText(k, kat, c); if (t !== undefined) { const v = toValue(t, p, kat, c); if (v !== undefined) props[p.name] = v; } return; }
           if (kids.length !== 1) { c.err(kat, "UNSUPPORTED_ELEMENT", `"${p.name}" に子が ${kids.length} 個ある`); return; }
           { const r = node(kids[0], `${kat}/${kids[0].local}`, kidsScope(), innerGuid); if (r) slot(p, unwrap(r, p.name)); }
           return;
@@ -595,7 +642,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
         if (!dm) { c.err(iat, "BAD_DICT", `辞書の要素 <${x.name}> は読めない`); continue; }
         const t = argText(x, iat, c);
         if (t === undefined) { c.warn(iat, "EMPTY_DICT_VALUE", `辞書のキー "${key}" は値が無いので IR に書けず、捨てた`); continue; }
-        const v: Value = dm[1] === "In" ? inValue(t) : isBracket(t) ? t.slice(1, -1) : t;
+        const v: Value = dm[1] === "In" ? inValue(t) : isBracket(t) ? outValue(t.slice(1, -1)) : t;
         if (map === "InArgument") { out.push({ name: key, value: v } as unknown as InvokeArg); continue; }
         const ta = x.attrs.find((q) => q.uri === X && q.local === "TypeArguments");
         const type = ta ? typeOf(ta.value, x, iat) : undefined;
@@ -658,7 +705,9 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
       const t = argText(x, iat, c);
       if (t === undefined) return undefined;
       if (!isBracket(t)) return { lit: t };
-      const e = t.slice(1, -1);
+      const raw = t.slice(1, -1);
+      const e = isCs(raw) ? raw.slice(1).trim() : raw;
+      if (ta === "x:Boolean" && isCs(raw) && /^(true|false)$/.test(e)) return e === "true";
       if (ta === "x:Int32" && /^-?\d+$/.test(e)) return Number(e);
       if (ta === "x:Double" && canonNum(e) && !Number.isInteger(Number(e))) return Number(e);
       if (ta === "x:Boolean" && /^(True|False)$/.test(e)) return e === "True";
@@ -733,7 +782,9 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
         if (to === undefined && val === undefined) { c.drop(iat, "値なし", "AssignOperation"); return; }
         if (to === undefined || val === undefined) { c.err(iat, "UNSUPPORTED_ELEMENT", "AssignOperation の To / Value の片方しか無い"); return; }
         for (const a2 of op.attrs) if (ignorableAttr(a2, op)) c.drop(iat, dropKind(a2.name), a2.name, a2.value);
-        out.push({ to: isBracket(to) ? to.slice(1, -1) : to, value: inValue(val) });
+        const tv = isBracket(to) ? outValue(to.slice(1, -1)) : to;
+        if (typeof tv !== "string") { c.err(iat, "CS_LVALUE", `代入先 ${JSON.stringify((tv as { cs: string }).cs)} は変数名でないので IR に書けない`); return; }
+        out.push({ to: tv, value: inValue(val) });
       });
       return out;
     }
@@ -751,9 +802,13 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
   function inValue(t: string): Value {
     if (!isBracket(t)) return { lit: t };
     const e = t.slice(1, -1);
+    if (isCs(e)) return csValue(e.slice(1), false);
     const l = vbLit(e);
     return l !== undefined ? { lit: l } : e;
   }
+
+  // 出力の [式]。C# の式なら変数名か { cs }
+  function outValue(e: string): Value { return isCs(e) ? csValue(e.slice(1), true) : e; }
 
   function variable(v: El, at: string): VariableDecl[] {
     const name = attr(v, "Name");
@@ -775,7 +830,13 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
       if (text !== undefined) def = text;
     }
     if (def !== undefined && def !== "{x:Null}") {
-      if (isBracket(def)) out.default = def.slice(1, -1);
+      if (isBracket(def) && isCs(def.slice(1, -1))) {
+        // VB で同じ意味に書ける既定値（数値、真偽値、文字列リテラル、変数名）は VB の式に、それ以外は { cs }
+        const e = def.slice(2, -1).trim(), l = csLit(e);
+        if (/^-?\d+(\.\d+)?$/.test(e) || IDENT.test(e)) out.default = e === "true" ? "True" : e === "false" ? "False" : e;
+        else if (l !== undefined && !/[\r\n]/.test(l)) out.default = `"${l.replace(/"/g, '""')}"`;
+        else out.default = { cs: e };
+      } else if (isBracket(def)) out.default = def.slice(1, -1);
       else if (type === "String") out.default = `"${(def.startsWith("{}") ? def.slice(2) : def).replace(/"/g, '""')}"`;
       else if (/^(True|False|-?\d+(\.\d+)?)$/.test(def)) out.default = def;
       else if (type === "TimeSpan" && /^(\d+\.)?\d+:\d+:\d+(\.\d+)?$/.test(def)) out.default = `TimeSpan.Parse("${def}")`;
@@ -950,7 +1011,8 @@ const importsOf = (xml: string) => {
 export function checkRoundTrip(xml: string, wf: Workflow, cat: Catalog): { xaml?: string; identical: boolean; sameMeaning: boolean; warnings: ImportIssue[] } {
   const warnings: ImportIssue[] = [];
   let again: string;
-  try { again = generate(wf, cat); } catch (e) { return { identical: false, sameMeaning: false, warnings: [{ path: "", code: "ROUNDTRIP_GENERATE", message: `XAML を作り直せない: ${(e as Error).message}` }] }; }
+  const language = isCsXaml(xml) ? ("CSharp" as const) : undefined;
+  try { again = generate(wf, cat, language ? { language } : {}); } catch (e) { return { identical: false, sameMeaning: false, warnings: [{ path: "", code: "ROUNDTRIP_GENERATE", message: `XAML を作り直せない: ${(e as Error).message}` }] }; }
   if (normalizeXaml(xml) === normalizeXaml(again)) return { xaml: again, identical: true, sameMeaning: true, warnings };
   const { lost, added } = diffLines(canonLines(xml), canonLines(again));
   for (const x of lost) warnings.push({ path: x.split(" ")[0], code: "ROUNDTRIP_LOST", message: `作り直すと消える: ${x}` });
@@ -961,6 +1023,9 @@ export function checkRoundTrip(xml: string, wf: Workflow, cat: Catalog): { xaml?
   if (missRefs.length) warnings.push({ path: "Activity", code: "EXTRA_REFERENCE", message: `IR に持てない参照: ${missRefs.join(", ")}` });
   return { xaml: again, identical: false, sameMeaning: !lost.length && !added.length, warnings };
 }
+
+// 式の言語が C# の XAML か（ルートの ExpressionActivityEditor="C#"）
+export const isCsXaml = (xml: string) => /ExpressionActivityEditor\s*=\s*"C#"/.test(xml);
 
 // ---- まとめ（CLI と migrate-report が使う）----
 
