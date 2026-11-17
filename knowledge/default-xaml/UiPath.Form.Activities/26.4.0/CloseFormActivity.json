@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CloseFormActivity\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ufa=\"clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ufa:CloseFormActivity FormId=\"{x:Null}\" InstanceName=\"{x:Null}\" />\r\n</Activity>"
+  }
+}

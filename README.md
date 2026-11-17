@@ -59,6 +59,7 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.WebAPI.Activities | 1.20.1 | 8（Coded API なし） |
 | UiPath.SAP.BAPI.Activities | 3.0.1 | 5（Coded API なし） |
 | UiPath.DataService.Activities | 26.10.1 | 12（Coded API なし） |
+| UiPath.Form.Activities | 26.4.0 | 9（Coded API なし。Windows だけ。[knowledge/forms.md](knowledge/forms.md)） |
 
 クロスプラットフォーム（`targetFramework` が `Portable`）のカタログは `<版>.portable.json`。どの版にあるかと、使えるアクティビティの数は [knowledge/cross-platform.md](knowledge/cross-platform.md)。
 

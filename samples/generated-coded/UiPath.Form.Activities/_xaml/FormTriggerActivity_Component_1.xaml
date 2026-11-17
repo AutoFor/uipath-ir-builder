@@ -1,0 +1,117 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="FormTriggerActivity_Component_1" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ufa="clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:upt="clr-namespace:UiPath.Platform.Triggers;assembly=UiPath.Platform"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="n" Type="InOutArgument(x:Int32)" />
+    <x:Property Name="stp" Type="InOutArgument(x:Boolean)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Forms.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>UiPath.Forms.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="FormTriggerActivity_Component_1" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <ui:TriggerScope SchedulingMode="Sequential" sap2010:WorkflowViewState.IdRef="TriggerScope_1">
+      <ui:TriggerScope.Triggers>
+        <ufa:FormTriggerActivity x:TypeArguments="ufa:TextTriggerEventArgs" DisplayName="名前が変わった" Enabled="True" Event="changed.name" FormId="6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01" SchedulingMode="Sequential" Tag="部品" TriggerId="6c852980-7cf3-5ceb-8a23-c38ba6371f94" sap2010:WorkflowViewState.IdRef="FormTriggerActivity_1" />
+        <ufa:FormTriggerActivity x:TypeArguments="ufa:FormInfoTriggerEventArgs" DisplayName="あいさつするが押された" Enabled="True" Event="click.greet" FormId="6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01" SchedulingMode="Sequential" Tag="部品" TriggerId="2a90d4f2-ba0c-5153-aefb-f0b882b80eb7" sap2010:WorkflowViewState.IdRef="FormTriggerActivity_2" />
+        <ufa:FormTriggerActivity x:TypeArguments="ufa:NumberTriggerEventArgs" DisplayName="年齢が変わった" Enabled="True" Event="changed.age" FormId="6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01" SchedulingMode="Sequential" Tag="部品" TriggerId="24a28860-51ac-5853-8885-b768a9c8380e" sap2010:WorkflowViewState.IdRef="FormTriggerActivity_3" />
+        <ui:RepeatTrigger DisplayName="来なかったときに止める" Enabled="True" Interval="[TimeSpan.FromSeconds(20)]" SchedulingMode="Sequential" TriggerId="051fbefb-6a3f-5f61-b71b-beb387550db3" sap2010:WorkflowViewState.IdRef="RepeatTrigger_1" />
+      </ui:TriggerScope.Triggers>
+      <ui:TriggerScope.Action>
+        <ActivityAction x:TypeArguments="upt:TriggerArgs">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="upt:TriggerArgs" Name="args" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <If Condition="[TypeOf args Is UiPath.Forms.Activities.TextTriggerEventArgs]" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <ui:LogMessage Level="Info" Message="[&quot;名前が変わった: &quot; &amp; CType(args, UiPath.Forms.Activities.TextTriggerEventArgs).Text]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+              </If.Then>
+              <If.Else>
+                <If Condition="[TypeOf args Is UiPath.Forms.Activities.NumberTriggerEventArgs]" sap2010:WorkflowViewState.IdRef="If_2">
+                  <If.Then>
+                    <ui:LogMessage Level="Info" Message="[&quot;年齢が変わった: &quot; &amp; CType(args, UiPath.Forms.Activities.NumberTriggerEventArgs).Value.ToString()]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+                  </If.Then>
+                  <If.Else>
+                    <If Condition="[TypeOf args Is UiPath.Forms.Activities.FormInfoTriggerEventArgs]" sap2010:WorkflowViewState.IdRef="If_3">
+                      <If.Then>
+                        <ui:LogMessage Level="Info" Message="[&quot;押された: &quot; &amp; CType(args, UiPath.Forms.Activities.FormInfoTriggerEventArgs).InstanceName]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
+                      </If.Then>
+                      <If.Else>
+                        <ui:LogMessage Level="Warn" Message="[&quot;部品のイベントが来なかった&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />
+                      </If.Else>
+                    </If>
+                  </If.Else>
+                </If>
+              </If.Else>
+            </If>
+            <Assign x:TypeArguments="x:Int32" To="[n]" Value="[n + 1]" sap2010:WorkflowViewState.IdRef="Assign_1" />
+            <If Condition="[n &gt;= 3 OrElse TypeOf args Is UiPath.Platform.Triggers.TriggerArgs AndAlso Not TypeOf args Is UiPath.Forms.Activities.FormTriggerArgsWrapper]" sap2010:WorkflowViewState.IdRef="If_4">
+              <If.Then>
+                <ui:StopTriggers ShouldStop="[stp]" sap2010:WorkflowViewState.IdRef="StopTriggers_1" />
+              </If.Then>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:TriggerScope.Action>
+    </ui:TriggerScope>
+  </Sequence>
+</Activity>

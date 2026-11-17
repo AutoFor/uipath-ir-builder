@@ -1,0 +1,39 @@
+{
+  "workflow": "ShowFormActivity_Design",
+  "variables": [
+    { "name": "items", "type": "DataTable", "default": "New DataTable()" },
+    { "name": "outName", "type": "String" },
+    { "name": "outAmount", "type": "Double" },
+    { "name": "outDept", "type": "String" },
+    { "name": "outDate", "type": "DateTime" },
+    { "name": "outItems", "type": "DataTable" }
+  ],
+  "body": [
+    { "act": "InvokeCode", "name": "明細の表を作る",
+      "props": { "Code": "io_dt.Columns.Add(\"item\") : io_dt.Columns.Add(\"qty\", GetType(Double)) : io_dt.Columns.Add(\"price\", GetType(Double))\nio_dt.Rows.Add(\"新幹線\", 2, 14720)\nio_dt.Rows.Add(\"宿泊\", 1, 9800)" },
+      "dicts": { "Arguments": [ { "name": "io_dt", "dir": "InOut", "type": "DataTable", "value": "items" } ] } },
+    { "act": "ShowFormActivity", "name": "経費の申請を出す（入れ物を使ったフォーム）",
+      "props": { "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13", "Top": "16" },
+      "dicts": { "Arguments": [
+        { "name": "name", "dir": "In", "type": "String", "value": { "lit": "山田 太郎" } },
+        { "name": "email", "dir": "In", "type": "String", "value": { "lit": "taro@example.com" } },
+        { "name": "dept", "dir": "In", "type": "String", "value": { "lit": "dev" } },
+        { "name": "phone", "dir": "In", "type": "String", "value": { "lit": "090-1234-5678" } },
+        { "name": "date", "dir": "In", "type": "DateTime", "value": "New DateTime(2026, 11, 17)" },
+        { "name": "amount", "dir": "In", "type": "Double", "value": "12800" },
+        { "name": "payment", "dir": "In", "type": "String", "value": { "lit": "self" } },
+        { "name": "reason", "dir": "In", "type": "String", "value": { "lit": "顧客先への出張（大阪）" } },
+        { "name": "items", "dir": "In", "type": "DataTable", "value": "items" }
+      ] } },
+    { "act": "GetFormFieldsActivity", "props": { "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13" },
+      "dicts": { "Arguments": [
+        { "name": "name", "dir": "Out", "type": "String", "value": "outName" },
+        { "name": "amount", "dir": "Out", "type": "Double", "value": "outAmount" },
+        { "name": "dept", "dir": "Out", "type": "String", "value": "outDept" },
+        { "name": "date", "dir": "Out", "type": "DateTime", "value": "outDate" },
+        { "name": "items", "dir": "Out", "type": "DataTable", "value": "outItems" }
+      ] } },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"読んだ: \" & outName & \" \" & outAmount.ToString() & \" \" & outDept & \" \" & outDate.ToString(\"yyyy-MM-dd\") & \" 明細 \" & outItems.Rows.Count.ToString() & \" 行 \" & outItems.Rows(0)(\"item\").ToString()" } },
+    { "act": "CloseFormActivity", "props": { "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13" } }
+  ]
+}

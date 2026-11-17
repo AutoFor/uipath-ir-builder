@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"GetFormFieldsActivity\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:scg=\"clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib\" xmlns:ufa=\"clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ufa:GetFormFieldsActivity FormId=\"{x:Null}\" InstanceName=\"{x:Null}\">\r\n    <ufa:GetFormFieldsActivity.Arguments>\r\n      <scg:Dictionary x:TypeArguments=\"x:String, OutArgument\" />\r\n    </ufa:GetFormFieldsActivity.Arguments>\r\n  </ufa:GetFormFieldsActivity>\r\n</Activity>"
+  }
+}

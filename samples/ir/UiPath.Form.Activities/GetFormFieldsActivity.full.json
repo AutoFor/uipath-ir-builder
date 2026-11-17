@@ -1,0 +1,105 @@
+{
+  "workflow": "GetFormFieldsActivity_Full",
+  "variables": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "age",
+      "type": "Double"
+    },
+    {
+      "name": "agree",
+      "type": "Boolean"
+    },
+    {
+      "name": "res",
+      "type": "GetFormValuesResult"
+    }
+  ],
+  "body": [
+    {
+      "act": "ShowFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "読む"
+        }
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "四郎"
+            }
+          },
+          {
+            "name": "age",
+            "dir": "In",
+            "type": "Double",
+            "value": "30"
+          },
+          {
+            "name": "agree",
+            "dir": "In",
+            "type": "Boolean",
+            "value": "True"
+          }
+        ]
+      }
+    },
+    {
+      "act": "GetFormFieldsActivity",
+      "name": "値を読む",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "読む"
+        },
+        "Result": "res"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "name",
+            "dir": "Out",
+            "type": "String",
+            "value": "name"
+          },
+          {
+            "name": "age",
+            "dir": "Out",
+            "type": "Double",
+            "value": "age"
+          },
+          {
+            "name": "agree",
+            "dir": "Out",
+            "type": "Boolean",
+            "value": "agree"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"読んだ: \" & name & \" \" & age.ToString() & \" \" & agree.ToString() & \" OK=\" & res.OK.ToString()"
+      }
+    },
+    {
+      "act": "CloseFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "読む"
+        }
+      }
+    }
+  ]
+}

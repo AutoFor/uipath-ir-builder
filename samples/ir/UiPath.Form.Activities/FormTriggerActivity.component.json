@@ -1,0 +1,189 @@
+{
+  "workflow": "FormTriggerActivity_Component",
+  "variables": [
+    {
+      "name": "stp",
+      "type": "Boolean"
+    },
+    {
+      "name": "n",
+      "type": "Int32"
+    },
+    {
+      "name": "scr",
+      "type": "ExecuteScriptResult[]"
+    }
+  ],
+  "body": [
+    {
+      "act": "ShowFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "部品"
+        }
+      }
+    },
+    {
+      "act": "ExecuteScriptActivity",
+      "name": "名前・ボタン・年齢を 1 秒ずつあけて操作する（人の操作の代わり。同じ瞬間に変えると最後の部品の changed しか出ない）",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "部品"
+        },
+        "Source": {
+          "lit": "function sv(k, v) { var i = document.querySelector('input[name=\"data[' + k + ']\"]'); i.focus(); i.value = v; i.dispatchEvent(new Event('input', { bubbles: true })); i.blur(); } setTimeout(function () { sv('name', '十郎'); }, 3000); setTimeout(function () { document.querySelector('button[name=\"data[greet]\"]').click(); }, 4000); setTimeout(function () { sv('age', '21'); }, 5000)"
+        },
+        "Result": "scr"
+      }
+    },
+    {
+      "act": "TriggerScope",
+      "item": "args",
+      "props": {
+        "SchedulingMode": "Sequential"
+      },
+      "slots": {
+        "Triggers": [
+          {
+            "act": "FormTriggerActivity",
+            "typeArg": "TextTriggerEventArgs",
+            "name": "名前が変わった",
+            "props": {
+              "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+              "Event": "changed.name",
+              "Tag": {
+                "lit": "部品"
+              }
+            }
+          },
+          {
+            "act": "FormTriggerActivity",
+            "typeArg": "FormInfoTriggerEventArgs",
+            "name": "あいさつするが押された",
+            "props": {
+              "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+              "Event": "click.greet",
+              "Tag": {
+                "lit": "部品"
+              }
+            }
+          },
+          {
+            "act": "FormTriggerActivity",
+            "typeArg": "NumberTriggerEventArgs",
+            "name": "年齢が変わった",
+            "props": {
+              "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+              "Event": "changed.age",
+              "Tag": {
+                "lit": "部品"
+              }
+            }
+          },
+          {
+            "act": "RepeatTrigger",
+            "name": "来なかったときに止める",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(20)"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "If",
+            "props": {
+              "Condition": "TypeOf args Is UiPath.Forms.Activities.TextTriggerEventArgs"
+            },
+            "then": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": "\"名前が変わった: \" & CType(args, UiPath.Forms.Activities.TextTriggerEventArgs).Text"
+                }
+              }
+            ],
+            "else": [
+              {
+                "act": "If",
+                "props": {
+                  "Condition": "TypeOf args Is UiPath.Forms.Activities.NumberTriggerEventArgs"
+                },
+                "then": [
+                  {
+                    "act": "LogMessage",
+                    "props": {
+                      "Level": "Info",
+                      "Message": "\"年齢が変わった: \" & CType(args, UiPath.Forms.Activities.NumberTriggerEventArgs).Value.ToString()"
+                    }
+                  }
+                ],
+                "else": [
+                  {
+                    "act": "If",
+                    "props": {
+                      "Condition": "TypeOf args Is UiPath.Forms.Activities.FormInfoTriggerEventArgs"
+                    },
+                    "then": [
+                      {
+                        "act": "LogMessage",
+                        "props": {
+                          "Level": "Info",
+                          "Message": "\"押された: \" & CType(args, UiPath.Forms.Activities.FormInfoTriggerEventArgs).InstanceName"
+                        }
+                      }
+                    ],
+                    "else": [
+                      {
+                        "act": "LogMessage",
+                        "props": {
+                          "Level": "Warn",
+                          "Message": {
+                            "lit": "部品のイベントが来なかった"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "act": "Assign",
+            "typeArg": "Int32",
+            "props": {
+              "To": "n",
+              "Value": "n + 1"
+            }
+          },
+          {
+            "act": "If",
+            "props": {
+              "Condition": "n >= 3 OrElse TypeOf args Is UiPath.Platform.Triggers.TriggerArgs AndAlso Not TypeOf args Is UiPath.Forms.Activities.FormTriggerArgsWrapper"
+            },
+            "then": [
+              {
+                "act": "StopTriggers",
+                "props": {
+                  "ShouldStop": "stp"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "act": "CloseFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "部品"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "Metadata": {
+    "Id": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+    "Kind": "FormIo"
+  },
+  "DesignProperties": {
+    "Title": "経費の申請",
+    "Width": 720,
+    "Height": 680,
+    "Padding": 16,
+    "Theme": "Flatly",
+    "CustomStyle": ".formio-component-header h3 { margin: 0 0 4px 0; } .card-header { font-weight: bold; } .formio-component-actions { margin-top: 8px; }"
+  },
+  "Data": {
+    "display": "form",
+    "components": [
+      {
+        "type": "content",
+        "key": "header",
+        "input": false,
+        "html": "<h3>経費の申請</h3><p class=\"text-muted\">必要なところを入れて「申請する」を押してください。</p>"
+      },
+      {
+        "type": "panel",
+        "key": "applicant",
+        "title": "申請者",
+        "theme": "primary",
+        "collapsible": false,
+        "components": [
+          {
+            "type": "columns",
+            "key": "applicantCols",
+            "columns": [
+              {
+                "width": 6,
+                "size": "sm",
+                "components": [
+                  {
+                    "type": "textfield",
+                    "key": "name",
+                    "label": "氏名",
+                    "input": true,
+                    "validate": {
+                      "required": true
+                    }
+                  }
+                ]
+              },
+              {
+                "width": 6,
+                "size": "sm",
+                "components": [
+                  {
+                    "type": "email",
+                    "key": "email",
+                    "label": "メール",
+                    "input": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "columns",
+            "key": "applicantCols2",
+            "columns": [
+              {
+                "width": 6,
+                "size": "sm",
+                "components": [
+                  {
+                    "type": "select",
+                    "key": "dept",
+                    "label": "部署",
+                    "input": true,
+                    "widget": "choicesjs",
+                    "dataSrc": "values",
+                    "data": {
+                      "values": [
+                        {
+                          "label": "営業",
+                          "value": "sales"
+                        },
+                        {
+                          "label": "開発",
+                          "value": "dev"
+                        },
+                        {
+                          "label": "総務",
+                          "value": "admin"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "width": 6,
+                "size": "sm",
+                "components": [
+                  {
+                    "type": "phoneNumber",
+                    "key": "phone",
+                    "label": "電話",
+                    "input": true,
+                    "inputMask": "999-9999-9999",
+                    "placeholder": "090-1234-5678"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "tabs",
+        "key": "detailTabs",
+        "components": [
+          {
+            "key": "tabSummary",
+            "label": "内容",
+            "components": [
+              {
+                "type": "columns",
+                "key": "summaryCols",
+                "columns": [
+                  {
+                    "width": 4,
+                    "size": "sm",
+                    "components": [
+                      {
+                        "type": "datetime",
+                        "key": "date",
+                        "label": "日付",
+                        "input": true,
+                        "enableTime": false,
+                        "format": "yyyy-MM-dd",
+                        "datePicker": {
+                          "disableWeekends": false
+                        },
+                        "widget": {
+                          "type": "calendar",
+                          "enableTime": false,
+                          "format": "yyyy-MM-dd",
+                          "locale": "ja"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": 4,
+                    "size": "sm",
+                    "components": [
+                      {
+                        "type": "number",
+                        "key": "amount",
+                        "label": "金額",
+                        "input": true,
+                        "decimalLimit": 0,
+                        "delimiter": true,
+                        "prefix": "¥"
+                      }
+                    ]
+                  },
+                  {
+                    "width": 4,
+                    "size": "sm",
+                    "components": [
+                      {
+                        "type": "radio",
+                        "key": "payment",
+                        "label": "支払い",
+                        "input": true,
+                        "inline": true,
+                        "values": [
+                          {
+                            "label": "立替",
+                            "value": "self"
+                          },
+                          {
+                            "label": "請求書",
+                            "value": "invoice"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "textarea",
+                "key": "reason",
+                "label": "理由",
+                "input": true,
+                "rows": 2
+              }
+            ]
+          },
+          {
+            "key": "tabItems",
+            "label": "明細",
+            "components": [
+              {
+                "type": "datagrid",
+                "key": "items",
+                "label": "明細",
+                "input": true,
+                "components": [
+                  {
+                    "type": "textfield",
+                    "key": "item",
+                    "label": "品目",
+                    "input": true
+                  },
+                  {
+                    "type": "number",
+                    "key": "qty",
+                    "label": "数量",
+                    "input": true
+                  },
+                  {
+                    "type": "number",
+                    "key": "price",
+                    "label": "単価",
+                    "input": true,
+                    "decimalLimit": 0,
+                    "delimiter": true,
+                    "prefix": "¥"
+                  }
+                ],
+                "addAnother": "行を足す"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "key": "agree",
+        "label": "内容に間違いがないことを確認しました",
+        "input": true
+      },
+      {
+        "type": "columns",
+        "key": "actions",
+        "columns": [
+          {
+            "width": 3,
+            "size": "sm",
+            "components": [
+              {
+                "type": "button",
+                "key": "submit",
+                "label": "申請する",
+                "action": "submit",
+                "theme": "primary",
+                "block": true,
+                "input": true
+              }
+            ]
+          },
+          {
+            "width": 3,
+            "size": "sm",
+            "components": [
+              {
+                "type": "button",
+                "key": "cancel",
+                "label": "やめる",
+                "action": "event",
+                "event": "cancel",
+                "theme": "secondary",
+                "block": true,
+                "input": true
+              }
+            ]
+          },
+          {
+            "width": 6,
+            "size": "sm",
+            "components": []
+          }
+        ]
+      }
+    ]
+  }
+}

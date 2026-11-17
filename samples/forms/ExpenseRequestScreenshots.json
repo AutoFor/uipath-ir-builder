@@ -1,0 +1,313 @@
+{
+  "workflow": "ExpenseRequestScreenshots",
+  "variables": [
+    {
+      "name": "rr",
+      "type": "ExecuteScriptResult[]"
+    },
+    {
+      "name": "outName",
+      "type": "String"
+    },
+    {
+      "name": "outAmount",
+      "type": "Double"
+    },
+    {
+      "name": "outDept",
+      "type": "String"
+    },
+    {
+      "name": "outItems",
+      "type": "DataTable"
+    },
+    {
+      "name": "dt",
+      "type": "DataTable",
+      "default": "New DataTable()"
+    }
+  ],
+  "body": [
+    {
+      "act": "InvokeCode",
+      "name": "明細の表を作る",
+      "props": {
+        "Code": "io_dt.Columns.Add(\"item\") : io_dt.Columns.Add(\"qty\", GetType(Double)) : io_dt.Columns.Add(\"price\", GetType(Double))\nio_dt.Rows.Add(\"新幹線\", 2, 14720)\nio_dt.Rows.Add(\"宿泊\", 1, 9800)"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "io_dt",
+            "dir": "InOut",
+            "type": "DataTable",
+            "value": "dt"
+          }
+        ]
+      }
+    },
+    {
+      "act": "ShowFormActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+        "Left": "40",
+        "Top": "16"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "name",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "山田 太郎"
+            }
+          },
+          {
+            "name": "email",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "taro@example.com"
+            }
+          },
+          {
+            "name": "dept",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "dev"
+            }
+          },
+          {
+            "name": "amount",
+            "dir": "In",
+            "type": "Double",
+            "value": "12800"
+          },
+          {
+            "name": "reason",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "顧客先への出張（大阪）"
+            }
+          },
+          {
+            "name": "payment",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "self"
+            }
+          },
+          {
+            "name": "items",
+            "dir": "In",
+            "type": "DataTable",
+            "value": "dt"
+          },
+          {
+            "name": "date",
+            "dir": "In",
+            "type": "DateTime",
+            "value": "New DateTime(2026, 11, 17)"
+          },
+          {
+            "name": "phone",
+            "dir": "In",
+            "type": "String",
+            "value": {
+              "lit": "090-1234-5678"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "Delay",
+      "props": {
+        "Duration": "TimeSpan.FromSeconds(2)"
+      }
+    },
+    {
+      "act": "ExecuteScriptActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+        "Source": {
+          "lit": "JSON.stringify([window.screenX, window.screenY, window.outerWidth, window.outerHeight, window.devicePixelRatio])"
+        },
+        "Result": "rr"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"11-design-summary \" & rr(0).Value.ToString()"
+      }
+    },
+    {
+      "act": "InvokeCode",
+      "name": "窓を撮る 11-design-summary",
+      "props": {
+        "Code": "Dim p = in_Rect.Trim(\"\"\"\"c, \"[\"c, \"]\"c).Split(\",\"c)\nDim r = New Double(4) {} : For k = 0 To 4 : r(k) = Double.Parse(p(k), System.Globalization.CultureInfo.InvariantCulture) : Next\nDim s = r(4)\nDim x = CInt(r(0) * s), y = CInt((r(1) - 32) * s), w = CInt(r(2) * s), h = CInt((r(3) + 32) * s)\nDim bmp As New System.Drawing.Bitmap(w, h)\nUsing g = System.Drawing.Graphics.FromImage(bmp) : g.CopyFromScreen(x, y, 0, 0, bmp.Size) : End Using\nbmp.Save(in_Path, System.Drawing.Imaging.ImageFormat.Png) : bmp.Dispose()"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Rect",
+            "dir": "In",
+            "type": "String",
+            "value": "rr(0).Value.ToString()"
+          },
+          {
+            "name": "in_Path",
+            "dir": "In",
+            "type": "String",
+            "value": "System.IO.Path.GetFullPath(System.IO.Path.Combine(\"output\", \"11-design-summary.png\"))"
+          }
+        ]
+      }
+    },
+    {
+      "act": "ExecuteScriptActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+        "Source": {
+          "lit": "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim()==='明細'}).click(); 'tab'"
+        }
+      }
+    },
+    {
+      "act": "Delay",
+      "props": {
+        "Duration": "TimeSpan.FromSeconds(2)"
+      }
+    },
+    {
+      "act": "ExecuteScriptActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+        "Source": {
+          "lit": "JSON.stringify([window.screenX, window.screenY, window.outerWidth, window.outerHeight, window.devicePixelRatio])"
+        },
+        "Result": "rr"
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"12-design-items \" & rr(0).Value.ToString()"
+      }
+    },
+    {
+      "act": "InvokeCode",
+      "name": "窓を撮る 12-design-items",
+      "props": {
+        "Code": "Dim p = in_Rect.Trim(\"\"\"\"c, \"[\"c, \"]\"c).Split(\",\"c)\nDim r = New Double(4) {} : For k = 0 To 4 : r(k) = Double.Parse(p(k), System.Globalization.CultureInfo.InvariantCulture) : Next\nDim s = r(4)\nDim x = CInt(r(0) * s), y = CInt((r(1) - 32) * s), w = CInt(r(2) * s), h = CInt((r(3) + 32) * s)\nDim bmp As New System.Drawing.Bitmap(w, h)\nUsing g = System.Drawing.Graphics.FromImage(bmp) : g.CopyFromScreen(x, y, 0, 0, bmp.Size) : End Using\nbmp.Save(in_Path, System.Drawing.Imaging.ImageFormat.Png) : bmp.Dispose()"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Rect",
+            "dir": "In",
+            "type": "String",
+            "value": "rr(0).Value.ToString()"
+          },
+          {
+            "name": "in_Path",
+            "dir": "In",
+            "type": "String",
+            "value": "System.IO.Path.GetFullPath(System.IO.Path.Combine(\"output\", \"12-design-items.png\"))"
+          }
+        ]
+      }
+    },
+    {
+      "act": "ExecuteScriptActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13",
+        "Source": {
+          "lit": "window.scrollTo(0, document.body.scrollHeight); 'scrolled'"
+        }
+      }
+    },
+    {
+      "act": "Delay",
+      "props": {
+        "Duration": "TimeSpan.FromSeconds(1)"
+      }
+    },
+    {
+      "act": "InvokeCode",
+      "name": "窓を撮る 13-design-bottom",
+      "props": {
+        "Code": "Dim p = in_Rect.Trim(\"\"\"\"c, \"[\"c, \"]\"c).Split(\",\"c)\nDim r = New Double(4) {} : For k = 0 To 4 : r(k) = Double.Parse(p(k), System.Globalization.CultureInfo.InvariantCulture) : Next\nDim s = r(4)\nDim x = CInt(r(0) * s), y = CInt((r(1) - 32) * s), w = CInt(r(2) * s), h = CInt((r(3) + 32) * s)\nDim bmp As New System.Drawing.Bitmap(w, h)\nUsing g = System.Drawing.Graphics.FromImage(bmp) : g.CopyFromScreen(x, y, 0, 0, bmp.Size) : End Using\nbmp.Save(in_Path, System.Drawing.Imaging.ImageFormat.Png) : bmp.Dispose()"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "in_Rect",
+            "dir": "In",
+            "type": "String",
+            "value": "rr(0).Value.ToString()"
+          },
+          {
+            "name": "in_Path",
+            "dir": "In",
+            "type": "String",
+            "value": "System.IO.Path.GetFullPath(System.IO.Path.Combine(\"output\", \"13-design-bottom.png\"))"
+          }
+        ]
+      }
+    },
+    {
+      "act": "GetFormFieldsActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13"
+      },
+      "dicts": {
+        "Arguments": [
+          {
+            "name": "name",
+            "dir": "Out",
+            "type": "String",
+            "value": "outName"
+          },
+          {
+            "name": "amount",
+            "dir": "Out",
+            "type": "Double",
+            "value": "outAmount"
+          },
+          {
+            "name": "dept",
+            "dir": "Out",
+            "type": "String",
+            "value": "outDept"
+          },
+          {
+            "name": "items",
+            "dir": "Out",
+            "type": "DataTable",
+            "value": "outItems"
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"読んだ: \" & outName & \" \" & outAmount.ToString() & \" \" & outDept & \" 明細 \" & If(outItems Is Nothing, \"(なし)\", outItems.Rows.Count.ToString() & \" 行\")"
+      }
+    },
+    {
+      "act": "CloseFormActivity",
+      "props": {
+        "FormId": "3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13"
+      }
+    }
+  ]
+}

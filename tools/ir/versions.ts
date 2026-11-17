@@ -79,7 +79,9 @@ export function projectPlatform(projectDir: string): Platform {
 
 // 古い抽出器で作ったカタログ：services の項目が無く、readOnly のプロパティも1つも無い。
 // （services が無いだけなら Coded API の無いパッケージ。Persistence と System.Activities がそう）
-function isLegacy(c: { services?: unknown; activities: { props: { readOnly?: boolean }[] }[] }) {
+// format（抽出器の形式。2 以上）があれば、services も readOnly も確かめて書き出したもの（Form のように、どちらも無いパッケージがある）
+function isLegacy(c: { format?: number; services?: unknown; activities: { props: { readOnly?: boolean }[] }[] }) {
+  if ((c.format ?? 0) >= 2) return false;
   return !("services" in c) && !c.activities.some((a) => a.props.some((p) => p.readOnly));
 }
 

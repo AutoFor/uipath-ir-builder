@@ -1,0 +1,22 @@
+{
+  "workflow": "ShowFormActivity_Sync",
+  "variables": [
+    { "name": "name", "type": "String" },
+    { "name": "agree", "type": "Boolean" },
+    { "name": "submitted", "type": "Nullable<Boolean>" }
+  ],
+  "body": [
+    {
+      "act": "ShowFormActivity",
+      "name": "フォームを出して閉じるまで待つ",
+      "props": { "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01", "IsAsync": "False", "Title": { "lit": "入力してください" }, "TopMost": "True", "Result": "submitted" },
+      "dicts": {
+        "Arguments": [
+          { "name": "name", "dir": "InOut", "type": "String", "value": "name" },
+          { "name": "agree", "dir": "Out", "type": "Boolean", "value": "agree" }
+        ]
+      }
+    },
+    { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"入力: \" & name & \" 同意: \" & agree.ToString() & \" 結果: \" & submitted.ToString()" } }
+  ]
+}

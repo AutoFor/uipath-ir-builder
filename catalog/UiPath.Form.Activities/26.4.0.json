@@ -1,0 +1,688 @@
+{
+  "package": "UiPath.Form.Activities",
+  "version": "26.4.0",
+  "assemblies": [
+    "UiPath.Forms.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "BringFormToFrontActivity",
+      "clrType": "UiPath.Forms.Activities.BringFormToFrontActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.HideFormResult[]>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.HideFormResult[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "ChangeFormPropertiesActivity",
+      "clrType": "UiPath.Forms.Activities.ChangeFormPropertiesActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.UpdateFormResult[]>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Height",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.UpdateFormResult[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ShowMargin",
+          "kind": "in",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "Title",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "TopMost",
+          "kind": "in",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "Width",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        },
+        {
+          "name": "WindowState",
+          "kind": "in",
+          "type": "System.Nullable<UiPath.Studio.Forms.Runtime.WindowState>",
+          "required": false,
+          "enum": [
+            "Normal",
+            "Minimized",
+            "Maximized"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ChangeFormPropertiesActivity"
+        }
+      ]
+    },
+    {
+      "className": "CloseFormActivity",
+      "clrType": "UiPath.Forms.Activities.CloseFormActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.FormActionActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FormActionActivity"
+        }
+      ]
+    },
+    {
+      "className": "ExecuteScriptActivity",
+      "clrType": "UiPath.Forms.Activities.ExecuteScriptActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.ExecuteScriptResult[]>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.ExecuteScriptResult[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Source",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExecuteScriptActivity"
+        }
+      ]
+    },
+    {
+      "className": "FormTriggerActivity",
+      "clrType": "UiPath.Forms.Activities.FormTriggerActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 1,
+      "baseType": "BaseFormsActionTriggerActivity<TResultArgs>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Enabled",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "Enabled",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "InterruptibleTriggerBase"
+        },
+        {
+          "name": "Event",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FormTriggerActivity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseFormsActionTriggerActivity"
+        },
+        {
+          "name": "MessageId",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FormTriggerActivity"
+        },
+        {
+          "name": "SchedulingMode",
+          "kind": "prop",
+          "type": "UiPath.Platform.Triggers.TriggerActionSchedulingMode",
+          "required": false,
+          "enum": [
+            "Sequential",
+            "Concurrent",
+            "OneTime",
+            "SequentialCollapse",
+            "SequentialDrop"
+          ],
+          "displayName": "SchedulingMode",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InterruptibleTriggerBase"
+        },
+        {
+          "name": "Tag",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BaseFormsActionTriggerActivity"
+        },
+        {
+          "name": "TriggerId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "displayName": "TriggerId",
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "InterruptibleTriggerBase"
+        }
+      ]
+    },
+    {
+      "className": "GetFormFieldsActivity",
+      "clrType": "UiPath.Forms.Activities.GetFormFieldsActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.GetFormValuesResult>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Arguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.OutArgument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetFormFieldsActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.GetFormValuesResult",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "HideFormActivity",
+      "clrType": "UiPath.Forms.Activities.HideFormActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.HideFormResult[]>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.HideFormResult[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "SetFormFieldsActivity",
+      "clrType": "UiPath.Forms.Activities.SetFormFieldsActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.AsyncFormActionActivity<UiPath.Studio.Forms.Runtime.SetFormValuesResult[]>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Arguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SetFormFieldsActivity"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Studio.Forms.Runtime.SetFormValuesResult[]",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    },
+    {
+      "className": "ShowFormActivity",
+      "clrType": "UiPath.Forms.Activities.ShowFormActivity",
+      "assembly": "UiPath.Forms.Activities",
+      "xmlns": "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Forms.Activities.Base.ShowFormActivityBase",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Arguments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.Argument>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "FormId",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "Height",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "InstanceName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AsyncFormActionActivity"
+        },
+        {
+          "name": "IsAsync",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "Left",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ShowInTaskbar",
+          "kind": "in",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "ShowMargin",
+          "kind": "in",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "Title",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "Top",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "TopMost",
+          "kind": "in",
+          "type": "System.Nullable<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "Width",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        },
+        {
+          "name": "WindowState",
+          "kind": "in",
+          "type": "System.Nullable<UiPath.Studio.Forms.Runtime.WindowState>",
+          "required": false,
+          "enum": [
+            "Normal",
+            "Minimized",
+            "Maximized"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ShowFormActivityBase"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "format": 2
+}

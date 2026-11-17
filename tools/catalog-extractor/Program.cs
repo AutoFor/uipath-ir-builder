@@ -121,8 +121,10 @@ Console.WriteLine($"{opts.Package} {opts.Version}: {activities.Count} activities
 
 // ---------------------------------------------------------------------------
 
+// Format：抽出器の形式。2 は services と readOnly を確かめて書き出したもの（Coded API も読み取り専用のプロパティも無いパッケージを、
+// 古い形式と見分けるため。tools/ir/versions.ts の isLegacy）
 record Catalog(string Package, string Version, List<string> Assemblies, List<ActivityInfo> Activities, List<ServiceInfo>? Services, List<ServiceInfo>? Handles,
-    List<ServiceInfo>? Extensions, SortedDictionary<string, List<string>>? Enums, List<string> Warnings, List<RegistryInfo>? CodedRegistries = null);
+    List<ServiceInfo>? Extensions, SortedDictionary<string, List<string>>? Enums, List<string> Warnings, List<RegistryInfo>? CodedRegistries = null, int Format = 2);
 
 // Coded のサービスの登録（[assembly: CodedWorkflowsServiceRegistry(typeof(X))] の X）。Studio はこれを読んで
 // .local/.codedworkflows/CodedWorkflow.cs を作る。vars は変数名 → 型（excel → IExcelService）、namespaces はそのファイルに足す using
@@ -232,7 +234,9 @@ static class Activities
         var (kind, inner) = Classify(pt);
         var a = Attrs.Of(p.GetCustomAttributesData());
         var valueType = inner ?? pt;
-        var enumType = valueType.IsEnum ? valueType : Nullable.GetUnderlyingType(valueType) is { IsEnum: true } nu ? nu : null;
+        // MetadataLoadContext の型には Nullable.GetUnderlyingType が効かない（実行時の typeof(Nullable<>) と比べるため）。名前で見る
+        var nullableOf = valueType.IsGenericType && valueType.GetGenericTypeDefinition().FullName == "System.Nullable`1" ? valueType.GetGenericArguments()[0] : null;
+        var enumType = valueType.IsEnum ? valueType : nullableOf is { IsEnum: true } nu ? nu : null;
         var converter = enumType == null ? null : Converter(p.GetCustomAttributesData()) ?? Converter(enumType.GetCustomAttributesData());
 
         return new PropInfo(

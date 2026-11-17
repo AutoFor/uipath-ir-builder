@@ -1,0 +1,131 @@
+{
+  "workflow": "FormTriggerActivity_Full",
+  "variables": [
+    {
+      "name": "stp",
+      "type": "Boolean"
+    },
+    {
+      "name": "n",
+      "type": "Int32"
+    }
+  ],
+  "body": [
+    {
+      "act": "ShowFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "トリガー"
+        }
+      }
+    },
+    {
+      "act": "TriggerScope",
+      "item": "args",
+      "props": {
+        "SchedulingMode": "Sequential"
+      },
+      "slots": {
+        "Triggers": [
+          {
+            "act": "FormTriggerActivity",
+            "typeArg": "WindowStateTriggerEventArgs",
+            "name": "窓の状態が変わった",
+            "props": {
+              "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+              "Event": "window.state_changed",
+              "Tag": {
+                "lit": "トリガー"
+              },
+              "Enabled": "True"
+            }
+          },
+          {
+            "act": "RepeatTrigger",
+            "props": {
+              "Interval": "TimeSpan.FromSeconds(3)"
+            }
+          }
+        ],
+        "Action": [
+          {
+            "act": "If",
+            "props": {
+              "Condition": "TypeOf args Is UiPath.Forms.Activities.WindowStateTriggerEventArgs"
+            },
+            "then": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": "\"窓の状態: \" & CType(args, UiPath.Forms.Activities.WindowStateTriggerEventArgs).State.ToString() & \" \" & CType(args, UiPath.Forms.Activities.WindowStateTriggerEventArgs).InstanceName"
+                }
+              },
+              {
+                "act": "StopTriggers",
+                "props": {
+                  "ShouldStop": "stp"
+                }
+              }
+            ],
+            "else": [
+              {
+                "act": "Assign",
+                "typeArg": "Int32",
+                "props": {
+                  "To": "n",
+                  "Value": "n + 1"
+                }
+              },
+              {
+                "act": "If",
+                "props": {
+                  "Condition": "n = 1"
+                },
+                "then": [
+                  {
+                    "act": "ChangeFormPropertiesActivity",
+                    "props": {
+                      "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+                      "InstanceName": {
+                        "lit": "トリガー"
+                      },
+                      "WindowState": "Minimized"
+                    }
+                  }
+                ],
+                "else": [
+                  {
+                    "act": "LogMessage",
+                    "props": {
+                      "Level": "Warn",
+                      "Message": {
+                        "lit": "窓の状態のトリガーが発火しなかった"
+                      }
+                    }
+                  },
+                  {
+                    "act": "StopTriggers",
+                    "props": {
+                      "ShouldStop": "stp"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "act": "CloseFormActivity",
+      "props": {
+        "FormId": "6f0c2a3e-9b1d-4c58-a7e2-1f3b5d7c9a01",
+        "InstanceName": {
+          "lit": "トリガー"
+        }
+      }
+    }
+  ]
+}
