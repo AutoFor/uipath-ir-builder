@@ -80,7 +80,11 @@ test("Form.tsx：型ごとの部品、読むだけ、隠す、必須、結果の
   // 必須（書けるものだけ。入力の applicant は入らない）
   assert.match(t, /!isReadOnly &&\n    formData\.category\.trim\(\) !== '' &&\n    Number\.isFinite\(formData\.approvedAmount\) &&\n    formData\.comment\.trim\(\) !== '';/);
   // 結果：validate: false は必須が空でも押せる。primary は 1 つ
-  assert.match(t, /completeTask\('Approve', formData\)/);
+  assert.match(t, /completeTask\('Approve', toTaskData\(formData, given\.current\)\)/);
+  // 書かなかった欄（タスクに無く、値が空）は送らない（AUT-1212）
+  assert.match(t, /const toTaskData = \(data: FormData, given: Set<string>\)/);
+  assert.match(t, /given\.current = new Set\(Object\.keys\(task\.data \?\? \{\}\)\);/);
+  assert.ok(!/setTaskData\(updated\)/.test(t));
   assert.match(t, /outcome-btn--secondary"\n {10}onClick=\{handleReject\}\n {10}disabled=\{isReadOnly\}/);
   assert.match(t, /outcome-btn--primary"\n {10}onClick=\{handleApprove\}\n {10}disabled=\{!isFormValid\}/);
 });
@@ -96,7 +100,7 @@ test("使わないハンドラは書かない（noUnusedLocals で build が落�
 test("文字は JSX と JS の文字列として崩れない", () => {
   const t = formTsx({ ...base([{ name: "a", dir: "in", type: "string", label: "a{b}<c>" }], [{ name: "it's" }]), title: "x & y" });
   assert.ok(t.includes("a{'{'}b{'}'}{'<'}c{'>'}"));
-  assert.ok(t.includes("completeTask('it\\'s', formData)"));
+  assert.ok(t.includes("completeTask('it\\'s', toTaskData(formData, given.current))"));
   assert.ok(t.includes("x {'&'} y"));
 });
 

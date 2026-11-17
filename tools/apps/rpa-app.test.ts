@@ -314,3 +314,45 @@ test("部品：options は選択肢の部品だけ。部品に無い項目は AP
   assert.deepEqual(codes(one([{ type: "divider", name: "A", text: "x" }])), ["APP_PROP"]);
   assert.deepEqual(codes(one([{ type: "textbox", name: "A", step: 1 }])), ["APP_PROP"]);
 });
+
+// ---- 入れ子・Rich Text・複数ファイル・List・Hide characters・スライダーの既定値（AUT-1212。trial の Debug で確かめた）----
+
+test("container：子は入れ物の childIds に並び、_logicalParent は入れ物。式の Controls.<ページ>.<子> も通る", () => {
+  const a: RpaApp = { app: "T", variables: [{ name: "S", type: "string" }], pages: [{ name: "P", controls: [
+    { type: "container", name: "Box", controls: [
+      { type: "textbox", name: "Pass", label: "合言葉", hideCharacters: true },
+      { type: "container", name: "Inner", controls: [{ type: "list", name: "L", options: ["a", "b"] }] },
+    ] },
+    { type: "richText", name: "Memo", label: "メモ" },
+    { type: "multiFileUpload", name: "Docs", label: "書類" },
+    { type: "button", name: "B", onClick: [{ set: "S", value: "Controls.P.Pass.Value" }] },
+  ] }] };
+  assert.deepEqual(check(a), []);
+  const p = pageOf(generateFiles(a), "P");
+  const ctl = (n: string): any => Object.values(p.controls).find((x: any) => x.name === n);
+  const root = p.controls[p.rootPanelId];
+  assert.deepEqual(root.config.childIds.map((i: string) => p.controls[i].name), ["Box", "Memo", "Docs", "B"]);
+  assert.deepEqual(ctl("Box").config.childIds.map((i: string) => p.controls[i].name), ["Pass", "Inner"]);
+  assert.equal(ctl("Pass")._logicalParent, ctl("Box").id);
+  assert.equal(ctl("L")._logicalParent, ctl("Inner").id);
+  assert.equal(ctl("Pass").properties.hideCharacters.value, true);
+  assert.equal(ctl("Memo").component, "form-rich-text-editor");
+  assert.equal(ctl("Docs").component, "form-multi-file-uploader");
+  const sb = ctl("L").config.sourceBinding;
+  assert.equal(p.expressions[ctl("L").id].expressions[sb.expressionId].expression, '{"a", "b"}.ToListSource()');
+});
+
+test("container の検査：名前の重なりは入れ子もまたぐ。hideCharacters は textbox だけ、controls は container だけ", () => {
+  const pg = (controls: any[]): RpaApp => ({ app: "T", pages: [{ name: "P", controls }] });
+  assert.deepEqual(codes(pg([{ type: "label", name: "A" }, { type: "container", name: "C", controls: [{ type: "label", name: "A" }] }])), ["APP_NAME"]);
+  assert.deepEqual(codes(pg([{ type: "label", name: "A", hideCharacters: true }])), ["APP_PROP"]);
+  assert.deepEqual(codes(pg([{ type: "label", name: "A", controls: [] }])), ["APP_PROP"]);
+  assert.deepEqual(codes(pg([{ type: "container", name: "C", controls: [{ type: "nope", name: "X" }] }])), ["APP_TYPE"]);
+});
+
+test("slider の既定値は isLiteral: false（true のままだと .Value が雛形の 50 のまま）", () => {
+  const p = pageOf(generateFiles(one([{ type: "slider", name: "S", min: 1, max: 40, value: 10 }])), "P");
+  const e = exprOf(p, "S", "sliderValue");
+  assert.deepEqual([e.expression, e.isLiteral], ["10", false]);
+  assert.equal(exprOf(p, "S", "maxValue").isLiteral, true);
+});

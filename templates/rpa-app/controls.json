@@ -16824,5 +16824,2813 @@
     }
    }
   }
+ },
+ "form-rich-text-editor": {
+  "control": {
+   "id": "id0301c143cef4423c8b07618975f049f5",
+   "iconUrl": "assets/svg/form/controls/basic/rich-text-editor.svg",
+   "component": "form-rich-text-editor",
+   "ruleInstances": {},
+   "name": "RichTextEditor",
+   "version": 1,
+   "config": {
+    "id": "ID2779"
+   },
+   "properties": {
+    "placeholder": {
+     "id": "ID2780",
+     "name": "placeholder",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2781",
+      "expressionId": "idc4def0ff5cbb44e4a4abc0c05d97a59b",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2782"
+      }
+     }
+    },
+    "text": {
+     "id": "ID2783",
+     "name": "text",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2784",
+      "expressionId": "id6b73f872ee4e494bae1f2a48c9d39c3b",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2785"
+      }
+     }
+    },
+    "richTextEditorReadOnly": {
+     "id": "ID2786",
+     "name": "richTextEditorReadOnly",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2787",
+      "expressionId": "id1e213d69ec554b4395a754fda775c8fa",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2788"
+      }
+     }
+    },
+    "tooltip": {
+     "id": "ID2789",
+     "name": "tooltip",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2790",
+      "expressionId": "id7cf72fe2d69747648daf1abd756298e1",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2791"
+      }
+     }
+    },
+    "flexDirection": {
+     "id": "ID2792",
+     "name": "flexDirection",
+     "valueType": "string",
+     "value": ""
+    },
+    "verticalAlignment": {
+     "id": "ID2793",
+     "name": "verticalAlignment",
+     "valueType": "string",
+     "value": ""
+    },
+    "horizontalAlignment": {
+     "id": "ID2794",
+     "name": "horizontalAlignment",
+     "valueType": "string",
+     "value": "center"
+    },
+    "controlAlignment": {
+     "id": "ID2795",
+     "name": "controlAlignment",
+     "valueType": "string",
+     "value": "stretch"
+    },
+    "required": {
+     "id": "ID2796",
+     "name": "required",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2797",
+      "expressionId": "id8e365512bf7f400ebd174fde898abb3d",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2798"
+      }
+     }
+    },
+    "requiredErrorMessage": {
+     "id": "ID2799",
+     "name": "requiredErrorMessage",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2800",
+      "expressionId": "ida06f8f7de93b49c191b0ba41e0ef3579",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2801"
+      }
+     }
+    },
+    "label": {
+     "id": "ID2802",
+     "name": "label",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2803",
+      "expressionId": "idc9793fcb076a47378adb73d2068702ac",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2804"
+      }
+     }
+    },
+    "inputControlLabelPosition": {
+     "id": "ID2805",
+     "name": "inputControlLabelPosition",
+     "valueType": "string",
+     "value": "column"
+    },
+    "display": {
+     "id": "ID2806",
+     "name": "display",
+     "valueType": "string",
+     "value": "flex"
+    },
+    "size": {
+     "id": "ID2807",
+     "name": "size",
+     "valueType": "size",
+     "value": {
+      "id": "ID2808",
+      "width": null,
+      "widthUnit": "auto",
+      "height": null,
+      "heightUnit": "auto"
+     }
+    },
+    "minSize": {
+     "id": "ID2809",
+     "name": "minSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID2810",
+      "width": 0,
+      "widthUnit": "px",
+      "height": 0,
+      "heightUnit": "px"
+     }
+    },
+    "maxSize": {
+     "id": "ID2811",
+     "name": "maxSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID2812",
+      "width": null,
+      "widthUnit": "none",
+      "height": null,
+      "heightUnit": "none"
+     }
+    },
+    "verticalOverflow": {
+     "id": "ID2813",
+     "name": "verticalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "horizontalOverflow": {
+     "id": "ID2814",
+     "name": "horizontalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "bold": {
+     "id": "ID2815",
+     "name": "bold",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "italic": {
+     "id": "ID2816",
+     "name": "italic",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "underline": {
+     "id": "ID2817",
+     "name": "underline",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "fontFamily": {
+     "id": "ID2818",
+     "name": "fontFamily",
+     "valueType": "string",
+     "value": "var(--apps-theme-font-family, Noto Sans)"
+    },
+    "fontSize": {
+     "id": "ID2819",
+     "name": "fontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2820",
+      "value": 14,
+      "valueUnit": "px"
+     }
+    },
+    "textColor": {
+     "id": "ID2821",
+     "name": "textColor",
+     "valueType": "string",
+     "value": "#333333"
+    },
+    "backgroundColor": {
+     "id": "ID2822",
+     "name": "backgroundColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "hidden": {
+     "id": "ID2823",
+     "value": ""
+    },
+    "disabled": {
+     "id": "ID2824",
+     "value": ""
+    },
+    "readonly": {
+     "id": "ID2825",
+     "name": "readonly",
+     "valueType": "boolean"
+    },
+    "margin": {
+     "id": "ID2826",
+     "name": "margin",
+     "valueType": "box",
+     "value": {
+      "id": "ID2827",
+      "top": 4,
+      "left": 4,
+      "bottom": 4,
+      "right": 4,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "padding": {
+     "id": "ID2828",
+     "name": "padding",
+     "valueType": "box",
+     "value": {
+      "id": "ID2829"
+     }
+    },
+    "borderColor": {
+     "id": "ID2830",
+     "name": "borderColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontStyle": {
+     "id": "ID2831",
+     "name": "fontStyle",
+     "valueType": "string"
+    },
+    "fontSizeColor": {
+     "id": "ID2832",
+     "name": "fontSizeColor",
+     "valueType": "string"
+    },
+    "borderStyle": {
+     "id": "ID2833",
+     "name": "borderStyle",
+     "valueType": "string",
+     "value": "solid"
+    },
+    "borderThickness": {
+     "id": "ID2834",
+     "name": "borderThickness",
+     "valueType": "box",
+     "value": {
+      "id": "ID2835",
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderRadius": {
+     "id": "ID2836",
+     "name": "borderRadius",
+     "valueType": "corner",
+     "value": {
+      "id": "ID2837",
+      "topLeftUnit": "px",
+      "topRightUnit": "px",
+      "bottomRightUnit": "px",
+      "bottomLeftUnit": "px"
+     }
+    },
+    "boxShadow": {
+     "id": "ID2838",
+     "name": "boxShadow",
+     "valueType": "drop-shadow",
+     "value": {
+      "id": "ID2839"
+     }
+    },
+    "boxShadowColor": {
+     "id": "ID2840",
+     "name": "boxShadowColor",
+     "valueType": "string"
+    },
+    "gridColumn": {
+     "id": "ID2841",
+     "name": "gridColumn",
+     "valueType": "number"
+    },
+    "gridRow": {
+     "id": "ID2842",
+     "name": "gridRow",
+     "valueType": "number"
+    },
+    "gridColumnSpan": {
+     "id": "ID2843",
+     "name": "gridColumnSpan",
+     "valueType": "number"
+    },
+    "gridRowSpan": {
+     "id": "ID2844",
+     "name": "gridRowSpan",
+     "valueType": "number"
+    },
+    "cssClasses": {
+     "id": "ID2845",
+     "name": "cssClasses",
+     "valueType": "string"
+    },
+    "cursor": {
+     "id": "ID2846",
+     "name": "cursor",
+     "valueType": "string"
+    },
+    "opacity": {
+     "id": "ID2847",
+     "name": "opacity",
+     "valueType": "decimal"
+    },
+    "backgroundImageUrl": {
+     "id": "ID2848",
+     "name": "backgroundImageUrl",
+     "valueType": "resolver-list",
+     "value": {
+      "id": "ID2849",
+      "resolvers": [],
+      "customExpressionBuilderDefinition": {
+       "id": "ID2850",
+       "customResolversForRegistration": []
+      }
+     }
+    },
+    "backgroundImageBase64": {
+     "id": "ID2851",
+     "name": "backgroundImageBase64",
+     "valueType": "string"
+    },
+    "backgroundImageDocumentBinding": {
+     "id": "ID2852",
+     "name": "backgroundImageDocumentBinding",
+     "valueType": "document-binding",
+     "value": {
+      "id": "ID2853",
+      "binding": {
+       "id": "ID2854",
+       "rootType": null,
+       "rootSystemName": "",
+       "instanceJPath": "",
+       "objectJPath": "",
+       "itemType": null
+      }
+     }
+    },
+    "backgroundImagePosition": {
+     "id": "ID2855",
+     "name": "backgroundImagePosition",
+     "valueType": "position",
+     "value": {
+      "id": "ID2856"
+     }
+    },
+    "backgroundImageRepeat": {
+     "id": "ID2857",
+     "name": "backgroundImageRepeat",
+     "valueType": "string"
+    },
+    "backgroundImageSize": {
+     "id": "ID2858",
+     "name": "backgroundImageSize",
+     "valueType": "string"
+    },
+    "flexGrow": {
+     "id": "ID2859",
+     "name": "flexGrow",
+     "valueType": "number"
+    },
+    "flexShrink": {
+     "id": "ID2860",
+     "name": "flexShrink",
+     "valueType": "number"
+    },
+    "position": {
+     "id": "ID2861",
+     "name": "position",
+     "valueType": "string"
+    },
+    "absolutePosition": {
+     "id": "ID2862",
+     "name": "absolutePosition",
+     "valueType": "box",
+     "value": {
+      "id": "ID2863"
+     }
+    },
+    "zIndex": {
+     "id": "ID2864",
+     "name": "zIndex",
+     "valueType": "number"
+    },
+    "borderSizeColor": {
+     "id": "ID2865",
+     "name": "borderSizeColor",
+     "valueType": "string"
+    },
+    "spaceBetween": {
+     "id": "ID2866",
+     "name": "spaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2867"
+     }
+    },
+    "resolvableDisabled": {
+     "id": "ID2868",
+     "name": "resolvableDisabled",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2869",
+      "expressionId": "id30ec1dec79bd4a05b2dc31cee840b366",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2870"
+      }
+     }
+    },
+    "resolvableHidden": {
+     "id": "ID2871",
+     "name": "resolvableHidden",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2872",
+      "expressionId": "id8024f08430d64ac2957b313ea00646ed",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2873"
+      }
+     }
+    },
+    "flexScroll": {
+     "id": "ID2874",
+     "name": "flexScroll",
+     "valueType": "boolean"
+    },
+    "isValid": {
+     "id": "ID2875",
+     "name": "isValid",
+     "valueType": "boolean",
+     "value": true
+    },
+    "inputControlLabelSpaceBetween": {
+     "id": "ID2876",
+     "name": "inputControlLabelSpaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2877",
+      "value": 8,
+      "valueUnit": "px"
+     }
+    },
+    "inputControlLabelWidth": {
+     "id": "ID2878",
+     "name": "inputControlLabelWidth",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2879",
+      "value": 250,
+      "valueUnit": "px"
+     }
+    },
+    "coordinates": {
+     "id": "ID2880",
+     "name": "coordinates",
+     "valueType": "string",
+     "value": {
+      "x": 0,
+      "y": 0,
+      "w": 60,
+      "h": 20
+     }
+    },
+    "valueBinding": {
+     "id": "ID2776",
+     "name": "valueBinding",
+     "valueType": "vb-external-binding",
+     "value": {
+      "id": "ID2777",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2778"
+      }
+     }
+    }
+   },
+   "events": {
+    "change": {
+     "id": "ID2775",
+     "eventType": "change",
+     "description": "",
+     "executors": []
+    }
+   },
+   "ruleOutputs": {},
+   "traits": {}
+  },
+  "expressions": {
+   "id": "ID2756",
+   "expressions": {
+    "idc4def0ff5cbb44e4a4abc0c05d97a59b": {
+     "id": "ID2757",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.placeholder.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2758"
+     }
+    },
+    "id6b73f872ee4e494bae1f2a48c9d39c3b": {
+     "id": "ID2759",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.text.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2760"
+     }
+    },
+    "id1e213d69ec554b4395a754fda775c8fa": {
+     "id": "ID2761",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.richTextEditorReadOnly.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2762"
+     }
+    },
+    "id7cf72fe2d69747648daf1abd756298e1": {
+     "id": "ID2763",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.tooltip.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2764"
+     }
+    },
+    "id8e365512bf7f400ebd174fde898abb3d": {
+     "id": "ID2765",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.required.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2766"
+     }
+    },
+    "ida06f8f7de93b49c191b0ba41e0ef3579": {
+     "id": "ID2767",
+     "expression": "\"Required field\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.requiredErrorMessage.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2768"
+     }
+    },
+    "idc9793fcb076a47378adb73d2068702ac": {
+     "id": "ID2769",
+     "expression": "\"Label\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.label.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2770"
+     }
+    },
+    "id30ec1dec79bd4a05b2dc31cee840b366": {
+     "id": "ID2771",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.resolvableDisabled.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2772"
+     }
+    },
+    "id8024f08430d64ac2957b313ea00646ed": {
+     "id": "ID2773",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id0301c143cef4423c8b07618975f049f5.properties.resolvableHidden.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2774"
+     }
+    }
+   }
+  }
+ },
+ "form-multi-file-uploader": {
+  "control": {
+   "id": "id7a488c1bdd4145cc919883ee597ca0b5",
+   "iconUrl": "assets/svg/form/controls/basic/file-picker.svg",
+   "component": "form-multi-file-uploader",
+   "ruleInstances": {},
+   "name": "MultiFileUploader",
+   "version": 1,
+   "config": {
+    "id": "ID2904"
+   },
+   "properties": {
+    "flexDirection": {
+     "id": "ID2905",
+     "name": "flexDirection",
+     "valueType": "string",
+     "value": ""
+    },
+    "verticalAlignment": {
+     "id": "ID2906",
+     "name": "verticalAlignment",
+     "valueType": "string",
+     "value": ""
+    },
+    "tooltip": {
+     "id": "ID2907",
+     "name": "tooltip",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2908",
+      "expressionId": "id0848b35a31294292a28cab4f5c998cdc",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2909"
+      }
+     }
+    },
+    "required": {
+     "id": "ID2910",
+     "name": "required",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2911",
+      "expressionId": "idd1428a67e8244cf3a33ffe0ba1555b27",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2912"
+      }
+     }
+    },
+    "requiredErrorMessage": {
+     "id": "ID2913",
+     "name": "requiredErrorMessage",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2914",
+      "expressionId": "id351c45ca74074a8faa3989deed4c257f",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2915"
+      }
+     }
+    },
+    "label": {
+     "id": "ID2916",
+     "name": "label",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2917",
+      "expressionId": "id992926c3924048f1aae779715f2683ed",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2918"
+      }
+     }
+    },
+    "inputControlLabelPosition": {
+     "id": "ID2919",
+     "name": "inputControlLabelPosition",
+     "valueType": "string",
+     "value": "column"
+    },
+    "display": {
+     "id": "ID2920",
+     "name": "display",
+     "valueType": "string",
+     "value": "flex"
+    },
+    "size": {
+     "id": "ID2921",
+     "name": "size",
+     "valueType": "size",
+     "value": {
+      "id": "ID2922",
+      "width": null,
+      "widthUnit": "auto",
+      "height": null,
+      "heightUnit": "auto"
+     }
+    },
+    "minSize": {
+     "id": "ID2923",
+     "name": "minSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID2924",
+      "width": 0,
+      "widthUnit": "px",
+      "height": 0,
+      "heightUnit": "px"
+     }
+    },
+    "maxSize": {
+     "id": "ID2925",
+     "name": "maxSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID2926",
+      "width": null,
+      "widthUnit": "none",
+      "height": null,
+      "heightUnit": "none"
+     }
+    },
+    "verticalOverflow": {
+     "id": "ID2927",
+     "name": "verticalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "horizontalOverflow": {
+     "id": "ID2928",
+     "name": "horizontalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "bold": {
+     "id": "ID2929",
+     "name": "bold",
+     "valueType": "boolean",
+     "value": false
+    },
+    "italic": {
+     "id": "ID2930",
+     "name": "italic",
+     "valueType": "boolean",
+     "value": false
+    },
+    "underline": {
+     "id": "ID2931",
+     "name": "underline",
+     "valueType": "boolean"
+    },
+    "fontFamily": {
+     "id": "ID2932",
+     "name": "fontFamily",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontSize": {
+     "id": "ID2933",
+     "name": "fontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2934",
+      "value": 14,
+      "valueUnit": "px"
+     }
+    },
+    "textColor": {
+     "id": "ID2935",
+     "name": "textColor",
+     "valueType": "string",
+     "value": "#333333"
+    },
+    "backgroundColor": {
+     "id": "ID2936",
+     "name": "backgroundColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "hidden": {
+     "id": "ID2937",
+     "value": ""
+    },
+    "disabled": {
+     "id": "ID2938",
+     "value": ""
+    },
+    "readonly": {
+     "id": "ID2939",
+     "name": "readonly",
+     "valueType": "boolean"
+    },
+    "margin": {
+     "id": "ID2940",
+     "name": "margin",
+     "valueType": "box",
+     "value": {
+      "id": "ID2941",
+      "top": 4,
+      "left": 4,
+      "bottom": 4,
+      "right": 4,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "padding": {
+     "id": "ID2942",
+     "name": "padding",
+     "valueType": "box",
+     "value": {
+      "id": "ID2943",
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderColor": {
+     "id": "ID2944",
+     "name": "borderColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontStyle": {
+     "id": "ID2945",
+     "name": "fontStyle",
+     "valueType": "string"
+    },
+    "fontSizeColor": {
+     "id": "ID2946",
+     "name": "fontSizeColor",
+     "valueType": "string"
+    },
+    "borderStyle": {
+     "id": "ID2947",
+     "name": "borderStyle",
+     "valueType": "string",
+     "value": "solid"
+    },
+    "borderThickness": {
+     "id": "ID2948",
+     "name": "borderThickness",
+     "valueType": "box",
+     "value": {
+      "id": "ID2949"
+     }
+    },
+    "borderRadius": {
+     "id": "ID2950",
+     "name": "borderRadius",
+     "valueType": "corner",
+     "value": {
+      "id": "ID2951"
+     }
+    },
+    "boxShadow": {
+     "id": "ID2952",
+     "name": "boxShadow",
+     "valueType": "drop-shadow",
+     "value": {
+      "id": "ID2953"
+     }
+    },
+    "boxShadowColor": {
+     "id": "ID2954",
+     "name": "boxShadowColor",
+     "valueType": "string"
+    },
+    "gridColumn": {
+     "id": "ID2955",
+     "name": "gridColumn",
+     "valueType": "number"
+    },
+    "gridRow": {
+     "id": "ID2956",
+     "name": "gridRow",
+     "valueType": "number"
+    },
+    "gridColumnSpan": {
+     "id": "ID2957",
+     "name": "gridColumnSpan",
+     "valueType": "number"
+    },
+    "gridRowSpan": {
+     "id": "ID2958",
+     "name": "gridRowSpan",
+     "valueType": "number"
+    },
+    "cssClasses": {
+     "id": "ID2959",
+     "name": "cssClasses",
+     "valueType": "string"
+    },
+    "cursor": {
+     "id": "ID2960",
+     "name": "cursor",
+     "valueType": "string"
+    },
+    "opacity": {
+     "id": "ID2961",
+     "name": "opacity",
+     "valueType": "decimal"
+    },
+    "backgroundImageUrl": {
+     "id": "ID2962",
+     "name": "backgroundImageUrl",
+     "valueType": "resolver-list",
+     "value": {
+      "id": "ID2963",
+      "resolvers": [],
+      "customExpressionBuilderDefinition": {
+       "id": "ID2964",
+       "customResolversForRegistration": []
+      }
+     }
+    },
+    "backgroundImageBase64": {
+     "id": "ID2965",
+     "name": "backgroundImageBase64",
+     "valueType": "string"
+    },
+    "backgroundImageDocumentBinding": {
+     "id": "ID2966",
+     "name": "backgroundImageDocumentBinding",
+     "valueType": "document-binding",
+     "value": {
+      "id": "ID2967",
+      "binding": {
+       "id": "ID2968",
+       "rootType": null,
+       "rootSystemName": "",
+       "instanceJPath": "",
+       "objectJPath": "",
+       "itemType": null
+      }
+     }
+    },
+    "backgroundImagePosition": {
+     "id": "ID2969",
+     "name": "backgroundImagePosition",
+     "valueType": "position",
+     "value": {
+      "id": "ID2970"
+     }
+    },
+    "backgroundImageRepeat": {
+     "id": "ID2971",
+     "name": "backgroundImageRepeat",
+     "valueType": "string"
+    },
+    "backgroundImageSize": {
+     "id": "ID2972",
+     "name": "backgroundImageSize",
+     "valueType": "string"
+    },
+    "flexGrow": {
+     "id": "ID2973",
+     "name": "flexGrow",
+     "valueType": "number"
+    },
+    "flexShrink": {
+     "id": "ID2974",
+     "name": "flexShrink",
+     "valueType": "number"
+    },
+    "position": {
+     "id": "ID2975",
+     "name": "position",
+     "valueType": "string"
+    },
+    "absolutePosition": {
+     "id": "ID2976",
+     "name": "absolutePosition",
+     "valueType": "box",
+     "value": {
+      "id": "ID2977"
+     }
+    },
+    "zIndex": {
+     "id": "ID2978",
+     "name": "zIndex",
+     "valueType": "number"
+    },
+    "borderSizeColor": {
+     "id": "ID2979",
+     "name": "borderSizeColor",
+     "valueType": "string"
+    },
+    "spaceBetween": {
+     "id": "ID2980",
+     "name": "spaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2981"
+     }
+    },
+    "resolvableDisabled": {
+     "id": "ID2982",
+     "name": "resolvableDisabled",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2983",
+      "expressionId": "id0b3462252a934dff879b4ceaf4947518",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2984"
+      }
+     }
+    },
+    "resolvableHidden": {
+     "id": "ID2985",
+     "name": "resolvableHidden",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID2986",
+      "expressionId": "idee442a5669e14872b963c910b456614e",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2987"
+      }
+     }
+    },
+    "flexScroll": {
+     "id": "ID2988",
+     "name": "flexScroll",
+     "valueType": "boolean"
+    },
+    "isValid": {
+     "id": "ID2989",
+     "name": "isValid",
+     "valueType": "boolean",
+     "value": true
+    },
+    "maxFileSize": {
+     "id": "ID2990",
+     "name": "maxFileSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2991",
+      "value": 10,
+      "valueUnit": "MB"
+     }
+    },
+    "inputControlLabelFontFamily": {
+     "id": "ID2992",
+     "name": "inputControlLabelFontFamily",
+     "valueType": "string",
+     "value": ""
+    },
+    "inputControlLabelFontSize": {
+     "id": "ID2993",
+     "name": "inputControlLabelFontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID2994",
+      "value": 14,
+      "valueUnit": "px"
+     }
+    },
+    "inputControlLabelTextColor": {
+     "id": "ID2995",
+     "name": "inputControlLabelTextColor",
+     "valueType": "string",
+     "value": "#333333"
+    },
+    "inputControlLabelBold": {
+     "id": "ID2996",
+     "name": "inputControlLabelBold",
+     "valueType": "boolean",
+     "value": false
+    },
+    "inputControlLabelItalic": {
+     "id": "ID2997",
+     "name": "inputControlLabelItalic",
+     "valueType": "boolean",
+     "value": false
+    },
+    "inputControlLabelUnderline": {
+     "id": "ID2998",
+     "name": "inputControlLabelUnderline",
+     "valueType": "boolean",
+     "value": false
+    },
+    "horizontalAlignment": {
+     "id": "ID2999",
+     "name": "horizontalAlignment",
+     "valueType": "string",
+     "value": "center"
+    },
+    "controlAlignment": {
+     "id": "ID3000",
+     "name": "controlAlignment",
+     "valueType": "string",
+     "value": ""
+    },
+    "inputControlLabelSpaceBetween": {
+     "id": "ID3001",
+     "name": "inputControlLabelSpaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3002",
+      "value": 8,
+      "valueUnit": "px"
+     }
+    },
+    "inputControlLabelWidth": {
+     "id": "ID3003",
+     "name": "inputControlLabelWidth",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3004",
+      "value": 250,
+      "valueUnit": "px"
+     }
+    },
+    "text": {
+     "id": "ID3005",
+     "name": "text",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3006",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3007"
+      }
+     }
+    },
+    "fileName": {
+     "id": "ID3008",
+     "name": "fileName",
+     "valueType": "string",
+     "value": ""
+    },
+    "fileSize": {
+     "id": "ID3009",
+     "name": "fileSize",
+     "valueType": "number",
+     "value": 0
+    },
+    "fileType": {
+     "id": "ID3010",
+     "name": "fileType",
+     "valueType": "string",
+     "value": ""
+    },
+    "fileNameWithoutType": {
+     "id": "ID3011",
+     "name": "fileNameWithoutType",
+     "valueType": "string",
+     "value": ""
+    },
+    "coordinates": {
+     "id": "ID3012",
+     "name": "coordinates",
+     "valueType": "string",
+     "value": {
+      "x": 0,
+      "y": 0,
+      "w": 17.5,
+      "h": 4.35
+     }
+    },
+    "valueBinding": {
+     "id": "ID2896",
+     "name": "valueBinding",
+     "valueType": "vb-external-binding",
+     "value": {
+      "id": "ID2897",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID2898"
+      }
+     }
+    },
+    "allowedFileTypes": {
+     "id": "ID2899",
+     "name": "allowedFileTypes",
+     "valueType": "string"
+    },
+    "helperText": {
+     "id": "ID2900",
+     "name": "helperText",
+     "valueType": "string"
+    },
+    "fileUploadingState": {
+     "id": "ID2901",
+     "name": "fileUploadingState",
+     "valueType": "string"
+    },
+    "inputControlLabelFontSizeColor": {
+     "id": "ID2902",
+     "name": "inputControlLabelFontSizeColor",
+     "valueType": "string"
+    },
+    "inputControlLabelFontStyle": {
+     "id": "ID2903",
+     "name": "inputControlLabelFontStyle",
+     "valueType": "string"
+    }
+   },
+   "events": {
+    "fileListUpdated": {
+     "id": "ID2895",
+     "eventType": "fileListUpdated",
+     "description": "",
+     "executors": []
+    }
+   },
+   "ruleOutputs": {},
+   "traits": {}
+  },
+  "expressions": {
+   "id": "ID2882",
+   "expressions": {
+    "id0848b35a31294292a28cab4f5c998cdc": {
+     "id": "ID2883",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.tooltip.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2884"
+     }
+    },
+    "idd1428a67e8244cf3a33ffe0ba1555b27": {
+     "id": "ID2885",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.required.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2886"
+     }
+    },
+    "id351c45ca74074a8faa3989deed4c257f": {
+     "id": "ID2887",
+     "expression": "\"Required field\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.requiredErrorMessage.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2888"
+     }
+    },
+    "id992926c3924048f1aae779715f2683ed": {
+     "id": "ID2889",
+     "expression": "\"Label\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.label.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2890"
+     }
+    },
+    "id0b3462252a934dff879b4ceaf4947518": {
+     "id": "ID2891",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.resolvableDisabled.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2892"
+     }
+    },
+    "idee442a5669e14872b963c910b456614e": {
+     "id": "ID2893",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id7a488c1bdd4145cc919883ee597ca0b5.properties.resolvableHidden.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID2894"
+     }
+    }
+   }
+  }
+ },
+ "form-edit-grid-vb": {
+  "control": {
+   "id": "id8536aee0801d43b3ac4ea26e10fbd756",
+   "iconUrl": "assets/svg/form/controls/basic/grid.svg",
+   "component": "form-edit-grid-vb",
+   "ruleInstances": {},
+   "name": "EditGrid",
+   "version": 1,
+   "config": {
+    "id": "ID3053",
+    "sourceBinding": {
+     "id": "ID3054",
+     "expressionId": "id282089498c694fe487ad0195c441d78b",
+     "expressionBuilderInstance": "query",
+     "workflow": {
+      "id": "ID3055",
+      "workflowId": null,
+      "workflowPath": null,
+      "isWorkflow": true
+     }
+    },
+    "selectedItemBinding": {
+     "expressionId": "idd5b180aca65a4c069cb500fa0acdd662",
+     "isLiteral": true
+    },
+    "columns": [
+     {
+      "id": "ID3030",
+      "headingExpression": {
+       "id": "ID3056",
+       "expressionId": "id9dd29f02033747c48ee1838abe88d6f4",
+       "expressionBuilderInstance": "query",
+       "workflow": {
+        "id": "ID3057"
+       }
+      },
+      "valueExpression": {
+       "expressionId": "id7a0a5ce4b76c4e75b65aa5be6372c9af",
+       "isLiteral": true
+      },
+      "hidden": {
+       "expressionId": "id29dbc44e46b24829b8f71a8a0a61e6f1",
+       "defaultExpression": "false",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "gridEditable": {
+       "expressionId": "idc3a1b86e9bb64b7d8af650b2c7c4cec0",
+       "defaultExpression": "true",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "columnWidth": {
+       "value": null,
+       "valueUnit": "auto"
+      },
+      "columnType": "string",
+      "gridColumnEditor": "textBox",
+      "listSource": {
+       "expressionId": "id017f2fa7fe8843579b5d874f6339cd91",
+       "isLiteral": true
+      },
+      "listColumnBinding": {
+       "expressionId": "id39b9dc8e674d49dfa675603632875b03",
+       "isLiteral": true
+      }
+     },
+     {
+      "id": "ID3031",
+      "headingExpression": {
+       "id": "ID3058",
+       "expressionId": "idc0a52c952cbf4b1292482b36578a8b69",
+       "expressionBuilderInstance": "query",
+       "workflow": {
+        "id": "ID3059"
+       }
+      },
+      "valueExpression": {
+       "expressionId": "idf3d9bd8713c64e9bad9640ee65f7139c",
+       "isLiteral": true
+      },
+      "hidden": {
+       "expressionId": "id9730489b92004e34ad6e6a4a75ebab89",
+       "defaultExpression": "false",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "gridEditable": {
+       "expressionId": "idf5841fb12f6646ae8b84c7fc4ae0e915",
+       "defaultExpression": "true",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "columnWidth": {
+       "value": null,
+       "valueUnit": "auto"
+      },
+      "columnType": "string",
+      "gridColumnEditor": "textBox",
+      "listSource": {
+       "expressionId": "id2948b57ab9bf4097a3c23827cba780ab",
+       "isLiteral": true
+      },
+      "listColumnBinding": {
+       "expressionId": "idc23fdfbcf6a2411f92ee02e9134e6c87",
+       "isLiteral": true
+      }
+     },
+     {
+      "id": "ID3032",
+      "headingExpression": {
+       "id": "ID3060",
+       "expressionId": "id5ee55b09422e442ba1f4e6a69470dcd0",
+       "expressionBuilderInstance": "query",
+       "workflow": {
+        "id": "ID3061"
+       }
+      },
+      "valueExpression": {
+       "expressionId": "idf15911271e8842b7a1a3d32436948d84",
+       "isLiteral": true
+      },
+      "hidden": {
+       "expressionId": "id7430e52a87104757a8664ab16d425081",
+       "defaultExpression": "false",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "gridEditable": {
+       "expressionId": "idb1d6b503d20c4053aaefd28e35c37c4e",
+       "defaultExpression": "true",
+       "controlId": "id8536aee0801d43b3ac4ea26e10fbd756",
+       "isLiteral": true
+      },
+      "columnWidth": {
+       "value": null,
+       "valueUnit": "auto"
+      },
+      "columnType": "string",
+      "gridColumnEditor": "textBox",
+      "listSource": {
+       "expressionId": "id39dcc58a00f24ef4a3744aa4322a9d3b",
+       "isLiteral": true
+      },
+      "listColumnBinding": {
+       "expressionId": "id3ad0df5b5e004b9dbbf6f1cc0235b9ae",
+       "isLiteral": true
+      }
+     }
+    ]
+   },
+   "properties": {
+    "flexDirection": {
+     "id": "ID3062",
+     "name": "flexDirection",
+     "valueType": "string",
+     "value": ""
+    },
+    "verticalAlignment": {
+     "id": "ID3063",
+     "name": "verticalAlignment",
+     "valueType": "string",
+     "value": ""
+    },
+    "gridEditable": {
+     "id": "ID3064",
+     "name": "gridEditable",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3065",
+      "expressionId": "id17f6d65f96c64ed695fd2cbe47950580",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3066"
+      }
+     }
+    },
+    "gridDeletable": {
+     "id": "ID3067",
+     "name": "gridDeletable",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3068",
+      "expressionId": "id3b229c42ff124ae3837fbda4f8b72e26",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3069"
+      }
+     }
+    },
+    "gridAddable": {
+     "id": "ID3070",
+     "name": "gridAddable",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3071",
+      "expressionId": "id6d20710a2e0243b4ba1f4739e40c7427",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3072"
+      }
+     }
+    },
+    "gridSearchable": {
+     "id": "ID3073",
+     "name": "gridSearchable",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3074",
+      "expressionId": "id5647e0c547d44ccc9c12b5a64c39f027",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3075"
+      }
+     }
+    },
+    "gridWrapHeaders": {
+     "id": "ID3076",
+     "name": "gridWrapHeaders",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3077",
+      "expressionId": "id70c6df9380f548588e5674b0148fa5f2",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3078"
+      }
+     }
+    },
+    "display": {
+     "id": "ID3079",
+     "name": "display",
+     "valueType": "string",
+     "value": "flex"
+    },
+    "size": {
+     "id": "ID3080",
+     "name": "size",
+     "valueType": "size",
+     "value": {
+      "id": "ID3081",
+      "width": null,
+      "widthUnit": "auto",
+      "height": null,
+      "heightUnit": "auto"
+     }
+    },
+    "minSize": {
+     "id": "ID3082",
+     "name": "minSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID3083",
+      "width": 0,
+      "widthUnit": "px",
+      "height": 0,
+      "heightUnit": "px"
+     }
+    },
+    "maxSize": {
+     "id": "ID3084",
+     "name": "maxSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID3085",
+      "width": null,
+      "widthUnit": "none",
+      "height": null,
+      "heightUnit": "none"
+     }
+    },
+    "verticalOverflow": {
+     "id": "ID3086",
+     "name": "verticalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "horizontalOverflow": {
+     "id": "ID3087",
+     "name": "horizontalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "bold": {
+     "id": "ID3088",
+     "name": "bold",
+     "valueType": "boolean"
+    },
+    "italic": {
+     "id": "ID3089",
+     "name": "italic",
+     "valueType": "boolean"
+    },
+    "underline": {
+     "id": "ID3090",
+     "name": "underline",
+     "valueType": "boolean"
+    },
+    "fontFamily": {
+     "id": "ID3091",
+     "name": "fontFamily",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontSize": {
+     "id": "ID3092",
+     "name": "fontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3093",
+      "value": 14,
+      "valueUnit": "px"
+     }
+    },
+    "textColor": {
+     "id": "ID3094",
+     "name": "textColor",
+     "valueType": "string",
+     "value": "#333333"
+    },
+    "backgroundColor": {
+     "id": "ID3095",
+     "name": "backgroundColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "hidden": {
+     "id": "ID3096",
+     "value": ""
+    },
+    "disabled": {
+     "id": "ID3097",
+     "value": ""
+    },
+    "readonly": {
+     "id": "ID3098",
+     "name": "readonly",
+     "valueType": "boolean"
+    },
+    "margin": {
+     "id": "ID3099",
+     "name": "margin",
+     "valueType": "box",
+     "value": {
+      "id": "ID3100",
+      "top": 4,
+      "left": 4,
+      "bottom": 4,
+      "right": 4,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "padding": {
+     "id": "ID3101",
+     "name": "padding",
+     "valueType": "box",
+     "value": {
+      "id": "ID3102",
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderColor": {
+     "id": "ID3103",
+     "name": "borderColor",
+     "valueType": "string",
+     "value": "#A4B1B8"
+    },
+    "fontStyle": {
+     "id": "ID3104",
+     "name": "fontStyle",
+     "valueType": "string"
+    },
+    "fontSizeColor": {
+     "id": "ID3105",
+     "name": "fontSizeColor",
+     "valueType": "string"
+    },
+    "borderStyle": {
+     "id": "ID3106",
+     "name": "borderStyle",
+     "valueType": "string",
+     "value": "solid"
+    },
+    "borderThickness": {
+     "id": "ID3107",
+     "name": "borderThickness",
+     "valueType": "box",
+     "value": {
+      "id": "ID3108"
+     }
+    },
+    "borderRadius": {
+     "id": "ID3109",
+     "name": "borderRadius",
+     "valueType": "corner",
+     "value": {
+      "id": "ID3110",
+      "topLeft": 3,
+      "topRight": 3,
+      "bottomRight": 3,
+      "bottomLeft": 3,
+      "topLeftUnit": "px",
+      "topRightUnit": "px",
+      "bottomRightUnit": "px",
+      "bottomLeftUnit": "px"
+     }
+    },
+    "boxShadow": {
+     "id": "ID3111",
+     "name": "boxShadow",
+     "valueType": "drop-shadow",
+     "value": {
+      "id": "ID3112"
+     }
+    },
+    "boxShadowColor": {
+     "id": "ID3113",
+     "name": "boxShadowColor",
+     "valueType": "string"
+    },
+    "gridColumn": {
+     "id": "ID3114",
+     "name": "gridColumn",
+     "valueType": "number"
+    },
+    "gridRow": {
+     "id": "ID3115",
+     "name": "gridRow",
+     "valueType": "number"
+    },
+    "gridColumnSpan": {
+     "id": "ID3116",
+     "name": "gridColumnSpan",
+     "valueType": "number"
+    },
+    "gridRowSpan": {
+     "id": "ID3117",
+     "name": "gridRowSpan",
+     "valueType": "number"
+    },
+    "cssClasses": {
+     "id": "ID3118",
+     "name": "cssClasses",
+     "valueType": "string"
+    },
+    "cursor": {
+     "id": "ID3119",
+     "name": "cursor",
+     "valueType": "string"
+    },
+    "opacity": {
+     "id": "ID3120",
+     "name": "opacity",
+     "valueType": "decimal"
+    },
+    "backgroundImageUrl": {
+     "id": "ID3121",
+     "name": "backgroundImageUrl",
+     "valueType": "resolver-list",
+     "value": {
+      "id": "ID3122",
+      "resolvers": [],
+      "customExpressionBuilderDefinition": {
+       "id": "ID3123",
+       "customResolversForRegistration": []
+      }
+     }
+    },
+    "backgroundImageBase64": {
+     "id": "ID3124",
+     "name": "backgroundImageBase64",
+     "valueType": "string"
+    },
+    "backgroundImageDocumentBinding": {
+     "id": "ID3125",
+     "name": "backgroundImageDocumentBinding",
+     "valueType": "document-binding",
+     "value": {
+      "id": "ID3126",
+      "binding": {
+       "id": "ID3127",
+       "rootType": null,
+       "rootSystemName": "",
+       "instanceJPath": "",
+       "objectJPath": "",
+       "itemType": null
+      }
+     }
+    },
+    "backgroundImagePosition": {
+     "id": "ID3128",
+     "name": "backgroundImagePosition",
+     "valueType": "position",
+     "value": {
+      "id": "ID3129"
+     }
+    },
+    "backgroundImageRepeat": {
+     "id": "ID3130",
+     "name": "backgroundImageRepeat",
+     "valueType": "string"
+    },
+    "backgroundImageSize": {
+     "id": "ID3131",
+     "name": "backgroundImageSize",
+     "valueType": "string"
+    },
+    "flexGrow": {
+     "id": "ID3132",
+     "name": "flexGrow",
+     "valueType": "number"
+    },
+    "flexShrink": {
+     "id": "ID3133",
+     "name": "flexShrink",
+     "valueType": "number"
+    },
+    "position": {
+     "id": "ID3134",
+     "name": "position",
+     "valueType": "string"
+    },
+    "absolutePosition": {
+     "id": "ID3135",
+     "name": "absolutePosition",
+     "valueType": "box",
+     "value": {
+      "id": "ID3136"
+     }
+    },
+    "zIndex": {
+     "id": "ID3137",
+     "name": "zIndex",
+     "valueType": "number"
+    },
+    "borderSizeColor": {
+     "id": "ID3138",
+     "name": "borderSizeColor",
+     "valueType": "string"
+    },
+    "spaceBetween": {
+     "id": "ID3139",
+     "name": "spaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3140"
+     }
+    },
+    "resolvableDisabled": {
+     "id": "ID3141",
+     "name": "resolvableDisabled",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3142",
+      "expressionId": "id81e8a2455dd0429abecf687f682c5f2e",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3143"
+      }
+     }
+    },
+    "resolvableHidden": {
+     "id": "ID3144",
+     "name": "resolvableHidden",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3145",
+      "expressionId": "id217694f15af94879a7934062b18e31cc",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3146"
+      }
+     }
+    },
+    "flexScroll": {
+     "id": "ID3147",
+     "name": "flexScroll",
+     "valueType": "boolean"
+    },
+    "horizontalAlignment": {
+     "id": "ID3148",
+     "name": "horizontalAlignment",
+     "valueType": "string",
+     "value": ""
+    },
+    "coordinates": {
+     "id": "ID3149",
+     "name": "coordinates",
+     "valueType": "string",
+     "value": {
+      "x": 0,
+      "y": 0,
+      "w": 60,
+      "h": 16
+     }
+    },
+    "controlAlignment": {
+     "id": "ID3150",
+     "name": "controlAlignment",
+     "valueType": "string",
+     "value": "stretch"
+    },
+    "backgroundTableHeaderColor": {
+     "id": "ID3151",
+     "name": "backgroundTableHeaderColor",
+     "valueType": "string",
+     "value": "var(--apps-theme-secondary-color, #f1f6f8)"
+    },
+    "backgroundTableBodyColor": {
+     "id": "ID3152",
+     "name": "backgroundTableBodyColor",
+     "valueType": "string",
+     "value": "#ffffff"
+    },
+    "fontFamilyTableHeader": {
+     "id": "ID3153",
+     "name": "fontFamilyTableHeader",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontSizeTableHeader": {
+     "id": "ID3154",
+     "name": "fontSizeTableHeader",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3155",
+      "value": 14,
+      "valueUnit": "px"
+     }
+    },
+    "textColorTableHeader": {
+     "id": "ID3156",
+     "name": "textColorTableHeader",
+     "valueType": "string",
+     "value": "#333333"
+    },
+    "boldTableHeader": {
+     "id": "ID3157",
+     "name": "boldTableHeader",
+     "valueType": "boolean",
+     "value": true
+    },
+    "valueBinding": {
+     "id": "ID3043",
+     "name": "valueBinding",
+     "valueType": "vb-external-binding",
+     "value": {
+      "id": "ID3044",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3045"
+      }
+     }
+    },
+    "fontSizeColorTableHeader": {
+     "id": "ID3046",
+     "name": "fontSizeColorTableHeader",
+     "valueType": "string"
+    },
+    "fontStyleTableHeader": {
+     "id": "ID3047",
+     "name": "fontStyleTableHeader",
+     "valueType": "string"
+    },
+    "underlineTableHeader": {
+     "id": "ID3048",
+     "name": "underlineTableHeader",
+     "valueType": "boolean"
+    },
+    "italicTableHeader": {
+     "id": "ID3049",
+     "name": "italicTableHeader",
+     "valueType": "boolean"
+    },
+    "selectedObject": {
+     "id": "ID3050",
+     "name": "selectedObject",
+     "valueType": "vb-external-binding",
+     "value": {
+      "id": "ID3051",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3052"
+      }
+     }
+    }
+   },
+   "events": {
+    "rowSelected": {
+     "id": "ID3039",
+     "eventType": "rowSelected",
+     "description": "",
+     "executors": []
+    },
+    "rowAdded": {
+     "id": "ID3040",
+     "eventType": "rowAdded",
+     "description": "",
+     "executors": []
+    },
+    "rowModified": {
+     "id": "ID3041",
+     "eventType": "rowModified",
+     "description": "",
+     "executors": []
+    },
+    "rowDeleted": {
+     "id": "ID3042",
+     "eventType": "rowDeleted",
+     "description": "",
+     "executors": []
+    }
+   },
+   "ruleOutputs": {},
+   "traits": {}
+  },
+  "expressions": {
+   "id": "ID3013",
+   "expressions": {
+    "id17f6d65f96c64ed695fd2cbe47950580": {
+     "id": "ID3014",
+     "expression": "true",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.gridEditable.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3015"
+     }
+    },
+    "id3b229c42ff124ae3837fbda4f8b72e26": {
+     "id": "ID3016",
+     "expression": "true",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.gridDeletable.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3017"
+     }
+    },
+    "id6d20710a2e0243b4ba1f4739e40c7427": {
+     "id": "ID3018",
+     "expression": "true",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.gridAddable.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3019"
+     }
+    },
+    "id5647e0c547d44ccc9c12b5a64c39f027": {
+     "id": "ID3020",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.gridSearchable.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3021"
+     }
+    },
+    "id70c6df9380f548588e5674b0148fa5f2": {
+     "id": "ID3022",
+     "expression": "true",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.gridWrapHeaders.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3023"
+     }
+    },
+    "id81e8a2455dd0429abecf687f682c5f2e": {
+     "id": "ID3024",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.resolvableDisabled.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3025"
+     }
+    },
+    "id217694f15af94879a7934062b18e31cc": {
+     "id": "ID3026",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.properties.resolvableHidden.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3027"
+     }
+    },
+    "id282089498c694fe487ad0195c441d78b": {
+     "id": "ID3028",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.config.sourceBinding",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3029"
+     }
+    },
+    "id9dd29f02033747c48ee1838abe88d6f4": {
+     "id": "ID3033",
+     "expression": "\"Column heading\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.config.columns[?(@.id==\"ID3030\")].headingExpression",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3034"
+     }
+    },
+    "idc0a52c952cbf4b1292482b36578a8b69": {
+     "id": "ID3035",
+     "expression": "\"Column heading\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.config.columns[?(@.id==\"ID3031\")].headingExpression",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3036"
+     }
+    },
+    "id5ee55b09422e442ba1f4e6a69470dcd0": {
+     "id": "ID3037",
+     "expression": "\"Column heading\"",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id8536aee0801d43b3ac4ea26e10fbd756.config.columns[?(@.id==\"ID3032\")].headingExpression",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3038"
+     }
+    }
+   }
+  }
+ },
+ "form-vb-panel": {
+  "control": {
+   "id": "id3b2668d21f9741cda893ec9631ab4364",
+   "iconUrl": "assets/svg/form/controls/basic/panel.svg",
+   "component": "form-vb-panel",
+   "ruleInstances": {},
+   "name": "Container",
+   "config": {
+    "id": "ID3158",
+    "childIds": []
+   },
+   "properties": {
+    "flexDirection": {
+     "id": "ID3175",
+     "name": "flexDirection",
+     "valueType": "string",
+     "value": "column"
+    },
+    "tooltip": {
+     "id": "ID3176",
+     "name": "tooltip",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3177",
+      "expressionId": "id08f49985d44546c6845e66ac966f2654",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3178"
+      }
+     }
+    },
+    "accessibleLabel": {
+     "id": "ID3179",
+     "name": "accessibleLabel",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3180",
+      "expressionId": "idf377a00c7e7a40c78dd709c71124310f",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3181"
+      }
+     }
+    },
+    "accessibleRole": {
+     "id": "ID3182",
+     "name": "accessibleRole",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3183",
+      "expressionId": "id935dfc18db184dd188cd8469d8f52c5f",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3184"
+      }
+     }
+    },
+    "display": {
+     "id": "ID3185",
+     "name": "display",
+     "valueType": "string",
+     "value": "flex"
+    },
+    "size": {
+     "id": "ID3186",
+     "name": "size",
+     "valueType": "size",
+     "value": {
+      "id": "ID3187",
+      "width": null,
+      "widthUnit": "auto",
+      "height": null,
+      "heightUnit": "auto"
+     }
+    },
+    "minSize": {
+     "id": "ID3188",
+     "name": "minSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID3189",
+      "width": 0,
+      "widthUnit": "px",
+      "height": 0,
+      "heightUnit": "px"
+     }
+    },
+    "maxSize": {
+     "id": "ID3190",
+     "name": "maxSize",
+     "valueType": "size",
+     "value": {
+      "id": "ID3191",
+      "width": null,
+      "widthUnit": "none",
+      "height": null,
+      "heightUnit": "none"
+     }
+    },
+    "verticalOverflow": {
+     "id": "ID3192",
+     "name": "verticalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "horizontalOverflow": {
+     "id": "ID3193",
+     "name": "horizontalOverflow",
+     "valueType": "string",
+     "value": "hidden"
+    },
+    "bold": {
+     "id": "ID3194",
+     "name": "bold",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "italic": {
+     "id": "ID3195",
+     "name": "italic",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "underline": {
+     "id": "ID3196",
+     "name": "underline",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "fontFamily": {
+     "id": "ID3197",
+     "name": "fontFamily",
+     "valueType": "string",
+     "value": ""
+    },
+    "fontSize": {
+     "id": "ID3198",
+     "name": "fontSize",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3199"
+     }
+    },
+    "textColor": {
+     "id": "ID3200",
+     "name": "textColor",
+     "valueType": "string",
+     "value": ""
+    },
+    "backgroundColor": {
+     "id": "ID3201",
+     "name": "backgroundColor",
+     "valueType": "string"
+    },
+    "hidden": {
+     "id": "ID3202",
+     "name": "hidden",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "disabled": {
+     "id": "ID3203",
+     "name": "disabled",
+     "valueType": "boolean",
+     "value": ""
+    },
+    "readonly": {
+     "id": "ID3204",
+     "name": "readonly",
+     "valueType": "boolean"
+    },
+    "margin": {
+     "id": "ID3159",
+     "name": "margin",
+     "valueType": "box",
+     "value": {
+      "id": "ID3160",
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "padding": {
+     "id": "ID3161",
+     "name": "padding",
+     "valueType": "box",
+     "value": {
+      "id": "ID3162",
+      "top": 8,
+      "left": 8,
+      "bottom": 8,
+      "right": 8,
+      "topUnit": "px",
+      "leftUnit": "px",
+      "bottomUnit": "px",
+      "rightUnit": "px"
+     }
+    },
+    "borderColor": {
+     "id": "ID3205",
+     "name": "borderColor",
+     "valueType": "string",
+     "value": "#A4B1B8"
+    },
+    "fontStyle": {
+     "id": "ID3206",
+     "name": "fontStyle",
+     "valueType": "string"
+    },
+    "fontSizeColor": {
+     "id": "ID3207",
+     "name": "fontSizeColor",
+     "valueType": "string"
+    },
+    "borderStyle": {
+     "id": "ID3208",
+     "name": "borderStyle",
+     "valueType": "string"
+    },
+    "borderThickness": {
+     "id": "ID3209",
+     "name": "borderThickness",
+     "valueType": "box",
+     "value": {
+      "id": "ID3210"
+     }
+    },
+    "borderRadius": {
+     "id": "ID3211",
+     "name": "borderRadius",
+     "valueType": "corner",
+     "value": {
+      "id": "ID3212",
+      "topLeft": 3,
+      "topRight": 3,
+      "bottomRight": 3,
+      "bottomLeft": 3,
+      "topLeftUnit": "px",
+      "topRightUnit": "px",
+      "bottomRightUnit": "px",
+      "bottomLeftUnit": "px"
+     }
+    },
+    "boxShadow": {
+     "id": "ID3213",
+     "name": "boxShadow",
+     "valueType": "drop-shadow",
+     "value": {
+      "id": "ID3214"
+     }
+    },
+    "boxShadowColor": {
+     "id": "ID3215",
+     "name": "boxShadowColor",
+     "valueType": "string"
+    },
+    "gridColumn": {
+     "id": "ID3216",
+     "name": "gridColumn",
+     "valueType": "number"
+    },
+    "gridRow": {
+     "id": "ID3217",
+     "name": "gridRow",
+     "valueType": "number"
+    },
+    "gridColumnSpan": {
+     "id": "ID3218",
+     "name": "gridColumnSpan",
+     "valueType": "number"
+    },
+    "gridRowSpan": {
+     "id": "ID3219",
+     "name": "gridRowSpan",
+     "valueType": "number"
+    },
+    "cssClasses": {
+     "id": "ID3220",
+     "name": "cssClasses",
+     "valueType": "string"
+    },
+    "cursor": {
+     "id": "ID3221",
+     "name": "cursor",
+     "valueType": "string"
+    },
+    "opacity": {
+     "id": "ID3222",
+     "name": "opacity",
+     "valueType": "decimal"
+    },
+    "backgroundImageUrl": {
+     "id": "ID3223",
+     "name": "backgroundImageUrl",
+     "valueType": "resolver-list",
+     "value": {
+      "id": "ID3224",
+      "resolvers": [],
+      "customExpressionBuilderDefinition": {
+       "id": "ID3225",
+       "customResolversForRegistration": []
+      }
+     }
+    },
+    "backgroundImageBase64": {
+     "id": "ID3226",
+     "name": "backgroundImageBase64",
+     "valueType": "string"
+    },
+    "backgroundImageDocumentBinding": {
+     "id": "ID3227",
+     "name": "backgroundImageDocumentBinding",
+     "valueType": "document-binding",
+     "value": {
+      "id": "ID3228",
+      "binding": {
+       "id": "ID3229",
+       "rootType": null,
+       "rootSystemName": "",
+       "instanceJPath": "",
+       "objectJPath": "",
+       "itemType": null
+      }
+     }
+    },
+    "backgroundImagePosition": {
+     "id": "ID3230",
+     "name": "backgroundImagePosition",
+     "valueType": "position",
+     "value": {
+      "id": "ID3231"
+     }
+    },
+    "backgroundImageRepeat": {
+     "id": "ID3232",
+     "name": "backgroundImageRepeat",
+     "valueType": "string"
+    },
+    "backgroundImageSize": {
+     "id": "ID3233",
+     "name": "backgroundImageSize",
+     "valueType": "string"
+    },
+    "flexGrow": {
+     "id": "ID3234",
+     "name": "flexGrow",
+     "valueType": "number",
+     "value": 0
+    },
+    "flexShrink": {
+     "id": "ID3235",
+     "name": "flexShrink",
+     "valueType": "number",
+     "value": 0
+    },
+    "position": {
+     "id": "ID3236",
+     "name": "position",
+     "valueType": "string"
+    },
+    "absolutePosition": {
+     "id": "ID3237",
+     "name": "absolutePosition",
+     "valueType": "box",
+     "value": {
+      "id": "ID3238"
+     }
+    },
+    "zIndex": {
+     "id": "ID3239",
+     "name": "zIndex",
+     "valueType": "number"
+    },
+    "borderSizeColor": {
+     "id": "ID3240",
+     "name": "borderSizeColor",
+     "valueType": "string"
+    },
+    "spaceBetween": {
+     "id": "ID3241",
+     "name": "spaceBetween",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3242"
+     }
+    },
+    "resolvableDisabled": {
+     "id": "ID3243",
+     "name": "resolvableDisabled",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3244",
+      "expressionId": "id9b2a3b2e54f447a8a9db533dd5bc653e",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3245"
+      }
+     }
+    },
+    "resolvableHidden": {
+     "id": "ID3246",
+     "name": "resolvableHidden",
+     "valueType": "vb-expression",
+     "value": {
+      "id": "ID3247",
+      "expressionId": "idd47636293af246089d82af83534ee454",
+      "expressionBuilderInstance": "query",
+      "workflow": {
+       "id": "ID3248"
+      }
+     }
+    },
+    "flexScroll": {
+     "id": "ID3249",
+     "name": "flexScroll",
+     "valueType": "boolean",
+     "value": false
+    },
+    "isValid": {
+     "id": "ID3250",
+     "name": "isValid",
+     "valueType": "boolean",
+     "value": true
+    },
+    "horizontalAlignment": {
+     "id": "ID3251",
+     "name": "horizontalAlignment",
+     "valueType": "string",
+     "value": "flex-start"
+    },
+    "verticalAlignment": {
+     "id": "ID3252",
+     "name": "verticalAlignment",
+     "valueType": "string",
+     "value": "flex-start"
+    },
+    "flexWrap": {
+     "id": "ID3253",
+     "name": "flexWrap",
+     "valueType": "boolean",
+     "value": false
+    },
+    "flexBasis": {
+     "id": "ID3254",
+     "name": "flexBasis",
+     "valueType": "value-with-unit",
+     "value": {
+      "id": "ID3255",
+      "value": null,
+      "valueUnit": "auto"
+     }
+    },
+    "controlAlignment": {
+     "id": "ID3256",
+     "name": "controlAlignment",
+     "valueType": "string",
+     "value": "stretch"
+    },
+    "coordinates": {
+     "id": "ID3257",
+     "name": "coordinates",
+     "valueType": "string",
+     "value": {
+      "x": 0,
+      "y": 0,
+      "w": 60,
+      "h": 10
+     }
+    }
+   },
+   "events": {
+    "click": {
+     "id": "ID3174",
+     "eventType": "click",
+     "description": "",
+     "executors": []
+    }
+   },
+   "ruleOutputs": {},
+   "traits": {}
+  },
+  "expressions": {
+   "id": "ID3163",
+   "expressions": {
+    "id08f49985d44546c6845e66ac966f2654": {
+     "id": "ID3164",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id3b2668d21f9741cda893ec9631ab4364.properties.tooltip.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3165"
+     }
+    },
+    "idf377a00c7e7a40c78dd709c71124310f": {
+     "id": "ID3166",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id3b2668d21f9741cda893ec9631ab4364.properties.accessibleLabel.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3167"
+     }
+    },
+    "id935dfc18db184dd188cd8469d8f52c5f": {
+     "id": "ID3168",
+     "expression": "",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id3b2668d21f9741cda893ec9631ab4364.properties.accessibleRole.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3169"
+     }
+    },
+    "id9b2a3b2e54f447a8a9db533dd5bc653e": {
+     "id": "ID3170",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id3b2668d21f9741cda893ec9631ab4364.properties.resolvableDisabled.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3171"
+     }
+    },
+    "idd47636293af246089d82af83534ee454": {
+     "id": "ID3172",
+     "expression": "false",
+     "isLiteral": true,
+     "sourceType": "expression-config-panel",
+     "contextSourceId": "$.controls.id3b2668d21f9741cda893ec9631ab4364.properties.resolvableHidden.value",
+     "skipCompilation": false,
+     "tokens": [],
+     "addedVia": "EE",
+     "validationConfig": {
+      "id": "ID3173"
+     }
+    }
+   }
+  }
  }
 }

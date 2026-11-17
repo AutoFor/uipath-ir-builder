@@ -49,7 +49,9 @@ export type Control = {
   props?: Record<string, Value>; // 雛形の部品にある式の項目を名前で直接（tooltip など）
   onClick?: Step[]; // button だけ
   source?: Value; columns?: Column[]; // table だけ。source は list の App の変数
-  options?: string[]; // dropdown / radio / multiselect の選択肢（List source に {"A", "B"}.ToListSource() と書く）
+  options?: string[]; // dropdown / radio / multiselect / list の選択肢（List source に {"A", "B"}.ToListSource() と書く）
+  hideCharacters?: boolean; // textbox だけ。パスワードのように伏せ字にする（Studio Web の Hide characters。式ではなく真偽の項目）
+  controls?: Control[]; // container だけ。中に並べる部品（入れ子にできる）
 };
 // onLoad：ページを開いたときの手順（Studio Web のページの Events → Loaded。根のパネルの load のイベント）
 export type Page = { name: string; controls: Control[]; onLoad?: Step[] };
@@ -63,7 +65,8 @@ export type Store = any; // rpa-app-entities.ts の出力
 export type Issue = { path: string; code: string; message: string };
 
 export type ControlType = "textbox" | "number" | "textarea" | "checkbox" | "dropdown" | "date" | "button" | "label" | "table"
-  | "radio" | "multiselect" | "slider" | "switch" | "email" | "fileUpload" | "fileDownload" | "header" | "divider" | "iframe" | "documentViewer";
+  | "radio" | "multiselect" | "slider" | "switch" | "email" | "fileUpload" | "fileDownload" | "header" | "divider" | "iframe" | "documentViewer"
+  | "richText" | "multiFileUpload" | "list" | "container";
 // radio から下は、2026-11-17 に Studio Web の Toolbox で足して書き出したもの（tools/apps/rpa-app-templates.ts --add-controls）
 export const COMPONENT: Record<ControlType, string> = {
   textbox: "form-text-vb", number: "form-text-number-vb", textarea: "form-text-area-vb", checkbox: "form-check-box",
@@ -71,9 +74,12 @@ export const COMPONENT: Record<ControlType, string> = {
   radio: "form-radio-button-vb", multiselect: "form-multiselect-vb", slider: "form-slider-vb", switch: "form-mobile-switch", email: "form-text-email-vb",
   fileUpload: "form-file-uploader", fileDownload: "form-file-downloader", header: "form-page-heading", divider: "form-mobile-divider",
   iframe: "form-iframe", documentViewer: "form-document-viewer",
+  richText: "form-rich-text-editor", multiFileUpload: "form-multi-file-uploader", list: "form-list-vb", container: "form-vb-panel",
 };
+// 入れ子もたどって、ページの部品をすべて並べる
+export const allControls = (list: Control[] = []): Control[] => list.flatMap((c) => [c, ...(c.type === "container" ? allControls(c.controls) : [])]);
 // 選択肢（List source）を持つ部品。config.sourceBinding の式に {"A", "B"}.ToListSource()、genericType は System.String（Studio Web の書き出し）
-const WITH_OPTIONS = new Set<ControlType>(["dropdown", "radio", "multiselect"]);
+const WITH_OPTIONS = new Set<ControlType>(["dropdown", "radio", "multiselect", "list"]);
 // IR の項目 → 部品の式の項目。部品によって名前が違うものは、その部品にある最初のもの
 const FRIENDLY: Record<string, string[]> = {
   label: ["label"], text: ["text", "labelText"], placeholder: ["placeholder"], required: ["required"], checked: ["resolvableChecked", "resolvableSwitchValue"],
@@ -169,7 +175,7 @@ export function check(a: RpaApp, store?: Store): Issue[] {
     name(p.name, `pages[${i}].name`);
     if (pages.has(p.name)) add(`pages[${i}].name`, "APP_NAME", `ページの名前が重なっている（${p.name}）`);
     if (vars.has(p.name)) add(`pages[${i}].name`, "APP_NAME", `ページと変数の名前が重なっている（${p.name}）`);
-    pages.set(p.name, new Set((p.controls ?? []).map((c) => c.name)));
+    pages.set(p.name, new Set(allControls(p.controls).map((c) => c.name)));
   });
   const value = (v: Value, at: string) => {
     if (v && typeof v === "object") {
@@ -251,8 +257,8 @@ export function check(a: RpaApp, store?: Store): Issue[] {
   a.pages.forEach((p, pi) => {
     if (p.onLoad !== undefined) checkSteps(p.onLoad, `pages[${pi}].onLoad`, p.name);
     const seen = new Set<string>();
-    (p.controls ?? []).forEach((c, ci) => {
-      const at = `pages[${pi}].controls[${ci}]`;
+    const each = (list: Control[], base: string) => (list ?? []).forEach((c, ci) => {
+      const at = `${base}[${ci}]`;
       name(c.name, `${at}.name`);
       if (seen.has(c.name)) add(`${at}.name`, "APP_NAME", `部品の名前がページの中で重なっている（${c.name}）`);
       seen.add(c.name);
@@ -277,7 +283,7 @@ export function check(a: RpaApp, store?: Store): Issue[] {
         else if (!Array.isArray(c.options) || !c.options.length || c.options.some((o) => typeof o !== "string")) add(`${at}.options`, "APP_SHAPE", "options は文字の配列（1 つ以上）");
       }
       for (const [k, v] of Object.entries(c)) {
-        if (["type", "name", "props", "onClick", "source", "columns", "options"].includes(k)) continue;
+        if (["type", "name", "props", "onClick", "source", "columns", "options", "hideCharacters", "controls"].includes(k)) continue;
         if (!(k in FRIENDLY)) { add(`${at}.${k}`, "APP_PROP", `項目 ${k} は無い（${Object.keys(FRIENDLY).join(", ")}、options、props、onClick）`); continue; }
         if (!friendly(k, has)) { add(`${at}.${k}`, "APP_PROP", `${c.type} に ${k} は無い`); continue; }
         value(v as Value, `${at}.${k}`);
@@ -290,7 +296,17 @@ export function check(a: RpaApp, store?: Store): Issue[] {
         if (c.type !== "button") add(`${at}.onClick`, "APP_PROP", "onClick は button だけ");
         checkSteps(c.onClick, `${at}.onClick`, p.name);
       }
+      if (c.hideCharacters !== undefined) {
+        if (c.type !== "textbox") add(`${at}.hideCharacters`, "APP_PROP", "hideCharacters は textbox だけ");
+        else if (typeof c.hideCharacters !== "boolean") add(`${at}.hideCharacters`, "APP_SHAPE", "hideCharacters は true / false");
+      }
+      if (c.controls !== undefined) {
+        if (c.type !== "container") add(`${at}.controls`, "APP_PROP", "controls は container だけ");
+        else if (!Array.isArray(c.controls)) add(`${at}.controls`, "APP_SHAPE", "controls は部品の配列");
+        else each(c.controls, `${at}.controls`);
+      }
     });
+    each(p.controls, `pages[${pi}].controls`);
   });
   return out;
 }
@@ -326,6 +342,9 @@ function setExpr(ctl: Json, group: Json, prop: string, v: Value, appFields: Map<
   const e = group.expressions[eid];
   if (!e) throw new Error(`雛形の ${ctl.component} に ${prop} の式が無い（templates/rpa-app を作り直す）`);
   writeExpr(e, eid, v, appFields, refs);
+  // スライダーの既定値：isLiteral: true（雛形の形）のままだと、画面の位置は変わるが .Value は動かすまで雛形の 50 のまま。
+  // Studio Web の式の編集で書くと isLiteral: false になり、.Value も既定値になった（2026-11-17、trial の Debug で確かめた）
+  if (prop === "sliderValue") e.isLiteral = false;
 }
 
 // 表：データの元（config.sourceBinding）と列（config.columns）。列の値の式の形は Studio Web で確かめる（knowledge/apps.md）
@@ -553,12 +572,14 @@ export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: str
     const appRef = Object.values<Json>(page.rootReferences)[0];
     Object.assign(page, { id: `ID${hex()}`, order, systemName, appSystemName, formId, title: pg.name, rootReferences: { [appSystemName]: appRef } });
     const refs: Json = {};
-    for (const c of pg.controls ?? []) {
+    const place = (c: Control, parentId: string) => {
       const t = T.controls[COMPONENT[c.type]];
       const map = new Map<string, string>();
       const ctl = cloneWithNewIds(t.control, ids, map);
       const group = cloneWithNewIds(t.expressions, ids, map);
-      Object.assign(ctl, { name: c.name, _logicalParent: rootId });
+      Object.assign(ctl, { name: c.name, _logicalParent: parentId });
+      // Hide characters：式ではなく真偽の項目（Studio Web の書き出し：properties.hideCharacters.value）
+      if (c.hideCharacters !== undefined) ctl.properties.hideCharacters.value = c.hideCharacters;
       const has = vbProps(COMPONENT[c.type]);
       for (const [k, v] of Object.entries(c)) if (k in FRIENDLY) setExpr(ctl, group, friendly(k, has)!, v as Value, appFields, refs);
       for (const [k, v] of Object.entries(c.props ?? {})) setExpr(ctl, group, k, v, appFields, refs);
@@ -579,9 +600,12 @@ export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: str
         appMetadata[file] = { AppFormId: formId, IsAppQueryBuilder: null };
       }
       page.controls[ctl.id] = ctl;
-      page.controls[rootId].config.childIds.push(ctl.id);
+      page.controls[parentId].config.childIds.push(ctl.id);
       page.expressions[ctl.id] = group;
-    }
+      // 入れ物（container）：子の _logicalParent を入れ物にし、入れ物の childIds に並べる（Studio Web の書き出しと同じ）
+      if (c.type === "container") for (const x of c.controls ?? []) place(x, ctl.id);
+    };
+    for (const c of pg.controls ?? []) place(c, rootId);
     // ページの読み込み：根のパネルの events.load から呼ぶ。ファイル名は <ページ>_<ページ>_load.xaml（Studio Web の Define workflow file と同じ）
     if (pg.onLoad?.length) {
       const file = `${pg.name}_${pg.name}_load.xaml`;
@@ -683,13 +707,13 @@ export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: str
 // 開く先のページは、取り込んだあと Studio Web で式を 1 回直すまで DLL ができない（knowledge/apps.md）
 export function notices(a: RpaApp, store?: Store): string[] {
   const opens = (list: Step[]): string[] => list.flatMap((s: Json) => ("open" in s ? [s.open] : "if" in s ? [...opens(s.then ?? []), ...opens(s.else ?? [])] : []));
-  const targets = new Set(a.pages.flatMap((p) => [...opens(p.onLoad ?? []), ...p.controls.flatMap((c) => opens(c.onClick ?? []))]));
+  const targets = new Set(a.pages.flatMap((p) => [...opens(p.onLoad ?? []), ...allControls(p.controls).flatMap((c) => opens(c.onClick ?? []))]));
   const out = [...targets].map((t) => `APP_OPEN_PAGE  ページ ${t} を開く手順がある。取り込んだあと、Studio Web で ${t} の部品の式を 1 回直して保存するまで「Selected page is not accessible」になる`);
   // 表（Table）は日付の書式を持たない。DateTime の列は 2026-11-23T00:00:00.0000000Z のまま出る（文書の Edit Grid の注意。
   // 2026-11-17 に Studio Web で、列の Source は行の型のメンバーの名前だけで、匿名型に写した一覧は「not declared」になると確かめた）
   const ents = entitiesOf(store);
   const vars = new Map((a.variables ?? []).map((v) => [v.name, v]));
-  for (const p of a.pages) for (const c of p.controls) {
+  for (const p of a.pages) for (const c of allControls(p.controls)) {
     if (c.type !== "table" || !c.source || typeof c.source !== "object" || !("var" in c.source)) continue;
     const v = vars.get(c.source.var);
     const e = v?.type === "list" ? ents.get(v.of) : undefined;

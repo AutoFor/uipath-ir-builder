@@ -107,7 +107,7 @@ uip codedapp pack dist -n <app> -v 1.0.0                                   # pub
 
 - 見本（14 フィールド、全部の型と部品）を作り、`npm install --offline`（このマシンの npm のキャッシュだけ）→ `tsc`（strict、`noUnusedLocals`）→ `vite build` が通った。版は react 19.3.1、vite 8.3.5、`@uipath/coded-action-app` 1.0.0
 - `uip codedapp pack` で `.nupkg` ができ、`content/action-schema.json` が入った。スキーマはスキルの `validate-action-schema.js` も通る
-- **Action Center で開いて完了できた**（2026-11-17、trial）：見本 `expense-review` を `pack -n irtest-expense-review` → `publish -t Action` → `deploy --folder-key <Shared>`。タスクは API の `CreateAppTask` で作り（下の「タスクを API で作る」）、`uip tasks assign` で自分に割り当て、`actions_/tasks/<Id>` で開いた。入力（文字・金額・日付・一覧・JSON）と入出力（区分が初期値で選ばれた）が出て、必須を埋めるまで「承認する」は押せず、埋めると保存のボタンも生きた（`setTaskData`）。「承認する」→ Complete で、タスクに `action: "Approve"` と、書いた出力（`approvedAmount`・`risk`・`comment`）が残った。**注意**：書かなかった欄も既定値で残る（`payOn: ""`、入力に無かった file の `receipt: { ID: "" }`）。automation の側で空を読めるようにするか、値の無い欄を送らないようにするかは、まだ決めていない
+- **Action Center で開いて完了できた**（2026-11-17、trial）：見本 `expense-review` を `pack -n irtest-expense-review` → `publish -t Action` → `deploy --folder-key <Shared>`。タスクは API の `CreateAppTask` で作り（下の「タスクを API で作る」）、`uip tasks assign` で自分に割り当て、`actions_/tasks/<Id>` で開いた。入力（文字・金額・日付・一覧・JSON）と入出力（区分が初期値で選ばれた）が出て、必須を埋めるまで「承認する」は押せず、埋めると保存のボタンも生きた（`setTaskData`）。「承認する」→ Complete で、タスクに `action: "Approve"` と、書いた出力（`approvedAmount`・`risk`・`comment`）が残った。書かなかった欄も既定値で残っていた（`payOn: ""`、入力に無かった file の `receipt: { ID: "" }`）→ 生成する Form.tsx は、タスクに最初から無かった欄で値が空（`''`・`null`・`{ ID: '' }`）のものを `setTaskData`・`completeTask` に送らない（`toTaskData`）。タスクに入っていた欄は空にしても送る。直したアプリで確かめた（2026-11-17）：支払日・リスクを書かずに承認すると、タスクの data に `payOn`・`risk`・`receipt` が無かった。数（`priority: 0`）とチェック（`false`）は空ではないので送る
 - SDK のサービスと Coded Web App は下の節（作って build・pack まで）
 
 ### タスクを API で作る（試すとき）
@@ -148,8 +148,10 @@ uip solution upload out/RequestApp.uis                                          
     { "name": "Confirm", "controls": [ { "type": "label", "name": "Who", "text": { "var": "ApplicantName" } } ] } ] }
 ```
 
-- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`、`radio`、`multiselect`、`slider`、`switch`、`email`、`fileUpload`、`fileDownload`、`header`、`divider`、`iframe`、`documentViewer`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）。見本 `samples/apps/rpa-app-parts.json`
-- 選択肢（`dropdown`・`radio`・`multiselect`）：`options: ["松", "竹"]` → `config.sourceBinding` の式 `{"松", "竹"}.ToListSource()`（`isLiteral: false`）と `sourceBinding.genericType: "System.String"`。Studio Web で List source に同じ式を書いて書き出した形
+- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`、`radio`、`multiselect`、`slider`、`switch`、`email`、`fileUpload`、`fileDownload`、`header`、`divider`、`iframe`、`documentViewer`、`richText`、`multiFileUpload`、`list`、`container`。ページの根のパネルに上から並ぶ。`container` は `controls: [...]` で中に並べる（入れ子にできる。子の `_logicalParent` は入れ物、入れ物の `config.childIds` に並ぶ。Studio Web の書き出しと同じ。名前はページの中で入れ子もまたいで 1 回だけ）。見本 `samples/apps/rpa-app-parts.json`
+- `textbox` の `hideCharacters: true`：伏せ字（Studio Web の Hide characters）。式ではなく `properties.hideCharacters.value`（boolean）
+- **Toolbox で部品が足せないときは、ページ（根）か足したい入れ物を選んでから押す**：Tabs などを選んだまま押すと何も起きなかった（前に Rich Text・Edit Grid が取れなかった理由）
+- 選択肢（`dropdown`・`radio`・`multiselect`・`list`）：`options: ["松", "竹"]` → `config.sourceBinding` の式 `{"松", "竹"}.ToListSource()`（`isLiteral: false`）と `sourceBinding.genericType: "System.String"`。Studio Web で List source に同じ式を書いて書き出した形
 - 部品ごとに名前の違う項目：`text`（switch は `labelText`）、`checked`（switch は `resolvableSwitchValue`）、`min` / `max`（slider は `minValue` / `maxValue`）、`step`・`value`（slider の `sliderStep`・`sliderValue`）、`url`（fileDownload・button）、`src`（iframe は `src`、documentViewer は `documentViewerSrc`）
 - `onLoad`（ページ）：ページを開いたときの手順。書き方は `onClick` と同じ。根のパネル（`ID1`）の `events.load` に `start-automation`、`workflowBindings` の `controlId` は根のパネル、ファイルは `<ページ>_<ページ>_load.xaml`、トリガーの DisplayName は `<ページ>_<ページ> : Loaded Event`（Studio Web のページの Events → Loaded → Define workflow file で作って書き出した形）
 - 項目：`label`、`text`、`placeholder`、`required`、`checked`、`hidden`、`disabled`、`min` / `max`（number）、`rows`（textarea）。部品に無い項目は `APP_PROP`。雛形の部品にあるほかの式の項目は `props: { "tooltip": "…" }`
@@ -196,7 +198,9 @@ uip solution upload out/WorkCalendar.uis
 
 **Debug は Assistant 無しでも動いた**（2026-11-17、trial、この PC の Chrome）：Debug →「Save & Debug」で、ビルドとアプリの実行がクラウド（ログの `ProjectDirectory:: /tmp/home/UiPath/RemoteAgent/...`）で走り、アプリが新しいタブ（`apps_/default/run/...`）で開いた。前に止まった「Signing in to Assistant」は出なかった
 
-部品の見本 `samples/apps/rpa-app-parts.json` の Debug（2026-11-17、trial）：開くと `onLoad` が動いてラベルに「ページを開きました」、ラジオに 松・竹・梅、ドロップダウンに 東日本・西日本、必須の印、スライダー（1〜50）、スイッチ、メール、添付、区切り線、ダウンロードが出た。竹を選んで「送る」→ ラベルが「竹 / 50」（`Controls.MainPage.Plan.Value` が読めた）。**スライダーは画面で 10 なのに `.Value` は 50 を返した**（`sliderValue` の初期値と `Value` の関係は分かっていない）。複数選択の選択肢は開いて見ていない
+部品の見本 `samples/apps/rpa-app-parts.json` の Debug（2026-11-17、trial）：開くと `onLoad` が動いてラベルに「ページを開きました」、ラジオに 松・竹・梅、ドロップダウンに 東日本・西日本、必須の印、スライダー（1〜50）、スイッチ、メール、添付、区切り線、ダウンロードが出た。竹を選んで「送る」→ ラベルが「竹 / 50」（`Controls.MainPage.Plan.Value` が読めた）。スライダーは画面で 10 なのに `.Value` は 50 を返した → 原因：既定値の式が `isLiteral: true`（雛形のまま）だと、画面の位置は変わるが `.Value` は動かすまで雛形の初期値 50。Studio Web の式の編集で書くと `isLiteral: false` になり、`.Value` も既定値になる（最大値を 40 にしても 50 だったので最大値ではない）。生成器は `sliderValue` を `isLiteral: false` で書く。直したあと、動かさずに 10、動かして 30 が返った。複数選択の選択肢は開いて見ていない
+
+2026-11-17（2 回目、trial の Debug）：`container` の中の `textbox`（`hideCharacters`、目のアイコン付きで伏せ字）と `list`（3 行）、`richText`（書式のツールバー付き）、`multiFileUpload` が出た。ボタンの式で入れ物の中の `Controls.MainPage.Passcode.Value.Length` が読めた（5 文字 → 5）
 
 ### RPA 側：今日動くか（`samples/apps/work-calendar-rpa/ir`）
 
@@ -316,7 +320,7 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 - **ドロップダウンの選択肢**（12）：List source に `{"v1","v2"}.ToListSource()` か `New List(Of String) From {…}.ToListSource()`。Multiselect とラジオも同じ。
 - **日付の型（Date）の値はタイムゾーンが要る**（34）：`DateTimeKind.Unspecified` は ISO でないとして弾かれる（`Local` か `Utc`）。上の `Value.Value.ToDateTime(TimeOnly.MinValue)` は Unspecified になる。
 - **アプリでできないこと**（22）：`Fetch` / `FetchOne`（Query Entity Record を使う）、エンティティの選択肢（choice set）と `GetChoiceSet` / `GetChoiceSetValue`、Autopilot でエンティティから作る、Studio Desktop で開く、ページの export・import、Public App。rpa-app-entities.ts は選択肢の列を扱わない。
-- **部品**（32）：rpa-app.ts が作れないもの：Rich Text・Multi File Uploader・Edit Grid（Toolbox を押しても足されず、雛形が取れていない）、Custom List・Tabs・List・Validation Control（雛形は `controls.json` にあるが、中の部品や選択肢の形を見ていないので IR には出していない）、Image、Container・Page Container・Container Layout、テキストボックスの Hide characters。2026-11-17 に ラジオ・Multiselect・Switch・Slider・File Uploader・File Downloader・Email・Header・Divider・IFrame・Document Viewer を足した（Studio Web の Toolbox で足して書き出し、`node tools/apps/rpa-app-templates.ts <書き出し> --add-controls` で `controls.json` に足した。既にある部品・ページ・App の雛形は変えない）。
+- **部品**（32）：rpa-app.ts が作れないもの：Edit Grid（雛形は取れた。列ごとに Hidden・Editable などの式が付き、データの元は Studio Web の「Create workflow」で表の問い合わせを作るのが正式な形なので、IR には出していない）、Custom List（足したばかりの Custom List は `templateId: null`・`allChildIds: {}` で、中に置く部品の型はデータの元を決めてから作られる。中身の形を取れていない）、Tabs（各タブは `pageContainerId` で Page Container の中身を切り替える作り。Page Container とページの入れ子が要る）、Validation Control（Document Understanding の検証）、Image、Page Container・Container Layout。2026-11-17 に ラジオ・Multiselect・Switch・Slider・File Uploader・File Downloader・Email・Header・Divider・IFrame・Document Viewer を足した（Studio Web の Toolbox で足して書き出し、`node tools/apps/rpa-app-templates.ts <書き出し> --add-controls` で `controls.json` に足した。既にある部品・ページ・App の雛形は変えない）。
 - **アプリのプロジェクト**（33）：Main のワークフローもトリガーも無い。App Events に Submit Action（アクション アプリ）もある。アプリを消すと、使っているワークフローも消える。
 - **デバッグ**（38）：動いているアプリで Shift+4 を押すと、アプリの中のログを JSON で取れる。On local machine と On cloud、Debug step-by-step がある。エラーがあるとデバッグのボタンが押せない。
 - **戻し方**（39）：Cloud Workspace は閉じたときと 40 分ごとに自動のスナップショットができ、Change history から戻せる。publish の履歴の Restore は、その版に全部のプロジェクトを戻す。

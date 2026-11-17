@@ -276,7 +276,7 @@ export function formTsx(app: ActionApp): string {
   }
   const usesCurrency = visible.some((f) => f.dir === "in" && f.currency);
   const handlers: string[] = [];
-  const update = `    const updated = { ...formData, [name]: value };\n    setFormData(updated);\n    codedActionAppService.setTaskData(updated);`;
+  const update = `    const updated = { ...formData, [name]: value };\n    setFormData(updated);\n    codedActionAppService.setTaskData(toTaskData(updated, given.current));`;
   if (anyText) handlers.push(`  const handleTextChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {\n    if (isReadOnly) return;\n    const { name, value } = e.target;\n${update}\n  };`);
   if (used.has("number")) handlers.push(`  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {\n    if (isReadOnly) return;\n    const { name } = e.target;\n    const parsed = e.target.value === '' ? 0 : Number(e.target.value);\n    const value = Number.isNaN(parsed) ? 0 : parsed;\n${update}\n  };`);
   if (used.has("integer")) handlers.push(`  const handleIntegerChange = (e: ChangeEvent<HTMLInputElement>) => {\n    if (isReadOnly) return;\n    const { name } = e.target;\n    const parsed = e.target.value === '' ? 0 : Math.trunc(Number(e.target.value));\n    const value = Number.isNaN(parsed) ? 0 : parsed;\n${update}\n  };`);
@@ -285,7 +285,7 @@ export function formTsx(app: ActionApp): string {
     if (isReadOnly) return;
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
-      codedActionAppService.setTaskData(updated);
+      codedActionAppService.setTaskData(toTaskData(updated, given.current));
       return updated;
     });
   };`);
@@ -324,7 +324,7 @@ export function formTsx(app: ActionApp): string {
   const sdkImports = [...(uploads.length ? ["attachments"] : []), ...(records.length ? ["entities"] : [])];
 
   return `// tools/apps/coded-action.ts が IR（${app.app}）から作った。手で直さない
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 ${needsChangeEvent ? "import type { ChangeEvent } from 'react';\n" : ""}import { MessageSeverity, Theme } from '@uipath/coded-action-app';
 import { codedActionAppService${sdkImports.map((s) => `, ${s}`).join("")} } from '../uipath';
 ${usesView ? "import Attachment from './Attachment';\n" : ""}${records.length ? "import RecordList from './RecordList';\n" : ""}import './Form.css';
@@ -341,6 +341,15 @@ const defaultFormData: FormData = {
 ${app.fields.map((f) => `  ${f.name}: ${initial(f)},`).join("\n")}
 };
 ${uploads.length ? `\n// 添付を上げられるフィールド\ntype FileKey = ${uploads.map((f) => js(f.name)).join(" | ")};\n` : ""}
+// 送るデータ：タスクに無かった欄で、値が空（'' / null / { ID: '' }）のものは送らない。
+// 送ると、書かなかった欄も空の値でタスクに残る（2026-11-17、Action Center で payOn: "" と receipt: { ID: "" } が残った）。
+// タスクに入っていた欄は、空にしたこともそのまま送る
+const isEmptyValue = (v: unknown): boolean =>
+  v === '' || v === null || v === undefined ||
+  (typeof v === 'object' && !Array.isArray(v) && 'ID' in (v as object) && (v as { ID: unknown }).ID === '');
+const toTaskData = (data: FormData, given: Set<string>): Partial<FormData> =>
+  Object.fromEntries(Object.entries(data).filter(([k, v]) => given.has(k) || !isEmptyValue(v))) as Partial<FormData>;
+
 const isDarkTheme = (theme: Theme): boolean =>
   theme === Theme.Dark || theme === Theme.DarkHighContrast;
 ${usesCurrency ? `
@@ -356,6 +365,8 @@ interface FormProps {
 function Form({ onInitTheme, darkTheme, onToggleTheme }: FormProps) {
   const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  // タスクに最初から入っていた欄の名前（toTaskData が使う）
+  const given = useRef<Set<string>>(new Set());
 ${uploads.length ? "  const [uploading, setUploading] = useState<FileKey | null>(null);\n" : ""}
   useEffect(() => {
     codedActionAppService.getTask().then((task) => {
@@ -363,6 +374,7 @@ ${uploads.length ? "  const [uploading, setUploading] = useState<FileKey | null>
       const merged = task.data
         ? { ...defaultFormData, ...(task.data as Partial<FormData>) }
         : defaultFormData;
+      given.current = new Set(Object.keys(task.data ?? {}));
       setFormData(merged);
       setIsReadOnly(task.isReadOnly);
       onInitTheme(isDarkTheme(task.theme));
@@ -373,7 +385,7 @@ ${handlers.join("\n\n")}${handlers.length ? "\n\n" : ""}  // 必須の記入が�
   const isFormValid =
     !isReadOnly${reqs.map((r) => ` &&\n    ${r}`).join("")};
 
-${outcomes.map((o) => `  const ${o.fn} = async () => {\n    try {\n      await codedActionAppService.completeTask(${js(o.name)}, formData);\n    } catch (e) {\n      // 完了に失敗したら、Action Center の中で人に知らせる\n      codedActionAppService.showMessage(\`完了できませんでした：\${e instanceof Error ? e.message : String(e)}\`, MessageSeverity.Error);\n    }\n  };`).join("\n")}
+${outcomes.map((o) => `  const ${o.fn} = async () => {\n    try {\n      await codedActionAppService.completeTask(${js(o.name)}, toTaskData(formData, given.current));\n    } catch (e) {\n      // 完了に失敗したら、Action Center の中で人に知らせる\n      codedActionAppService.showMessage(\`完了できませんでした：\${e instanceof Error ? e.message : String(e)}\`, MessageSeverity.Error);\n    }\n  };`).join("\n")}
 
   return (
     <div className="review-app">

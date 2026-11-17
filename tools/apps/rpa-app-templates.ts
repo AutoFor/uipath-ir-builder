@@ -101,9 +101,11 @@ export function addControls(sol: string): string[] {
     const p = JSON.parse(readFileSync(join(models, f), "utf8"));
     if (p.type !== "form") continue;
     for (const [id, c] of Object.entries<Json>(p.controls)) {
-      if (id === p.rootPanelId || c.config?.childIds?.length || controls[c.component]) continue;
+      if (id === p.rootPanelId || controls[c.component]) continue;
       const control = structuredClone(c);
       delete control._logicalParent;
+      // 入れ物（パネル）は子を外して雛形にする（子の式は子の部品の雛形にある）
+      if (control.config?.childIds) control.config.childIds = [];
       for (const e of Object.values<Json>(control.events ?? {})) { e.executors = []; delete e.actionType; }
       controls[c.component] = { control, expressions: structuredClone(groupOf(p, id)) };
       added.push(c.component);

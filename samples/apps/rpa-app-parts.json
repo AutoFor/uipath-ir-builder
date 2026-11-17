@@ -19,8 +19,14 @@
         { "type": "fileUpload", "name": "Attachment", "label": "添付" },
         { "type": "divider", "name": "Line" },
         { "type": "fileDownload", "name": "Guide", "label": "案内", "url": "https://docs.uipath.com" },
+        { "type": "container", "name": "Account", "controls": [
+            { "type": "textbox", "name": "Passcode", "label": "合言葉", "hideCharacters": true },
+            { "type": "list", "name": "Steps", "options": ["申し込む", "確かめる", "使い始める"] }
+          ] },
+        { "type": "richText", "name": "Memo", "label": "メモ", "placeholder": "自由に書く" },
+        { "type": "multiFileUpload", "name": "Docs", "label": "書類（いくつでも）" },
         { "type": "button", "name": "Send", "text": "送る",
-          "onClick": [ { "set": "Msg", "value": "Controls.MainPage.Plan.Value & \" / \" & Controls.MainPage.Seats.Value.ToString()" } ] }
+          "onClick": [ { "set": "Msg", "value": "Controls.MainPage.Plan.Value & \" / \" & Controls.MainPage.Seats.Value.ToString() & \" / \" & Controls.MainPage.Passcode.Value.Length.ToString()" } ] }
       ]
     }
   ]
