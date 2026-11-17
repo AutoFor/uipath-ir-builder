@@ -453,3 +453,16 @@ test("道具ごとのカスタムガードレール：規則を書けて、to-ir
   assert.deepEqual(codes({ tool: "Nope", rules: [{ always: "input" }] }), ["UNKNOWN_TOOL"]);
   assert.deepEqual(codes({ tool: "Probe", rules: [{ word: "like", value: "x" }] }), ["BAD_OPERATOR"]);
 });
+
+test("評価器の省略形：種類と検査（AUT-1201 の 19）", async () => {
+  const { EVALUATOR_KIND, evaluatorFile } = await import("./gen.ts");
+  // Studio Web の Add evaluator で作って書き出した type・category
+  assert.deepEqual(Object.fromEntries(Object.entries(EVALUATOR_KIND).map(([k, v]) => [k, [v.type, v.category]])), { exact: [1, 0], json: [6, 0], semantic: [5, 1], trajectory: [7, 3] });
+  assert.equal(evaluatorFile("Answer Judge"), "evaluator-answer-judge.json");
+  const codes = (evaluators: any) => generate(ir({ evaluators } as any), BASE, ALL).problems.map((p) => p.code);
+  assert.deepEqual(codes([{ name: "A", kind: "exact" }, { name: "B", kind: "semantic", prompt: "x {{ActualOutput}}" }]), []);
+  assert.deepEqual(codes([{ name: "A", kind: "exact" }, { name: "A", kind: "json" }]), ["BAD_EVALUATOR"]);
+  assert.deepEqual(codes([{ name: "A", kind: "fuzzy" }]), ["BAD_EVALUATOR"]);
+  assert.deepEqual(codes([{ name: "A", kind: "exact", prompt: "x" }]), ["BAD_EVALUATOR"]);
+  assert.deepEqual(codes([{ name: "Default Evaluator", kind: "exact" }]), ["BAD_EVALUATOR"]);
+});

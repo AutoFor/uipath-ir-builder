@@ -8,8 +8,8 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool, ValidationEscalation } from "./gen.ts";
-import { LLM_RECIPIENT_HINT, recipientIR } from "./gen.ts";
+import type { AgentIR, Context, Escalation, EvalCase, EvaluatorIR, Field, Guardrail, Tool, ValidationEscalation } from "./gen.ts";
+import { EVALUATOR_KIND, LLM_RECIPIENT_HINT, recipientIR } from "./gen.ts";
 
 /** uip agent init が作る評価器（生成の先に必ずあるので IR に持たない） */
 const DEFAULT_EVALUATORS = new Set(["evaluator-default.json", "evaluator-default-trajectory.json"]);
@@ -104,6 +104,24 @@ function escalationToIR(r: any): Escalation | ValidationEscalation | undefined {
   const ends = Object.entries(ch.outcomeMapping ?? {}).filter(([, v]) => v !== "continue");
   if (ends.length) e.outcomes = Object.fromEntries(ends);
   if (ch.taskTitle && ch.taskTitle !== "Approval request") e.title = ch.taskTitle;
+  return e;
+}
+
+/** 評価器のファイルを省略形に戻す。知らない項目や種類があれば undefined（evalFiles のまま持つ） */
+function evaluatorToIR(j: any, refs: Set<string>): EvaluatorIR | undefined {
+  const known = new Set(["fileName", "id", "name", "description", "type", "category", "prompt", "model", "targetOutputKey", "createdAt", "updatedAt"]);
+  if (Object.keys(j).some(k => !known.has(k)) || typeof j.name !== "string") return undefined;
+  const kind = (Object.keys(EVALUATOR_KIND) as EvaluatorIR["kind"][]).find(k => EVALUATOR_KIND[k].type === j.type && EVALUATOR_KIND[k].category === j.category);
+  if (!kind) return undefined;
+  const k: any = EVALUATOR_KIND[kind];
+  const e: EvaluatorIR = { name: j.name, kind };
+  if (j.description && j.description !== k.description) e.description = j.description;
+  if (j.targetOutputKey && j.targetOutputKey !== "*") e.target = j.targetOutputKey;
+  if (k.prompt) {
+    if (j.prompt && j.prompt !== k.prompt) e.prompt = j.prompt;
+    if (j.model && j.model !== "same-as-agent") e.model = j.model;
+  } else if (j.prompt || j.model) return undefined;
+  if (!refs.has(j.id)) e.defaultSet = false;
   return e;
 }
 
@@ -308,8 +326,15 @@ export function toIR(dir: string): AgentIR {
   const evalFiles: Record<string, unknown> = {};
   for (const f of files) if (f !== file) evalFiles[`eval-sets/${f}`] = readJson(join(evDir, f));
   const erDir = join(dir, "evals", "evaluators");
-  for (const f of existsSync(erDir) ? readdirSync(erDir).filter(f => f.endsWith(".json")).sort() : [])
-    if (!DEFAULT_EVALUATORS.has(f)) evalFiles[`evaluators/${f}`] = readJson(join(erDir, f));
+  const refs = new Set<string>(file ? readJson(join(evDir, file)).evaluatorRefs ?? [] : []);
+  const evaluators: EvaluatorIR[] = [];
+  for (const f of existsSync(erDir) ? readdirSync(erDir).filter(f => f.endsWith(".json")).sort() : []) {
+    if (DEFAULT_EVALUATORS.has(f)) continue;
+    const j = readJson(join(erDir, f));
+    const e = evaluatorToIR(j, refs);
+    if (e) evaluators.push(e); else evalFiles[`evaluators/${f}`] = j;
+  }
+  if (evaluators.length) ir.evaluators = evaluators;
   if (Object.keys(evalFiles).length) ir.evalFiles = evalFiles;
   return ir;
 }

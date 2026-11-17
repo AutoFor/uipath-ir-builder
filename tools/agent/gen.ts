@@ -99,9 +99,28 @@ export type AgentIR = {
   resources?: Record<string, unknown>[];
   guardrails?: Guardrail[];
   evals?: EvalCase[];
+  /** 既定のほかの評価器（AUT-1201 の 19）。既定の評価セットの evaluatorRefs にも入る（defaultSet: false で外す） */
+  evaluators?: EvaluatorIR[];
   /** 既定のほかの評価セット・評価器（evals/ からの相対パス → 中身）。to-ir.ts がテンプレートなどから取り込むもの */
   evalFiles?: Record<string, unknown>;
 };
+
+/**
+ * 評価器の省略形。type・category は Studio Web の「Add evaluator」で作って書き出した値（2026-11-17）：
+ * exact（Exact match、type 1・category 0）、json（JSON similarity、6・0）、semantic（LLM-as-a-judge の Semantic Similarity、5・1）、
+ * trajectory（Trajectory、7・3）。semantic と trajectory は prompt と model を持つ（省けば Studio Web の既定の文と same-as-agent）
+ */
+export type EvaluatorIR = { name: string; kind: "exact" | "json" | "semantic" | "trajectory"; description?: string; target?: string; prompt?: string; model?: string; defaultSet?: boolean };
+export const EVALUATOR_KIND = {
+  exact: { type: 1, category: 0, description: "An evaluator that checks for exact string matches between expected and actual outputs" },
+  json: { type: 6, category: 0, description: "An evaluator that compares the structural similarity between JSON objects" },
+  semantic: { type: 5, category: 1, description: "An evaluator that uses a LLM to score the similarity of the actual output to the expected output",
+    prompt: "As an expert evaluator, analyze the semantic similarity of these JSON contents to determine a score from 0-100. Focus on comparing the meaning and contextual equivalence of corresponding fields, accounting for alternative valid expressions, synonyms, and reasonable variations in language while maintaining high standards for accuracy and completeness. Provide your score with a justification, explaining briefly and concisely why you gave that score.\n----\nExpectedOutput:\n{{ExpectedOutput}}\n----\nActualOutput:\n{{ActualOutput}}\n" },
+  trajectory: { type: 7, category: 3, description: "An evaluator that judges the agent based on its run history and expected behavior",
+    prompt: "As an expert evaluator, determine how well the agent did on a scale of 0-100. Focus on if the simulation was successful and if the agent behaved according to the expected output accounting for alternative valid expressions, and reasonable variations in language while maintaining high standards for accuracy and completeness. Provide your score with a justification, explaining briefly and concisely why you gave that score.\n----\nUserOrSyntheticInputGivenToAgent:\n{{UserOrSyntheticInput}}\n----\nSimulationInstructions:\n{{SimulationInstructions}}\n----\nExpectedAgentBehavior:\n{{ExpectedAgentBehavior}}\n----\nAgentRunHistory:\n{{AgentRunHistory}}\n" },
+} as const;
+/** 評価器のファイル名（evals/evaluators/ の中） */
+export const evaluatorFile = (name: string) => `evaluator-${name.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "x"}.json`;
 
 export type Context =
   | { index: string; folder: string; name?: string; description?: string; mode?: "semantic" | "deeprag" | "batchtransform"; resultCount?: number; threshold?: number; fileExtension?: string; queryDescription?: string }
@@ -841,6 +860,16 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
 
   for (const rel of Object.keys(ir.evalFiles ?? {}))
     if (!/^(eval-sets|evaluators)\/[^/\\]+\.json$/.test(rel)) probs.push({ path: `evalFiles.${rel}`, code: "BAD_EVAL_FILE", message: "eval-sets/<名前>.json か evaluators/<名前>.json" });
+  const evNames = new Set<string>();
+  (ir.evaluators ?? []).forEach((e, i) => {
+    const at = `evaluators[${i}]`;
+    if (!e?.name?.trim()) probs.push({ path: `${at}.name`, code: "BAD_EVALUATOR", message: "評価器の name を書く" });
+    else if (evNames.has(e.name) || ["Default Evaluator", "Default Trajectory Evaluator"].includes(e.name)) probs.push({ path: `${at}.name`, code: "BAD_EVALUATOR", message: `評価器の名前が重なっている（${e.name}）` });
+    else if (ir.evalFiles?.[`evaluators/${evaluatorFile(e.name)}`] !== undefined) probs.push({ path: `${at}.name`, code: "BAD_EVALUATOR", message: `evalFiles の evaluators/${evaluatorFile(e.name)} と重なる` });
+    evNames.add(e?.name);
+    if (!(e?.kind in EVALUATOR_KIND)) probs.push({ path: `${at}.kind`, code: "BAD_EVALUATOR", message: `kind は ${Object.keys(EVALUATOR_KIND).join(" / ")}` });
+    else if ((e.kind === "exact" || e.kind === "json") && (e.prompt !== undefined || e.model !== undefined)) probs.push({ path: at, code: "BAD_EVALUATOR", message: `${e.kind} は prompt・model を持たない（LLM を使わない評価器）` });
+  });
 
   if (probs.length) return { problems: probs };
 
@@ -1072,6 +1101,40 @@ function writeEvals(project: string, cases: EvalCase[]) {
   writeJson(join(dir, file), set);
 }
 
+/** 評価器の省略形を書く。返すのは書いたファイル（evals/ からの相対パス） */
+function writeEvaluators(project: string, list: EvaluatorIR[]): string[] {
+  const dir = join(project, "evals", "evaluators");
+  const now = new Date().toISOString();
+  const written: string[] = [];
+  const ids: { id: string; inSet: boolean }[] = [];
+  // 前の評価器は名前で探す（Studio Web はファイル名に時刻を使う。名前の違うファイルは writeProject が消す）
+  const before = new Map<string, any>(existsSync(dir) ? readdirSync(dir).filter(f => f.endsWith(".json")).map(f => readJson(join(dir, f))).map((j: any) => [j.name, j]) : []);
+  for (const e of list) {
+    const k = EVALUATOR_KIND[e.kind];
+    const file = evaluatorFile(e.name);
+    const old = before.get(e.name);
+    const id = old?.id ?? randomUUID();
+    const llm = "prompt" in k;
+    writeJson(join(dir, file), {
+      fileName: file, id, name: e.name, description: e.description ?? k.description, type: k.type, category: k.category,
+      prompt: llm ? e.prompt ?? k.prompt : "", ...(llm ? { model: e.model ?? "same-as-agent" } : {}),
+      targetOutputKey: e.target ?? "*", createdAt: old?.createdAt ?? now, updatedAt: now,
+    });
+    written.push(`evaluators/${file}`);
+    ids.push({ id, inSet: e.defaultSet !== false });
+  }
+  // 既定の評価セットの evaluatorRefs：IR の評価器の id を足し、外すものは除く（Studio Web は新しい評価器を自動では足さない）
+  const setFile = join(project, "evals", "eval-sets", "evaluation-set-default.json");
+  if (list.length && existsSync(setFile)) {
+    const set = readJson(setFile);
+    const refs: string[] = (set.evaluatorRefs ?? []).filter((r: string) => !ids.some(x => x.id === r && !x.inSet));
+    for (const x of ids) if (x.inSet && !refs.includes(x.id)) refs.push(x.id);
+    set.evaluatorRefs = refs;
+    writeJson(setFile, set);
+  }
+  return written;
+}
+
 /** 生成した中身をプロジェクトのフォルダに書く。resources/ と評価は IR が正本（IR に無いものは消す） */
 export function writeProject(dir: string, ir: AgentIR, result: Generated, opts: { inline?: boolean } = {}) {
   writeJson(join(dir, "agent.json"), result.agent);
@@ -1084,14 +1147,27 @@ export function writeProject(dir: string, ir: AgentIR, result: Generated, opts: 
   const up = join(dir, "project.uiproj");
   if (existsSync(up)) writeJson(up, { ...readJson(up), Name: ir.name, ...(ir.description !== undefined ? { Description: ir.description } : {}) });
   writeEvals(dir, result.evals);
+  // 評価器の省略形：evaluators/evaluator-<名前>.json に書き（id は前のファイルから引き継ぐ）、既定の評価セットの evaluatorRefs に足す
+  const evFiles = writeEvaluators(dir, ir.evaluators ?? []);
   // 既定のほかの評価セット・評価器も IR が正本。init が作る既定のもの以外で IR に無いファイルは消す
-  const keep = new Set(["eval-sets/evaluation-set-default.json", "evaluators/evaluator-default.json", "evaluators/evaluator-default-trajectory.json", ...Object.keys(ir.evalFiles ?? {})]);
+  const keep = new Set(["eval-sets/evaluation-set-default.json", "evaluators/evaluator-default.json", "evaluators/evaluator-default-trajectory.json", ...Object.keys(ir.evalFiles ?? {}), ...evFiles]);
   for (const sub of ["eval-sets", "evaluators"]) {
     const d = join(dir, "evals", sub);
     if (existsSync(d)) for (const f of readdirSync(d)) if (f.endsWith(".json") && !keep.has(`${sub}/${f}`)) rmSync(join(d, f));
   }
   for (const [rel, v] of Object.entries(ir.evalFiles ?? {})) {
     writeJson(join(dir, "evals", rel), v);
+  }
+  // 消した評価器を指す evaluatorRefs を外す
+  const setFile = join(dir, "evals", "eval-sets", "evaluation-set-default.json");
+  const evDir = join(dir, "evals", "evaluators");
+  if (existsSync(setFile) && existsSync(evDir)) {
+    const have = new Set(readdirSync(evDir).filter(f => f.endsWith(".json")).map(f => readJson(join(evDir, f)).id));
+    const set = readJson(setFile);
+    if (Array.isArray(set.evaluatorRefs) && set.evaluatorRefs.some((r: string) => !have.has(r))) {
+      set.evaluatorRefs = set.evaluatorRefs.filter((r: string) => have.has(r));
+      writeJson(setFile, set);
+    }
   }
 
 }
