@@ -97,7 +97,10 @@ uip solution upload out/RequestApp.uis                                          
     { "name": "Confirm", "controls": [ { "type": "label", "name": "Who", "text": { "var": "ApplicantName" } } ] } ] }
 ```
 
-- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）
+- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`、`radio`、`multiselect`、`slider`、`switch`、`email`、`fileUpload`、`fileDownload`、`header`、`divider`、`iframe`、`documentViewer`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）。見本 `samples/apps/rpa-app-parts.json`
+- 選択肢（`dropdown`・`radio`・`multiselect`）：`options: ["松", "竹"]` → `config.sourceBinding` の式 `{"松", "竹"}.ToListSource()`（`isLiteral: false`）と `sourceBinding.genericType: "System.String"`。Studio Web で List source に同じ式を書いて書き出した形
+- 部品ごとに名前の違う項目：`text`（switch は `labelText`）、`checked`（switch は `resolvableSwitchValue`）、`min` / `max`（slider は `minValue` / `maxValue`）、`step`・`value`（slider の `sliderStep`・`sliderValue`）、`url`（fileDownload・button）、`src`（iframe は `src`、documentViewer は `documentViewerSrc`）
+- `onLoad`（ページ）：ページを開いたときの手順。書き方は `onClick` と同じ。根のパネル（`ID1`）の `events.load` に `start-automation`、`workflowBindings` の `controlId` は根のパネル、ファイルは `<ページ>_<ページ>_load.xaml`、トリガーの DisplayName は `<ページ>_<ページ> : Loaded Event`（Studio Web のページの Events → Loaded → Define workflow file で作って書き出した形）
 - 項目：`label`、`text`、`placeholder`、`required`、`checked`、`hidden`、`disabled`、`min` / `max`（number）、`rows`（textarea）。部品に無い項目は `APP_PROP`。雛形の部品にあるほかの式の項目は `props: { "tooltip": "…" }`
 - 値：文字（VB の文字列にする）・真偽・数、`{ "var": "<App の変数>" }`（tokens と bindingReferences でつなぐ）、`{ "vb": "<式>" }`（そのまま）
 - 変数：`type` は `string` と `list`（`{ "type": "list", "of": "<Data Fabric の表>" }`。表の一覧を持つ）。ほかの型はまだ（`APP_UNSUPPORTED`）
@@ -134,9 +137,15 @@ uip solution upload out/WorkCalendar.uis
 - list の変数：`appVariableDefinition: { baseType: "generic", dataType: "Apps.Controls.ListSource", options: [{ baseType: "class", dataType: "[5ba47f0c-5858-4f65-9378-b4be1cff98f2]::DataService.Entities.WorkCalendar" }] }`（`type: "object"`）。XAML の型は `ac:ListSource(de:WorkCalendar)`（`Apps.Controls.ListSource(Of T)`、`UiPath.Apps.Expressions.Integrations`）。`New ListSource(Of T)(data, totalRecords)` か拡張の `.ToListSource()`。中身は `.data`
 - 表の部品：`config.sourceBinding.expressionId` の式に変数（token 付き）、`config.columns[]` の `headingExpression`（文字）と `valueExpression`（列の名前。式は `$.controls.<id>.config.columns[?(@.id=="ID…")].valueExpression`）
 - 日付の部品の値は `DateOnly?`。日付の列（DateTime）へは `Controls.P.D.Value.Value.ToDateTime(TimeOnly.MinValue)`。チェックボックスの値は `Boolean`
-- 表の日付の列は `2026-11-23T00:00:00.0000000Z` と出る（書式はまだ）
+- **表の日付の列は書式を変えられない**：`2026-11-23T00:00:00.0000000Z` と出る。文書（Edit Grid の注意）に「Table と Edit Grid では日付の書式は使えない。DateTime はそのまま、DateOnly の列はブラウザーの言語で書式」とある。Studio Web で確かめたこと（2026-11-17）：列の Source は行の型のメンバーの名前だけで、式は書けない。Data source に匿名型へ写した一覧（`Days.data.Select(Function(r) New With {.WorkDate = …ToString("yyyy/MM/dd")}).ToList().ToListSource()`）を入れると式は通るが、列が初期化され、列の Source に `WorkDate` を書くと「'WorkDate' is not declared」で保存できない。Data Fabric の DATE の列も型は DateTime。生成器は表の日時の列に注意 `APP_TABLE_DATE` を出す。日付をきれいに見せたいときは、選んだ日をラベルに `ToString("yyyy/MM/dd")` で出す（見本の保存の手順と同じ）
 
 確かめたこと（2026-11-13）：見本を `--uis` で作って `upload` し、3 つのワークフローを開いて問題なし。デバッグで、日付を入れて「保存」→ 表に 1 行出た、チェックを変えて「保存」→ 同じ行が直った（行は増えない）、「この日の設定を消す」→ 行が消えた。DESKTOP の Chrome でやった（Studio Web は UiPath Assistant とのつなぎを求める）
+
+2026-11-17（trial）：`onLoad`（一覧を読み込み、件数をラベルに出す）を足した見本を `--solution-id` で上書きし、Studio Web のページの Events → Loaded に「Edit workflow file」として出て、ワークフローに問い合わせと代入が並んだ。trial には表 WorkCalendar が無い（表は別の組織にある。Health analyzer に「Entity not available on the current tenant」）ので、この見本の Debug はしていない。`onLoad` を動かして確かめたのは下の部品の見本
+
+**Debug は Assistant 無しでも動いた**（2026-11-17、trial、この PC の Chrome）：Debug →「Save & Debug」で、ビルドとアプリの実行がクラウド（ログの `ProjectDirectory:: /tmp/home/UiPath/RemoteAgent/...`）で走り、アプリが新しいタブ（`apps_/default/run/...`）で開いた。前に止まった「Signing in to Assistant」は出なかった
+
+部品の見本 `samples/apps/rpa-app-parts.json` の Debug（2026-11-17、trial）：開くと `onLoad` が動いてラベルに「ページを開きました」、ラジオに 松・竹・梅、ドロップダウンに 東日本・西日本、必須の印、スライダー（1〜50）、スイッチ、メール、添付、区切り線、ダウンロードが出た。竹を選んで「送る」→ ラベルが「竹 / 50」（`Controls.MainPage.Plan.Value` が読めた）。**スライダーは画面で 10 なのに `.Value` は 50 を返した**（`sliderValue` の初期値と `Value` の関係は分かっていない）。複数選択の選択肢は開いて見ていない
 
 ### RPA 側：今日動くか（`samples/apps/work-calendar-rpa/ir`）
 
@@ -256,7 +265,7 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 - **ドロップダウンの選択肢**（12）：List source に `{"v1","v2"}.ToListSource()` か `New List(Of String) From {…}.ToListSource()`。Multiselect とラジオも同じ。
 - **日付の型（Date）の値はタイムゾーンが要る**（34）：`DateTimeKind.Unspecified` は ISO でないとして弾かれる（`Local` か `Utc`）。上の `Value.Value.ToDateTime(TimeOnly.MinValue)` は Unspecified になる。
 - **アプリでできないこと**（22）：`Fetch` / `FetchOne`（Query Entity Record を使う）、エンティティの選択肢（choice set）と `GetChoiceSet` / `GetChoiceSetValue`、Autopilot でエンティティから作る、Studio Desktop で開く、ページの export・import、Public App。rpa-app-entities.ts は選択肢の列を扱わない。
-- **部品**（32）：rpa-app.ts が作れないもの：ラジオ・Multiselect・Switch・Slider・File Uploader・Email・Rich Text、Edit Grid・Custom List・Tabs・Header・Divider・Image・IFrame・Document Viewer、Container・Page Container。
+- **部品**（32）：rpa-app.ts が作れないもの：Rich Text・Multi File Uploader・Edit Grid（Toolbox を押しても足されず、雛形が取れていない）、Custom List・Tabs・List・Validation Control（雛形は `controls.json` にあるが、中の部品や選択肢の形を見ていないので IR には出していない）、Image、Container・Page Container・Container Layout、テキストボックスの Hide characters。2026-11-17 に ラジオ・Multiselect・Switch・Slider・File Uploader・File Downloader・Email・Header・Divider・IFrame・Document Viewer を足した（Studio Web の Toolbox で足して書き出し、`node tools/apps/rpa-app-templates.ts <書き出し> --add-controls` で `controls.json` に足した。既にある部品・ページ・App の雛形は変えない）。
 - **アプリのプロジェクト**（33）：Main のワークフローもトリガーも無い。App Events に Submit Action（アクション アプリ）もある。アプリを消すと、使っているワークフローも消える。
 - **デバッグ**（38）：動いているアプリで Shift+4 を押すと、アプリの中のログを JSON で取れる。On local machine と On cloud、Debug step-by-step がある。エラーがあるとデバッグのボタンが押せない。
 - **戻し方**（39）：Cloud Workspace は閉じたときと 40 分ごとに自動のスナップショットができ、Change history から戻せる。publish の履歴の Restore は、その版に全部のプロジェクトを戻す。
