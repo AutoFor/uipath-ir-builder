@@ -96,6 +96,7 @@ uip codedapp pack dist -n <app> -v 1.0.0                                   # pub
 - Action App（`expense-attach` に clientId と試しの表を入れたもの）を `deploy --client-id <Id>` で出し、Action Center で開いた：
   - `records`：iframe の中の `new UiPath()`（引数なし、`initialize()` なし）で Data Fabric が読めた。`pageSize: 2` で「1–2 件 / 全 3 件」→「次へ」で「3–3 件」
   - `show`：入力の file に、API で作った添付の `{ ID }` を渡すと、`getById` の名前（receipt.png）と、Blob の URL の `<img>` が iframe の中に出た（CSP で止まらない）
+  - 書ける file：ブラウザーの Action Center でファイルを選んで「直して返す」→ タスクの data に `signedSheet: { ID: "3d40…" }` が入り、`GET /odata/Attachments(<ID>)` で選んだファイルの名前が返った（`Attachments.create` に folderId は渡していない。Shared のタスクで読めた）。ファイルの選択は人が行った（iframe の中は Claude in Chrome から操作できない）
   - 試しの添付は Orchestrator の `POST /odata/Attachments`（`{"Name": "…"}`）→ 返りの `BlobFileAccess`（`Verb: PUT`、`RequiresAuth: false`、`Headers` は Keys / Values）へ中身を PUT して作った
 - **同じタスクを UiPath Assistant（デスクトップ）のタスクの画面で開くと、SDK が使えない**：「外部アプリケーションのアクセス トークンを取得できませんでした … `identity_/connect/token`: 400」が出て、表も添付も出ない（書く欄と結果のボタンは出る）。文書の既知の制限（AUT-1208 の 16）のとおり。SDK を使う Action App は、ブラウザーの Action Center で開いてもらう
 - Web App（`work-portal` に clientId・orgName・tenantName・`redirectUri: https://<org>.uipath.host/<path-name>` と試しの表）を `publish -t Web` → `deploy --path-name <path-name> --client-id <Id>`。開いて「UiPath でサインイン」を押すと、Chrome の UiPath のサインインがそのまま使われ、同意の画面も出ずに戻り、表が読めた（2 件ずつ、全 3 件）
