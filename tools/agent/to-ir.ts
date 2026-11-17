@@ -104,7 +104,36 @@ function escalationToIR(r: any): Escalation | ValidationEscalation | undefined {
   const ends = Object.entries(ch.outcomeMapping ?? {}).filter(([, v]) => v !== "continue");
   if (ends.length) e.outcomes = Object.fromEntries(ends);
   if (ch.taskTitle && ch.taskTitle !== "Approval request") e.title = ch.taskTitle;
+  // エスカレーションのメモリ（properties.memory）
+  const m = r.properties?.memory;
+  if (m?.isEnabled) {
+    const fs: any[] = m.fieldSettings ?? [];
+    const equal = fs.every(f => Math.abs(f.weight - 1 / fs.length) < 1e-6);
+    const mem: any = { fields: equal ? fs.map(f => f.name) : Object.fromEntries(fs.map(f => [f.name, f.weight])) };
+    if (m.threshold !== undefined && m.threshold !== 0.8) mem.threshold = m.threshold;
+    if (m.searchMode && m.searchMode !== "hybrid") mem.search = m.searchMode;
+    if (m.fieldMatching === "and") mem.match = "all";
+    e.memory = mem;
+  } else if (r.properties && Object.keys(r.properties).some(k => k !== "memory")) return undefined;
   return e;
+}
+
+/** ソリューションの debug_overwrites.json から、資源（key）を当てたフォルダを探す */
+function overwriteFolder(agentDir: string, key: string | undefined): string | undefined {
+  if (!key) return undefined;
+  for (let d = resolve(agentDir); ; d = join(d, "..")) {
+    const up = join(d, "userProfile");
+    if (existsSync(up)) {
+      for (const u of readdirSync(up)) {
+        const f = join(up, u, "debug_overwrites.json");
+        if (!existsSync(f)) continue;
+        for (const t of readJson(f).tenants ?? []) for (const r of t.resources ?? [])
+          if (String(r.overwrite?.resourceKey ?? r.solutionResourceKey).toLowerCase() === key.toLowerCase() && r.overwrite?.folderPath) return r.overwrite.folderPath;
+      }
+      return undefined;
+    }
+    if (resolve(d, "..") === resolve(d)) return undefined;
+  }
 }
 
 /** 評価器のファイルを省略形に戻す。知らない項目や種類があれば undefined（evalFiles のまま持つ） */
@@ -313,7 +342,10 @@ export function toIR(dir: string): AgentIR {
     if (!existsSync(f)) continue;
     const m = readJson(f);
     if (m.$featureType !== "memorySpace") continue;
-    const e: NonNullable<AgentIR["memory"]>[number] = { space: m.memorySpaceName, folder: m.folderPath };
+    // Studio Web で作った memory space は folderPath が solution_folder。実際のフォルダは
+    // userProfile/<利用者>/debug_overwrites.json の overwrite（resourceKey が feature の referenceKey）にある
+    const folder = m.folderPath === "solution_folder" ? overwriteFolder(dir, m.referenceKey) ?? m.folderPath : m.folderPath;
+    const e: NonNullable<AgentIR["memory"]>[number] = { space: m.memorySpaceName, folder };
     if (m.name !== m.memorySpaceName) e.name = m.name;
     const s = m.dynamicFewShotSettings ?? {};
     if (s.isEnabled === false) e.fewShot = false;

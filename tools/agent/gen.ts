@@ -208,6 +208,12 @@ export type Escalation = {
   /** 結果（アプリの outcomes）ごとに、エージェントが続けるか（continue）止まるか（end）。書かなければ全部 continue */
   outcomes?: Record<string, "continue" | "end">;
   title?: string;
+  /**
+   * エスカレーションのメモリ（AUT-1201 の 18）：解決した件を覚え、似た件では人に聞かずに一番近い 1 件の結果を使う。
+   * fields はアプリの入力の名前（配列なら等分、オブジェクトなら重み。合わせて 1）。エージェントに memory（memory space）が要る。
+   * 形は Studio Web の Escalation memory で作って書き出した resource の properties.memory（2026-11-17）
+   */
+  memory?: { fields: string[] | Record<string, number>; threshold?: number; search?: "hybrid" | "semantic"; match?: "any" | "all" };
 };
 
 /** Action Center のアプリの action schema（dotnet の型の引数の並び） */
@@ -550,6 +556,24 @@ function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefi
   const name = e.name ?? found.name.replace(/[^A-Za-z0-9_]/g, "_");
   const oldRes = project && existsSync(join(project, "resources", name, "resource.json")) ? readJson(join(project, "resources", name, "resource.json")) : undefined;
   const title = e.title ?? "Approval request";
+  // エスカレーションのメモリ：fields はアプリの入力（inputs・inOuts）の名前。id は前のものを名前で引き継ぐ
+  let memory: Record<string, unknown> | undefined;
+  if (e.memory) {
+    const m = e.memory;
+    const weights: Record<string, number> = Array.isArray(m.fields) ? Object.fromEntries(m.fields.map(f => [f, 1 / m.fields.length])) : (m.fields ?? {});
+    const names = Object.keys(weights);
+    const inputs = new Set([...(s.inputs ?? []), ...(s.inOuts ?? [])].map(a => a.name));
+    if (!names.length) probs.push({ path: `${p}.memory.fields`, code: "ESC_MEMORY", message: "エスカレーションのメモリには引数が 1 つ以上要る" });
+    for (const f of names) if (!inputs.has(f)) probs.push({ path: `${p}.memory.fields`, code: "ESC_MEMORY", message: `アプリの入力に "${f}" が無い（ある物: ${[...inputs].join(", ")}）` });
+    const sum = names.reduce((a, f) => a + weights[f], 0);
+    if (names.length && Math.abs(sum - 1) > 1e-6) probs.push({ path: `${p}.memory.fields`, code: "ESC_MEMORY", message: `重みは合わせて 1（100%）にする（いま ${sum}）` });
+    if (m.threshold !== undefined && !(m.threshold >= 0 && m.threshold <= 1)) probs.push({ path: `${p}.memory.threshold`, code: "ESC_MEMORY", message: "threshold は 0〜1" });
+    const oldIds = new Map<string, string>((oldRes?.properties?.memory?.fieldSettings ?? []).map((x: any) => [x.name, x.id]));
+    memory = {
+      isEnabled: true, threshold: m.threshold ?? 0.8, searchMode: m.search ?? "hybrid", fieldMatching: m.match === "all" ? "and" : "or",
+      fieldSettings: names.map(f => ({ id: oldIds.get(f) ?? randomUUID(), name: f, weight: weights[f] })),
+    };
+  }
   return {
     $resourceType: "escalation",
     id: oldRes?.id ?? randomUUID(),
@@ -559,7 +583,7 @@ function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefi
     isAgentMemoryEnabled: false,
     ixpToolId: null,
     storageBucketName: null,
-    properties: {},
+    properties: memory ? { memory } : {},
     governanceProperties: { isEscalatedAtRuntime: false },
     isEnabled: true,
     channels: [{
@@ -859,6 +883,7 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
     resources[n] = r;
   });
   (ir.escalations ?? []).forEach((e, i) => {
+    if ("memory" in e && e.memory && !(ir.memory ?? []).length) probs.push({ path: `escalations[${i}].memory`, code: "ESC_MEMORY", message: "エスカレーションのメモリには、エージェントの memory（memory space）が要る" });
     const r = "validate" in e ? validationResource(e, i, ir, opts.project, probs) : escalationResource(e, i, opts.appLookup, opts.project, probs);
     if (!r) return;
     const n = String(r.name);

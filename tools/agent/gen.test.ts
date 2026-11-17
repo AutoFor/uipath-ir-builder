@@ -504,3 +504,20 @@ test("function の道具：ソリューションの中の関数の入口と key 
     rmSync(sol, { recursive: true, force: true });
   }
 });
+
+test("エスカレーションのメモリ：properties.memory の形と検査（AUT-1201 の 18）", () => {
+  const esc = (memory: any) => ({ app: "SimpleApprovalApp", name: "Approval", recipients: ["a@example.com"], memory });
+  const mem = [{ space: "M", folder: "Shared" }];
+  const r = generate(ir({ memory: mem, escalations: [esc({ fields: ["Content"], match: "all" })] } as any), BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  const m: any = (r.result!.resources.Approval as any).properties.memory;
+  assert.deepEqual({ ...m, fieldSettings: m.fieldSettings.map((f: any) => ({ name: f.name, weight: f.weight })) },
+    { isEnabled: true, threshold: 0.8, searchMode: "hybrid", fieldMatching: "and", fieldSettings: [{ name: "Content", weight: 1 }] });
+  const two: any = (generate(ir({ memory: mem, escalations: [esc({ fields: ["Content", "Comment"] })] } as any), BASE, ALL).result!.resources.Approval as any).properties.memory;
+  assert.deepEqual(two.fieldSettings.map((f: any) => f.weight), [0.5, 0.5]);
+  assert.equal(two.fieldMatching, "or");
+  const codes = (x: any) => generate(ir(x), BASE, ALL).problems.map((p) => p.code);
+  assert.deepEqual(codes({ escalations: [esc({ fields: ["Content"] })] }), ["ESC_MEMORY"]); // memory space が無い
+  assert.deepEqual(codes({ memory: mem, escalations: [esc({ fields: ["Nope"] })] }), ["ESC_MEMORY"]);
+  assert.deepEqual(codes({ memory: mem, escalations: [esc({ fields: { Content: 0.3, Comment: 0.3 } })] }), ["ESC_MEMORY"]);
+});
