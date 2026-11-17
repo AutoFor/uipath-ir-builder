@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"FormTriggerActivity&lt;FormInfoTriggerEventArgs&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ufa=\"clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ufa:FormTriggerActivity x:TypeArguments=\"ufa:FormInfoTriggerEventArgs\" Event=\"{x:Null}\" FormId=\"{x:Null}\" MessageId=\"{x:Null}\" Tag=\"{x:Null}\" Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"e791b187-8893-4390-805e-abd95ee21950\" />\r\n</Activity>"
+  }
+}
