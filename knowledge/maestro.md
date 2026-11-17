@@ -69,6 +69,10 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - **会話のエージェント（`conversationalAgent`）の `maxIterations` は 8 以下**。SDK の既定はそれを超え、`verify.mjs` は通すが、Studio Web の問題パネルが止める。明示する
 - **会話の flow は CLI の debug では動かない**（`inputSchema` / `outputSchema` が無いと言われて上がらない。チャットを送る手段も無い）。`uip solution upload <ソリューションのフォルダ>` で上げ、Studio Web のデバッグのチャットで話しかける。返事と `sendMessage` の文が出て、成功になった
 - **コネクタは `uip maestro registry prepare` を `tools/maestro`（SDK のあるフォルダ）で流す**。ほかの場所だと「SDK が無い」と言われる。接続は `uip is connections list --all-folders` で探す（既定は個人ワークスペースだけを見る）
+- **`registry prepare` は `--profile` を見ず、既定のログインの接続を `.flow-sdk/bindings.json` に書く**（1.204.0、2026-11-17）。trial（接続が 0 件）で `--profile trial` を付けて流しても、既定のログインの組織の Slack の接続（`seiya-kawashima`）を結んで成功した。別のログインのテナントで動かす flow は、`bindings.json` の接続の Id がそのテナントのものか確かめる。`.flow-sdk/` は prepare が `tools/maestro` に作る作業場で、コミットしない
+- **RPA のジョブが失敗すると、`rpaWorkflow` の `onError` に来る**（Automate、trial、2026-11-17、`samples/maestro/deploy/RpaOnError.flow.ts`）。`$vars.<id>.error` は `{ code: "Robot", status: 502, message: "Failure in the Orchestrator Job", detail: "<RPA の例外とスタック（in Main.xaml at …）>", category }`。debug の結果では失敗した node の出力が `Error`（先頭が大文字）で見えるが、式からは `.error`。エラーの道は `<id>ErrorEnd` で終わり、本線の続きは走らない。ジョブを待つ間（Unattended のロボットで 1 分ほど）flow は止まって待つ
+- **Quick Form（`hitl`）にはエラーの道を付けられない**。trial の登録簿の `uipath.human-in-the-loop.quick-form`（1.6）は出口が `completed` だけで、`supportsErrorHandling` が無い。SDK の `check` も `.onError` を `ONERROR_NO_ERROR_PORT` で止める。文書の「Quick Form にエラーの道」（2026-10-30）は Flow のこのノードにはまだ来ていない
+- **割り当てない人のタスクも `uip tasks complete` で完了できる**（trial、2026-11-17）。`uip tasks list` の JSON は日本語のタイトルを `\uXXXX` で返すので、`grep` で探さず `--output-filter "[?IsCompleted==\`false\`]"` で絞る。タスクはデバッグのフォルダ（`FolderId` はそのたびに違う）にできる
 - **人のタスク（Quick Form）は `uip tasks complete <id> --type QuickFormTask --folder-id <id> --action Approve --data <JSON>` で完了できる**。タスクは `uip tasks list` の `CreatedTime` と `Title` で探す。完了すると、出力に `Action` と入力した値が入り、分岐の先へ進んだ
 - **ファイルを入力にするとき**は `debug.mjs --attachment <入力名>=<ファイル>`
 - **要約（`summarize`）と一括変換（`batchTransform`）はプランによっては動かない**（`460002 Failed to create ephemeral index`、詳細は `Unavailable with current plan`）。手元の検証は通る
@@ -94,16 +98,17 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `onError` | テナント | テナント | `ControlTour` |
 | `mock`、`terminate` | テナント | テナント | `LoopTour` |
 | `dataFabricCreate` / `Read` / `Update` / `Delete` | テナント | テナント | `DataFabricTour`、`WorkCalendarCheck`（RPA から Data Fabric を使う形は knowledge/dataservice.md） |
-| `rpaWorkflow` | テナント | テナント | `fixtures/tenant/Rpa.*`、`deploy/DuViaRpa`（RPA で Document Understanding） |
-| `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
+| `rpaWorkflow`：成功、ファイルの入力、出力を後ろで読む | テナント（Community と trial） | テナント | `fixtures/tenant/Rpa.*`、`deploy/DuViaRpa`（RPA で Document Understanding） |
+| `rpaWorkflow` の `onError`（RPA のジョブの失敗） | テナント（trial、2026-11-17） | 手元 | `deploy/RpaOnError` |
+| `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント（Community。trial は接続が 0 件で、接続を作るにはブラウザで同意が要るので試していない） | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
 | `agent`（公開済み） | テナント | テナント | `fixtures/tenant/Agent.*`（PERSONAL_WORKSPACE を実際の名前にして流す） |
 | `inlineAgent`（flow の中で定義するエージェント） | テナント | テナント | `InlineAgent` |
-| `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
+| `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（Community と trial。`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
 | `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
 | `ixpExtract` / `dynamicExtract` | `ixpExtract` は動いた（Standard のトライアル。Community はデプロイが 403）。`dynamicExtract` は Studio Web の Debug で抽出サービスまで届くが、実行時の SingleExtract が INVALID_DOCUMENT。Studio Web だけで作った Flow でも同じ（設計時の Dataset の予測は通る）（10 節） | 同じ | — |
-| 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元。着信はデプロイと電話番号が要り、発信はデバッグでも本当にかけて課金される | 同じ | `Voice` |
+| 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元と、テナントの登録簿との突き合わせ（下の「音声のノード」）。着信はデプロイと電話番号（SIP の電話会社か Twilio の契約）が要り、発信はデバッグでも本当にかけて課金されるので、試せない | 同じ | `Voice` |
 | `queueItem`、`publishedFunction` | 手元（キューは書き込みになる。関数は、pack → publish → deploy したものを Service Task から呼べる（文書、AUT-1197）。まだテナントで試していない） | 手元 | `LocalOnly` |
 | `apiWorkflow`（生成器で作った API ワークフローを呼ぶ） | テナント（トライアル。配列の引数も渡せた） | 手元 | `deploy/CallApiWorkflow`（knowledge/api-workflow.md） |
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
@@ -115,6 +120,19 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `queueItem` | テナント（試しのキューに項目ができた） | — | `deploy/QueueTour` |
 | BPMN の Call activity（`startAgenticProcess`）と戻り値 | — | テナント | `deploy/Parent`、`deploy/Child` |
 | ビジネスルール（`businessRule`、DMN） | — | 評価できた（DMN 1.3、`.uirule` を直す。10 節） | `deploy/RuleCall`、`deploy/Tier` |
+
+### 音声のノード（trial の登録簿と SDK 6.66.5 の突き合わせ、2026-11-17）
+
+| ノード | 登録簿の版 | SDK が書く版 | 差 |
+| --- | --- | --- | --- |
+| `core.trigger.voice`（Incoming call） | 1.0 | 1.0 | なし |
+| `uipath.agent.voice`（Voice agent） | 1.2 | 1.0 | 登録簿の入力に `voice.turnDetection`（`silenceDurationMs`・`prefixPaddingMs` 0〜5000、`sensitivity` low / high）と `voice.agentSpeaksFirst`（既定 true）があり、SDK の `voiceAgent` には無い（Studio Web で足す）。`maxIterations` は 1〜8。上にエスカレーション、下にコンテキストと道具をつなぐ口がある |
+| `uipath.conversational.voice.end-call`（End call） | 1.0 | 1.0 | なし |
+| `uipath.conversational.voice.create-outgoing-call` | 1.0 | 1.0 | なし |
+
+- SDK は Voice agent の設定を、ノードではなく横の `<UUID>/agent.json` に書く（`settings.engine: "conversational-v1"`、`mode: "voice"`、`voice: { model: "gemini-3.1-flash-live-preview", maxTokens: 65536, temperature: 0, persona: "Aoede" }`）。音声のモデルは `uip agent model list` には出ない（文字のモデルだけ）ので、使えるかは CLI では確かめられない
+- Voice agent の出力は `uipath__agent_response_messages`・`uipath__voice_call_context`（`type: phone | web`、`id`、`conversationId`）・`uipath__voice_session`（`callEnded`・`endedBy`（agent / user / system / error）・`reason`）
+- `verify.mjs`（check・compile・validate）は 1.0 のまま通る。動かすには電話番号が要るので、テナントでは動かしていない
 
 **Automate として動いていることの確かめ**：`debug.mjs --automate` で動かしたプロジェクトを Studio Web で開くと、下のツールバーが「製品: Maestro Automate」、エクスプローラーが「Maestro Automate プロジェクト」になっていた。Orchestrator のジョブは `RuntimeType: "Flow"` で、profile は出ない。
 
@@ -245,6 +263,7 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 ### まだのもの
 
 - 文書の抽出の `dynamicExtract`（実行時の SingleExtract が INVALID_DOCUMENT。Studio Web だけで作った Flow でも同じなので、サービス側を待つ）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
+- trial でのコネクタ（接続が 0 件。接続を作るには、`uip is connections create <key> --no-wait` の URL をブラウザで開いて Connect を押す人の操作が要る）
 
 ## 11. 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1202）
 
