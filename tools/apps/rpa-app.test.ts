@@ -229,3 +229,11 @@ test("アクション：Studio Web の Simple Approval の書き出しと同じ�
   assert.equal(res.resource.type, "workflow Action");
   assert.equal(res.resource.spec.type, "workflow Action");
 });
+
+test("--solution-id：Studio Web のソリューションの Id にする（上書き用。AUT-1200）", () => {
+  const id = "f32a0e35-4f0e-49aa-6678-08df41839b07";
+  const f = generateFiles(approval, undefined, { solutionId: id });
+  assert.equal(JSON.parse(f["ApprovalActionSolution.uipx"]).SolutionId, id);
+  assert.equal(JSON.parse(f["SolutionStorage.json"]).SolutionId, id);
+  assert.notEqual(JSON.parse(generateFiles(approval)["ApprovalActionSolution.uipx"]).SolutionId, id);
+});

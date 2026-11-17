@@ -5,6 +5,8 @@
 //     --uis <file.uis>   取り込み用の zip を書く。Studio Web へは uip solution upload <file.uis>
 //                        （フォルダを upload に渡すと .local が送られず、イベントがつながらない）
 //     --check            検証だけ
+//     --solution-id <Id> Studio Web の既にあるソリューションの Id にする。--uis を upload すると、そのソリューションを上書きする
+//                        （Action: Overwritten。上書きの前の版は Studio Web に残る。IR に無いプロジェクトは消える。knowledge/apps.md）
 //   終了コード: 0 = 書けた / 1 = 検証で弾かれた / 2 = 使い方の誤り
 //
 // パーツ（knowledge/apps.md の「ローコードの Apps」）:
@@ -491,11 +493,12 @@ ${body}
 </Activity>`;
 }
 
-export function generateFiles(a: RpaApp, store?: Store): Record<string, string> {
+// solutionId：Studio Web の既にあるソリューションの Id。渡すと uip solution upload がそこへ上書きする（AUT-1200）
+export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: string } = {}): Record<string, string> {
   const T = templates();
   const ents = entitiesOf(store);
   const solution = a.solution ?? a.app;
-  const solutionId = randomUUID(), projectId = randomUUID(), projectKey = randomUUID();
+  const solutionId = opts.solutionId ?? randomUUID(), projectId = randomUUID(), projectKey = randomUUID();
   const appSystemName = `ID${hex()}`;
   const vars = new Map((a.variables ?? []).map((v) => [v.name, v]));
   const actionKey = randomUUID();
@@ -677,9 +680,10 @@ export function loadStore(app: RpaApp, irFile: string): Store | undefined {
 function main() {
   const args = process.argv.slice(2);
   const val = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
-  const out = val("--out"), uis = val("--uis"), checkOnly = args.includes("--check");
-  const files = args.filter((a, i) => !a.startsWith("--") && !["--out", "--uis"].includes(args[i - 1]));
-  if (files.length !== 1 || (!out && !uis && !checkOnly)) { console.error("使い方: node tools/apps/rpa-app.ts <app.json> (--out <dir> | --uis <file.uis> | --check)"); process.exit(2); }
+  const out = val("--out"), uis = val("--uis"), solutionId = val("--solution-id"), checkOnly = args.includes("--check");
+  const files = args.filter((a, i) => !a.startsWith("--") && !["--out", "--uis", "--solution-id"].includes(args[i - 1]));
+  if (files.length !== 1 || (!out && !uis && !checkOnly)) { console.error("使い方: node tools/apps/rpa-app.ts <app.json> (--out <dir> | --uis <file.uis> | --check) [--solution-id <Studio Web のソリューションの Id>]"); process.exit(2); }
+  if (solutionId !== undefined && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(solutionId)) { console.error(`--solution-id は GUID（${solutionId}）`); process.exit(2); }
   const app: RpaApp = JSON.parse(readFileSync(files[0], "utf8"));
   const store = loadStore(app, files[0]);
   const issues = check(app, store);
@@ -690,7 +694,7 @@ function main() {
   }
   for (const n of notices(app)) console.log(`  注意 ${n}`);
   if (checkOnly) { console.log(`OK ${files[0]}`); return; }
-  const gen = generateFiles(app, store);
+  const gen = generateFiles(app, store, { solutionId });
   if (out) {
     for (const [p, s] of Object.entries(gen)) { const f = join(resolvePath(out), p); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, s, "utf8"); }
     console.log(`OK ${files[0]} -> ${out}（${Object.keys(gen).length} ファイル）`);

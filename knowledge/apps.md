@@ -235,7 +235,7 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 ### 取り込み（`uip solution upload`）で確かめたこと
 
 - 書き出しの SolutionId と ProjectId を新しくし、ページの式（ラベルの文字）を書き換えて `upload` すると、新しいソリューションとして入り、Studio Web で書き換えたとおりに出る。`.entities` と `JitCustomTypes*.json` を消しても開ける（Studio Web が DLL を作り直す）
-- 取り込んだソリューションへの上書き（`upload` をもう一度）は HTTP 500（`.project/…` が見つからない）で通らなかった。2026-11-17 に Flow だけのソリューション（`.uis` ではなくフォルダ）で試すと、2 回目は `Action: Overwritten` で通った（1.204。文書のとおり、上書きの前に戻せる版を残す。`--no-snapshot` で残さない、`--force` で有無の確認を飛ばす）。RPA アプリの `.uis` での上書きは試し直していない
+- 取り込んだソリューションへの上書き（`upload` をもう一度）は HTTP 500（`.project/…` が見つからない）で通らなかった。2026-11-17 に Flow だけのソリューション（`.uis` ではなくフォルダ）で試すと、2 回目は `Action: Overwritten` で通った（1.204。文書のとおり、上書きの前に戻せる版を残す。`--no-snapshot` で残さない、`--force` で有無の確認を飛ばす）。**RPA アプリの `.uis` も上書きできた**（2026-11-17、1.204、AUT-1200）：`.uipx` と `SolutionStorage.json` の `SolutionId` を Studio Web のソリューションの Id にした `.uis` を upload すると `Action: Overwritten`（`SnapshotCreated: true`）。IR から作り直したもの（プロジェクトの Id が新しい）でも通り、`.uis` に無いプロジェクトは消えた。生成器は `node tools/apps/rpa-app.ts <app.json> --uis <file.uis> --solution-id <Id>` でこの形にする（Id は `uip solution upload` の結果の `SolutionId`）。Id が違うと新しいソリューションとして入る（同じ `.uis` を 2 回上げると「… 1」ができる）。zip の中のパスは `/` 区切りにする（`\` だと「Archive is missing project directories referenced by solution metadata」の HTTP 400）。前の 500 は 1.204 では出なかった。Local Workspace（ブラウザでフォルダを開く）はこのために要らない
 
 #### イベント（XAML）を生かすには
 
