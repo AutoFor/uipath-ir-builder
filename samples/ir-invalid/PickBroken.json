@@ -1,0 +1,46 @@
+{
+  "workflow": "PickBroken",
+  "body": [
+    {
+      "act": "Pick",
+      "branches": [
+        {
+          "name": "b",
+          "action": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "a"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "Sequence",
+      "branches": [
+        {
+          "trigger": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "t"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": "Pick",
+      "branches": []
+    }
+  ]
+}

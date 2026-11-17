@@ -24,6 +24,7 @@ import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { isArgumentList, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
+import { graphNodes, mapGraph } from "./graph.ts";
 
 type Add = (path: string, code: string, message: string) => void;
 
@@ -177,6 +178,7 @@ export function validateUiaTree(wf: Workflow, cat: Catalog, add: Add) {
       }
     }
     for (const [k, list] of children(n)) list.forEach((c, i) => walk(c, `${path}.${k}[${i}]`, card));
+    for (const g of graphNodes(n)) walk(g.node, `${path}.${g.path}`, card);
   };
   wf.body.forEach((n, i) => walk(n, `body[${i}]`, false));
 }
@@ -221,6 +223,7 @@ export function prepareUia(root: Node, cat: Catalog): Node {
     if (n.slots) out.slots = Object.fromEntries(Object.entries(n.slots).map(([k, v]) => [k, map(v)!]));
     if (n.cases) out.cases = Object.fromEntries(Object.entries(n.cases).map(([k, v]) => [k, map(v)!]));
     if (n.catches) out.catches = n.catches.map((c) => ({ ...c, body: map(c.body)! }));
+    Object.assign(out, mapGraph(n, (list) => map(list)!));
     return out;
   };
   return copy(root, undefined);

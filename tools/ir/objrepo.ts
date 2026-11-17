@@ -22,6 +22,7 @@ import { objectTypes, resolve } from "./catalog.ts";
 import { importXaml, parseXml, type El } from "./import-xaml.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 import { isValue, objDefaults } from "./uia.ts";
+import { graphChildren, graphNodes } from "./graph.ts";
 
 export const UIX = "http://schemas.uipath.com/workflow/activities/uix";
 const XNS = "http://schemas.microsoft.com/winfx/2006/xaml";
@@ -615,9 +616,9 @@ export function resolveRefs(wf: Workflow, state: RepoState, cat: Catalog): { wf:
   return { wf: copy, issues };
 }
 
-export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) => void, path = "body") {
+export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) => void, path = "body", exact = false) {
   (list ?? []).forEach((n, i) => {
-    const at = `${path}[${i}]`;
+    const at = exact ? path : `${path}[${i}]`;
     f(n, at);
     walkNodes(n.body, f, `${at}.body`);
     walkNodes(n.then, f, `${at}.then`);
@@ -625,6 +626,7 @@ export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) =
     for (const [k, v] of Object.entries(n.slots ?? {})) walkNodes(v, f, `${at}.slots.${k}`);
     for (const [k, v] of Object.entries(n.cases ?? {})) walkNodes(v, f, `${at}.cases.${k}`);
     (n.catches ?? []).forEach((c, j) => walkNodes(c.body, f, `${at}.catches[${j}].body`));
+    for (const g of graphNodes(n)) walkNodes([g.node], f, `${at}.${g.path}`, true);
   });
 }
 
@@ -674,6 +676,7 @@ export function registerTargets(wf: Workflow, repo: Repository, cat: Catalog, op
       for (const [k, v] of Object.entries(n.slots ?? {})) visit(v, `${at}.slots.${k}`, inner);
       for (const [k, v] of Object.entries(n.cases ?? {})) visit(v, `${at}.cases.${k}`, inner);
       (n.catches ?? []).forEach((c, j) => visit(c.body, `${at}.catches[${j}].body`, inner));
+      for (const g of graphChildren(n)) visit(g.nodes, `${at}.${g.path}`, inner);
     });
   };
 

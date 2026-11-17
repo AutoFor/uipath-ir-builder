@@ -1,0 +1,114 @@
+{
+  "workflow": "FlowchartCs",
+  "variables": [
+    {
+      "name": "total",
+      "type": "Int32",
+      "default": "0"
+    }
+  ],
+  "body": [
+    {
+      "act": "Flowchart",
+      "name": "数える",
+      "props": {
+        "ValidateUnconnectedNodes": true
+      },
+      "variables": [
+        {
+          "name": "count",
+          "type": "Int32",
+          "default": "0"
+        }
+      ],
+      "flowchart": {
+        "start": "Inc",
+        "nodes": [
+          {
+            "id": "Inc",
+            "act": "Assign",
+            "name": "1 足す",
+            "props": {
+              "To": "count",
+              "Value": "count + 1"
+            },
+            "next": "Check"
+          },
+          {
+            "id": "Check",
+            "decision": "count < 3",
+            "name": "3 未満か",
+            "true": "Show",
+            "false": "Kind"
+          },
+          {
+            "id": "Show",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": "\"count=\" & count.ToString"
+            },
+            "next": "Inc"
+          },
+          {
+            "id": "Kind",
+            "switch": "count",
+            "typeArg": "Int32",
+            "name": "回数で分ける",
+            "cases": {
+              "3": "Three",
+              "4": "Four"
+            },
+            "default": "Other"
+          },
+          {
+            "id": "Three",
+            "act": "Assign",
+            "props": {
+              "To": "total",
+              "Value": "count * 10"
+            },
+            "next": "ThreeLog"
+          },
+          {
+            "id": "ThreeLog",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "three"
+              }
+            }
+          },
+          {
+            "id": "Four",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "four"
+              }
+            }
+          },
+          {
+            "id": "Other",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "other"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "LogMessage",
+      "props": {
+        "Level": "Info",
+        "Message": "\"total=\" & total.ToString"
+      }
+    }
+  ]
+}

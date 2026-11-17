@@ -14,6 +14,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import type { Node, Workflow } from "./types.ts";
+import { graphChildren } from "./graph.ts";
 
 // level：error は build / run で落ちるか値が読み書きできないもの。warn は見た目の問題（スクショで確かめた）
 export type FormIssue = { file: string; code: string; message: string; level?: "warn" };
@@ -171,6 +172,7 @@ function nodes(list: Node[] | undefined, out: Node[]) {
     for (const v of Object.values(n.slots ?? {})) nodes(v, out);
     for (const v of Object.values(n.cases ?? {})) nodes(v, out);
     for (const c of n.catches ?? []) nodes(c.body, out);
+    for (const g of graphChildren(n)) nodes(g.nodes, out);
   }
 }
 

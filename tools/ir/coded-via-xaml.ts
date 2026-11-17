@@ -13,9 +13,10 @@
 
 import type { Catalog, Prop } from "./catalog.ts";
 import { resolve, defaultSlot, funcInfo, funcArgName } from "./catalog.ts";
-import type { Node, Value, Workflow, ArgumentDecl, Issue } from "./types.ts";
+import type { Node, Value, Workflow, ArgumentDecl, Issue, VariableDecl } from "./types.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { argumentType, isUntypedArgument } from "./validate.ts";
+import { graphChildren, graphValues, hasGraph } from "./graph.ts";
 
 export type ViaXamlArg = { name: string; type: string; dir: "In" | "InOut" };
 
@@ -151,6 +152,10 @@ export function viaXamlArgs(root: Node, cat: Catalog, sc: Map<string, string>): 
       const inner = new Set(local).add((c.var ?? "exception").toLowerCase());
       c.body.forEach((x) => walk(x, inner));
     }
+    // 図（Flowchart・StateMachine・Pick）の子と式。State / PickBranch の変数はその中だけで見える
+    const withVars = (vars?: VariableDecl[]) => { const inner = new Set(local); for (const v of vars ?? []) inner.add(v.name.toLowerCase()); for (const v of vars ?? []) if (v.default !== undefined) value(v.default, inner); return inner; };
+    for (const g of graphChildren(n)) { const inner = withVars(g.vars); g.nodes.forEach((x) => walk(x, inner)); }
+    for (const g of graphValues(n)) value(g.value, withVars(g.vars));
   };
   walk(root, new Set());
 
@@ -185,7 +190,7 @@ export type GenericArg = { name: string; dir: "In" | "Out" | "InOut"; type: stri
 export type GenericActivity = { name: string; wf: Workflow; args: GenericArg[] };
 
 export function genericActivity(n: Node, cat: Catalog, sc: Map<string, string>): GenericActivity | undefined {
-  if (n.body || n.then || n.else || n.slots || n.cases || n.catches || n.assigns || n.args || n.lists || n.variables || n.item !== undefined) return undefined;
+  if (n.body || n.then || n.else || n.slots || n.cases || n.catches || n.assigns || n.args || n.lists || n.variables || n.item !== undefined || hasGraph(n)) return undefined;
   // objs（要素で書くオブジェクト）は、中が全部リテラルなら引数にできない値として XAML に書く。式があれば対象外
   // 文字列は、その位置で見えている変数・引数を参照していなければよい（"$type" や enum の名前、定数の式）
   const names = new Set([...sc.keys()].map((k) => k.toLowerCase()));

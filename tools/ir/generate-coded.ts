@@ -22,6 +22,7 @@ import { genericActivity, viaXamlArgs, viaXamlWorkflow, type GenericActivity } f
 import { objToCs } from "./uia.ts";
 import { xamlDefaultProps } from "./import-xaml.ts";
 import { isTestCase } from "./testcase.ts";
+import { graphNodes } from "./graph.ts";
 
 export type CodedOptions = {
   namespace: string;
@@ -577,7 +578,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         ? ["ForEach", "ForEachRow", "While", "DoWhile", "ParallelForEach", "RepeatNumberOfTimesX", "InterruptibleWhile", "InterruptibleDoWhile", "RetryScope"].includes(name)
         : !!maps.get(`${r.activity.package}/${name}`)?.coded?.some((x) => x.scope === "lambda");
       if (isLoop) return;
-      const kids = [...(c.body ?? []), ...(c.then ?? []), ...(c.else ?? []), ...Object.values(c.slots ?? {}).flat(), ...Object.values(c.cases ?? {}).flat(), ...(c.catches ?? []).flatMap((x) => x.body)];
+      const kids = [...(c.body ?? []), ...(c.then ?? []), ...(c.else ?? []), ...Object.values(c.slots ?? {}).flat(), ...Object.values(c.cases ?? {}).flat(), ...(c.catches ?? []).flatMap((x) => x.body), ...graphNodes(c).map((g) => g.node)];
       kids.forEach((k) => walk(k, cat_at));
     };
     nodes.forEach((c, i) => walk(c, `${at}.body[${i}]`));

@@ -2,6 +2,7 @@
 // 表に載せるのは、build で落ちることを確かめたものだけ。
 
 import type { Workflow, Node, Value } from "./types.ts";
+import { graphChildren } from "./graph.ts";
 
 // ジョブを中断するアクティビティ。このどれかを含むファイルは project.json のエントリポイントにする（ST-DBP-024）
 export const SUSPENDING = new Set(["WaitForFormTaskAndResume", "WaitForExternalTaskAndResume", "WaitForJobAndResume", "WaitForQueueItemAndResume", "WaitForUserActionAndResume", "ResumeAfterDelay"]);
@@ -22,6 +23,7 @@ function children(n: Node): [string, Node[]][] {
   for (const [k, v] of Object.entries(n.slots ?? {})) out.push([`slots.${k}`, v]);
   for (const [k, v] of Object.entries(n.cases ?? {})) out.push([`cases.${k}`, v]);
   (n.catches ?? []).forEach((c, i) => out.push([`catches[${i}].body`, c.body]));
+  for (const g of graphChildren(n)) out.push([g.path, g.nodes]);
   return out;
 }
 

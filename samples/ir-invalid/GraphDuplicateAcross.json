@@ -1,0 +1,41 @@
+{
+  "workflow": "GraphDuplicateAcross",
+  "body": [
+    {
+      "act": "Flowchart",
+      "flowchart": {
+        "start": "A",
+        "nodes": [
+          {
+            "id": "A",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "a"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "act": "Flowchart",
+      "flowchart": {
+        "start": "A",
+        "nodes": [
+          {
+            "id": "A",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
