@@ -10,11 +10,17 @@ import { checkPersistence } from "./persistence.ts";
 
 type Scope = Map<string, string>; // 名前 -> IR の型名
 
+// IR の file（XAML の置き場所）として書けるか：プロジェクトの中の相対パスの .xaml
+export const isWorkflowFile = (f: string) => /\.xaml$/i.test(f) && !/^([\\/]|[A-Za-z]:)/.test(f) && !f.split(/[\\/]/).some((s) => s === ".." || s === "." || s === "");
+// IR から書き出す XAML の、プロジェクトからの相対パス（区切りは /）
+export const workflowFile = (wf: Pick<Workflow, "workflow" | "file">) => (wf.file ?? `${wf.workflow}.xaml`).replace(/\\/g, "/");
+
 export function validate(wf: Workflow, cat: Catalog): Issue[] {
   const issues: Issue[] = [];
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
 
   if (!/^[A-Za-z_]\w*$/.test(wf.workflow)) add("workflow", "BAD_NAME", `ワークフロー名 "${wf.workflow}" は識別子にする`);
+  if (wf.file !== undefined && !isWorkflowFile(wf.file)) add("file", "BAD_FILE", `file "${wf.file}" は、プロジェクトからの相対パスの .xaml にする（例 "Sub/Foo.xaml"。".." や絶対パスは書けない）`);
 
   const scope: Scope = new Map();
   for (const [i, a] of (wf.arguments ?? []).entries()) {

@@ -1,7 +1,9 @@
 // XAML を読んで IR にする（generate.ts の逆）。npm の依存なし。
 //
-//   node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]
-//     --out     IR を <dir>/<workflow>.json に書き出す
+//   node tools/ir/import-xaml.ts <file.xaml>... [--project <P>] [--out <dir>] [--print] [--verbose]
+//     --project そのプロジェクトの project.json の版（と Windows / クロスプラットフォーム）のカタログで読む。
+//               XAML がサブフォルダにあれば（<P>/Sub/Foo.xaml）、IR に "file": "Sub/Foo.xaml" を付ける（gen.ts がそこに書き戻す）
+//     --out     IR を <dir>/<workflow>.json に書き出す（--project があれば、XAML と同じフォルダの形で <dir>/Sub/Foo.json）
 //     --print   IR を標準出力に出す
 //     --verbose 捨てたものを1件ずつ出す（既定は種類ごとの件数と、注釈などの中身があるものだけ）
 //   終了コード: 0 = 取り込めて検証も通った / 1 = 取り込めない、または検証で弾かれた
@@ -15,7 +17,7 @@
 // {vb, cs} の cs は XAML に無いので戻らない。C# に直せない式は Coded の生成で CODED_EXPR になる（IR を手で直す）。
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve as resolvePath } from "node:path";
+import { dirname, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { argumentListElement, defaultSlot, delegateArgs, funcInfo, isArgumentList, isExpressionChild, listElementType, literalMapValue, loadCatalog, objectImpls, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
@@ -23,7 +25,8 @@ import { generate } from "./generate.ts";
 import type { ArgumentDecl, AssignOp, CatchDecl, InvokeArg, ListItem, Node, ObjValue, Value, VariableDecl, Workflow } from "./types.ts";
 import { toXamlType, xamlTypeEntries } from "./types-xaml.ts";
 import { objDefaults } from "./uia.ts";
-import { isArgumentDict, isUntypedArgument, itemNames, validate } from "./validate.ts";
+import { isArgumentDict, isUntypedArgument, itemNames, validate, workflowFile } from "./validate.ts";
+import { loadSelected, VersionError } from "./versions.ts";
 
 export type ImportIssue = { path: string; code: string; message: string };
 export type Dropped = { path: string; kind: DroppedKind; name: string; value?: string };
@@ -974,6 +977,18 @@ export function importAndCheck(xml: string, cat: Catalog): FullImport {
   return out;
 }
 
+// プロジェクトの中の XAML を取り込んだ IR に、置き場所を付ける。rel はプロジェクトからの相対パス。
+// "<workflow>.xaml"（プロジェクトの直下で、x:Class とファイル名が同じ）なら付けない。それ以外（サブフォルダ、x:Class と違う名前）は "file" に書く
+export function placeImported(wf: Workflow, rel: string): Workflow {
+  const f = rel.replace(/\\/g, "/");
+  if (f === workflowFile({ workflow: wf.workflow })) return wf;
+  const { workflow, ...rest } = wf;
+  return { workflow, file: f, ...rest };
+}
+
+// 取り込んだ IR の置き場所（<ir>/ からの相対パス）。XAML と同じフォルダの形にする（Sub/Foo.xaml → Sub/Foo.json）
+export const irFileFor = (rel: string) => rel.replace(/\\/g, "/").replace(/\.xaml$/i, ".json");
+
 export function droppedSummary(d: Dropped[]): { kind: string; count: number; examples: string[] }[] {
   const m = new Map<string, Dropped[]>();
   for (const x of d) m.set(x.kind, [...(m.get(x.kind) ?? []), x]);
@@ -993,18 +1008,26 @@ export const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", ".."
 
 function main() {
   const args = process.argv.slice(2);
-  const outIdx = args.indexOf("--out");
-  const outDir = outIdx >= 0 ? args[outIdx + 1] : undefined;
+  const val = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
+  const outDir = val("--out");
+  const project = val("--project");
   const print = args.includes("--print");
   const verbose = args.includes("--verbose");
-  const files = args.filter((a, i) => !a.startsWith("--") && (outIdx < 0 || i !== outIdx + 1));
-  if (!files.length) { console.error("使い方: node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]"); process.exit(2); }
-  const cat = loadCatalog(repoRoot, CATALOG_FILES);
+  const valued = new Set(["--out", "--project"]);
+  const files = args.filter((a, i) => !a.startsWith("--") && !valued.has(args[i - 1]));
+  if (!files.length) { console.error("使い方: node tools/ir/import-xaml.ts <file.xaml>... [--project <P>] [--out <dir>] [--print] [--verbose]"); process.exit(2); }
+  let cat: Catalog;
+  try { cat = project ? loadSelected(repoRoot, project).cat : loadCatalog(repoRoot, CATALOG_FILES); }
+  catch (e) { if (!(e instanceof VersionError)) throw e; console.error(e.message); process.exit(2); }
   let failed = false;
   const line = (i: ImportIssue) => `  ${i.code.padEnd(26)} ${i.path}: ${i.message}`;
   for (const f of files) {
     if (!existsSync(f)) { console.log(`NG ${f}: ファイルが無い`); failed = true; continue; }
     const r = importAndCheck(readFileSync(f, "utf8"), cat);
+    // --project の中の XAML なら、置き場所（サブフォルダ）を IR に残す
+    const rel = project ? relative(project, f) : undefined;
+    const inProject = rel !== undefined && !rel.startsWith("..") && !/^[A-Za-z]:|^[\\/]/.test(rel);
+    if (r.wf && inProject) r.wf = placeImported(r.wf, rel!);
     const ok = !r.errors.length && !r.validation.length;
     if (!ok) failed = true;
     console.log(`${ok ? "OK" : "NG"} ${f}${r.roundTrip ? (r.roundTrip.identical ? "（往復で文字まで一致）" : r.roundTrip.sameMeaning ? "（往復で意味は同じ）" : "（往復で違いあり）") : ""}`);
@@ -1015,8 +1038,8 @@ function main() {
     if (verbose) for (const d of r.dropped) console.log(`    ${d.kind} ${d.path} ${d.name}${d.value !== undefined ? `=${d.value}` : ""}`);
     if (print && r.wf) console.log(JSON.stringify(r.wf, null, 2));
     if (outDir && r.wf && ok) {
-      mkdirSync(outDir, { recursive: true });
-      const path = join(outDir, `${r.wf.workflow}.json`);
+      const path = join(outDir, inProject ? irFileFor(rel!) : `${r.wf.workflow}.json`);
+      mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, JSON.stringify(r.wf, null, 2) + "\n", "utf8");
       console.log(`  -> ${path}`);
     }

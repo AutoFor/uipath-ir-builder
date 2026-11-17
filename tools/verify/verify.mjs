@@ -18,6 +18,8 @@
 // uipcli が入っていなければ、注意を出して今までどおり build / run する（knowledge/uipath-clis.md）。
 //   --use-project     作業用プロジェクトの project.json の版のカタログを使う（gen.ts / gen-coded.ts の --project。--template で版を変えたプロジェクトを試すとき）
 //   --imports-from <xaml>  ルートの imports をこの XAML から取る（gen.ts の --imports-from）
+//   --base <dir>      手書き・変換した *.xaml を、<dir> からの相対パスのまま写す（Sub/Foo.xaml と、それを "Sub\Foo.xaml" で呼ぶ Main.xaml など）。
+//                     無ければプロジェクトの直下に写す。IR に "file"（サブフォルダ）があれば、gen.ts がそこに書く
 //
 // IR（*.json）1つにつき、XAML（<プロジェクト>/<workflow>.xaml）と C#（<プロジェクト>/coded/<workflow>.cs）の両方を作って試す。
 // C# で対応表の無いアクティビティは、gen-coded.ts が <プロジェクト>/coded/_activities/（1つのアクティビティだけ）と coded/_xaml/（部分木）に XAML を書き、RunWorkflow で呼ぶ（knowledge/coded-via-xaml.md）。
@@ -62,6 +64,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === "--no-analyze") opt.noAnalyze = true;
   else if (a === "--build-once") opt.buildOnce = true; // run の前に 1 回だけ build し、各 run に --skip-build を付ける（AUT-1207 の 12）
   else if (a === "--use-project") opt.useProject = true;
+  else if (a === "--base") opt.base = resolve(argv[++i]); // *.xaml / *.cs をこのフォルダからの相対パスのまま写す（サブフォルダの XAML を試すとき）
   else if (a === "--imports-from") opt.importsFrom = resolve(argv[++i]);
   else if (a === "--default-xaml") opt.defaultXaml = argv[++i];
   else if (a === "--out") opt.out = argv[++i];
@@ -145,6 +148,25 @@ if (opt.defaultXaml) {
   process.exit(0);
 }
 
+// Studio が Coded の部分クラス（.local/.codedworkflows/CodedWorkflow.cs）に使う名前空間。tools/coded/check.ts の loadContext と同じ決め方
+function codedNamespace(dir) {
+  const gen = join(dir, ".local", ".codedworkflows", "CodedWorkflow.cs");
+  const m = existsSync(gen) ? readFileSync(gen, "utf8").match(/\bnamespace\s+([\w.]+)/) : null;
+  if (m) return m[1];
+  // 名前は project.uiproj の Name を先に見る（Studio 26.10 は project.json の name と違えば uiproj の Name を使った）
+  const up = join(dir, "project.uiproj");
+  let name;
+  try { name = existsSync(up) ? readJson(up).Name : undefined; } catch {}
+  name ??= readJson(join(dir, "project.json")).name;
+  return String(name).replace(/[^\w]/g, "").replace(/^(\d)/, "_$1");
+}
+
+// テンプレートが Portable（クロスプラットフォーム）なのに --use-project が無いと、Windows のカタログで作ってしまう
+{
+  const tpj = readJson(join(projDir, "project.json"));
+  if (tpj.targetFramework === "Portable" && !opt.useProject) console.error("注意: テンプレートはクロスプラットフォーム（Portable）。--use-project を付けないと Windows のカタログで作る");
+}
+
 const results = [];
 const t0 = Date.now();
 
@@ -166,7 +188,7 @@ const genLines = gen.stdout.split(/\r?\n/);
 for (const { file, wf } of irs) {
   const r = newResult(file, "xaml");
   r.workflow = wf.workflow;
-  r.target = join(projDir, `${wf.workflow}.xaml`);
+  r.target = join(projDir, ...String(wf.file ?? `${wf.workflow}.xaml`).split(/[\\/]/)); // IR の file（サブフォルダ）があればそこ
   const i = genLines.findIndex((l) => l === `OK ${file}` || l.startsWith(`OK ${file} ->`) || l === `NG ${file}`);
   if (i < 0) r.gen = { ok: false, issues: ["gen.ts の出力に結果が無い"] };
   else if (genLines[i].startsWith("OK")) r.gen = { ok: true };
@@ -193,7 +215,9 @@ if (gen.status && gen.status !== 1) writeFileSync(join(logDir, "_gen.txt"), gen.
 
 // ---- IR → C#（coded/ に置く。InvokeWorkflowFile の先も coded/ の .cs にする）----
 if (irFiles.length && !opt.noCoded) {
-  const cg = node([join(root, "tools", "ir", "gen-coded.ts"), ...irFiles, "--out", join(projDir, "coded"), "--invoke-dir", "coded", ...(opt.useProject ? ["--project", projDir] : [])]);
+  // 名前空間は作業用プロジェクトのもの（Studio の CodedWorkflow の部分クラスと同じでないと「'CodedWorkflow' が見つかりません」で落ちる）。
+  // --use-project が無くても、gen-coded.ts の既定（CatalogProbeNet8）ではなく、テンプレートの名前に合わせる
+  const cg = node([join(root, "tools", "ir", "gen-coded.ts"), ...irFiles, "--out", join(projDir, "coded"), "--invoke-dir", "coded", ...(opt.useProject ? ["--project", projDir] : ["--namespace", codedNamespace(projDir)])]);
   const lines = cg.stdout.split(/\r?\n/);
   for (const { file, wf } of irs) {
     const r = newResult(file, "coded-gen");
@@ -214,6 +238,20 @@ if (irFiles.length && !opt.noCoded) {
     }
     results.push(r);
   }
+}
+
+// ---- 手書き・変換した *.xaml：そのまま写す（tools/ir/convert-xaml.ts で作った C# の XAML を試すときなど）----
+// Coded のチェッカー（RunWorkflow の呼び先がプロジェクトにあるか）より先に写す
+for (const f of files.filter((x) => extname(x).toLowerCase() === ".xaml")) {
+  const r = newResult(f, "xaml-file");
+  const stem = basename(f, extname(f)).toLowerCase();
+  if (names.has(stem)) die(`${rel(f)} と IR ${rel(names.get(stem))} が同じ名前の XAML になる`);
+  r.workflow = basename(f, extname(f));
+  const sub = opt.base ? relative(opt.base, f) : "";
+  r.target = sub && !sub.startsWith("..") ? join(projDir, sub) : join(projDir, basename(f));
+  mkdirSync(dirname(r.target), { recursive: true });
+  cpSync(f, r.target);
+  results.push(r);
 }
 
 // ---- Coded：チェッカー → コピー ----
@@ -239,15 +277,10 @@ if (csFiles.length) {
   }
 }
 
-// ---- 手書き・変換した *.xaml：そのまま写す（tools/ir/convert-xaml.ts で作った C# の XAML を試すときなど）----
-for (const f of files.filter((x) => extname(x).toLowerCase() === ".xaml")) {
-  const r = newResult(f, "xaml-file");
-  const stem = basename(f, extname(f)).toLowerCase();
-  if (names.has(stem)) die(`${rel(f)} と IR ${rel(names.get(stem))} が同じ名前の XAML になる`);
-  r.workflow = basename(f, extname(f));
-  r.target = join(projDir, basename(f));
-  cpSync(f, r.target);
-  results.push(r);
+// サブフォルダに置いたワークフローは、次の prepareProject で消す（直下の *.xaml と同じく、前回のものが残ると build が落ちる）
+{
+  const dirs = [...new Set(results.filter((r) => r.target).map((r) => relative(projDir, r.target).split(/[\\/]/)).filter((s) => s.length > 1 && s[0] !== "coded").map((s) => s[0]))];
+  if (dirs.length) writeFileSync(join(projDir, ".verify-subdirs.json"), JSON.stringify(dirs));
 }
 
 // ---- analyze（uipcli）：build / run の前に、式までコンパイルして確かめる ----
@@ -428,6 +461,8 @@ function prepareProject() {
   // 前回のワークフローを消す。壊れた .cs が残るとプロジェクト全体のコンパイルが落ちるため
   for (const e of readdirSync(projDir)) if (/\.(xaml|cs)$/i.test(e)) rmSync(join(projDir, e));
   rmSync(join(projDir, "coded"), { recursive: true, force: true });
+  const subdirs = join(projDir, ".verify-subdirs.json");
+  if (existsSync(subdirs)) { for (const d of readJson(subdirs)) if (/^[^\\/.][^\\/]*$/.test(d) && !["data", "output"].includes(d)) rmSync(join(projDir, d), { recursive: true, force: true }); rmSync(subdirs); }
   // サンプルの入力データ（samples/data/、Excel の .xlsx など）を <プロジェクト>/data/ に写し直す。ワークフローは "data\excel\Sample.xlsx" のように相対パスで読む。
   // 書き出すファイルは <プロジェクト>/output/ に置く（毎回空にする）
   for (const d of ["data", "output"]) rmSync(join(projDir, d), { recursive: true, force: true });

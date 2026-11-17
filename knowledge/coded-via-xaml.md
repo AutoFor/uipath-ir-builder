@@ -121,7 +121,7 @@ XAML 経由の C#（`CODED_VIA_XAML`）：
 ## 分かった落とし穴
 
 - **`RunWorkflow` の InOut**：XAML の InOut 引数は、`RunWorkflow` の戻りの辞書に入って返ってくる（IfElseIfV2_Min の `label`、DeserializeJson_Min の `obj` で run して確かめた）。Coded のワークフロー自身の InOut は書けない（knowledge/coded-workflow.md）が、XAML を呼ぶときは使える
-- **Coded の名前空間**：Studio はプロジェクト名から名前に使えない文字を**消す**（`uipath-ir-probe-v24` → `uipathirprobev24`。`.local/.codedworkflows/CodedWorkflow.cs` で確かめた）。以前のチェッカーは `_` に置き換えていたので、ハイフンのあるプロジェクトの初回の build で `CodedWorkflow` が見つからなかった。`tools/coded/check.ts` を直した
+- **Coded の名前空間**：Studio はプロジェクト名から名前に使えない文字を**消す**（`uipath-ir-probe-v24` → `uipathirprobev24`。`.local/.codedworkflows/CodedWorkflow.cs` で確かめた）。以前のチェッカーは `_` に置き換えていたので、ハイフンのあるプロジェクトの初回の build で `CodedWorkflow` が見つからなかった。`tools/coded/check.ts` を直した。名前は `project.uiproj` の `Name` が先（`project.json` の `name` と食い違うと Coded の build が落ちる。[cross-platform.md](cross-platform.md) の「確かめたこと」）
 - **型の名前**：C# の生成器は IR の型名をそのまま書く。既定の using（`System`、`System.Collections.Generic`、`System.Data`、`System.IO`、`System.Linq` など）に無い名前空間の型は、IR に完全名で書く（`System.Xml.Linq.XDocument`、`Newtonsoft.Json.Linq.JObject`）。XAML はどちらでも書ける
 - **VB の予約語の変数名**：変数名 `to` は VB の予約語（`For ... To`）なので、XAML の build が `BC30198: ')' expected` で落ちる。1つの XAML の build エラーで、同じ作業用プロジェクトの全ファイルが NG になる
 - **for の変数への書き込み**：C# の `foreach` の変数（ForEach の `item`）に XAML 経由で書き込むと、`item = (T)...` が C# のコンパイルエラーになる（`foreach` の変数は読み取り専用）。IR では別の変数に代入する

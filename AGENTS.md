@@ -79,6 +79,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 ```
 
 - 引数は `"arguments": [{ "name": "in_Name", "dir": "In", "type": "String" }]`
+- サブフォルダに置くワークフローは `"file": "Sub/Greet.xaml"` を書く（gen.ts がそこに書き出す）。呼ぶ側の `WorkflowFileName` はプロジェクトからの相対パス（`{ "lit": "Sub\\Greet.xaml" }`）
 - テストケースにするなら `"testCase": true` を書き、`body` の代わりに `given` / `when` / `then` を書ける。XAML でも Coded（`[TestCase]`）でも作れる。XAML は `--out` のプロジェクトの project.json の `fileInfoCollection` に載る。データ駆動のテストは `"testCase": { "data": [ { "<In 引数>": 値 }, … ] }`（XAML だけ）（[knowledge/testing.md](knowledge/testing.md) の「テストケース」）
 - `props` の文字列は **VB の式**（C# のプロジェクトでも VB で書く。生成器が C# に直す）。文字列リテラルは `{ "lit": "..." }`、enum はメンバー名
 - VB の予約語（`to`、`step`、`next`、`end` など）を変数名にしない（build が `BC30198: ')' expected` で落ちる）
