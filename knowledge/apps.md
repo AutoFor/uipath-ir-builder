@@ -97,6 +97,7 @@ uip codedapp pack dist -n <app> -v 1.0.0                                   # pub
   - `records`：iframe の中の `new UiPath()`（引数なし、`initialize()` なし）で Data Fabric が読めた。`pageSize: 2` で「1–2 件 / 全 3 件」→「次へ」で「3–3 件」
   - `show`：入力の file に、API で作った添付の `{ ID }` を渡すと、`getById` の名前（receipt.png）と、Blob の URL の `<img>` が iframe の中に出た（CSP で止まらない）
   - 試しの添付は Orchestrator の `POST /odata/Attachments`（`{"Name": "…"}`）→ 返りの `BlobFileAccess`（`Verb: PUT`、`RequiresAuth: false`、`Headers` は Keys / Values）へ中身を PUT して作った
+- **同じタスクを UiPath Assistant（デスクトップ）のタスクの画面で開くと、SDK が使えない**：「外部アプリケーションのアクセス トークンを取得できませんでした … `identity_/connect/token`: 400」が出て、表も添付も出ない（書く欄と結果のボタンは出る）。文書の既知の制限（AUT-1208 の 16）のとおり。SDK を使う Action App は、ブラウザーの Action Center で開いてもらう
 - Web App（`work-portal` に clientId・orgName・tenantName・`redirectUri: https://<org>.uipath.host/<path-name>` と試しの表）を `publish -t Web` → `deploy --path-name <path-name> --client-id <Id>`。開いて「UiPath でサインイン」を押すと、Chrome の UiPath のサインインがそのまま使われ、同意の画面も出ずに戻り、表が読めた（2 件ずつ、全 3 件）
 
 、`expense-attach`（SDK あり）、`work-portal`（Web）を作り、`npm install --prefer-offline` → `npm run build`（tsc strict + vite）→ `uip codedapp pack` がすべて通った。`expense-attach` の nupkg に `action-schema.json` と `uipath.json` が入り、スキーマはスキルの検証も通った。**まだ**：Action Center・テナントでの動き全部（`setTaskData` / `completeTask` の新しい値の形、`{ ID }` を automation が受け取れるか、SDK の呼び出し、iframe の中の `<a download>` と `blob:` の画像、Web App の OAuth のサインイン）、`bindings_v2.json`（作っていない。pack が空のものを入れる）、デプロイ先で `uipathCodedApps()` が `dist/index.html` に入れる localhost の meta とプラットフォームの meta のどちらが勝つか
