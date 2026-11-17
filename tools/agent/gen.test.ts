@@ -466,3 +466,17 @@ test("評価器の省略形：種類と検査（AUT-1201 の 19）", async () =>
   assert.deepEqual(codes([{ name: "A", kind: "exact", prompt: "x" }]), ["BAD_EVALUATOR"]);
   assert.deepEqual(codes([{ name: "Default Evaluator", kind: "exact" }]), ["BAD_EVALUATOR"]);
 });
+
+test("Client-side tool と confirm（会話型だけ。AUT-1201 の 17）", () => {
+  const cs = { clientSide: "get_location", description: "d", input: { type: "object", properties: {} }, output: { type: "object", properties: { city: { type: "string" } } }, confirm: true };
+  const conv = { name: "C", conversational: true, system: "係です" };
+  const r = generate({ ...conv, tools: [cs] } as any, CONV_BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  const res: any = r.result!.resources.get_location;
+  assert.equal(res.type, "clientSide");
+  assert.equal(res.location, "solution");
+  assert.deepEqual(res.properties, { folderPath: "solution_folder", requireConversationalConfirmation: true });
+  const codes = (x: any) => generate(ir(x), BASE, ALL).problems.map((p) => p.code).sort();
+  assert.deepEqual(codes({ tools: [cs] }), ["CLIENT_SIDE_NOT_CONVERSATIONAL", "CONFIRM_NOT_CONVERSATIONAL"]);
+  assert.deepEqual(generate({ ...conv, tools: [{ ...cs, output: undefined }] } as any, CONV_BASE, ALL).problems.map((p) => p.code), ["CLIENT_SIDE_SCHEMA"]);
+});

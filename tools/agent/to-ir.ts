@@ -228,6 +228,13 @@ export function toIR(dir: string): AgentIR {
     const f = join(resDir, d, "resource.json");
     if (!existsSync(f)) continue;
     const r = readJson(f);
+    const before = tools.length;
+    readOne();
+    // 会話型の「Require confirmation」は、どの道具でも confirm: true に戻す（raw は resource のまま持つ）
+    const last: any = tools[tools.length - 1];
+    if (tools.length > before && !("raw" in last) && r.properties?.requireConversationalConfirmation === true) last.confirm = true;
+    continue;
+    function readOne() {
     if (r.$resourceType === "tool" && PROCESS_TYPES.has(r.type) && r.properties?.processName) {
       const t: Tool = { process: r.properties.processName, folder: r.properties.folderPath };
       if (r.name !== r.properties.processName) (t as any).name = r.name;
@@ -267,6 +274,12 @@ export function toIR(dir: string): AgentIR {
       const statics = (r.properties.parameters ?? []).filter((p: any) => p.fieldVariant === "static");
       if (statics.length) t.values = Object.fromEntries(statics.map((p: any) => [p.name, p.value]));
       tools.push(t);
+    } else if (r.$resourceType === "tool" && r.type === "clientSide" && r.inputSchema && r.outputSchema) {
+      const t: any = { clientSide: r.name };
+      if (r.description) t.description = r.description;
+      t.input = r.inputSchema;
+      t.output = r.outputSchema;
+      tools.push(t);
     } else if (r.$resourceType === "tool") {
       tools.push({ raw: r });
     } else if (r.$resourceType === "mcp" && r.slug) {
@@ -279,6 +292,7 @@ export function toIR(dir: string): AgentIR {
       escalations.push(escalationToIR(r)!);
     } else {
       others.push(r);
+    }
     }
   }
   if (tools.length) ir.tools = tools;

@@ -41,7 +41,14 @@ export type Tool =
   | { mcp: string; tools?: string[]; description?: string }
   /** Integration Service の活動。connection は接続の Id か名前（書かなければその connector の既定の接続）。values は固定の値 */
   | { integration: string; activity: string; connection?: string; name?: string; description?: string; values?: Record<string, unknown> }
+  /** Client-side tool（会話型）。呼んだ側（ブラウザ・TypeScript SDK）で動く。input と output は JSON Schema（どちらも必須） */
+  | { clientSide: string; description?: string; input: Record<string, unknown>; output: Record<string, unknown> }
   | { raw: Record<string, unknown> };
+/**
+ * どの道具にも confirm: true を書ける：会話型で、実行の前に利用者が承認・修正・拒否する（Studio Web の「Require confirmation」。
+ * resource の properties.requireConversationalConfirmation）。形は 2026-11-17 に Studio Web で作って書き出したもの（AUT-1201 の 17）
+ */
+export type ToolCommon = { confirm?: boolean };
 
 export type Guardrail =
   | { pii: string[]; threshold?: number; scopes?: string[]; tools?: string[]; action?: "block" | "log"; name?: string; reason?: string }
@@ -88,7 +95,7 @@ export type AgentIR = {
   user?: string;
   input?: Record<string, Field>;
   output?: Record<string, Field>;
-  tools?: Tool[];
+  tools?: (Tool & ToolCommon)[];
   /** エージェントのメモリ（memory space。先に Studio Web か agents_ の画面で作る）。features/ は CLI（uip agent memory add）が書く */
   memory?: { space: string; folder: string; name?: string; threshold?: number; resultCount?: number; searchMode?: "hybrid" | "semantic"; fields?: Record<string, number>; fewShot?: boolean }[];
   /** 知識（コンテキスト）。インデックス（RAG）・Data Fabric の表・実行時の添付 */
@@ -328,6 +335,18 @@ function toolResource(t: Tool, i: number, lookup: ProcessLookup | undefined, pro
   const p = `tools[${i}]`;
   if ("raw" in t) return t.raw;
   if ("integration" in t) return integrationResource(t, i, isLookup, project, probs);
+  if ("clientSide" in t) {
+    const obj = (s: unknown) => !!s && typeof s === "object" && (s as any).type === "object";
+    if (!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(t.clientSide)) probs.push({ path: `${p}.clientSide`, code: "BAD_NAME", message: "Client-side tool の名前は英数字と _ -（関数の名前として渡る）" });
+    if (!obj(t.input) || !obj(t.output)) { probs.push({ path: p, code: "CLIENT_SIDE_SCHEMA", message: "Client-side tool は input と output の JSON Schema（type: object）が両方要る" }); return undefined; }
+    // Studio Web の「Client-side tools」→ Create new で作って書き出した形
+    return {
+      $resourceType: "tool", id: (project && oldId(project, t.clientSide)) ?? randomUUID(), name: t.clientSide, description: t.description ?? "",
+      type: "clientSide", location: "solution", isEnabled: true, referenceKey: null,
+      // properties.folderPath は Studio Web の書き出しには無いが、uip agent refresh / validate が求める（solution tools must use folderPath "solution_folder"）
+      inputSchema: t.input, outputSchema: t.output, settings: {}, properties: { folderPath: "solution_folder" }, argumentProperties: {}, guardrail: { policies: [] },
+    };
+  }
   if ("ixp" in t) {
     if (t.tag !== "staging" && t.tag !== "live") { probs.push({ path: `${p}.tag`, code: "BAD_TAG", message: "tag は staging か live（IXP のプロジェクトでタグを付けたモデルだけ使える）" }); return undefined; }
     const name = t.name ?? t.ixp.replace(/[^A-Za-z0-9_]/g, "_");
@@ -800,6 +819,11 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
   (ir.tools ?? []).forEach((t, i) => {
     const r = toolResource(t, i, opts.lookup, opts.project, probs, opts.isLookup, opts.mcpLookup);
     if (!r) return;
+    if ("clientSide" in t && !conv) probs.push({ path: `tools[${i}]`, code: "CLIENT_SIDE_NOT_CONVERSATIONAL", message: "Client-side tool は会話型のエージェントだけ" });
+    if ((t as ToolCommon).confirm !== undefined) {
+      if (!conv) probs.push({ path: `tools[${i}].confirm`, code: "CONFIRM_NOT_CONVERSATIONAL", message: "confirm（実行前の承認）は会話型のエージェントだけ" });
+      else if ((t as ToolCommon).confirm) r.properties = { ...(r.properties as object ?? {}), requireConversationalConfirmation: true };
+    }
     const n = String(r.name);
     if (resources[n]) probs.push({ path: `tools[${i}]`, code: "DUP_NAME", message: `名前 "${n}" が重なる` });
     resources[n] = r;
