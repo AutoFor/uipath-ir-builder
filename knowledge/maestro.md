@@ -37,6 +37,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 
 - `debug.mjs` は一時フォルダに `flow init`（`--automate` なら Automate）し、`.flow` を入れて `uip maestro flow debug` を流す。**テナントの Studio Web に試しのソリューションが 1 つ増える**
 - `verify.mjs` の `--out` は `<dir>/<名前>.flow/<名前>.flow`（フォルダと同じ名前のファイル）に書く
+- `verify.mjs --tenant` は既定のログインのテナントと照合する。別のログインのテナント（trial など）で動かすものは `--profile <名前>` を付ける（照合の一覧を読むときだけ使う）
 - SDK の最新は 6.96.1（2026-11-13）。6.66.5 との差は関数 2 つ（`ANY_ESCALATION`、`taskOutput`）と、Case の型がいくつか。どちらにも Switch の「Match all cases」（テナントでは 11 月に入った）は無い
 
 ## 3. Flow の書き方で、つまずくところ
@@ -69,7 +70,9 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - **会話のエージェント（`conversationalAgent`）の `maxIterations` は 8 以下**。SDK の既定はそれを超え、`verify.mjs` は通すが、Studio Web の問題パネルが止める。明示する
 - **会話の flow は CLI の debug では動かない**（`inputSchema` / `outputSchema` が無いと言われて上がらない。チャットを送る手段も無い）。`uip solution upload <ソリューションのフォルダ>` で上げ、Studio Web のデバッグのチャットで話しかける。返事と `sendMessage` の文が出て、成功になった
 - **コネクタは `uip maestro registry prepare` を `tools/maestro`（SDK のあるフォルダ）で流す**。ほかの場所だと「SDK が無い」と言われる。接続は `uip is connections list --all-folders` で探す（既定は個人ワークスペースだけを見る）
-- **`registry prepare` は `--profile` を見ず、既定のログインの接続を `.flow-sdk/bindings.json` に書く**（1.204.0、2026-11-17）。trial（接続が 0 件）で `--profile trial` を付けて流しても、既定のログインの組織の Slack の接続（`seiya-kawashima`）を結んで成功した。別のログインのテナントで動かす flow は、`bindings.json` の接続の Id がそのテナントのものか確かめる。`.flow-sdk/` は prepare が `tools/maestro` に作る作業場で、コミットしない
+- **`registry prepare` は `--profile` を見ず、既定のログインの接続を `.flow-sdk/bindings.json` に書く**（1.204.0、2026-11-17）。trial（接続が 0 件）で `--profile trial` を付けて流しても、既定のログインの組織の Slack の接続（`seiya-kawashima`）を結んで成功した。`--connection-id <trial の接続>` を渡すと「この tenant の一覧に無い」と断る。SDK は `UIPATH_CLI_INHERITED_PROFILE` でログインを受け継ぐ作りだが、uip 1.204.0 はこれを見ず、設定すると `PROFILE_MISMATCH`（「uip update して」）で止まる。`.flow-sdk/` は prepare が `tools/maestro` に作る作業場で、コミットしない
+- **別のログインのテナントのコネクタは、`bindings.json` を手で書けば prepare なしで動いた**（trial、2026-11-17、`samples/maestro/deploy/GenAiTour.flow.ts`）。形は見本の先頭の注釈どおり（接続の Id は `propertyAttribute: "ConnectionId"`、フォルダの Key は `"FolderKey"`。値は `uip is connections list <key> --all-folders --profile <名前>` の `Id` と `FolderKey`）。これを置いた `<ws>/.flow-sdk/` を `verify.mjs --workspace <ws>` に渡す。UiPath GenAI Activities（`uipath-uipath-airdk`）のように SDK が入力の形を持っているコネクタは、overlay（connectors-local）が無くても `check` が入力の名前と必須を見る（`summarize-text` に `text` と書くと `CONNECTOR_INPUT`：必須は `prompt`）。入力の欄は `uip maestro flow registry get uipath.connector.<key>.<action> --connection-id <Id> --profile <名前>` の `inputDefinition.fields`（`--connection-id` が無いと欄が出ない）。照合は `verify.mjs --tenant --profile <名前>`
+- **UiPath GenAI Activities のノードの出力**（Automate、trial）：`$vars.<id>.output` が応答そのもの（debug の結果では `response` の下）。言語の判定（`detect-language`、入力 `text`）は `.language`（`"Japanese"`）、要約（`summarize-text`、入力 `prompt`・`summaryFormat`・`detectInputLanguage`）は `.summary`、Web 検索（`web-search`、入力 `provider`（`GoogleCustomSearch` / `Jina`）・`query`・`num`）は `.results[]`（`title`・`url`・`snippet`）と `.formattedResults`。LLM の 2 つは `usage`・`model`（`gpt-5.1-2025-11-13`）・`choices` も返す。1 本の flow で 3 つが 1 つの接続を使うと、validate が「接続の共有」の warning を出す（同じアカウントで使うなら気にしなくてよい）
 - **RPA のジョブが失敗すると、`rpaWorkflow` の `onError` に来る**（Automate、trial、2026-11-17、`samples/maestro/deploy/RpaOnError.flow.ts`）。`$vars.<id>.error` は `{ code: "Robot", status: 502, message: "Failure in the Orchestrator Job", detail: "<RPA の例外とスタック（in Main.xaml at …）>", category }`。debug の結果では失敗した node の出力が `Error`（先頭が大文字）で見えるが、式からは `.error`。エラーの道は `<id>ErrorEnd` で終わり、本線の続きは走らない。ジョブを待つ間（Unattended のロボットで 1 分ほど）flow は止まって待つ
 - **Quick Form（`hitl`）にはエラーの道を付けられない**。trial の登録簿の `uipath.human-in-the-loop.quick-form`（1.6）は出口が `completed` だけで、`supportsErrorHandling` が無い。SDK の `check` も `.onError` を `ONERROR_NO_ERROR_PORT` で止める。文書の「Quick Form にエラーの道」（2026-10-30）は Flow のこのノードにはまだ来ていない
 - **割り当てない人のタスクも `uip tasks complete` で完了できる**（trial、2026-11-17）。`uip tasks list` の JSON は日本語のタイトルを `\uXXXX` で返すので、`grep` で探さず `--output-filter "[?IsCompleted==\`false\`]"` で絞る。タスクはデバッグのフォルダ（`FolderId` はそのたびに違う）にできる
@@ -100,7 +103,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `dataFabricCreate` / `Read` / `Update` / `Delete` | テナント | テナント | `DataFabricTour`、`WorkCalendarCheck`（RPA から Data Fabric を使う形は knowledge/dataservice.md） |
 | `rpaWorkflow`：成功、ファイルの入力、出力を後ろで読む | テナント（Community と trial） | テナント | `fixtures/tenant/Rpa.*`、`deploy/DuViaRpa`（RPA で Document Understanding） |
 | `rpaWorkflow` の `onError`（RPA のジョブの失敗） | テナント（trial、2026-11-17） | 手元 | `deploy/RpaOnError` |
-| `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント（Community。trial は接続が 0 件で、接続を作るにはブラウザで同意が要るので試していない） | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
+| `connector`（Slack のユーザーグループの一覧。読むだけ） | テナント（Community） | テナント | `fixtures/tenant/Slack.*`（先に `registry prepare`。下） |
+| `connector`（UiPath GenAI Activities：言語の判定・要約・Web 検索） | テナント（trial、2026-11-17。`bindings.json` を手で書いた） | 手元 | `deploy/GenAiTour` |
 | `agent`（公開済み） | テナント | テナント | `fixtures/tenant/Agent.*`（PERSONAL_WORKSPACE を実際の名前にして流す） |
 | `inlineAgent`（flow の中で定義するエージェント） | テナント | テナント | `InlineAgent` |
 | `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（Community と trial。`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
@@ -263,8 +267,6 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 ### まだのもの
 
 - 文書の抽出の `dynamicExtract`（実行時の SingleExtract が INVALID_DOCUMENT。Studio Web だけで作った Flow でも同じなので、サービス側を待つ）、要約・一括変換（プランの制限）、音声（電話番号と課金のある発信）
-- trial でのコネクタ（接続が 0 件。接続を作るには、`uip is connections create <key> --no-wait` の URL をブラウザで開いて Connect を押す人の操作が要る）
-
 ## 11. 文書で分かったこと（2026-11-15 の突き合わせ、AUT-1202）
 
 公式の文書（maestro・maestro-automate）で分かり、まだテナントで試していないもの。番号は AUT-1202 の一覧の番号。テナントで確かめたら、上の節に移す。
