@@ -16,7 +16,7 @@ const codes = (r: { issues: { code: string }[] }) => r.issues.map((i) => i.code)
 test("見本のフォーム（samples/data/forms）は通り、見本の IR の FormId・key・イベントはすべて見つかる", () => {
   const { forms, issues } = scanProject(join(root, "samples", "data", "forms"));
   assert.deepEqual(issues, []);
-  assert.equal(forms.length, 2);
+  assert.equal(forms.length, 3);
   const dir = join(root, "samples", "ir", "UiPath.Form.Activities");
   for (const f of readdirSync(dir).filter((x) => x.endsWith(".json") && !x.endsWith(".verify.json"))) {
     const wf = JSON.parse(readFileSync(join(dir, f), "utf8")) as Workflow;
@@ -42,6 +42,21 @@ test(".uiform：Metadata・Id・Kind・components の欠け、key の重なり�
   assert.deepEqual(codes(checkUiForm("a", form([{ type: "textfield" }]))), ["FORM_NO_KEY"]);
   assert.deepEqual(codes(checkUiForm("a", form([{ type: "rating", key: "r" }]))), ["FORM_UNKNOWN_TYPE"]);
   assert.deepEqual(codes(checkUiForm("a", form([{ type: "button", key: "b", action: "url" }]))), ["FORM_BUTTON_ACTION"]);
+});
+
+test(".uiform：明細の表（datagrid など）の中の key は外に出さない。Studio に無い fieldset / well は弾く", () => {
+  const r = checkUiForm("a", form([{ type: "datagrid", key: "items", components: [{ type: "textfield", key: "item" }] }, { type: "fieldset", key: "f", components: [] }]));
+  assert.deepEqual(r.info!.keys, ["items"]);
+  assert.deepEqual(codes(r), ["FORM_UNKNOWN_TYPE"]);
+});
+
+test(".uiform：見た目の注意（スクショで見つけたもの）は warn で、check を落とさない", () => {
+  const f = (components: unknown[], dp: object) => ({ ...form(components), DesignProperties: dp });
+  const warns = (j: unknown) => checkUiForm("a", j).issues.filter((i) => i.level === "warn").map((i) => i.code);
+  assert.deepEqual(warns(f([{ type: "columns", key: "c", columns: [{ size: "md", components: [] }] }], { Width: 720 })), ["FORM_COLUMNS_STACK"]);
+  assert.deepEqual(warns(f([{ type: "columns", key: "c", columns: [{ size: "sm", components: [] }] }], { Width: 720 })), []);
+  assert.deepEqual(warns(f([], { Height: 760, Theme: "Dark" })), ["FORM_THEME", "FORM_TOO_TALL"]);
+  assert.deepEqual(warns(f([{ type: "currency", key: "a", decimalLimit: 0 }, { type: "phoneNumber", key: "p" }], {})), ["FORM_CURRENCY_DECIMAL", "FORM_PHONE_MASK"]);
 });
 
 test("HTML：先頭の <!-- form --> を読む。無ければフォームではない。uiPathApi が無いと弾く", () => {

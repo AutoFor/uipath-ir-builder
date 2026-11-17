@@ -1,0 +1,97 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="ShowFormActivity_74ce18" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common"
+xmlns:ufa="clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Top" Type="InArgument(s:Nullable(x:Int32))" />
+    <x:Property Name="in_Arguments_amount" Type="InArgument(x:Double)" />
+    <x:Property Name="in_Arguments_date" Type="InArgument(s:DateTime)" />
+    <x:Property Name="in_Arguments_dept" Type="InArgument(x:String)" />
+    <x:Property Name="in_Arguments_email" Type="InArgument(x:String)" />
+    <x:Property Name="in_Arguments_items" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_Arguments_name" Type="InArgument(x:String)" />
+    <x:Property Name="in_Arguments_payment" Type="InArgument(x:String)" />
+    <x:Property Name="in_Arguments_phone" Type="InArgument(x:String)" />
+    <x:Property Name="in_Arguments_reason" Type="InArgument(x:String)" />
+    <x:Property Name="out_Result" Type="OutArgument(s:Nullable(x:Boolean))" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Forms.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>UiPath.Forms.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="ShowFormActivity_74ce18" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <ufa:ShowFormActivity FormId="3b7d1f52-8c4e-4a19-9e6b-2d5a7c0f4e13" IsAsync="True" Result="[out_Result]" Top="[in_Top]" sap2010:WorkflowViewState.IdRef="ShowFormActivity_1">
+      <ufa:ShowFormActivity.Arguments>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="x:Double" x:Key="amount">[in_Arguments_amount]</InArgument>
+          <InArgument x:TypeArguments="s:DateTime" x:Key="date">[in_Arguments_date]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="dept">[in_Arguments_dept]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="email">[in_Arguments_email]</InArgument>
+          <InArgument x:TypeArguments="sd:DataTable" x:Key="items">[in_Arguments_items]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="name">[in_Arguments_name]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="payment">[in_Arguments_payment]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="phone">[in_Arguments_phone]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="reason">[in_Arguments_reason]</InArgument>
+        </scg:Dictionary>
+      </ufa:ShowFormActivity.Arguments>
+    </ufa:ShowFormActivity>
+  </Sequence>
+</Activity>

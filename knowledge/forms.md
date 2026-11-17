@@ -119,6 +119,7 @@ node tools/ir/forms.ts check --project <P> <P>/ir/Main.json ...    # フォー�
 | `FORM_UNKNOWN_TYPE` | Studio のフォームに無い部品の種類 |
 | `FORM_BUTTON_ACTION` | ボタンの action が submit / event / reset 以外 |
 | `FORM_HTML_NO_API` | HTML に uiPathApi が無い |
+| 注意（warn。check は落とさない）：`FORM_COLUMNS_STACK` / `FORM_TOO_TALL` / `FORM_THEME` / `FORM_CURRENCY_DECIMAL` / `FORM_PHONE_MASK` | 見た目の問題（7.）。スクショで見つけたもの |
 | `FORM_DUP_ID` | 同じ Metadata.Id のファイルが 2 つある |
 | `FORM_ID_MISSING` / `FORM_ID_NOT_FOUND` | IR の FormId が無い・プロジェクトに無い（実行時に NoMapEntry） |
 | `FORM_KEY_NOT_FOUND` | Arguments のキーが `.uiform` の部品の key に無い（`.Items` は外して比べる） |
@@ -168,7 +169,54 @@ Studio では「トリガーのワークフロー」（最初のアクティビ�
   - 部品のイベントのトリガー（5.）
 - 無人（Unattended）では動かさない。窓を出す画面が要る
 
-## 7. 落とし穴
+## 7. デザイン（見た目を整える）
+
+見本 `samples/data/forms/ExpenseRequest.uiform`（経費の申請）。入れ物・表・タブ・テーマを使い、窓だけを撮って直しながら作った（`samples/forms/ExpenseRequestScreenshots.json`）。IR の見本は `ShowFormActivity.design.json`（DataTable と DateTime の受け渡しも run で確かめた）。
+
+### 入れ物（コンテナー）
+
+Studio のランタイムにある入れ物は 5 つ。入れ物は値を持たず、中の部品の key がそのままフォームの key になる。
+
+| type | 使いどころ | 書き方 |
+| --- | --- | --- |
+| `panel` | 見出し付きの枠（「申請者」など） | `title`、`theme`（`primary` など。Flatly では濃い紺の帯）、`collapsible`、`components` |
+| `columns` | 横に並べる | `columns: [{ "width": 6, "size": "sm", "components": [...] }, ...]`（width は 12 分割）。**`size` は「この幅以上で横に並ぶ」区切り**：`sm` 576px、`md` 768px（既定）、`lg` 992px。窓の幅（DesignProperties.Width、CSS の px）より大きい区切りだと縦に積まれる。720 の窓では `md` が積まれた。窓が 1000 未満なら `sm` にする |
+| `tabs` | 長いフォームを分ける | `components: [{ "key": "tab1", "label": "内容", "components": [...] }, ...]`（タブ自体には type を書かない） |
+| `table` | 格子に置く | `numRows`、`numCols`、`rows: [[{ "components": [...] }, ...], ...]` |
+| `container` | 中の値を 1 つのオブジェクトにまとめる | 中の key は外から読み書きしない（`container` の key で丸ごと） |
+
+一覧で入力するもの（`datagrid`・`editgrid`・`datatable`・`datamap`）も中に部品を持つが、中の key は「行の中の列」。外からは表の key で、**DataTable** を Show Form の In・Get Form Values の Out に渡す（列名＝中の部品の key）。`datagrid` は `addAnother` で「行を足す」ボタンの文字を変える（既定は英語の Add Another）。
+
+form.io にある `fieldset` と `well` は Studio の部品の一覧に無い（検査が `FORM_UNKNOWN_TYPE` で弾く）。
+
+### テーマと CSS
+
+- `DesignProperties.Theme`：`Default` / `Cosmo` / `Cyborg`（暗い色）/ `Flatly` / `Sandstone`（Bootswatch の Bootstrap。`FormIoThemes.js`）。ほかの値は Default
+- `DesignProperties.CustomStyle`：CSS をそのまま `<style>` で差し込む。部品は `.formio-component-<key>` で指せる（例 `.formio-component-header h3 { margin: 0 }`）
+- `DesignProperties.Padding`：窓の内側の余白
+- 見出しや説明文は `content`（`html` に `<h3>`、`<p class="text-muted">`）。Bootstrap のクラスが使える
+- ボタンは `theme`（`primary` / `secondary` / `success` / `danger`）と `block: true`（列の幅いっぱい）。送信とやめるを columns で横に並べる
+
+### 日本向けに直すところ（スクショで見つけた）
+
+| 部品 | 既定のままだと | 直し方 |
+| --- | --- | --- |
+| `phoneNumber` | 入力マスクが米国の形 `(___) ___-____` | `"inputMask": "999-9999-9999"` |
+| `currency` | 「¥12,800.00」。`decimalLimit: 0` にすると「¥12,800.」と点が残る | `number` に `"prefix": "¥"`, `"delimiter": true`, `"decimalLimit": 0`（「¥ 12,800」） |
+| `datagrid` | 行を足すボタンが「Add Another」 | `"addAnother": "行を足す"` |
+| `datetime` | 書式が米国の形 | `"format": "yyyy-MM-dd"`、`"enableTime": false`。Show Form の In に DateTime を渡すと入る |
+| `select` | 選択肢は `data.values` の `{label, value}`。値は value（In に `"dev"` を渡すと「開発」が選ばれる） | `"widget": "choicesjs"`, `"dataSrc": "values"` |
+
+### 窓の大きさ
+
+- RDP の画面（1280×800 相当、150%）では、`Height` 760 の窓は下が画面の外に出て、送信ボタンが見えなかった。**`Height` は 720 以下**にし、長いものは `tabs` で分ける（それでも溢れる分はスクロールになる）
+- Show Form の `Left` / `Top` で置き場所を決められる（`Top` 16 など）
+
+### 窓だけを撮って確かめる
+
+画面全体を撮ると、デスクトップのほかの窓まで写る（6.）。`ExpenseRequestScreenshots.json` は、ExecuteScript で `JSON.stringify([window.screenX, window.screenY, window.outerWidth, window.outerHeight, window.devicePixelRatio])` を取り、InvokeCode で**その範囲だけ**（CSS の px に devicePixelRatio を掛け、題の帯の 32px を足す）を `output/*.png` に切り出す。タブを切り替えて撮る（`.nav-link` を click）、下までスクロールして撮る（`window.scrollTo`）もできる。撮った PNG は確かめたら消す。
+
+## 8. 落とし穴
 
 - build を飛ばす run（`--build-once`）では NoMapEntry で落ちる（2.）
 - `FormId` を式で書けない（素のプロパティ）。変数で切り替えたいときは、フォームごとに Show Form を分ける

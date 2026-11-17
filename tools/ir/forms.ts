@@ -15,20 +15,27 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import type { Node, Workflow } from "./types.ts";
 
-export type FormIssue = { file: string; code: string; message: string };
+// level：error は build / run で落ちるか値が読み書きできないもの。warn は見た目の問題（スクショで確かめた）
+export type FormIssue = { file: string; code: string; message: string; level?: "warn" };
 export type FormInfo = { file: string; id: string; kind: "FormIo" | "Html"; keys: string[]; events: string[] };
 
 const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // form.io の部品のうち、値を持たない（キーで読み書きしない）もの
-const LAYOUT = new Set(["columns", "panel", "table", "tabs", "fieldset", "well", "content", "htmlelement"]);
+const LAYOUT = new Set(["columns", "panel", "table", "tabs", "content", "htmlelement", "label"]);
 // 子を持つ部品（form.io の components / columns[].components / rows[][].components）
 const CHILD_KEYS = ["components", "columns", "rows"];
+// 中の部品が行ごと（またはオブジェクト）の値になるもの。中の key は外から読み書きしない（Studio の ComponentsWithChildren と container）
+const ROW_CONTAINERS = new Set(["datagrid", "datatable", "editgrid", "datamap", "container"]);
+// Bootstrap の列の区切り（この幅以上で横に並ぶ。px）
+const BREAKPOINT: Record<string, number> = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200 };
 // Studio の FormIoComponentTypes（UiPath.Studio.Forms.Runtime）にある部品の種類
 export const KNOWN_TYPES = new Set([
   "button", "checkbox", "number", "password", "radio", "select", "label", "textarea", "textfield", "datagrid", "datatable", "day", "time",
   "datetime", "selectboxes", "survey", "datamap", "currency", "url", "email", "phoneNumber", "htmlelement", "content", "columns", "panel",
-  "table", "tabs", "hidden", "container", "editgrid", "filePath", "fieldset", "well",
+  "table", "tabs", "hidden", "container", "editgrid", "filePath",
 ]);
+// DesignProperties.Theme に書けるもの（FormIoThemes.js。ほかの値は Default になる）
+export const THEMES = ["Default", "Cosmo", "Cyborg", "Flatly", "Sandstone"];
 // ウィンドウとメッセージのイベント（FormEvents の既定。部品のイベントは <key>.click / <key>.changed）
 export const WINDOW_EVENTS = ["window.closed", "window.got_focus", "window.lost_focus", "window.state_changed", "form.message"];
 
@@ -48,6 +55,7 @@ function walk(c: unknown, out: Comp[]) {
   if (!c || typeof c !== "object") return;
   const o = c as Comp;
   if (typeof o.type === "string") out.push(o);
+  if (typeof o.type === "string" && ROW_CONTAINERS.has(o.type)) return;
   for (const k of CHILD_KEYS) if (k in o) walk(o[k], out);
 }
 
@@ -55,6 +63,7 @@ function walk(c: unknown, out: Comp[]) {
 export function checkUiForm(file: string, j: unknown): { issues: FormIssue[]; info?: FormInfo } {
   const issues: FormIssue[] = [];
   const add = (code: string, message: string) => issues.push({ file, code, message });
+  const warn = (code: string, message: string) => issues.push({ file, code, message, level: "warn" });
   if (!j || typeof j !== "object" || Array.isArray(j)) { add("FORM_BAD_JSON", ".uiform は JSON のオブジェクトにする（Metadata / DesignProperties / Data）"); return { issues }; }
   const o = j as Record<string, unknown>;
   const md = o.Metadata as Record<string, unknown> | undefined;
@@ -67,14 +76,26 @@ export function checkUiForm(file: string, j: unknown): { issues: FormIssue[]; in
     add("FORM_NO_COMPONENTS", "Data は form.io のフォーム（{ \"display\": \"form\", \"components\": [...] }）にする。components が無いと何も出ない");
     return { issues };
   }
+  const dp = (o.DesignProperties ?? {}) as Record<string, unknown>;
+  if (dp.Theme !== undefined && !THEMES.includes(dp.Theme as string)) warn("FORM_THEME", `DesignProperties.Theme "${String(dp.Theme)}" は無い（${THEMES.join(" / ")}）。Default になる`);
+  // RDP の画面（1280×800 相当）で、題の帯とタスク バーを除いた高さ。これより高い窓は下が画面の外に出る
+  if (typeof dp.Height === "number" && dp.Height > 720) warn("FORM_TOO_TALL", `DesignProperties.Height ${dp.Height} は高すぎる（1280×800 の画面で下が画面の外に出た。720 以下にして、長いものは tabs で分ける）`);
   const comps: Comp[] = [];
   walk(data.components, comps);
+  const width = typeof dp.Width === "number" ? dp.Width : undefined;
   const keys: string[] = [];
   const events: string[] = [];
   const seen = new Set<string>();
   for (const c of comps) {
     const t = c.type as string;
-    if (!KNOWN_TYPES.has(t)) add("FORM_UNKNOWN_TYPE", `部品の type "${t}" は Studio のフォームの部品に無い（knowledge/forms.md の一覧）`);
+    if (!KNOWN_TYPES.has(t)) { add("FORM_UNKNOWN_TYPE", `部品の type "${t}" は Studio のフォームの部品に無い（knowledge/forms.md の一覧）`); continue; }
+    if (t === "columns" && width !== undefined)
+      for (const col of (Array.isArray(c.columns) ? c.columns : []) as { size?: string }[]) {
+        const bp = BREAKPOINT[col.size ?? "md"];
+        if (bp !== undefined && width < bp) { warn("FORM_COLUMNS_STACK", `columns "${String(c.key)}" の size "${col.size ?? "md"}" は ${bp}px 以上で横に並ぶ。窓の幅 ${width} では縦に積まれる（"sm" にする）`); break; }
+      }
+    if (t === "currency" && c.decimalLimit === 0) warn("FORM_CURRENCY_DECIMAL", `currency "${String(c.key)}" を小数 0 桁にすると「¥12,800.」と点が残る。円は number に prefix "¥"・delimiter・decimalLimit 0 で書く`);
+    if (t === "phoneNumber" && c.inputMask === undefined) warn("FORM_PHONE_MASK", `phoneNumber "${String(c.key)}" の既定の入力マスクは米国の形（(999) 999-9999）。inputMask を "999-9999-9999" などにする`);
     if (LAYOUT.has(t)) continue;
     if (typeof c.key !== "string" || !c.key) { add("FORM_NO_KEY", `type "${t}" の部品に key が無い。Get / Set Form Values と Show Form の Arguments は key で指す`); continue; }
     if (seen.has(c.key)) add("FORM_DUP_KEY", `部品の key "${c.key}" が重なっている。値の読み書きがどちらに行くか決まらない`);
@@ -193,9 +214,10 @@ function main(argv: string[]) {
   }
   const irs = argv.slice(1).filter((a, i, all) => a !== "--project" && all[i - 1] !== "--project");
   for (const f of irs) issues.push(...checkWorkflowRefs(JSON.parse(readText(f)) as Workflow, f, forms));
-  for (const i of issues) console.log(`NG ${i.file}  ${i.code}  ${i.message}`);
-  if (cmd === "check") console.log(issues.length ? `NG ${issues.length} 件` : `OK フォーム ${forms.length} 個${irs.length ? `、IR ${irs.length} 個` : ""}`);
-  process.exit(issues.length ? 1 : 0);
+  for (const i of issues) console.log(`${i.level === "warn" ? "注意" : "NG"} ${i.file}  ${i.code}  ${i.message}`);
+  const errors = issues.filter((i) => i.level !== "warn");
+  if (cmd === "check") console.log(errors.length ? `NG ${errors.length} 件` : `OK フォーム ${forms.length} 個${irs.length ? `、IR ${irs.length} 個` : ""}${issues.length ? `（注意 ${issues.length} 件）` : ""}`);
+  process.exit(errors.length ? 1 : 0);
 }
 
 if (process.argv[1] && /forms\.ts$/.test(process.argv[1])) main(process.argv.slice(2));
