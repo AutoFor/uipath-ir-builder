@@ -363,7 +363,25 @@ test("受け手：メールのほかに、利用者・グループの GUID、グ
   assert.equal(recipientResource({ assetEmail: "x" } as any), undefined); // folder が要る
   assert.deepEqual(res.map((r) => recipientIR(r!)), all);
   assert.equal(recipientResource({ team: "x" } as any), undefined);
-  assert.equal(recipientIR({ type: 9, value: "x" }), undefined);
+  assert.equal(recipientIR({ type: 12, value: "x" }), undefined);
+});
+
+test("受け手：Workload（9）・Round Robin（10）・LLM inferred（11）は Studio Web の書き出しと同じ形（AUT-1189）", async () => {
+  const { recipientResource, recipientIR, LLM_RECIPIENT_HINT } = await import("./gen.ts");
+  const g = "ce684f6f-5af3-4e43-8516-1adad6e98fc9";
+  assert.deepEqual(recipientResource({ workload: g, name: "Everyone" }), { type: 9, value: g, displayName: "Everyone" });
+  assert.deepEqual(recipientResource({ roundRobin: g }), { type: 10, value: g });
+  assert.deepEqual(recipientResource({ llm: "承認者のメール" }), { type: 11, value: "" });
+  assert.deepEqual(recipientIR({ type: 9, value: g, displayName: "Everyone" }), { workload: g, name: "Everyone" });
+  assert.deepEqual(recipientIR({ type: 10, value: g }), { roundRobin: g });
+  assert.deepEqual(recipientIR({ type: 11, value: "" }), { llm: LLM_RECIPIENT_HINT });
+  assert.equal(recipientIR({ type: 9, value: "" }), undefined);
+});
+
+test("受け手：Workload・Round Robin・LLM はほかの受け手と並べられない（AUT-1189）", () => {
+  const esc = { app: "SimpleApprovalApp", name: "Approval", recipients: [{ llm: "x" }, "a@example.com"] };
+  const r = generate(ir({ escalations: [esc] } as any), BASE, ALL);
+  assert.ok(r.problems.some((p) => p.code === "SOLO_RECIPIENT"));
 });
 
 test("harness：advanced は settings.mode に入り、ガードレールと一緒なら止める（AUT-1190）", () => {

@@ -121,11 +121,19 @@ export type ValidationEscalation = { validate: string; bucket: string; bucketFol
  * 「Recipient shapes」。エスカレーションも同じ形）：
  * 1 { userId }（利用者の GUID）、2 { groupId }（グループの GUID）、5 { group }（グループの名前）、
  * 4 { assetEmail, folder }・6 { assetGroup, folder }（メール・グループ名を入れたアセットと、そのフォルダ）、
- * 7 { argEmail }・8 { argGroup }（メール・グループ名を入れたエージェントの入力。"user.email" のような点の道）
+ * 7 { argEmail }・8 { argGroup }（メール・グループ名を入れたエージェントの入力。"user.email" のような点の道）、
+ * 9 { workload, name? }（グループの中で仕事の少ない人）・10 { roundRobin, name? }（グループの中で順番に）。値はグループの GUID、
+ * 11 { llm }（エージェントが実行時に受け手を推す。値はモデルへの説明。入力に dynamic__escalationRecipient が足される）。
+ * 9〜11 は Studio Web の Assignment Criteria で作って書き出した形（2026-11-17）。受け手はそれ 1 つだけ
  */
 export type Recipient = string | { userId: string } | { groupId: string } | { group: string }
-  | { assetEmail: string; folder: string } | { assetGroup: string; folder: string } | { argEmail: string } | { argGroup: string };
-type RecipientRes = { type: number; value?: string; assetName?: string; folderPath?: string; argumentName?: string };
+  | { assetEmail: string; folder: string } | { assetGroup: string; folder: string } | { argEmail: string } | { argGroup: string }
+  | { workload: string; name?: string } | { roundRobin: string; name?: string } | { llm: string };
+type RecipientRes = { type: number; value?: string; displayName?: string; assetName?: string; folderPath?: string; argumentName?: string };
+/** LLM inferred のときに Studio Web が入れる、モデルへの説明の既定 */
+export const LLM_RECIPIENT_HINT = "Email address(es) of the person or team this should be escalated to.";
+/** 受け手が 1 つだけでなければならない方式（9〜11） */
+export const isSoloRecipient = (r: Recipient) => typeof r === "object" && r !== null && ("workload" in r || "roundRobin" in r || "llm" in r);
 export function recipientResource(r: Recipient): RecipientRes | undefined {
   if (typeof r === "string") return { type: 3, value: r };
   const o = r as Record<string, string>;
@@ -136,6 +144,9 @@ export function recipientResource(r: Recipient): RecipientRes | undefined {
   if (typeof o.assetGroup === "string" && typeof o.folder === "string") return { type: 6, assetName: o.assetGroup, folderPath: o.folder };
   if (typeof o.argEmail === "string") return { type: 7, argumentName: o.argEmail };
   if (typeof o.argGroup === "string") return { type: 8, argumentName: o.argGroup };
+  if (typeof o.workload === "string") return { type: 9, value: o.workload, ...(o.name ? { displayName: o.name } : {}) };
+  if (typeof o.roundRobin === "string") return { type: 10, value: o.roundRobin, ...(o.name ? { displayName: o.name } : {}) };
+  if (typeof o.llm === "string") return { type: 11, value: "" };
   return undefined;
 }
 export function recipientIR(x: RecipientRes): Recipient | undefined {
@@ -148,6 +159,9 @@ export function recipientIR(x: RecipientRes): Recipient | undefined {
     case 6: return x.assetName ? { assetGroup: x.assetName, folder: x.folderPath ?? "" } : undefined;
     case 7: return x.argumentName ? { argEmail: x.argumentName } : undefined;
     case 8: return x.argumentName ? { argGroup: x.argumentName } : undefined;
+    case 9: return x.value ? { workload: x.value, ...(x.displayName ? { name: x.displayName } : {}) } : undefined;
+    case 10: return x.value ? { roundRobin: x.value, ...(x.displayName ? { name: x.displayName } : {}) } : undefined;
+    case 11: return { llm: LLM_RECIPIENT_HINT };
   }
   return undefined;
 }
@@ -459,7 +473,8 @@ function argsSchema(args: Arg[]): { schema: Record<string, unknown>; mapping: Re
 function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefined, project: string | undefined, probs: Problem[]): Record<string, unknown> | undefined {
   const p = `escalations[${i}]`;
   if (!e.recipients?.length) probs.push({ path: `${p}.recipients`, code: "NO_RECIPIENT", message: "タスクを受ける人を 1 つ以上書く（メール、または { group } など。空だとタスクがどこにも行かない）" });
-  (e.recipients ?? []).forEach((r, j) => { if (!recipientResource(r)) probs.push({ path: `${p}.recipients[${j}]`, code: "BAD_RECIPIENT", message: "受け手はメールの文字列か、{ userId } / { groupId } / { group } / { assetEmail, folder } / { assetGroup, folder } / { argEmail } / { argGroup } のどれか" }); });
+  (e.recipients ?? []).forEach((r, j) => { if (!recipientResource(r)) probs.push({ path: `${p}.recipients[${j}]`, code: "BAD_RECIPIENT", message: "受け手はメールの文字列か、{ userId } / { groupId } / { group } / { assetEmail, folder } / { assetGroup, folder } / { argEmail } / { argGroup } / { workload } / { roundRobin } / { llm } のどれか" }); });
+  if ((e.recipients ?? []).some(isSoloRecipient) && (e.recipients ?? []).length > 1) probs.push({ path: `${p}.recipients`, code: "SOLO_RECIPIENT", message: "workload・roundRobin・llm は Studio Web では受け手 1 つだけの方式。ほかの受け手と並べない" });
   if (!lookup) { probs.push({ path: p, code: "NEED_TENANT", message: "エスカレーションは --project で生成する（アプリを探す）" }); return undefined; }
   const found = lookup(e.app, e.folder);
   if ("error" in found) { probs.push({ path: p, code: "APP_NOT_FOUND", message: found.error }); return undefined; }
@@ -467,6 +482,9 @@ function escalationResource(e: Escalation, i: number, lookup: AppLookup | undefi
   const outcomes = (s.outcomes ?? []).map(o => o.name);
   for (const k of Object.keys(e.outcomes ?? {})) if (!outcomes.includes(k)) probs.push({ path: `${p}.outcomes.${k}`, code: "UNKNOWN_OUTCOME", message: `アプリの結果に "${k}" が無い（ある物: ${outcomes.join(", ")}）` });
   const input = argsSchema([...(s.inputs ?? []), ...(s.inOuts ?? [])]);
+  // LLM inferred：モデルが受け手を埋める入力を足す（型の対応表には入らない。Studio Web の書き出しと同じ）
+  const llm = (e.recipients ?? []).find(r => typeof r === "object" && r !== null && "llm" in r) as { llm: string } | undefined;
+  if (llm) (input.schema.properties as Record<string, unknown>).dynamic__escalationRecipient = { type: "string", title: "Recipient", description: llm.llm || LLM_RECIPIENT_HINT };
   const output = argsSchema([...(s.inOuts ?? []), ...(s.outputs ?? [])]);
   const name = e.name ?? found.name.replace(/[^A-Za-z0-9_]/g, "_");
   const oldRes = project && existsSync(join(project, "resources", name, "resource.json")) ? readJson(join(project, "resources", name, "resource.json")) : undefined;

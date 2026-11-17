@@ -9,7 +9,7 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { AgentIR, Context, Escalation, EvalCase, Field, Guardrail, Tool, ValidationEscalation } from "./gen.ts";
-import { recipientIR } from "./gen.ts";
+import { LLM_RECIPIENT_HINT, recipientIR } from "./gen.ts";
 
 /** uip agent init が作る評価器（生成の先に必ずあるので IR に持たない） */
 const DEFAULT_EVALUATORS = new Set(["evaluator-default.json", "evaluator-default-trajectory.json"]);
@@ -97,7 +97,10 @@ function escalationToIR(r: any): Escalation | ValidationEscalation | undefined {
   if (ch.properties.folderName && ch.properties.folderName !== "solution_folder") e.folder = ch.properties.folderName;
   if (r.name !== String(ch.properties.appName).replace(/[^A-Za-z0-9_]/g, "_")) e.name = r.name;
   if (r.description && r.description !== `Escalate to a human via the ${ch.properties.appName} app`) e.description = r.description;
-  e.recipients = (ch.recipients ?? []).map(recipientIR);
+  // LLM inferred（11）の説明は入力の dynamic__escalationRecipient にある
+  e.recipients = (ch.recipients ?? []).map((x: any) => x.type === 11
+    ? { llm: ch.inputSchema?.properties?.dynamic__escalationRecipient?.description ?? LLM_RECIPIENT_HINT }
+    : recipientIR(x));
   const ends = Object.entries(ch.outcomeMapping ?? {}).filter(([, v]) => v !== "continue");
   if (ends.length) e.outcomes = Object.fromEntries(ends);
   if (ch.taskTitle && ch.taskTitle !== "Approval request") e.title = ch.taskTitle;
