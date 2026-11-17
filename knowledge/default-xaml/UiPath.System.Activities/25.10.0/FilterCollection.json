@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"FilterCollection&lt;Object&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uasc=\"clr-namespace:UiPath.Activities.System.Collections;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uasc:FilterCollection x:TypeArguments=\"x:Object\" Collection=\"{x:Null}\" Filter=\"{x:Null}\" FilterAction=\"RemoveMatchingElements\" />\r\n</Activity>"
+  }
+}

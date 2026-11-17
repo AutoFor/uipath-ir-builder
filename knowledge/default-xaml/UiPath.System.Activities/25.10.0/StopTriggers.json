@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"StopTriggers\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:StopTriggers>\r\n    <ui:StopTriggers.ShouldStop>\r\n      <OutArgument x:TypeArguments=\"x:Boolean\">\r\n        <CSharpReference x:TypeArguments=\"x:Boolean\">StopTriggersOutArgument</CSharpReference>\r\n      </OutArgument>\r\n    </ui:StopTriggers.ShouldStop>\r\n  </ui:StopTriggers>\r\n</Activity>"
+  }
+}

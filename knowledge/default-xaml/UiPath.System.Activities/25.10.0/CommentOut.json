@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"CommentOut\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ui=\"http://schemas.uipath.com/workflow/activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ui:CommentOut>\r\n    <ui:CommentOut.Body>\r\n      <Sequence DisplayName=\"\u7121\u8996\u3055\u308c\u308b\u30a2\u30af\u30c6\u30a3\u30d3\u30c6\u30a3\" />\r\n    </ui:CommentOut.Body>\r\n  </ui:CommentOut>\r\n</Activity>"
+  }
+}

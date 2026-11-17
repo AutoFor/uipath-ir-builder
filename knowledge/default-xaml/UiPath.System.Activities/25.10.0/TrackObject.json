@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"TrackObject\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:ucap=\"clr-namespace:UiPath.Core.Activities.ProcessTracking;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <ucap:TrackObject ObjectId=\"{x:Null}\" ObjectInteraction=\"{x:Null}\" ObjectProperties=\"{x:Null}\" ObjectPropertiesV2=\"{x:Null}\" ObjectType=\"{x:Null}\" UseObjectPropertiesV2=\"True\" />\r\n</Activity>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"BuildCollection&lt;Object&gt;\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uasc=\"clr-namespace:UiPath.Activities.System.Collections;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uasc:BuildCollection x:TypeArguments=\"x:Object\" FirstItem=\"{x:Null}\" Items=\"{x:Null}\" NextItems=\"{x:Null}\" />\r\n</Activity>"
+  }
+}
