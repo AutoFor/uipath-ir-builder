@@ -1,0 +1,33 @@
+{
+  "app": "PartsApp",
+  "solution": "PartsAppSolution",
+  "kind": "rpa-app",
+  "variables": [ { "name": "Msg", "type": "string" } ],
+  "pages": [
+    {
+      "name": "MainPage",
+      "onLoad": [ { "set": "Msg", "value": "\"ページを開きました\"" } ],
+      "controls": [
+        { "type": "header", "name": "Title", "text": "申し込み" },
+        { "type": "label", "name": "Status", "text": { "var": "Msg" } },
+        { "type": "radio", "name": "Plan", "label": "プラン", "options": ["松", "竹", "梅"], "required": true },
+        { "type": "dropdown", "name": "Region", "label": "地域", "options": ["東日本", "西日本"] },
+        { "type": "multiselect", "name": "Options", "label": "オプション", "options": ["保守", "研修", "移行"] },
+        { "type": "slider", "name": "Seats", "label": "席数", "min": 1, "max": 50, "step": 1, "value": 10 },
+        { "type": "switch", "name": "Urgent", "text": "急ぎ", "checked": false },
+        { "type": "email", "name": "Mail", "label": "連絡先", "placeholder": "taro@example.com", "required": true },
+        { "type": "fileUpload", "name": "Attachment", "label": "添付" },
+        { "type": "divider", "name": "Line" },
+        { "type": "fileDownload", "name": "Guide", "label": "案内", "url": "https://docs.uipath.com" },
+        { "type": "container", "name": "Account", "controls": [
+            { "type": "textbox", "name": "Passcode", "label": "合言葉", "hideCharacters": true },
+            { "type": "list", "name": "Steps", "options": ["申し込む", "確かめる", "使い始める"] }
+          ] },
+        { "type": "richText", "name": "Memo", "label": "メモ", "placeholder": "自由に書く" },
+        { "type": "multiFileUpload", "name": "Docs", "label": "書類（いくつでも）" },
+        { "type": "button", "name": "Send", "text": "送る",
+          "onClick": [ { "set": "Msg", "value": "Controls.MainPage.Plan.Value & \" / \" & Controls.MainPage.Seats.Value.ToString() & \" / \" & Controls.MainPage.Passcode.Value.Length.ToString()" } ] }
+      ]
+    }
+  ]
+}

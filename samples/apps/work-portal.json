@@ -1,0 +1,16 @@
+{
+  "app": "work-portal",
+  "kind": "web",
+  "title": "稼働日ポータル",
+  "subtitle": "稼働日カレンダーを見て、確かめるプロセスを始める。",
+  "baseUrl": "https://api.uipath.com",
+  "records": [
+    { "title": "稼働日カレンダー", "entity": "WorkCalendar", "pageSize": 25,
+      "columns": [ { "field": "WorkDate", "label": "日付" }, { "field": "HolidayName", "label": "祝日" }, { "field": "IsHoliday", "label": "休み" }, { "field": "RunRpa", "label": "RPA を動かす" } ] }
+  ],
+  "processes": [
+    { "title": "稼働日かを確かめる", "name": "WorkCalendarCheck", "folderPath": "Shared",
+      "inputs": [ { "name": "in_Date", "label": "日付（yyyy-MM-dd）", "type": "string", "required": true }, { "name": "in_Notify", "label": "結果を知らせる", "type": "boolean" } ],
+      "button": "確かめる" }
+  ]
+}

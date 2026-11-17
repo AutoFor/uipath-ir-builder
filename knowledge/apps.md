@@ -6,7 +6,7 @@ UiPath の Apps には 2 つある。
 | --- | --- | --- |
 | 作り方 | React + TypeScript を書く | Studio Web の画面で部品を並べる |
 | 道具 | `uip codedapp`（pack / publish / deploy） | `uip` に無い。Studio Web で作り、ソリューションで出し入れする |
-| この道具 | `tools/apps/coded-action.ts`（Action App） | `tools/apps/rpa-app.ts`（RPA アプリ） |
+| この道具 | `tools/apps/coded-action.ts`（Action App）、`tools/apps/coded-web.ts`（Web App） | `tools/apps/rpa-app.ts`（RPA アプリ） |
 
 ## Coded Action App
 
@@ -61,17 +61,69 @@ uip codedapp publish -t Action   /   uip codedapp deploy -n <app> --folder-key <
 | `string` | 文字 | 文字 / `textarea` / `select` / `radio`。`format: date` は日付 |
 | `number` / `integer` | 文字（`currency` で通貨の書式） | 数（`integer` は小数を切る。`min` / `max`） |
 | `boolean` | チェック（押せない） | チェック |
-| `array` | 一覧 | まだ無い（`APP_UNSUPPORTED`） |
-| `object` | JSON | まだ無い |
-| `file` | 添付の Id（`{ ID }`） | まだ無い |
+| `array` | 一覧 | 行ごとの部品と「×」「＋ 行を足す」（`items` が string / number / integer / boolean のときだけ。ほかは `APP_UNSUPPORTED`） |
+| `object` | JSON | 中のフィールドごとの部品（中が string / number / integer / boolean のときだけ。中にも `label`） |
+| `file` | 添付の Id（`{ ID }`）。`show: "download" / "image"` で SDK で開く | ファイルを選ぶと `Attachments.create(name, file)` で上げ、`{ ID: id }` を値にする |
 
-必須（`required`）は、書けるフィールドの `string`（空白だけは空）と `number` / `integer` で、`validate` の結果のボタンを押せなくする。
+必須（`required`）は、書けるフィールドの `string`（空白だけは空）と `number` / `integer`、`array`（1 行以上）、`file`（`ID` がある）、`object`（中の必須が埋まっている）で、`validate` の結果のボタンを押せなくする。
+
+### SDK のサービス（`@uipath/uipath-typescript`。Action App と Web App で共通の部品は `tools/apps/coded-parts.ts`）
+
+見本 `samples/apps/expense-attach.json`。SDK を使う（書ける file、`show`、`records` がある）ときだけ、`src/uipath.ts`（`new UiPath()` を引数なしで。Action App では `sdk.initialize()` を呼ばず iframe のセッションを使う）、`uipath.json`（`{ scope, clientId }`。`clientId` が無ければ印を入れて注意を出す）、`package.json` の `@uipath/uipath-typescript ^1.8.4` を足す。
+
+- 添付を開く（`show`）：`Attachments.getById(ID)` → `blobFileAccess.uri` を fetch（`requiresAuth` なら `headers` も）→ Blob の URL。`download` はボタン、`image` は `<img>`。PDF は iframe で見えないので入れていない
+- 添付を返す：SDK 1.8.4 の `Attachments.create` の JSDoc に「返った id を action の出力の file フィールドの値に使う」とある。automation に渡る形は `JobAttachmentSchema`（`ID`・`FullName`・`MimeType`）。`folderId` は渡していない
+- Data Fabric の表（`records`）：`[{ title, entity | entityId, columns: [{ field, label }], pageSize, folderKey? }]` → `getRecordsByName` / `getAllRecords`。呼び出しはいつも 1 ページなので、カーソル（`nextCursor` / `previousCursor`）でページ送り。choice set の列は数（`numberId`）のまま
+- スコープは使うものから決める：開く `OR.Folders.Read`、上げる `OR.Folders`、表 `DataFabric.Schema.Read DataFabric.Data.Read`、プロセス `OR.Execution OR.Jobs`
+- 出どころ：スキル `uipath-coded-apps`（`references/create-action-app.md`、`references/sdk/*.md`、`assets/templates/*`）と SDK の d.ts
+
+## Coded Web App（`tools/apps/coded-web.ts`）
+
+```bash
+node tools/apps/coded-web.ts samples/apps/work-portal.json --out <dir>     # 作る（--check で検証だけ）
+cd <dir> && npm install --prefer-offline && npm run build
+uip codedapp pack dist -n <app> -v 1.0.0                                   # publish / deploy は人に確かめてから
+```
+
+- IR：`{ "app", "kind": "web", "title", "clientId", "orgName", "tenantName", "baseUrl", "records": [...], "processes": [{ "title", "name", "folderPath" | "folderKey", "inputs": [{ "name", "label", "type", "required" }], "button" }] }`
+- 形はスキルの `web-app-template.md` の Tailwind だけの版（Q6 = no）：`vite.config.ts`（`base: './'`、`uipathCodedApps()`）、`uipath.json`、`src/hooks/useAuth.tsx`（PKCE：`sdk.initialize()` → `isInOAuthCallback()` → `completeOAuth()`）、Tailwind 4。`.env` は使わない
+- プロセス：`processes.start({ name }, { folderPath | folderKey, inputArguments: JSON.stringify(値) })`。フォルダを書かなければデプロイしたフォルダ
+- `baseUrl` の既定は `https://api.uipath.com`（`cloud.uipath.com` は `APP_SHAPE`）、`redirectUri` の既定は `http://localhost:5173`。`clientId`・`orgName`・`tenantName` が無ければ印を入れて注意
+- 版：`@uipath/coded-apps-dev` は npm に `1.0.0-beta.1` しかない。build で SDK の `crypto` の import に「externalized」の注意が出る（落ちない）
+
+**テナントで確かめたこと**（2026-11-17、trial。外部アプリ「IR テスト Coded Apps」：Non-confidential、user スコープ OR.Folders・OR.Jobs・OR.Execution・DataFabric.Schema.Read・DataFabric.Data.Read、リダイレクト URI は `http://localhost:5173`・`https://<org>.uipath.host/<path-name>`・`https://cloud.uipath.com/<orgId>/<tenantId>/actions_`。`uip admin external-apps create "<名前>" --non-confidential --user-scope "…" --redirect-uri "a,b,c"`。client ID は返りの `Id`）
+
+- Action App（`expense-attach` に clientId と試しの表を入れたもの）を `deploy --client-id <Id>` で出し、Action Center で開いた：
+  - `records`：iframe の中の `new UiPath()`（引数なし、`initialize()` なし）で Data Fabric が読めた。`pageSize: 2` で「1–2 件 / 全 3 件」→「次へ」で「3–3 件」
+  - `show`：入力の file に、API で作った添付の `{ ID }` を渡すと、`getById` の名前（receipt.png）と、Blob の URL の `<img>` が iframe の中に出た（CSP で止まらない）
+  - 書ける file：ブラウザーの Action Center でファイルを選んで「直して返す」→ タスクの data に `signedSheet: { ID: "3d40…" }` が入り、`GET /odata/Attachments(<ID>)` で選んだファイルの名前が返った（`Attachments.create` に folderId は渡していない。Shared のタスクで読めた）。ファイルの選択は人が行った（iframe の中は Claude in Chrome から操作できない）
+  - 試しの添付は Orchestrator の `POST /odata/Attachments`（`{"Name": "…"}`）→ 返りの `BlobFileAccess`（`Verb: PUT`、`RequiresAuth: false`、`Headers` は Keys / Values）へ中身を PUT して作った
+- Web App の `processes`（2026-11-17、2 回目）：試しの API ワークフロー（`in_Date`・`in_Notify` → `message`）を `uip solution pack` → `publish` → `deploy run --folder-name IrTestProc --parent-folder-path Shared` で置き、外部アプリ（user スコープ OR.Execution・OR.Jobs ほか）で出し直した Web App のフォームから「確かめる」→ 画面に「始めたジョブ：<key>（Pending）」→ ジョブは Successful、`InputArguments` に `{"in_Date":"2026-11-17","in_Notify":false}`、`OutputArguments` に `message` が返った。`processes.start({ name }, { folderPath: "Shared/IrTestProc", inputArguments })` で、プロセスの名前はフォルダの中の名前
+- **同じタスクを UiPath Assistant（デスクトップ）のタスクの画面で開くと、SDK が使えない**：「外部アプリケーションのアクセス トークンを取得できませんでした … `identity_/connect/token`: 400」が出て、表も添付も出ない（書く欄と結果のボタンは出る）。文書の既知の制限（AUT-1208 の 16）のとおり。SDK を使う Action App は、ブラウザーの Action Center で開いてもらう
+- Web App（`work-portal` に clientId・orgName・tenantName・`redirectUri: https://<org>.uipath.host/<path-name>` と試しの表）を `publish -t Web` → `deploy --path-name <path-name> --client-id <Id>`。開いて「UiPath でサインイン」を押すと、Chrome の UiPath のサインインがそのまま使われ、同意の画面も出ずに戻り、表が読めた（2 件ずつ、全 3 件）
+
+、`expense-attach`（SDK あり）、`work-portal`（Web）を作り、`npm install --prefer-offline` → `npm run build`（tsc strict + vite）→ `uip codedapp pack` がすべて通った。`expense-attach` の nupkg に `action-schema.json` と `uipath.json` が入り、スキーマはスキルの検証も通った。**まだ**：Action Center・テナントでの動き全部（`setTaskData` / `completeTask` の新しい値の形、`{ ID }` を automation が受け取れるか、SDK の呼び出し、iframe の中の `<a download>` と `blob:` の画像、Web App の OAuth のサインイン）、`bindings_v2.json`（作っていない。pack が空のものを入れる）、デプロイ先で `uipathCodedApps()` が `dist/index.html` に入れる localhost の meta とプラットフォームの meta のどちらが勝つか
 
 ### 確かめたこと
 
 - 見本（14 フィールド、全部の型と部品）を作り、`npm install --offline`（このマシンの npm のキャッシュだけ）→ `tsc`（strict、`noUnusedLocals`）→ `vite build` が通った。版は react 19.3.1、vite 8.3.5、`@uipath/coded-action-app` 1.0.0
 - `uip codedapp pack` で `.nupkg` ができ、`content/action-schema.json` が入った。スキーマはスキルの `validate-action-schema.js` も通る
-- まだ：Action Center で開くこと（publish / deploy は人に確かめてから）、SDK のサービス（Data Fabric、添付の表示など）、Coded Web App
+- **Action Center で開いて完了できた**（2026-11-17、trial）：見本 `expense-review` を `pack -n irtest-expense-review` → `publish -t Action` → `deploy --folder-key <Shared>`。タスクは API の `CreateAppTask` で作り（下の「タスクを API で作る」）、`uip tasks assign` で自分に割り当て、`actions_/tasks/<Id>` で開いた。入力（文字・金額・日付・一覧・JSON）と入出力（区分が初期値で選ばれた）が出て、必須を埋めるまで「承認する」は押せず、埋めると保存のボタンも生きた（`setTaskData`）。「承認する」→ Complete で、タスクに `action: "Approve"` と、書いた出力（`approvedAmount`・`risk`・`comment`）が残った。書かなかった欄も既定値で残っていた（`payOn: ""`、入力に無かった file の `receipt: { ID: "" }`）→ 生成する Form.tsx は、タスクに最初から無かった欄で値が空（`''`・`null`・`{ ID: '' }`）のものを `setTaskData`・`completeTask` に送らない（`toTaskData`）。タスクに入っていた欄は空にしても送る。直したアプリで確かめた（2026-11-17）：支払日・リスクを書かずに承認すると、タスクの data に `payOn`・`risk`・`receipt` が無かった。数（`priority: 0`）とチェック（`false`）は空ではないので送る
+- SDK のサービスと Coded Web App は下の節（作って build・pack まで）
+
+### タスクを API で作る（試すとき）
+
+`uip tasks` に作る命令が無いので、Orchestrator の `POST /tasks/AppTasks/CreateAppTask`（スコープ OR.Tasks）を `tools/platform/cloud-api.mjs` で呼ぶ（Git Bash では `MSYS_NO_PATHCONV=1`）。
+
+```json
+// Coded Action App：appId は publish の結果の System Name、appVersion は Deploy Version
+{ "type": "AppTask", "title": "…", "appId": "ID9f50…", "appVersion": 1, "appType": "Coded", "folderKey": "<deploy したフォルダ>", "data": { "<inputs と inOuts の名前>": … } }
+// RPA のアクション アプリ（ソリューションで deploy したもの）：名前とフォルダを渡すと、Orchestrator が appId と codebehind のプロセスを埋める
+{ "type": "AppTask", "title": "…", "appName": "ApprovalAction", "folderPath": "Shared/<ソリューション>", "data": { … } }
+```
+
+- 返りの `appTasksMetadata.id` はタスクの Id ではない（タスクの Id は根の `id`）。`uip tasks get` は「Action does not exist」になる
+- 結果は `GET /tasks/AppTasks/GetAppTaskById?taskId=<Id>` の `action`（outcome）と `data`
 - **publish しなくても Action Center で試せる**（文書、AUT-1197。まだ試していない）：手元で `npm run dev`（localhost）のまま、`https://<host>/<org>/<tenant>/actions_/debug/coded-action-app` を開く。外部アプリ（OAuth）のリダイレクト URI に `https://<host>/<orgId>/<tenantId>/actions_`（名前ではなく GUID の形）を足しておく。
 
 ## ローコードの Apps
@@ -97,7 +149,12 @@ uip solution upload out/RequestApp.uis                                          
     { "name": "Confirm", "controls": [ { "type": "label", "name": "Who", "text": { "var": "ApplicantName" } } ] } ] }
 ```
 
-- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`。ページの根のパネルに上から並ぶ（入れ子のパネルはまだ）
+- 部品（`type`）：`textbox`、`number`、`textarea`、`checkbox`、`dropdown`、`date`、`button`、`label`、`table`、`radio`、`multiselect`、`slider`、`switch`、`email`、`fileUpload`、`fileDownload`、`header`、`divider`、`iframe`、`documentViewer`、`richText`、`multiFileUpload`、`list`、`container`。ページの根のパネルに上から並ぶ。`container` は `controls: [...]` で中に並べる（入れ子にできる。子の `_logicalParent` は入れ物、入れ物の `config.childIds` に並ぶ。Studio Web の書き出しと同じ。名前はページの中で入れ子もまたいで 1 回だけ）。見本 `samples/apps/rpa-app-parts.json`
+- `textbox` の `hideCharacters: true`：伏せ字（Studio Web の Hide characters）。式ではなく `properties.hideCharacters.value`（boolean）
+- **Toolbox で部品が足せないときは、ページ（根）か足したい入れ物を選んでから押す**：Tabs などを選んだまま押すと何も起きなかった（前に Rich Text・Edit Grid が取れなかった理由）
+- 選択肢（`dropdown`・`radio`・`multiselect`・`list`）：`options: ["松", "竹"]` → `config.sourceBinding` の式 `{"松", "竹"}.ToListSource()`（`isLiteral: false`）と `sourceBinding.genericType: "System.String"`。Studio Web で List source に同じ式を書いて書き出した形
+- 部品ごとに名前の違う項目：`text`（switch は `labelText`）、`checked`（switch は `resolvableSwitchValue`）、`min` / `max`（slider は `minValue` / `maxValue`）、`step`・`value`（slider の `sliderStep`・`sliderValue`）、`url`（fileDownload・button）、`src`（iframe は `src`、documentViewer は `documentViewerSrc`）
+- `onLoad`（ページ）：ページを開いたときの手順。書き方は `onClick` と同じ。根のパネル（`ID1`）の `events.load` に `start-automation`、`workflowBindings` の `controlId` は根のパネル、ファイルは `<ページ>_<ページ>_load.xaml`、トリガーの DisplayName は `<ページ>_<ページ> : Loaded Event`（Studio Web のページの Events → Loaded → Define workflow file で作って書き出した形）
 - 項目：`label`、`text`、`placeholder`、`required`、`checked`、`hidden`、`disabled`、`min` / `max`（number）、`rows`（textarea）。部品に無い項目は `APP_PROP`。雛形の部品にあるほかの式の項目は `props: { "tooltip": "…" }`
 - 値：文字（VB の文字列にする）・真偽・数、`{ "var": "<App の変数>" }`（tokens と bindingReferences でつなぐ）、`{ "vb": "<式>" }`（そのまま）
 - 変数：`type` は `string` と `list`（`{ "type": "list", "of": "<Data Fabric の表>" }`。表の一覧を持つ）。ほかの型はまだ（`APP_UNSUPPORTED`）
@@ -134,9 +191,17 @@ uip solution upload out/WorkCalendar.uis
 - list の変数：`appVariableDefinition: { baseType: "generic", dataType: "Apps.Controls.ListSource", options: [{ baseType: "class", dataType: "[5ba47f0c-5858-4f65-9378-b4be1cff98f2]::DataService.Entities.WorkCalendar" }] }`（`type: "object"`）。XAML の型は `ac:ListSource(de:WorkCalendar)`（`Apps.Controls.ListSource(Of T)`、`UiPath.Apps.Expressions.Integrations`）。`New ListSource(Of T)(data, totalRecords)` か拡張の `.ToListSource()`。中身は `.data`
 - 表の部品：`config.sourceBinding.expressionId` の式に変数（token 付き）、`config.columns[]` の `headingExpression`（文字）と `valueExpression`（列の名前。式は `$.controls.<id>.config.columns[?(@.id=="ID…")].valueExpression`）
 - 日付の部品の値は `DateOnly?`。日付の列（DateTime）へは `Controls.P.D.Value.Value.ToDateTime(TimeOnly.MinValue)`。チェックボックスの値は `Boolean`
-- 表の日付の列は `2026-11-23T00:00:00.0000000Z` と出る（書式はまだ）
+- **表の日付の列は書式を変えられない**：`2026-11-23T00:00:00.0000000Z` と出る。文書（Edit Grid の注意）に「Table と Edit Grid では日付の書式は使えない。DateTime はそのまま、DateOnly の列はブラウザーの言語で書式」とある。Studio Web で確かめたこと（2026-11-17）：列の Source は行の型のメンバーの名前だけで、式は書けない。Data source に匿名型へ写した一覧（`Days.data.Select(Function(r) New With {.WorkDate = …ToString("yyyy/MM/dd")}).ToList().ToListSource()`）を入れると式は通るが、列が初期化され、列の Source に `WorkDate` を書くと「'WorkDate' is not declared」で保存できない。Data Fabric の DATE の列も型は DateTime。生成器は表の日時の列に注意 `APP_TABLE_DATE` を出す。日付をきれいに見せたいときは、選んだ日をラベルに `ToString("yyyy/MM/dd")` で出す（見本の保存の手順と同じ）
 
 確かめたこと（2026-11-13）：見本を `--uis` で作って `upload` し、3 つのワークフローを開いて問題なし。デバッグで、日付を入れて「保存」→ 表に 1 行出た、チェックを変えて「保存」→ 同じ行が直った（行は増えない）、「この日の設定を消す」→ 行が消えた。DESKTOP の Chrome でやった（Studio Web は UiPath Assistant とのつなぎを求める）
+
+2026-11-17（trial）：`onLoad`（一覧を読み込み、件数をラベルに出す）を足した見本を `--solution-id` で上書きし、Studio Web のページの Events → Loaded に「Edit workflow file」として出て、ワークフローに問い合わせと代入が並んだ。trial には表 WorkCalendar が無い（表は別の組織にある。Health analyzer に「Entity not available on the current tenant」）ので、この見本の Debug はしていない。`onLoad` を動かして確かめたのは下の部品の見本
+
+**Debug は Assistant 無しでも動いた**（2026-11-17、trial、この PC の Chrome）：Debug →「Save & Debug」で、ビルドとアプリの実行がクラウド（ログの `ProjectDirectory:: /tmp/home/UiPath/RemoteAgent/...`）で走り、アプリが新しいタブ（`apps_/default/run/...`）で開いた。前に止まった「Signing in to Assistant」は出なかった
+
+部品の見本 `samples/apps/rpa-app-parts.json` の Debug（2026-11-17、trial）：開くと `onLoad` が動いてラベルに「ページを開きました」、ラジオに 松・竹・梅、ドロップダウンに 東日本・西日本、必須の印、スライダー（1〜50）、スイッチ、メール、添付、区切り線、ダウンロードが出た。竹を選んで「送る」→ ラベルが「竹 / 50」（`Controls.MainPage.Plan.Value` が読めた）。スライダーは画面で 10 なのに `.Value` は 50 を返した → 原因：既定値の式が `isLiteral: true`（雛形のまま）だと、画面の位置は変わるが `.Value` は動かすまで雛形の初期値 50。Studio Web の式の編集で書くと `isLiteral: false` になり、`.Value` も既定値になる（最大値を 40 にしても 50 だったので最大値ではない）。生成器は `sliderValue` を `isLiteral: false` で書く。直したあと、動かさずに 10、動かして 30 が返った。複数選択の選択肢は開いて見ていない
+
+2026-11-17（2 回目、trial の Debug）：`container` の中の `textbox`（`hideCharacters`、目のアイコン付きで伏せ字）と `list`（3 行）、`richText`（書式のツールバー付き）、`multiFileUpload` が出た。ボタンの式で入れ物の中の `Controls.MainPage.Passcode.Value.Length` が読めた（5 文字 → 5）
 
 ### RPA 側：今日動くか（`samples/apps/work-calendar-rpa/ir`）
 
@@ -228,7 +293,7 @@ Studio Web のエージェントのエスカレーションで「+ New App」→
 - **ボタン**：`<uwana:SubmitAction Outcome="approve">`。`OutcomeExpression`（`expressionId`・`formId`）と、`PropertyOverrides`（`<InArgument x:Key="Comment">[Controls.<ページ>.<部品>.Value]</InArgument>`。outputs と inOuts に入る値）。名前空間に `action` と `__Action_ActionSchema`。
 - **ソリューション**：`resources/solution_folder/app/workflow Action/<アプリ>.json`（resource と spec の `type` が `workflow Action`）。
 - IR：`"action": { "inputs": [{ "name", "description" }], "inOuts": [...], "outputs": [...], "outcomes": ["approve", { "name": "reject", "description": "…" }] }`、値は `{ "action": "Content" }`、手順は `{ "submit": "approve", "values": { "Comment": "<VB の式>" } }`。型は string と boolean だけ。名前は 4 つの節をまたいで重ねられない。
-- **確かめたこと**（trial、2026-11-17）：生成したものを `uip solution upload` で取り込めた。同じソリューションにエージェントを足してエスカレーションの Action App を開くと、「Defined resources」に出て選べた。選んだエスカレーションの resource には、入力 Content・Comment、出力 Comment、結果 approve・reject が説明つきで入った（Studio Web がアクションの定義を読めている）。**まだ**：Studio Web のアプリの画面で開くこと（この PC の Assistant が別の組織にサインインしていて「Signing in to Assistant」で止まる）、Action Center でタスクとして開いて Submit すること。
+- **確かめたこと**（trial、2026-11-17）：生成したものを `uip solution upload` で取り込めた。同じソリューションにエージェントを足してエスカレーションの Action App を開くと、「Defined resources」に出て選べた。選んだエスカレーションの resource には、入力 Content・Comment、出力 Comment、結果 approve・reject が説明つきで入った（Studio Web がアクションの定義を読めている）。**Action Center でも確かめた**（2026-11-17、trial）：生成した `.uis` を upload → Studio Web で開いて問題なし → Deploy（publish と deploy。`Shared/<ソリューション>` のフォルダができる）→ `CreateAppTask`（`appName` と `folderPath`）でタスク → Action Center で開くと `Content` がラベルに出た → コメントを書いて「承認」→ 完了の確認 → Complete。タスクに `action: "approve"` と `Comment`（Submit Action の PropertyOverrides で書いた値）が残り、アプリのジョブ（Serverless）は Successful。押したときに Action Center に「Unexpected Error … Please retry」が一度出たが、完了と値には響かなかった（原因は見ていない）。片付け：`uip solution deploy uninstall <名前> --yes` → `uip solution packages delete <名前> <版> --yes` → `uip solution delete <Id> --yes`。Coded は `uip codedapp delete --display-name <名前> --folder-key <Key> --yes` と `uip or packages delete <Id>:<版> --yes`。
 
 App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：アプリのページを開く（Open Apps Page）、アプリで URL を開く、アプリの値をリセット、アプリのメッセージを表示、スピナーの表示/非表示、ポップオーバー/ボトムシートを閉じる。値は「代入」（Assign）で `AppVariable.<名>` や `Controls.<ページ>.<部品>.Value` に入れる。
 
@@ -256,7 +321,7 @@ App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：ア
 - **ドロップダウンの選択肢**（12）：List source に `{"v1","v2"}.ToListSource()` か `New List(Of String) From {…}.ToListSource()`。Multiselect とラジオも同じ。
 - **日付の型（Date）の値はタイムゾーンが要る**（34）：`DateTimeKind.Unspecified` は ISO でないとして弾かれる（`Local` か `Utc`）。上の `Value.Value.ToDateTime(TimeOnly.MinValue)` は Unspecified になる。
 - **アプリでできないこと**（22）：`Fetch` / `FetchOne`（Query Entity Record を使う）、エンティティの選択肢（choice set）と `GetChoiceSet` / `GetChoiceSetValue`、Autopilot でエンティティから作る、Studio Desktop で開く、ページの export・import、Public App。rpa-app-entities.ts は選択肢の列を扱わない。
-- **部品**（32）：rpa-app.ts が作れないもの：ラジオ・Multiselect・Switch・Slider・File Uploader・Email・Rich Text、Edit Grid・Custom List・Tabs・Header・Divider・Image・IFrame・Document Viewer、Container・Page Container。
+- **部品**（32）：rpa-app.ts が作れないもの：Edit Grid（雛形は取れた。列ごとに Hidden・Editable などの式が付き、データの元は Studio Web の「Create workflow」で表の問い合わせを作るのが正式な形なので、IR には出していない）、Custom List（足したばかりの Custom List は `templateId: null`・`allChildIds: {}` で、中に置く部品の型はデータの元を決めてから作られる。中身の形を取れていない）、Tabs（各タブは `pageContainerId` で Page Container の中身を切り替える作り。Page Container とページの入れ子が要る）、Validation Control（Document Understanding の検証）、Image、Page Container・Container Layout。2026-11-17 に ラジオ・Multiselect・Switch・Slider・File Uploader・File Downloader・Email・Header・Divider・IFrame・Document Viewer を足した（Studio Web の Toolbox で足して書き出し、`node tools/apps/rpa-app-templates.ts <書き出し> --add-controls` で `controls.json` に足した。既にある部品・ページ・App の雛形は変えない）。
 - **アプリのプロジェクト**（33）：Main のワークフローもトリガーも無い。App Events に Submit Action（アクション アプリ）もある。アプリを消すと、使っているワークフローも消える。
 - **デバッグ**（38）：動いているアプリで Shift+4 を押すと、アプリの中のログを JSON で取れる。On local machine と On cloud、Debug step-by-step がある。エラーがあるとデバッグのボタンが押せない。
 - **戻し方**（39）：Cloud Workspace は閉じたときと 40 分ごとに自動のスナップショットができ、Change history から戻せる。publish の履歴の Restore は、その版に全部のプロジェクトを戻す。

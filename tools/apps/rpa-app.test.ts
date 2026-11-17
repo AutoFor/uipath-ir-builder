@@ -27,7 +27,7 @@ test("見本は検証を通り、開く先のページの注意が出る", () =>
 
 test("検証：名前、部品、項目、参照", () => {
   assert.deepEqual(codes(one([{ type: "button", name: "Next" }])), ["APP_NAME"]);
-  assert.deepEqual(codes(one([{ type: "slider" as "label", name: "A" }])), ["APP_TYPE"]);
+  assert.deepEqual(codes(one([{ type: "editGrid" as "label", name: "A" }])), ["APP_TYPE"]);
   assert.deepEqual(codes(one([{ type: "button", name: "A", placeholder: "x" }])), ["APP_PROP"]);
   assert.deepEqual(codes(one([{ type: "label", name: "A", props: { nope: "x" } }])), ["APP_PROP"]);
   assert.deepEqual(codes(one([{ type: "label", name: "A", text: { var: "X" } }])), ["APP_REF"]);
@@ -236,4 +236,123 @@ test("--solution-id：Studio Web のソリューションの Id にする（上�
   assert.equal(JSON.parse(f["ApprovalActionSolution.uipx"]).SolutionId, id);
   assert.equal(JSON.parse(f["SolutionStorage.json"]).SolutionId, id);
   assert.notEqual(JSON.parse(generateFiles(approval)["ApprovalActionSolution.uipx"]).SolutionId, id);
+});
+
+// ---- ページの読み込み（onLoad。Studio Web のページの Events → Loaded で作って書き出した形。AUT-1179）----
+
+test("onLoad：根のパネルの load から <ページ>_<ページ>_load.xaml を呼ぶ", () => {
+  const f = generateFiles(cal, calStore);
+  const main = pageOf(f, "MainPage");
+  const root = main.controls[main.rootPanelId];
+  const ex = root.events.load.executors[0];
+  assert.equal(ex.executorMethod, "start-automation");
+  assert.equal(ex.config.workflowPath, "MainPage_MainPage_load.xaml");
+  assert.equal(root.events.load.actionType, "automation");
+  assert.equal(main.workflowBindings[ex.config.automationId].controlId, main.rootPanelId);
+  const x = f["WorkCalendarApp/MainPage_MainPage_load.xaml"];
+  assert.match(x, /<ui:ManualTrigger [^>]*DisplayName="MainPage_MainPage : Loaded Event"/);
+  assert.match(x, /<uda:QueryEntityRecords x:TypeArguments="de:WorkCalendar"/);
+  const meta = JSON.parse(JSON.parse(f["WorkCalendarApp/.local/ProjectSettings.json"]).ProjectAppMetadata);
+  assert.equal(meta["MainPage_MainPage_load.xaml"].AppFormId, main.formId);
+  // クリックの DisplayName は前のまま
+  assert.match(f["WorkCalendarApp/MainPage_Save_click.xaml"], /DisplayName="MainPage_Save : クリック時 Event"/);
+});
+
+test("onLoad：手順はボタンと同じ検査。いまのページは開けない", () => {
+  const p = (onLoad: any): RpaApp => ({ app: "T", variables: [{ name: "S", type: "string" }], pages: [{ name: "P", controls: [], onLoad }, { name: "Q", controls: [] }] });
+  assert.deepEqual(codes(p([{ set: "S", value: "\"x\"" }, { open: "Q" }])), []);
+  assert.deepEqual(codes(p([{ open: "P" }])), ["APP_REF"]);
+  assert.deepEqual(codes(p([{ set: "Nope", value: "1" }])), ["APP_REF"]);
+  assert.deepEqual(codes(p({ set: "S" })), ["APP_SHAPE"]);
+  assert.match(notices(p([{ open: "Q" }]))[0], /APP_OPEN_PAGE .*Q/);
+  // onLoad が無ければ load は空のまま
+  const main = pageOf(generateFiles(sample), "MainPage");
+  assert.deepEqual(main.controls[main.rootPanelId].events.load.executors, []);
+});
+
+test("表の日付の列には APP_TABLE_DATE の注意（表の部品は書式を持たない）", () => {
+  const n = notices(cal, calStore);
+  assert.equal(n.length, 1);
+  assert.match(n[0], /APP_TABLE_DATE .*WorkDate/);
+});
+
+// ---- 足した部品（2026-11-17 に Studio Web の Toolbox で足して書き出した雛形。AUT-1177）----
+
+test("部品：radio・multiselect・slider・switch・email など。選択肢は List source の式", () => {
+  const a = one([
+    { type: "radio", name: "R", label: "区分", options: ["A", "B \"x\""], required: true },
+    { type: "multiselect", name: "M", label: "複数", options: ["X", "Y"] },
+    { type: "dropdown", name: "D", label: "選ぶ", options: ["1", "2"] },
+    { type: "slider", name: "S", label: "量", min: 0, max: 10, step: 2, value: 4 },
+    { type: "switch", name: "W", text: "有効", checked: true },
+    { type: "email", name: "E", label: "メール", placeholder: "a@example.com" },
+    { type: "fileUpload", name: "F", label: "添付" },
+    { type: "fileDownload", name: "G", label: "取る", url: "https://example.com/a.pdf" },
+    { type: "header", name: "H", text: "見出し" },
+    { type: "divider", name: "V" },
+    { type: "iframe", name: "I", src: "https://example.com" },
+    { type: "documentViewer", name: "X", src: { vb: "\"https://example.com/a.pdf\"" } },
+  ]);
+  assert.deepEqual(check(a), []);
+  const p = pageOf(generateFiles(a), "P");
+  const ctl = (n: string): any => Object.values(p.controls).find((x: any) => x.name === n);
+  const src = (n: string) => { const c = ctl(n); return [c.config.sourceBinding.genericType, p.expressions[c.id].expressions[c.config.sourceBinding.expressionId]]; };
+  assert.equal(ctl("R").component, "form-radio-button-vb");
+  assert.deepEqual([src("R")[0], src("R")[1].expression, src("R")[1].isLiteral], ["System.String", '{"A", "B ""x"""}.ToListSource()', false]);
+  assert.equal(src("D")[1].expression, '{"1", "2"}.ToListSource()');
+  assert.equal(exprOf(p, "S", "maxValue").expression, "10");
+  assert.equal(exprOf(p, "S", "sliderValue").expression, "4");
+  assert.equal(exprOf(p, "W", "labelText").expression, '"有効"');
+  assert.equal(exprOf(p, "W", "resolvableSwitchValue").expression, "true");
+  assert.equal(exprOf(p, "X", "documentViewerSrc").expression, '"https://example.com/a.pdf"');
+  assert.equal(ctl("V").component, "form-mobile-divider");
+});
+
+test("部品：options は選択肢の部品だけ。部品に無い項目は APP_PROP", () => {
+  assert.deepEqual(codes(one([{ type: "label", name: "A", options: ["x"] }])), ["APP_PROP"]);
+  assert.deepEqual(codes(one([{ type: "radio", name: "A", options: [] }])), ["APP_SHAPE"]);
+  assert.deepEqual(codes(one([{ type: "divider", name: "A", text: "x" }])), ["APP_PROP"]);
+  assert.deepEqual(codes(one([{ type: "textbox", name: "A", step: 1 }])), ["APP_PROP"]);
+});
+
+// ---- 入れ子・Rich Text・複数ファイル・List・Hide characters・スライダーの既定値（AUT-1212。trial の Debug で確かめた）----
+
+test("container：子は入れ物の childIds に並び、_logicalParent は入れ物。式の Controls.<ページ>.<子> も通る", () => {
+  const a: RpaApp = { app: "T", variables: [{ name: "S", type: "string" }], pages: [{ name: "P", controls: [
+    { type: "container", name: "Box", controls: [
+      { type: "textbox", name: "Pass", label: "合言葉", hideCharacters: true },
+      { type: "container", name: "Inner", controls: [{ type: "list", name: "L", options: ["a", "b"] }] },
+    ] },
+    { type: "richText", name: "Memo", label: "メモ" },
+    { type: "multiFileUpload", name: "Docs", label: "書類" },
+    { type: "button", name: "B", onClick: [{ set: "S", value: "Controls.P.Pass.Value" }] },
+  ] }] };
+  assert.deepEqual(check(a), []);
+  const p = pageOf(generateFiles(a), "P");
+  const ctl = (n: string): any => Object.values(p.controls).find((x: any) => x.name === n);
+  const root = p.controls[p.rootPanelId];
+  assert.deepEqual(root.config.childIds.map((i: string) => p.controls[i].name), ["Box", "Memo", "Docs", "B"]);
+  assert.deepEqual(ctl("Box").config.childIds.map((i: string) => p.controls[i].name), ["Pass", "Inner"]);
+  assert.equal(ctl("Pass")._logicalParent, ctl("Box").id);
+  assert.equal(ctl("L")._logicalParent, ctl("Inner").id);
+  assert.equal(ctl("Pass").properties.hideCharacters.value, true);
+  assert.equal(ctl("Memo").component, "form-rich-text-editor");
+  assert.equal(ctl("Docs").component, "form-multi-file-uploader");
+  const sb = ctl("L").config.sourceBinding;
+  assert.equal(p.expressions[ctl("L").id].expressions[sb.expressionId].expression, '{"a", "b"}.ToListSource()');
+});
+
+test("container の検査：名前の重なりは入れ子もまたぐ。hideCharacters は textbox だけ、controls は container だけ", () => {
+  const pg = (controls: any[]): RpaApp => ({ app: "T", pages: [{ name: "P", controls }] });
+  assert.deepEqual(codes(pg([{ type: "label", name: "A" }, { type: "container", name: "C", controls: [{ type: "label", name: "A" }] }])), ["APP_NAME"]);
+  assert.deepEqual(codes(pg([{ type: "label", name: "A", hideCharacters: true }])), ["APP_PROP"]);
+  assert.deepEqual(codes(pg([{ type: "label", name: "A", controls: [] }])), ["APP_PROP"]);
+  assert.deepEqual(codes(pg([{ type: "container", name: "C", controls: [{ type: "nope", name: "X" }] }])), ["APP_TYPE"]);
+});
+
+test("slider の既定値は isLiteral: false（true のままだと .Value が雛形の 50 のまま）", () => {
+  const p = pageOf(generateFiles(one([{ type: "slider", name: "S", min: 1, max: 40, value: 10 }])), "P");
+  const e = exprOf(p, "S", "sliderValue");
+  assert.deepEqual([e.expression, e.isLiteral], ["10", false]);
+  assert.equal(exprOf(p, "S", "maxValue").isLiteral, true);
 });

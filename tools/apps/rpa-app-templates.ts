@@ -88,9 +88,41 @@ export function extract(sol: string) {
   return { components: Object.keys(controls), pages: pages.length };
 }
 
+// 部品だけを足す（--add-controls）。controls.json に無い component だけを、書き出しのページから写す。
+// page.json・app.json・event.xaml・files/ は変えない。アプリのフォルダは project.uiproj のあるもの（名前は App とは限らない）
+export function addControls(sol: string): string[] {
+  const appDir = readdirSync(sol, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => join(sol, d.name)).find((d) => existsSync(join(d, "project.uiproj")));
+  if (!appDir) throw new Error(`project.uiproj のあるフォルダが無い: ${sol}`);
+  const models = join(appDir, ".app", "models");
+  const file = join(OUT, "controls.json");
+  const controls: Record<string, { control: Json; expressions: Json }> = JSON.parse(readFileSync(file, "utf8"));
+  const added: string[] = [];
+  for (const f of readdirSync(models)) {
+    const p = JSON.parse(readFileSync(join(models, f), "utf8"));
+    if (p.type !== "form") continue;
+    for (const [id, c] of Object.entries<Json>(p.controls)) {
+      if (id === p.rootPanelId || controls[c.component]) continue;
+      const control = structuredClone(c);
+      delete control._logicalParent;
+      // 入れ物（パネル）は子を外して雛形にする（子の式は子の部品の雛形にある）
+      if (control.config?.childIds) control.config.childIds = [];
+      for (const e of Object.values<Json>(control.events ?? {})) { e.executors = []; delete e.actionType; }
+      controls[c.component] = { control, expressions: structuredClone(groupOf(p, id)) };
+      added.push(c.component);
+    }
+  }
+  writeFileSync(file, JSON.stringify(controls, null, 1) + "\n", "utf8");
+  return added;
+}
+
 function main() {
   const sol = process.argv[2];
-  if (!sol || !existsSync(join(sol, "App"))) { console.error("使い方: node tools/apps/rpa-app-templates.ts <書き出したソリューションのフォルダ>"); process.exit(2); }
+  if (sol && process.argv.includes("--add-controls")) {
+    const added = addControls(resolvePath(sol));
+    console.log(`OK templates/rpa-app/controls.json に足した部品 ${added.length}: ${added.join(", ")}`);
+    return;
+  }
+  if (!sol || !existsSync(join(sol, "App"))) { console.error("使い方: node tools/apps/rpa-app-templates.ts <書き出したソリューションのフォルダ> [--add-controls]"); process.exit(2); }
   const r = extract(resolvePath(sol));
   console.log(`OK templates/rpa-app（部品 ${r.components.length}: ${r.components.join(", ")}）`);
 }

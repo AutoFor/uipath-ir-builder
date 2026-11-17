@@ -10,6 +10,10 @@
   "pages": [
     {
       "name": "MainPage",
+      "onLoad": [
+        { "query": "WorkCalendar", "into": "Days" },
+        { "set": "Msg", "value": "AppVariable.Days.data.Count().ToString() & \" 日分の設定があります\"" }
+      ],
       "controls": [
         { "type": "label", "name": "Title", "text": "稼働日カレンダー" },
         { "type": "label", "name": "Guide", "text": "日付を選び、祝日か・その日に RPA を動かすかを決めて「保存」を押します。登録の無い日は、RPA は動きません。" },

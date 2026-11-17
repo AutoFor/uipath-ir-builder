@@ -45,12 +45,16 @@ export type Control = {
   type: ControlType;
   name: string;
   label?: Value; text?: Value; placeholder?: Value; required?: Value; checked?: Value; hidden?: Value; disabled?: Value;
-  min?: Value; max?: Value; rows?: Value;
+  min?: Value; max?: Value; rows?: Value; step?: Value; value?: Value; url?: Value; src?: Value;
   props?: Record<string, Value>; // 雛形の部品にある式の項目を名前で直接（tooltip など）
   onClick?: Step[]; // button だけ
   source?: Value; columns?: Column[]; // table だけ。source は list の App の変数
+  options?: string[]; // dropdown / radio / multiselect / list の選択肢（List source に {"A", "B"}.ToListSource() と書く）
+  hideCharacters?: boolean; // textbox だけ。パスワードのように伏せ字にする（Studio Web の Hide characters。式ではなく真偽の項目）
+  controls?: Control[]; // container だけ。中に並べる部品（入れ子にできる）
 };
-export type Page = { name: string; controls: Control[] };
+// onLoad：ページを開いたときの手順（Studio Web のページの Events → Loaded。根のパネルの load のイベント）
+export type Page = { name: string; controls: Control[]; onLoad?: Step[] };
 export type Variable = { name: string; type: "string"; default?: string } | { name: string; type: "list"; of: string; default?: undefined };
 // entities：Data Fabric の表の定義（tools/apps/rpa-app-entities.ts で作る）。IR のファイルからの相対パス
 // action：Action Center のタスクの画面にする（アプリ 1 つに 1 つ）。形は Studio Web の Simple Approval の書き出し（AUT-1193）
@@ -60,16 +64,29 @@ export type RpaApp = { app: string; solution?: string; kind?: "rpa-app"; entitie
 export type Store = any; // rpa-app-entities.ts の出力
 export type Issue = { path: string; code: string; message: string };
 
-export type ControlType = "textbox" | "number" | "textarea" | "checkbox" | "dropdown" | "date" | "button" | "label" | "table";
+export type ControlType = "textbox" | "number" | "textarea" | "checkbox" | "dropdown" | "date" | "button" | "label" | "table"
+  | "radio" | "multiselect" | "slider" | "switch" | "email" | "fileUpload" | "fileDownload" | "header" | "divider" | "iframe" | "documentViewer"
+  | "richText" | "multiFileUpload" | "list" | "container";
+// radio から下は、2026-11-17 に Studio Web の Toolbox で足して書き出したもの（tools/apps/rpa-app-templates.ts --add-controls）
 export const COMPONENT: Record<ControlType, string> = {
   textbox: "form-text-vb", number: "form-text-number-vb", textarea: "form-text-area-vb", checkbox: "form-check-box",
   dropdown: "form-dropdown-vb", date: "form-mobile-date-picker-vb", button: "form-button", label: "form-label", table: "form-simple-table-vb",
+  radio: "form-radio-button-vb", multiselect: "form-multiselect-vb", slider: "form-slider-vb", switch: "form-mobile-switch", email: "form-text-email-vb",
+  fileUpload: "form-file-uploader", fileDownload: "form-file-downloader", header: "form-page-heading", divider: "form-mobile-divider",
+  iframe: "form-iframe", documentViewer: "form-document-viewer",
+  richText: "form-rich-text-editor", multiFileUpload: "form-multi-file-uploader", list: "form-list-vb", container: "form-vb-panel",
 };
-// IR の項目 → 部品の式の項目
-const FRIENDLY: Record<string, string> = {
-  label: "label", text: "text", placeholder: "placeholder", required: "required", checked: "resolvableChecked",
-  hidden: "resolvableHidden", disabled: "resolvableDisabled", min: "inputControlMinValue", max: "inputControlMaxValue", rows: "numberOfRows",
+// 入れ子もたどって、ページの部品をすべて並べる
+export const allControls = (list: Control[] = []): Control[] => list.flatMap((c) => [c, ...(c.type === "container" ? allControls(c.controls) : [])]);
+// 選択肢（List source）を持つ部品。config.sourceBinding の式に {"A", "B"}.ToListSource()、genericType は System.String（Studio Web の書き出し）
+const WITH_OPTIONS = new Set<ControlType>(["dropdown", "radio", "multiselect", "list"]);
+// IR の項目 → 部品の式の項目。部品によって名前が違うものは、その部品にある最初のもの
+const FRIENDLY: Record<string, string[]> = {
+  label: ["label"], text: ["text", "labelText"], placeholder: ["placeholder"], required: ["required"], checked: ["resolvableChecked", "resolvableSwitchValue"],
+  hidden: ["resolvableHidden"], disabled: ["resolvableDisabled"], min: ["inputControlMinValue", "minValue"], max: ["inputControlMaxValue", "maxValue"],
+  rows: ["numberOfRows"], step: ["sliderStep"], value: ["sliderValue"], url: ["url"], src: ["src", "documentViewerSrc"],
 };
+const friendly = (k: string, has: Set<string>) => FRIENDLY[k]?.find((p) => has.has(p));
 const DATA_TYPE: Record<Variable["type"], string> = { string: "System.String", list: "Apps.Controls.ListSource" };
 const xamlType = (v: Variable) => (v.type === "list" ? `ac:ListSource(de:${v.of})` : "x:String");
 // Data Fabric の列の型 → XAML の型
@@ -158,7 +175,7 @@ export function check(a: RpaApp, store?: Store): Issue[] {
     name(p.name, `pages[${i}].name`);
     if (pages.has(p.name)) add(`pages[${i}].name`, "APP_NAME", `ページの名前が重なっている（${p.name}）`);
     if (vars.has(p.name)) add(`pages[${i}].name`, "APP_NAME", `ページと変数の名前が重なっている（${p.name}）`);
-    pages.set(p.name, new Set((p.controls ?? []).map((c) => c.name)));
+    pages.set(p.name, new Set(allControls(p.controls).map((c) => c.name)));
   });
   const value = (v: Value, at: string) => {
     if (v && typeof v === "object") {
@@ -176,10 +193,72 @@ export function check(a: RpaApp, store?: Store): Issue[] {
       else if (m[2] && !ctl.has(m[2])) add(at, "APP_REF", `ページ ${m[1]} に部品 ${m[2]} が無い（${m[0]}）`);
     }
   };
+  // 手順（ボタンの onClick と、ページの onLoad）。page は手順が動くページ
+  const vb = (x: unknown, at2: string) => {
+    if (typeof x !== "string" || !x.trim()) add(at2, "APP_SHAPE", "VB の式を書く");
+    else controlsRef(x, at2);
+  };
+  const entity = (n: unknown, at2: string) => {
+    const e = ents.get(n as string);
+    if (!e) add(at2, "APP_REF", store ? `表 ${n} が entities に無い` : `表 ${n} を使うには entities（表の定義）が要る`);
+    return e;
+  };
+  const fields = (e: Entity | undefined, f: unknown, at2: string) => {
+    if (!f || typeof f !== "object") { add(at2, "APP_SHAPE", "fields は { 列の名前: VB の式 }"); return; }
+    for (const [k, x] of Object.entries(f)) {
+      const fd = e?.fields.get(k);
+      if (e && !fd) add(`${at2}.${k}`, "APP_REF", `表 ${e.name} に列 ${k} が無い`);
+      else if (fd?.system) add(`${at2}.${k}`, "APP_REF", `列 ${k} は Data Fabric が書く列`);
+      vb(x, `${at2}.${k}`);
+    }
+  };
+  const checkSteps = (list: Json, base: string, page: string) => {
+    if (!Array.isArray(list)) { add(base, "APP_SHAPE", "手順は配列"); return; }
+    list.forEach((s: Json, si: number) => {
+      const sat = `${base}[${si}]`;
+      const kinds = STEP_KEYS.filter((k) => s && typeof s === "object" && k in s);
+      if (kinds.length !== 1) { add(sat, "APP_SHAPE", `手順は ${STEP_KEYS.map((k) => `{ ${k} }`).join(" / ")} のどれか 1 つ`); return; }
+      if ("submit" in s) {
+        if (!a.action) add(`${sat}.submit`, "APP_REF", "submit はアクションを持つアプリだけ（action を書く）");
+        else if (!outcomes.has(s.submit)) add(`${sat}.submit`, "APP_REF", `結果 ${s.submit} が action.outcomes に無い`);
+        for (const [k, x] of Object.entries(s.values ?? {})) {
+          if (a.action && !writable.has(k)) add(`${sat}.values.${k}`, "APP_REF", `アクションの outputs・inOuts に ${k} が無い`);
+          vb(x, `${sat}.values.${k}`);
+        }
+      } else if ("set" in s) {
+        const v = vars.get(s.set);
+        if (!v) add(`${sat}.set`, "APP_REF", `変数 ${s.set} が無い`);
+        vb(s.value, `${sat}.value`);
+      } else if ("open" in s) {
+        if (!pages.has(s.open)) add(`${sat}.open`, "APP_REF", `ページ ${s.open} が無い`);
+        else if (s.open === page) add(`${sat}.open`, "APP_REF", "いまのページは開けない");
+      } else if ("create" in s) {
+        const e = entity(s.create, `${sat}.create`);
+        fields(e, s.fields, `${sat}.fields`);
+        for (const f of e?.fields.values() ?? []) if (f.required && !f.system && !(f.name in (s.fields ?? {}))) add(`${sat}.fields`, "APP_REF", `必須の列 ${f.name} が無い`);
+      } else if ("update" in s) {
+        fields(entity(s.update, `${sat}.update`), s.fields, `${sat}.fields`);
+        vb(s.id, `${sat}.id`);
+      } else if ("delete" in s) {
+        entity(s.delete, `${sat}.delete`);
+        vb(s.id, `${sat}.id`);
+      } else if ("query" in s) {
+        entity(s.query, `${sat}.query`);
+        const v = vars.get(s.into);
+        if (!v || v.type !== "list" || v.of !== s.query) add(`${sat}.into`, "APP_REF", `into は表 ${s.query} の list の App の変数`);
+        if (s.top !== undefined && !(Number.isInteger(s.top) && s.top > 0 && s.top <= 1000)) add(`${sat}.top`, "APP_SHAPE", "top は 1〜1000");
+      } else {
+        vb(s.if, `${sat}.if`);
+        checkSteps(s.then, `${sat}.then`, page);
+        if (s.else !== undefined) checkSteps(s.else, `${sat}.else`, page);
+      }
+    });
+  };
   a.pages.forEach((p, pi) => {
+    if (p.onLoad !== undefined) checkSteps(p.onLoad, `pages[${pi}].onLoad`, p.name);
     const seen = new Set<string>();
-    (p.controls ?? []).forEach((c, ci) => {
-      const at = `pages[${pi}].controls[${ci}]`;
+    const each = (list: Control[], base: string) => (list ?? []).forEach((c, ci) => {
+      const at = `${base}[${ci}]`;
       name(c.name, `${at}.name`);
       if (seen.has(c.name)) add(`${at}.name`, "APP_NAME", `部品の名前がページの中で重なっている（${c.name}）`);
       seen.add(c.name);
@@ -199,10 +278,14 @@ export function check(a: RpaApp, store?: Store): Issue[] {
           });
         }
       }
+      if (c.options !== undefined) {
+        if (!WITH_OPTIONS.has(c.type)) add(`${at}.options`, "APP_PROP", `options は ${[...WITH_OPTIONS].join(" / ")} だけ`);
+        else if (!Array.isArray(c.options) || !c.options.length || c.options.some((o) => typeof o !== "string")) add(`${at}.options`, "APP_SHAPE", "options は文字の配列（1 つ以上）");
+      }
       for (const [k, v] of Object.entries(c)) {
-        if (["type", "name", "props", "onClick", "source", "columns"].includes(k)) continue;
-        if (!(k in FRIENDLY)) { add(`${at}.${k}`, "APP_PROP", `項目 ${k} は無い（${Object.keys(FRIENDLY).join(", ")}、props、onClick）`); continue; }
-        if (!has.has(FRIENDLY[k])) { add(`${at}.${k}`, "APP_PROP", `${c.type} に ${k} は無い`); continue; }
+        if (["type", "name", "props", "onClick", "source", "columns", "options", "hideCharacters", "controls"].includes(k)) continue;
+        if (!(k in FRIENDLY)) { add(`${at}.${k}`, "APP_PROP", `項目 ${k} は無い（${Object.keys(FRIENDLY).join(", ")}、options、props、onClick）`); continue; }
+        if (!friendly(k, has)) { add(`${at}.${k}`, "APP_PROP", `${c.type} に ${k} は無い`); continue; }
         value(v as Value, `${at}.${k}`);
       }
       for (const [k, v] of Object.entries(c.props ?? {})) {
@@ -211,69 +294,19 @@ export function check(a: RpaApp, store?: Store): Issue[] {
       }
       if (c.onClick) {
         if (c.type !== "button") add(`${at}.onClick`, "APP_PROP", "onClick は button だけ");
-        const vb = (x: unknown, at2: string) => {
-          if (typeof x !== "string" || !x.trim()) add(at2, "APP_SHAPE", "VB の式を書く");
-          else controlsRef(x, at2);
-        };
-        const entity = (n: unknown, at2: string) => {
-          const e = ents.get(n as string);
-          if (!e) add(at2, "APP_REF", store ? `表 ${n} が entities に無い` : `表 ${n} を使うには entities（表の定義）が要る`);
-          return e;
-        };
-        const fields = (e: Entity | undefined, f: unknown, at2: string) => {
-          if (!f || typeof f !== "object") { add(at2, "APP_SHAPE", "fields は { 列の名前: VB の式 }"); return; }
-          for (const [k, x] of Object.entries(f)) {
-            const fd = e?.fields.get(k);
-            if (e && !fd) add(`${at2}.${k}`, "APP_REF", `表 ${e.name} に列 ${k} が無い`);
-            else if (fd?.system) add(`${at2}.${k}`, "APP_REF", `列 ${k} は Data Fabric が書く列`);
-            vb(x, `${at2}.${k}`);
-          }
-        };
-        const steps = (list: Json, base: string) => {
-          if (!Array.isArray(list)) { add(base, "APP_SHAPE", "手順は配列"); return; }
-          list.forEach((s: Json, si: number) => {
-            const sat = `${base}[${si}]`;
-            const kinds = STEP_KEYS.filter((k) => s && typeof s === "object" && k in s);
-            if (kinds.length !== 1) { add(sat, "APP_SHAPE", `手順は ${STEP_KEYS.map((k) => `{ ${k} }`).join(" / ")} のどれか 1 つ`); return; }
-            if ("submit" in s) {
-              if (!a.action) add(`${sat}.submit`, "APP_REF", "submit はアクションを持つアプリだけ（action を書く）");
-              else if (!outcomes.has(s.submit)) add(`${sat}.submit`, "APP_REF", `結果 ${s.submit} が action.outcomes に無い`);
-              for (const [k, x] of Object.entries(s.values ?? {})) {
-                if (a.action && !writable.has(k)) add(`${sat}.values.${k}`, "APP_REF", `アクションの outputs・inOuts に ${k} が無い`);
-                vb(x, `${sat}.values.${k}`);
-              }
-            } else if ("set" in s) {
-              const v = vars.get(s.set);
-              if (!v) add(`${sat}.set`, "APP_REF", `変数 ${s.set} が無い`);
-              vb(s.value, `${sat}.value`);
-            } else if ("open" in s) {
-              if (!pages.has(s.open)) add(`${sat}.open`, "APP_REF", `ページ ${s.open} が無い`);
-              else if (s.open === p.name) add(`${sat}.open`, "APP_REF", "いまのページは開けない");
-            } else if ("create" in s) {
-              const e = entity(s.create, `${sat}.create`);
-              fields(e, s.fields, `${sat}.fields`);
-              for (const f of e?.fields.values() ?? []) if (f.required && !f.system && !(f.name in (s.fields ?? {}))) add(`${sat}.fields`, "APP_REF", `必須の列 ${f.name} が無い`);
-            } else if ("update" in s) {
-              fields(entity(s.update, `${sat}.update`), s.fields, `${sat}.fields`);
-              vb(s.id, `${sat}.id`);
-            } else if ("delete" in s) {
-              entity(s.delete, `${sat}.delete`);
-              vb(s.id, `${sat}.id`);
-            } else if ("query" in s) {
-              entity(s.query, `${sat}.query`);
-              const v = vars.get(s.into);
-              if (!v || v.type !== "list" || v.of !== s.query) add(`${sat}.into`, "APP_REF", `into は表 ${s.query} の list の App の変数`);
-              if (s.top !== undefined && !(Number.isInteger(s.top) && s.top > 0 && s.top <= 1000)) add(`${sat}.top`, "APP_SHAPE", "top は 1〜1000");
-            } else {
-              vb(s.if, `${sat}.if`);
-              steps(s.then, `${sat}.then`);
-              if (s.else !== undefined) steps(s.else, `${sat}.else`);
-            }
-          });
-        };
-        steps(c.onClick, `${at}.onClick`);
+        checkSteps(c.onClick, `${at}.onClick`, p.name);
+      }
+      if (c.hideCharacters !== undefined) {
+        if (c.type !== "textbox") add(`${at}.hideCharacters`, "APP_PROP", "hideCharacters は textbox だけ");
+        else if (typeof c.hideCharacters !== "boolean") add(`${at}.hideCharacters`, "APP_SHAPE", "hideCharacters は true / false");
+      }
+      if (c.controls !== undefined) {
+        if (c.type !== "container") add(`${at}.controls`, "APP_PROP", "controls は container だけ");
+        else if (!Array.isArray(c.controls)) add(`${at}.controls`, "APP_SHAPE", "controls は部品の配列");
+        else each(c.controls, `${at}.controls`);
       }
     });
+    each(p.controls, `pages[${pi}].controls`);
   });
   return out;
 }
@@ -309,6 +342,9 @@ function setExpr(ctl: Json, group: Json, prop: string, v: Value, appFields: Map<
   const e = group.expressions[eid];
   if (!e) throw new Error(`雛形の ${ctl.component} に ${prop} の式が無い（templates/rpa-app を作り直す）`);
   writeExpr(e, eid, v, appFields, refs);
+  // スライダーの既定値：isLiteral: true（雛形の形）のままだと、画面の位置は変わるが .Value は動かすまで雛形の 50 のまま。
+  // Studio Web の式の編集で書くと isLiteral: false になり、.Value も既定値になった（2026-11-17、trial の Debug で確かめた）
+  if (prop === "sliderValue") e.isLiteral = false;
 }
 
 // 表：データの元（config.sourceBinding）と列（config.columns）。列の値の式の形は Studio Web で確かめる（knowledge/apps.md）
@@ -472,7 +508,9 @@ ${ind(seq(s.else), 4)}
 </uwana:OpenAppsPage>`;
 }
 
-function eventXaml(page: string, control: string, steps: Step[], forms: Map<string, { formId: string }>, vars: Map<string, Variable>, ents: Map<string, Entity>): string {
+// trigger：ManualTrigger の DisplayName。Studio Web は「<ページ>_<部品> : クリック時 Event」（日本語の画面）、
+// ページの読み込みは「<ページ>_<ページ> : Loaded Event」（英語の画面、2026-11-17 の書き出し）と書いた
+function eventXaml(page: string, trigger: string, steps: Step[], forms: Map<string, { formId: string }>, vars: Map<string, Variable>, ents: Map<string, Entity>): string {
   const T = templates();
   const withEntities = usesEntities(steps) || [...vars.values()].some((v) => v.type === "list");
   const c: Ctx = { page, forms, vars, ents, n: new Map([["Sequence", 1]]), locals: [] };
@@ -487,7 +525,7 @@ ${locals}    <sap:WorkflowViewStateService.ViewState>
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:ManualTrigger Result="{x:Null}" DisplayName="${page}_${control} : クリック時 Event" sap2010:WorkflowViewState.IdRef="ManualTrigger_1" />
+    <ui:ManualTrigger Result="{x:Null}" DisplayName="${xml(trigger)}" sap2010:WorkflowViewState.IdRef="ManualTrigger_1" />
 ${body}
   </Sequence>
 </Activity>`;
@@ -534,27 +572,50 @@ export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: str
     const appRef = Object.values<Json>(page.rootReferences)[0];
     Object.assign(page, { id: `ID${hex()}`, order, systemName, appSystemName, formId, title: pg.name, rootReferences: { [appSystemName]: appRef } });
     const refs: Json = {};
-    for (const c of pg.controls ?? []) {
+    const place = (c: Control, parentId: string) => {
       const t = T.controls[COMPONENT[c.type]];
       const map = new Map<string, string>();
       const ctl = cloneWithNewIds(t.control, ids, map);
       const group = cloneWithNewIds(t.expressions, ids, map);
-      Object.assign(ctl, { name: c.name, _logicalParent: rootId });
-      for (const [k, v] of Object.entries(c)) if (k in FRIENDLY) setExpr(ctl, group, FRIENDLY[k], v as Value, appFields, refs);
+      Object.assign(ctl, { name: c.name, _logicalParent: parentId });
+      // Hide characters：式ではなく真偽の項目（Studio Web の書き出し：properties.hideCharacters.value）
+      if (c.hideCharacters !== undefined) ctl.properties.hideCharacters.value = c.hideCharacters;
+      const has = vbProps(COMPONENT[c.type]);
+      for (const [k, v] of Object.entries(c)) if (k in FRIENDLY) setExpr(ctl, group, friendly(k, has)!, v as Value, appFields, refs);
       for (const [k, v] of Object.entries(c.props ?? {})) setExpr(ctl, group, k, v, appFields, refs);
       if (c.type === "table") tableSetup(ctl, group, c, appFields, refs, ids);
+      if (c.options?.length) {
+        // 選択肢：Studio Web で List source に {"A", "B", "C"}.ToListSource() と書いて書き出した形（2026-11-17）
+        const sb = ctl.config.sourceBinding;
+        sb.genericType = "System.String";
+        Object.assign(group.expressions[sb.expressionId], { expression: `{${c.options.map(vbString).join(", ")}}.ToListSource()`, isLiteral: false });
+      }
       if (c.onClick?.length) {
         const file = `${pg.name}_${c.name}_click.xaml`;
         const automationId = randomUUID();
         ctl.events.click.executors = [{ id: ids.next(), executorMethod: "start-automation", config: { automationId, workflowPath: file } }];
         ctl.events.click.actionType = "automation";
         page.workflowBindings[automationId] = { id: ids.next(), controlId: ctl.id, workflowPath: null, activities: {} };
-        files[P(file)] = eventXaml(pg.name, c.name, c.onClick, forms, vars, ents);
+        files[P(file)] = eventXaml(pg.name, `${pg.name}_${c.name} : クリック時 Event`, c.onClick, forms, vars, ents);
         appMetadata[file] = { AppFormId: formId, IsAppQueryBuilder: null };
       }
       page.controls[ctl.id] = ctl;
-      page.controls[rootId].config.childIds.push(ctl.id);
+      page.controls[parentId].config.childIds.push(ctl.id);
       page.expressions[ctl.id] = group;
+      // 入れ物（container）：子の _logicalParent を入れ物にし、入れ物の childIds に並べる（Studio Web の書き出しと同じ）
+      if (c.type === "container") for (const x of c.controls ?? []) place(x, ctl.id);
+    };
+    for (const c of pg.controls ?? []) place(c, rootId);
+    // ページの読み込み：根のパネルの events.load から呼ぶ。ファイル名は <ページ>_<ページ>_load.xaml（Studio Web の Define workflow file と同じ）
+    if (pg.onLoad?.length) {
+      const file = `${pg.name}_${pg.name}_load.xaml`;
+      const automationId = randomUUID();
+      const load = page.controls[rootId].events.load;
+      load.executors = [{ id: ids.next(), executorMethod: "start-automation", config: { automationId, workflowPath: file } }];
+      load.actionType = "automation";
+      page.workflowBindings[automationId] = { id: ids.next(), controlId: rootId, workflowPath: null, activities: {} };
+      files[P(file)] = eventXaml(pg.name, `${pg.name}_${pg.name} : Loaded Event`, pg.onLoad, forms, vars, ents);
+      appMetadata[file] = { AppFormId: formId, IsAppQueryBuilder: null };
     }
     page.bindingReferences = refs;
     page.idCounter = counter + 1;
@@ -644,9 +705,24 @@ export function generateFiles(a: RpaApp, store?: Store, opts: { solutionId?: str
 }
 
 // 開く先のページは、取り込んだあと Studio Web で式を 1 回直すまで DLL ができない（knowledge/apps.md）
-export function notices(a: RpaApp): string[] {
-  const targets = new Set(a.pages.flatMap((p) => p.controls.flatMap((c) => (c.onClick ?? []).flatMap((s) => ("open" in s ? [s.open] : [])))));
-  return [...targets].map((t) => `APP_OPEN_PAGE  ページ ${t} を開く手順がある。取り込んだあと、Studio Web で ${t} の部品の式を 1 回直して保存するまで「Selected page is not accessible」になる`);
+export function notices(a: RpaApp, store?: Store): string[] {
+  const opens = (list: Step[]): string[] => list.flatMap((s: Json) => ("open" in s ? [s.open] : "if" in s ? [...opens(s.then ?? []), ...opens(s.else ?? [])] : []));
+  const targets = new Set(a.pages.flatMap((p) => [...opens(p.onLoad ?? []), ...allControls(p.controls).flatMap((c) => opens(c.onClick ?? []))]));
+  const out = [...targets].map((t) => `APP_OPEN_PAGE  ページ ${t} を開く手順がある。取り込んだあと、Studio Web で ${t} の部品の式を 1 回直して保存するまで「Selected page is not accessible」になる`);
+  // 表（Table）は日付の書式を持たない。DateTime の列は 2026-11-23T00:00:00.0000000Z のまま出る（文書の Edit Grid の注意。
+  // 2026-11-17 に Studio Web で、列の Source は行の型のメンバーの名前だけで、匿名型に写した一覧は「not declared」になると確かめた）
+  const ents = entitiesOf(store);
+  const vars = new Map((a.variables ?? []).map((v) => [v.name, v]));
+  for (const p of a.pages) for (const c of allControls(p.controls)) {
+    if (c.type !== "table" || !c.source || typeof c.source !== "object" || !("var" in c.source)) continue;
+    const v = vars.get(c.source.var);
+    const e = v?.type === "list" ? ents.get(v.of) : undefined;
+    for (const col of c.columns ?? []) {
+      const f = e?.fields.get(col.value);
+      if (f && (f.xaml === "s:DateTime" || f.xaml === "s:DateTimeOffset")) out.push(`APP_TABLE_DATE  ${p.name}.${c.name} の列 ${col.value} は日時のまま（2026-11-23T00:00:00.0000000Z の形）で出る。表の部品には書式が無い（knowledge/apps.md）`);
+    }
+  }
+  return out;
 }
 
 // ---- zip（.uis）----
@@ -692,7 +768,7 @@ function main() {
     for (const i of issues) console.log(`  ${i.code.padEnd(16)} ${i.path}: ${i.message}`);
     process.exit(1);
   }
-  for (const n of notices(app)) console.log(`  注意 ${n}`);
+  for (const n of notices(app, store)) console.log(`  注意 ${n}`);
   if (checkOnly) { console.log(`OK ${files[0]}`); return; }
   const gen = generateFiles(app, store, { solutionId });
   if (out) {
