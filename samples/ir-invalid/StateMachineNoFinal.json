@@ -1,0 +1,21 @@
+{
+  "workflow": "StateMachineNoFinal",
+  "body": [
+    {
+      "act": "StateMachine",
+      "stateMachine": {
+        "initial": "S",
+        "states": [
+          {
+            "id": "S",
+            "transitions": [
+              {
+                "to": "S"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

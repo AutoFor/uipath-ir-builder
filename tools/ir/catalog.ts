@@ -195,6 +195,12 @@ const specialProps: Record<string, string> = {
   "Switch.Cases": "cases",
   "TryCatch.Catches": "catches",
   "MultipleAssign.AssignOperations": "assigns",
+  // 図（tools/ir/graph.ts）。ノードに id を付け、矢印は行き先の id で書く
+  "Flowchart.Nodes": "flowchart.nodes",
+  "Flowchart.StartNode": "flowchart.start",
+  "StateMachine.States": "stateMachine.states",
+  "StateMachine.InitialState": "stateMachine.initial",
+  "Pick.Branches": "branches",
 };
 const attrTypes = new Set(["System.String", "System.Boolean", "System.Byte", "System.Guid", "System.Int32", "System.Int64", "System.Double", "System.Decimal", "System.TimeSpan", "System.Globalization.CultureInfo", "System.Drawing.Color"]);
 

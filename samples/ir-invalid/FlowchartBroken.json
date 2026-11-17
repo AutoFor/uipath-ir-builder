@@ -1,0 +1,53 @@
+{
+  "workflow": "FlowchartBroken",
+  "body": [
+    {
+      "act": "Flowchart",
+      "flowchart": {
+        "start": "Missing",
+        "nodes": [
+          {
+            "id": "A",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "a"
+              }
+            },
+            "next": "Nowhere"
+          },
+          {
+            "id": "B",
+            "decision": "True",
+            "true": "A",
+            "trueLabel": "x"
+          },
+          {
+            "id": "A",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "dup"
+              }
+            }
+          },
+          {
+            "id": "1bad",
+            "switch": "1",
+            "typeArg": "Int32"
+          },
+          {
+            "id": "C",
+            "decision": "True",
+            "switch": "x"
+          }
+        ]
+      },
+      "props": {
+        "Nodes": "x"
+      }
+    }
+  ]
+}

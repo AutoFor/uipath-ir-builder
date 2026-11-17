@@ -17,16 +17,16 @@
 
 `coverage.ts --activity` では「書けない」と理由が出る。
 
-## 残っているもの（35 件）
+## 残っているもの（30 件）
 
 | プロパティ | 理由 | 方針 |
 | --- | --- | --- |
 | `InvokeFunc.Func`（2〜17 引数の 15 種類） | 引数が2つ以上の `ActivityFunc`。生成器は引数 0 か 1 だけ扱う。型が開いたジェネリック（`T1`, ...）で、Studio の画面にも出ない | 使う場面が出てから |
-| `Flowchart.Nodes` / `StartNode`、`StateMachine.States` / `InitialState` | ノードどうしの参照（`x:Reference`）が要る。IR に Flowchart / StateMachine の形が無い | IR の設計から要る（`docs/worker-guide.md` の 9.） |
-| `Pick.Branches` | `PickBranch` を子に持つ。IR に形が無い | Flowchart と同じ |
 | `InvokeMethod.Parameters` / `GenericTypeArguments`（各2）、`New.Arguments`、`NewArray.Bounds`、`IndexerReference.Indices`、`ValueTypeIndexerReference.Indices`、`MultidimensionalArrayItemReference.Indices` | `Collection<Argument>` / `Collection<Type>`。向きと型を要素ごとに持つ。式（`New Foo(...)`、`a(0)`）で書けるので、System.Activities の低レベルの部品としては使わなくて済む | `InvokeMethod` のイシューで対応する |
 | `VariableValue.Variable`、`VariableReference.Variable`、`DelegateArgumentValue.DelegateArgument`、`DelegateArgumentReference.DelegateArgument`、`Literal.Value` | XAML の式の内部表現。IR は VB の式の文字列で書く | 対応しない |
 | `NForEachUiElement.VariablesMetadata` | `Dictionary<String, List<VariableMetadata>>`。Studio の既定 XAML は空の辞書を置く | 中身を確かめてから |
+
+`Flowchart.Nodes` / `StartNode`、`StateMachine.States` / `InitialState`、`Pick.Branches` は、IR の `flowchart` / `stateMachine` / `branches` で書けるようにした（AUT-1216。[flowchart-statemachine.md](flowchart-statemachine.md)）。
 
 `CreateUserAction` の `AppActionPropertiesMetadata`、`State`、`TaskFieldsForDesktop` も残っている（`CurrentAppTaskState` は `objs` で書ける。[persistence.md](persistence.md)）。
 

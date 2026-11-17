@@ -24,6 +24,7 @@ import type { Mapping, Variant } from "./mapping.ts";
 import { loadMappings } from "./mapping.ts";
 import type { Issue, Node, ObjValue, Value, Workflow } from "./types.ts";
 import { codedModels } from "./uia.ts";
+import { graphNodes } from "./graph.ts";
 
 export type ActivityStatus = "syntax" | "mapped" | "null" | "partial" | "nomap" | "unknown";
 export const STATUS_LABEL: Record<ActivityStatus, string> = {
@@ -70,9 +71,9 @@ export function loadBehaviorNotes(root: string): { subject: string; text: string
 
 // ---- 木を歩く ----
 
-function walk(nodes: Node[], path: string, visit: (n: Node, path: string) => void) {
+function walk(nodes: Node[], path: string, visit: (n: Node, path: string) => void, exact = false) {
   nodes.forEach((n, i) => {
-    const at = `${path}[${i}]`;
+    const at = exact ? path : `${path}[${i}]`;
     visit(n, at);
     if (n.body) walk(n.body, `${at}.body`, visit);
     if (n.then) walk(n.then, `${at}.then`, visit);
@@ -80,6 +81,7 @@ function walk(nodes: Node[], path: string, visit: (n: Node, path: string) => voi
     for (const [k, v] of Object.entries(n.slots ?? {})) walk(v, `${at}.slots.${k}`, visit);
     for (const [k, v] of Object.entries(n.cases ?? {})) walk(v, `${at}.cases.${k}`, visit);
     (n.catches ?? []).forEach((c, j) => walk(c.body, `${at}.catches[${j}].body`, visit));
+    for (const g of graphNodes(n)) walk([g.node], `${at}.${g.path}`, visit, true);
   });
 }
 

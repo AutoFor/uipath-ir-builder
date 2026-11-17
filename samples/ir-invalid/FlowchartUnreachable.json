@@ -1,0 +1,33 @@
+{
+  "workflow": "FlowchartUnreachable",
+  "body": [
+    {
+      "act": "Flowchart",
+      "flowchart": {
+        "start": "A",
+        "nodes": [
+          {
+            "id": "A",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "a"
+              }
+            }
+          },
+          {
+            "id": "B",
+            "act": "LogMessage",
+            "props": {
+              "Level": "Info",
+              "Message": {
+                "lit": "b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

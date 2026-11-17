@@ -1,0 +1,60 @@
+{
+  "workflow": "PickCs",
+  "body": [
+    {
+      "act": "Pick",
+      "name": "早い方",
+      "branches": [
+        {
+          "name": "速い",
+          "variables": [
+            {
+              "name": "msg",
+              "type": "String",
+              "default": "\"fast\""
+            }
+          ],
+          "trigger": [
+            {
+              "act": "Delay",
+              "props": {
+                "Duration": "TimeSpan.FromMilliseconds(50)"
+              }
+            }
+          ],
+          "action": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": "msg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "遅い",
+          "trigger": [
+            {
+              "act": "Delay",
+              "props": {
+                "Duration": "TimeSpan.FromMilliseconds(5000)"
+              }
+            }
+          ],
+          "action": [
+            {
+              "act": "LogMessage",
+              "props": {
+                "Level": "Info",
+                "Message": {
+                  "lit": "slow"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

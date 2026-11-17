@@ -118,8 +118,7 @@ const expectErrors = (name: string, codes: string[]) => test(`取り込めない
   const got = new Set(r.errors.map((e) => e.code));
   assert.deepEqual([...got].sort(), [...codes].sort());
 });
-expectErrors("Flowchart.xaml", ["UNSUPPORTED_FLOWCHART"]);
-expectErrors("NestedStateMachine.xaml", ["UNSUPPORTED_STATEMACHINE"]);
+expectErrors("FlowStepOutside.xaml", ["UNSUPPORTED_FLOWCHART"]);
 expectErrors("CSharpExpr.xaml", ["CSHARP_EXPR"]);
 expectErrors("Unknowns.xaml", ["UNKNOWN_ACT", "UNKNOWN_PROP", "UNKNOWN_TYPE"]);
 
@@ -231,7 +230,7 @@ test("見積もり：coded: null は理由つきで一覧に出て、C# は作�
 });
 
 test("見積もり：取り込めない XAML は理由を出す", () => {
-  const r = reportWorkflow("Flowchart.xaml", fixture("unsupported/Flowchart.xaml"), cat, maps, notes);
+  const r = reportWorkflow("FlowStepOutside.xaml", fixture("unsupported/FlowStepOutside.xaml"), cat, maps, notes);
   assert.equal(r.importable, false);
   assert.match(formatReport(r), /UNSUPPORTED_FLOWCHART/);
 });
@@ -239,4 +238,53 @@ test("見積もり：取り込めない XAML は理由を出す", () => {
 test("捨てられるプロパティの一覧は、全対応表の ignore を含む", () => {
   const md = droppedPropsMarkdown(maps);
   for (const m of maps.values()) for (const k of m.ignore ?? []) assert.ok(md.includes(k), `${m.activity}.${k}`);
+});
+
+// ---- 図（Flowchart・StateMachine・Pick。AUT-1216）----
+
+test("Studio が書く Flowchart（中身ごと書いたノード、__ReferenceID、<x:Key> の子）を読む", () => {
+  const r = importAndCheck(fixture("StudioFlowchart.xaml"), cat);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.validation, []);
+  assert.equal(r.roundTrip?.sameMeaning, true, r.warnings.map((w) => w.message).join("\n"));
+  const fc = r.wf!.body[0];
+  assert.equal(fc.act, "Flowchart");
+  assert.equal(fc.flowchart!.start, "種類を決める", "__ReferenceID の id は表示名から作る");
+  const byId = Object.fromEntries(fc.flowchart!.nodes.map((n) => [n.id, n]));
+  assert.deepEqual(Object.keys(byId), ["種類を決める", "正か", "種類", "たくさん", "ほか"], "Nodes の順");
+  assert.equal((byId["種類を決める"] as { next?: string }).next, "正か");
+  assert.deepEqual(byId["正か"], { id: "正か", decision: "in_Count > 0", name: "正か", true: "種類", false: "ほか" });
+  assert.deepEqual(byId["種類"], { id: "種類", switch: "kind", name: "種類", cases: { many: "たくさん", one: "ほか" }, default: "ほか" });
+});
+
+test("Studio が書く StateMachine（Transition.To の中に書いた状態、{x:Reference}、VisualBasicValue の条件）を読む", () => {
+  const r = importAndCheck(fixture("StudioStateMachine.xaml"), cat);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.validation, []);
+  assert.equal(r.roundTrip?.sameMeaning, true, r.warnings.map((w) => w.message).join("\n"));
+  const sm = r.wf!.body[0].stateMachine!;
+  assert.equal(sm.initial, "Initialization");
+  assert.deepEqual(sm.states.map((s) => [s.id, s.name, s.final]), [["Initialization", undefined, undefined], ["Process_Transaction", "Process Transaction", undefined], ["End_Process", "End Process", true]]);
+  const work = sm.states[1];
+  assert.deepEqual(work.variables, [{ name: "label", type: "String" }]);
+  assert.deepEqual(work.transitions!.map((t) => [t.to, t.name, t.condition]), [["Process_Transaction", "Next", "n < 3"], ["End_Process", "Done", "n >= 3"]]);
+  assert.equal(work.transitions![1].action![0].act, "LogMessage");
+});
+
+test("StartNode だけに書いた Flowchart と、遷移の無い StateMachine も読む（後者は検証で弾く）", () => {
+  const a = importAndCheck(fixture("FlowchartMinimal.xaml"), cat);
+  assert.deepEqual(a.errors, []);
+  assert.deepEqual(a.validation, []);
+  assert.equal(a.wf!.body[0].flowchart!.nodes.length, 1);
+  const b = importAndCheck(fixture("NestedStateMachine.xaml"), cat);
+  assert.deepEqual(b.errors, []);
+  assert.deepEqual(b.validation.map((v) => v.code).sort(), ["SM_NO_FINAL", "SM_NO_TRANSITION"]);
+});
+
+test("往復の意味の比べ方は、図の矢印の違いを見つける", () => {
+  const r = importXaml(fixture("StudioFlowchart.xaml"), cat);
+  const wf = structuredClone(r.wf!);
+  const d = wf.body[0].flowchart!.nodes.find((n) => n.id === "正か") as { false?: string };
+  d.false = "たくさん";
+  assert.equal(checkRoundTrip(fixture("StudioFlowchart.xaml"), wf, cat).sameMeaning, false);
 });

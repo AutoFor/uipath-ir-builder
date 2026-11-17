@@ -11,7 +11,8 @@
 // 方針:
 // - 値を黙って捨てない。捨てるものは dropped に、意味が変わるかもしれないものは warnings に、IR に書けないものは errors に入れる
 // - 捨ててよいもの（dropped）: ViewState、IdRef、HintSize、注釈、生成器が足し直す値（既定値、GUID）、{x:Null}（値なし）
-// - 書けないもの（errors）: C# の式、Flowchart、StateMachine、IR に無い要素構文、表に無い型
+// - 書けないもの（errors）: C# の式、図の外の FlowStep / State など、IR に無い要素構文、表に無い型
+// - Flowchart・StateMachine・Pick は graphOf で読む（Studio の中身ごと書いたノードと x:Reference をつなぎ直す。ViewState は捨てる）
 // - 取り込んだあと checkRoundTrip で XAML を作り直して比べ、残った違いも warnings に出す
 //
 // {vb, cs} の cs は XAML に無いので戻らない。C# に直せない式は Coded の生成で CODED_EXPR になる（IR を手で直す）。
@@ -22,7 +23,8 @@ import { fileURLToPath } from "node:url";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { argumentListElement, defaultSlot, delegateArgs, funcInfo, isArgumentList, isExpressionChild, listElementType, literalMapValue, loadCatalog, objectImpls, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import { generate } from "./generate.ts";
-import type { ArgumentDecl, AssignOp, CatchDecl, InvokeArg, ListItem, Node, ObjValue, Value, VariableDecl, Workflow } from "./types.ts";
+import type { ArgumentDecl, AssignOp, BranchDecl, CatchDecl, FlowNode, InvokeArg, ListItem, Node, ObjValue, StateDecl, TransitionDecl, Value, VariableDecl, Workflow } from "./types.ts";
+import { isGraphId } from "./graph.ts";
 import { toXamlType, xamlTypeEntries } from "./types-xaml.ts";
 import { objDefaults } from "./uia.ts";
 import { isArgumentDict, isUntypedArgument, itemNames, validate, workflowFile } from "./validate.ts";
@@ -314,9 +316,10 @@ const dropKind = (name: string): DroppedKind =>
 
 // ---- 本体 ----
 
+// 図のノードは Flowchart / StateMachine の中だけ（graphOf）。アクティビティの置き場所に出てきたらエラー
 const BLOCKED: Record<string, string> = {
-  Flowchart: "UNSUPPORTED_FLOWCHART", FlowStep: "UNSUPPORTED_FLOWCHART", FlowDecision: "UNSUPPORTED_FLOWCHART", FlowSwitch: "UNSUPPORTED_FLOWCHART",
-  StateMachine: "UNSUPPORTED_STATEMACHINE", State: "UNSUPPORTED_STATEMACHINE", FinalState: "UNSUPPORTED_STATEMACHINE", Transition: "UNSUPPORTED_STATEMACHINE",
+  FlowStep: "UNSUPPORTED_FLOWCHART", FlowDecision: "UNSUPPORTED_FLOWCHART", FlowSwitch: "UNSUPPORTED_FLOWCHART",
+  State: "UNSUPPORTED_STATEMACHINE", FinalState: "UNSUPPORTED_STATEMACHINE", Transition: "UNSUPPORTED_STATEMACHINE", PickBranch: "UNSUPPORTED_PICK",
 };
 
 // 既定値と同じ属性は IR に残さない。IR に無い props は、XAML でも C# でも既定 XAML の値として扱う（generate.ts と generate-coded.ts の xamlDefaultProps）
@@ -417,6 +420,8 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
     if (!a) return undefined;
     const n: Node = { act: actName(a, !!taAttr) };
     const scope = new Map(scopeIn);
+    const gk = graphKindOf(a); // 図（Flowchart・StateMachine・Pick）なら、図のプロパティは graphOf で読む
+    const graphAttrs: Attr[] = [], graphProps: El[] = [];
     if (taAttr) { const t = typeOf(taAttr.value, el, at); if (t) n.typeArg = t; }
 
     // 子の前に変数を読む（型の決定と、代入先の型のため）
@@ -445,6 +450,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
       }
       if (x.local.includes(".")) { c.warn(at, "UNKNOWN_ATTACHED", `付加プロパティ ${x.name}=${JSON.stringify(x.value)} を捨てた`); continue; }
       if (x.local === "DisplayName") { n.name = x.value; continue; }
+      if (gk?.props.includes(x.local)) { graphAttrs.push(x); continue; }
       const p = a.props.find((q) => q.name === x.local);
       if (!p) { c.err(at, "UNKNOWN_PROP", `${a.className} に "${x.local}" は無い（カタログ）`); continue; }
       // 生成器が足し直すもの
@@ -495,11 +501,13 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
         if (!objProp) { c.warn(at, "UNKNOWN_ATTACHED", `付加プロパティの要素 <${k.name}> を捨てた`); continue; }
       }
       if (pname === "Variables") continue;
+      if (gk?.props.includes(pname)) { graphProps.push(k); continue; }
       const p = a.props.find((q) => q.name === pname);
       if (!p) { c.err(kat, "UNKNOWN_PROP", `${a.className} に "${pname}" は無い（カタログ）`); continue; }
       propElement(k, p, kat);
     }
 
+    if (gk) Object.assign(n, graphOf(gk.kind, a, graphAttrs, graphProps, content.splice(0), at, scope, innerGuid));
     // コンテンツ（プロパティ要素で包まれていない子）。x:Key 付きは Switch の分岐、それ以外は子の一覧
     const keyed = content.filter((k) => k.attrs.some((x) => x.uri === X && x.local === "Key"));
     const plain = content.filter((k) => !keyed.includes(k));
@@ -747,6 +755,232 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
     }
   }
 
+  // ---- 図（Flowchart・StateMachine・Pick。graph.ts）----
+  // Studio はノードを最初に指した場所（StartNode、Next など）に中身ごと書き、2 回目からは <x:Reference> で指す。生成器は平らに並べる。
+  // どちらの形も、要素の x:Name と参照の名前でつなぎ直す。id は x:Name（Studio の __ReferenceID<n> なら表示名から作る）
+
+  // 図のプロパティ（属性 / 要素 / コンテンツ）を受け取って IR にする
+  function graphOf(kind: GraphKind, a: Activity, attrs: Attr[], props: El[], content: El[], at: string, scope: Map<string, string>, guid: string | undefined): Partial<Node> {
+    const ids = new IdMaker();
+    const g: GraphCtx = { at, scope, guid, ids };
+    if (kind === "branches") {
+      const list = [...props.flatMap((k) => k.kids.filter((x) => !ignorableEl(x))), ...content];
+      const flat = list.length === 1 && /^(List|Collection)$/.test(list[0].local) ? list[0].kids.filter((x) => !ignorableEl(x)) : list;
+      return { branches: flat.flatMap((b, i) => branchOf(b, `${at}.Branches[${i}]`, g)) };
+    }
+    const startProp = kind === "flowchart" ? "StartNode" : "InitialState";
+    const listProp = kind === "flowchart" ? "Nodes" : "States";
+    // 最初のノード。属性 {x:Reference 名前} か、要素（<x:Reference> か中身）
+    let start: string | El | undefined;
+    for (const x of attrs) if (x.local === startProp) { if (x.value === "{x:Null}") c.drop(at, "値なし", startProp); else start = refName(x.value, `${at}.${startProp}`); }
+    const items: El[] = [];
+    for (const k of props) {
+      const kids = k.kids.filter((x) => !ignorableEl(x));
+      if (k.local.endsWith(`.${startProp}`)) {
+        if (kids.length === 1 && !(kids[0].uri === X && kids[0].local === "Null")) start = kids[0];
+        else if (!kids.length) c.drop(at, "値なし", startProp);
+      } else items.push(...(kids.length === 1 && /^(List|Collection)$/.test(kids[0].local) ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids));
+    }
+    items.push(...content);
+    // 全部のノードの要素を集める（中に書かれた行き先もたどる）
+    const isNode = (e: El) => (kind === "flowchart" ? ["FlowStep", "FlowDecision", "FlowSwitch"] : ["State"]).includes(e.local) && e.uri === ACT;
+    const byName = new Map<string, El>();
+    const all: El[] = [];
+    const collect = (e: El) => {
+      if (all.includes(e)) return;
+      all.push(e);
+      const nm = e.attrs.find((x) => x.uri === X && x.local === "Name")?.value;
+      if (nm) byName.set(nm, e);
+      const walk = (k: El) => { for (const x of k.kids) { if (ignorableEl(x)) continue; if (isNode(x)) collect(x); else walk(x); } };
+      walk(e);
+    };
+    const order: (El | string)[] = []; // 一覧の順（要素か参照の名前）
+    const visitItem = (e: El, iat: string) => {
+      if (isNode(e)) { collect(e); order.push(e); return; }
+      if (e.uri === X && e.local === "Reference") { const nm = refText(e); if (nm) order.push(nm); else c.err(iat, "UNSUPPORTED_ELEMENT", "x:Reference に名前が無い"); return; }
+      c.err(iat, "UNSUPPORTED_ELEMENT", `${listProp} に <${e.name}> は置けない`);
+    };
+    if (typeof start === "object" && isNode(start)) collect(start);
+    items.forEach((e, i) => visitItem(e, `${at}.${listProp}[${i}]`));
+    // 並び：一覧の順、一覧に無いものは見つけた順
+    const seq: El[] = [];
+    const push = (e: El | undefined) => { if (e && !seq.includes(e)) seq.push(e); };
+    for (const o of order) push(typeof o === "string" ? byName.get(o) : o);
+    for (const e of all) push(e);
+    for (const o of order) if (typeof o === "string" && !byName.has(o)) c.err(`${at}.${listProp}`, "GRAPH_BAD_REF", `x:Reference ${o} の要素が無い`);
+    // id を決める：意味のある x:Name はそのまま、Studio の __ReferenceID<n> と名前の無いものは表示名から
+    for (const e of seq) { const nm = e.attrs.find((x) => x.uri === X && x.local === "Name")?.value; if (nm && !/^__ReferenceID\d+$/.test(nm) && isGraphId(nm)) ids.claim(e, nm); }
+    for (const e of seq) if (!ids.has(e)) ids.make(e, kind === "flowchart" ? flowLabel(e) : attr(e, "DisplayName"), kind === "flowchart" ? "n" : "s");
+    // 行き先：属性の {x:Reference 名前}、要素の <x:Reference>、中に書かれたノード
+    g.target = (v: El | string, tat: string) => {
+      const e = typeof v === "string" ? byName.get(v) : v.uri === X && v.local === "Reference" ? byName.get(refText(v) ?? "") : v;
+      if (!e || !ids.has(e)) { c.err(tat, "GRAPH_BAD_REF", `行き先 ${typeof v === "string" ? v : v.name} が見つからない`); return undefined; }
+      return ids.get(e);
+    };
+    const first = start === undefined ? undefined : g.target(start, `${at}.${startProp}`);
+    if (first === undefined) c.err(at, "GRAPH_NO_START", `${a.className} の ${startProp} が無い`);
+    if (kind === "flowchart") return { flowchart: { start: first ?? "", nodes: seq.flatMap((e, i) => flowNodeOf(e, `${at}.Nodes[${i}]`, g)) } };
+    return { stateMachine: { initial: first ?? "", states: seq.flatMap((e, i) => stateOf(e, `${at}.States[${i}]`, g)) } };
+  }
+
+  // 図の要素の属性と子を分ける。表示用のもの（ViewState、IdRef）は捨て、知らない属性はエラー
+  function parts(e: El, at: string, known: string[]): { attrs: Map<string, string>; props: Map<string, El>; content: El[] } {
+    const attrs = new Map<string, string>(), props = new Map<string, El>(), content: El[] = [];
+    for (const x of e.attrs) {
+      if (x.uri === XMLNS || (x.uri === X && (x.local === "Name" || x.local === "TypeArguments" || x.local === "Key"))) continue;
+      if (ignorableAttr(x, e)) { c.drop(at, dropKind(x.name), x.name, x.value); continue; }
+      if (!known.includes(x.local)) { c.err(at, "UNKNOWN_PROP", `${e.local} の属性 ${x.name} は IR に書けない`); continue; }
+      attrs.set(x.local, x.value);
+    }
+    for (const k of e.kids) {
+      if (ignorableEl(k)) { c.drop(at, dropKind(k.name), k.name); continue; }
+      const dot = k.local.indexOf(".");
+      if (dot < 0) { content.push(k); continue; }
+      const pn = k.local.slice(dot + 1);
+      if (!known.includes(pn)) { c.err(at, "UNKNOWN_PROP", `${e.local} の要素 <${k.name}> は IR に書けない`); continue; }
+      props.set(pn, k);
+    }
+    return { attrs, props, content };
+  }
+  // 真偽などの式（属性の [式]、要素の VisualBasicValue）
+  function graphExpr(p: ReturnType<typeof parts>, name: string, at: string): Value | undefined {
+    const prop: Prop = { name, kind: "child", type: "System.Activities.Activity<System.Boolean>", required: false, obsolete: false };
+    const raw = p.attrs.get(name) ?? (p.props.has(name) ? argText(p.props.get(name)!, `${at}.${name}`, c) : undefined);
+    return raw === undefined ? undefined : toValue(raw, prop, `${at}.${name}`, c);
+  }
+  // 子が1つ入る場所（State.Entry、Transition.Trigger など）。生成器が包んだ Sequence は外す
+  function graphChild(k: El | undefined, name: string, at: string, scope: Map<string, string>, guid: string | undefined): Node[] | undefined {
+    if (!k) return undefined;
+    const kids = k.kids.filter((x) => !ignorableEl(x));
+    if (!kids.length || (kids.length === 1 && kids[0].uri === X && kids[0].local === "Null")) { c.drop(at, "値なし", name); return undefined; }
+    if (kids.length !== 1) { c.err(`${at}.${name}`, "UNSUPPORTED_ELEMENT", `"${name}" に子が ${kids.length} 個ある`); return undefined; }
+    const r = node(kids[0], `${at}.${name}/${kids[0].local}`, new Map(scope), guid);
+    return r ? unwrap(r, name) : undefined;
+  }
+  // 行き先（属性か要素）
+  function graphLink(p: ReturnType<typeof parts>, name: string, at: string, g: GraphCtx): string | undefined {
+    const a = p.attrs.get(name);
+    if (a !== undefined) { if (a === "{x:Null}") return undefined; const nm = refName(a, `${at}.${name}`); return nm === undefined ? undefined : g.target!(nm, `${at}.${name}`); }
+    const k = p.props.get(name);
+    if (!k) return undefined;
+    const kids = k.kids.filter((x) => !ignorableEl(x));
+    if (kids.length !== 1) { c.err(`${at}.${name}`, "UNSUPPORTED_ELEMENT", `"${name}" の中が ${kids.length} 個`); return undefined; }
+    if (kids[0].uri === X && kids[0].local === "Null") return undefined;
+    return g.target!(kids[0], `${at}.${name}`);
+  }
+  function graphVars(p: ReturnType<typeof parts>, at: string, scope: Map<string, string>): VariableDecl[] | undefined {
+    const k = p.props.get("Variables");
+    if (!k) return undefined;
+    const kids = k.kids.filter((x) => !ignorableEl(x));
+    const list = kids.length === 1 && kids[0].local === "Collection" ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids;
+    const vars = list.flatMap((v) => variable(v, `${at}.Variables`));
+    for (const v of vars) scope.set(v.name, v.type);
+    return vars.length ? vars : undefined;
+  }
+
+  function flowNodeOf(e: El, at: string, g: GraphCtx): FlowNode[] {
+    const id = g.ids.get(e);
+    if (e.local === "FlowStep") {
+      const p = parts(e, at, ["Action", "Next"]);
+      const acts = [...(p.props.has("Action") ? p.props.get("Action")!.kids.filter((x) => !ignorableEl(x)) : []), ...p.content];
+      if (acts.length !== 1) { c.err(at, "UNSUPPORTED_ELEMENT", `FlowStep の中のアクティビティが ${acts.length} 個（1 つのはず）`); return []; }
+      const n = node(acts[0], `${at}/${acts[0].local}`, new Map(g.scope), g.guid);
+      if (!n) return [];
+      const next = graphLink(p, "Next", at, g);
+      return [{ id, ...n, ...(next !== undefined ? { next } : {}) }];
+    }
+    if (e.local === "FlowDecision") {
+      const p = parts(e, at, ["Condition", "True", "False", "DisplayName"]);
+      const decision = graphExpr(p, "Condition", at);
+      if (decision === undefined) { c.err(at, "GRAPH_BAD_NODE", "FlowDecision に Condition が無い"); return []; }
+      const t = graphLink(p, "True", at, g), f = graphLink(p, "False", at, g);
+      const name = p.attrs.get("DisplayName");
+      return [{ id, decision, ...(name !== undefined ? { name } : {}), ...(t !== undefined ? { true: t } : {}), ...(f !== undefined ? { false: f } : {}) }];
+    }
+    // FlowSwitch<T>
+    const p = parts(e, at, ["Expression", "Default", "DisplayName"]);
+    const ta = e.attrs.find((x) => x.uri === X && x.local === "TypeArguments");
+    const typeArg = ta ? typeOf(ta.value, e, at) : "String";
+    const sw = graphExpr(p, "Expression", at);
+    if (sw === undefined) { c.err(at, "GRAPH_BAD_NODE", "FlowSwitch に Expression が無い"); return []; }
+    const cases: Record<string, string> = {};
+    for (const k of p.content) {
+      // x:Key は属性か、<x:Reference>名前<x:Key>キー</x:Key></x:Reference> の子
+      const keyEl = k.kids.find((x) => x.uri === X && x.local === "Key");
+      const key = k.attrs.find((x) => x.uri === X && x.local === "Key")?.value ?? keyEl?.text.trim();
+      if (key === undefined) { c.err(at, "UNSUPPORTED_ELEMENT", `FlowSwitch の分岐 <${k.name}> に x:Key が無い`); continue; }
+      const to = g.target!(k, `${at}.cases.${key}`);
+      if (to !== undefined) cases[key] = to;
+    }
+    const def = graphLink(p, "Default", at, g);
+    const name = p.attrs.get("DisplayName");
+    return [{ id, switch: sw, ...(typeArg && typeArg !== "String" ? { typeArg } : {}), ...(name !== undefined ? { name } : {}), ...(Object.keys(cases).length ? { cases } : {}), ...(def !== undefined ? { default: def } : {}) }];
+  }
+
+  function stateOf(e: El, at: string, g: GraphCtx): StateDecl[] {
+    const id = g.ids.get(e);
+    const p = parts(e, at, ["DisplayName", "IsFinal", "Entry", "Exit", "Transitions", "Variables"]);
+    for (const k of p.content) c.err(at, "UNSUPPORTED_ELEMENT", `State に <${k.name}> は置けない`);
+    const scope = new Map(g.scope);
+    const variables = graphVars(p, at, scope);
+    const s: StateDecl = { id };
+    const dn = p.attrs.get("DisplayName");
+    if (dn !== undefined && dn !== id) s.name = dn;
+    if (p.attrs.get("IsFinal") === "True") s.final = true;
+    if (variables) s.variables = variables;
+    const entry = graphChild(p.props.get("Entry"), "Entry", at, scope, g.guid);
+    if (entry) s.entry = entry;
+    const exit = graphChild(p.props.get("Exit"), "Exit", at, scope, g.guid);
+    if (exit) s.exit = exit;
+    const tk = p.props.get("Transitions");
+    if (tk) {
+      const kids = tk.kids.filter((x) => !ignorableEl(x));
+      const list = kids.length === 1 && kids[0].local === "Collection" ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids;
+      const ts = list.flatMap((t, i): TransitionDecl[] => {
+        const tat = `${at}.Transitions[${i}]`;
+        if (t.local !== "Transition") { c.err(tat, "UNSUPPORTED_ELEMENT", `Transitions に <${t.name}> は置けない`); return []; }
+        const q = parts(t, tat, ["DisplayName", "Trigger", "To", "Condition", "Action"]);
+        for (const k of q.content) c.err(tat, "UNSUPPORTED_ELEMENT", `Transition に <${k.name}> は置けない`);
+        const to = graphLink(q, "To", tat, g);
+        if (to === undefined) { c.err(tat, "GRAPH_BAD_REF", "Transition に To が無い"); return []; }
+        const out: TransitionDecl = { to };
+        const name = q.attrs.get("DisplayName");
+        if (name !== undefined) out.name = name;
+        const trigger = graphChild(q.props.get("Trigger"), "Trigger", tat, scope, g.guid);
+        if (trigger) out.trigger = trigger;
+        const cond = graphExpr(q, "Condition", tat);
+        if (cond !== undefined) out.condition = cond;
+        const action = graphChild(q.props.get("Action"), "Action", tat, scope, g.guid);
+        if (action) out.action = action;
+        return [out];
+      });
+      if (ts.length) s.transitions = ts;
+    }
+    return [s];
+  }
+
+  function branchOf(e: El, at: string, g: GraphCtx): BranchDecl[] {
+    if (e.local !== "PickBranch") { c.err(at, "UNSUPPORTED_ELEMENT", `Pick に <${e.name}> は置けない`); return []; }
+    const p = parts(e, at, ["DisplayName", "Trigger", "Action", "Variables"]);
+    const scope = new Map(g.scope);
+    const variables = graphVars(p, at, scope);
+    const trigger = graphChild(p.props.get("Trigger"), "Trigger", at, scope, g.guid);
+    // Action は PickBranch のコンテンツプロパティ
+    let actionEl = p.props.get("Action");
+    if (!actionEl && p.content.length) actionEl = { ...e, local: "PickBranch.Action", kids: p.content };
+    const action = graphChild(actionEl, "Action", at, scope, g.guid);
+    const b: BranchDecl = { trigger: trigger ?? [] };
+    const name = p.attrs.get("DisplayName");
+    return [{ ...(name !== undefined ? { name } : {}), ...(variables ? { variables } : {}), ...b, ...(action ? { action } : {}) }];
+  }
+
+  // {x:Reference 名前} / {x:Reference Name=名前}
+  function refName(v: string, at: string): string | undefined {
+    const m = v.match(/^\{x:Reference\s+(?:Name=)?([^\s}]+)\s*\}$/);
+    if (!m) c.err(at, "UNSUPPORTED_MARKUP", `参照は {x:Reference 名前} のはず（${v}）`);
+    return m?.[1];
+  }
+
   // [式] / 文字列のリテラル。exprText の逆（{ lit } は "..." になる）
   function inValue(t: string): Value {
     if (!isBracket(t)) return { lit: t };
@@ -840,6 +1074,51 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
   }
 }
 
+// ---- 図の取り込みの部品 ----
+
+type GraphKind = "flowchart" | "stateMachine" | "branches";
+// 図を持つアクティビティか（カタログのプロパティで見分ける）。図のプロパティ名も返す
+function graphKindOf(a: Activity): { kind: GraphKind; props: string[] } | undefined {
+  const has = (p: string) => a.props.some((q) => q.name === p);
+  if (has("Nodes") && has("StartNode")) return { kind: "flowchart", props: ["Nodes", "StartNode"] };
+  if (has("States") && has("InitialState")) return { kind: "stateMachine", props: ["States", "InitialState"] };
+  if (has("Branches") && a.props.find((q) => q.name === "Branches")!.type.includes("PickBranch")) return { kind: "branches", props: ["Branches"] };
+  return undefined;
+}
+
+type GraphCtx = { at: string; scope: Map<string, string>; guid: string | undefined; ids: IdMaker; target?: (v: El | string, at: string) => string | undefined };
+
+// 図のノードの id。x:Name か、表示名から作る（x:Name に書ける形にして、重なれば _2, _3 …）
+class IdMaker {
+  private byEl = new Map<El, string>();
+  private used = new Set<string>();
+  has(e: El) { return this.byEl.has(e); }
+  get(e: El) { return this.byEl.get(e)!; }
+  claim(e: El, id: string) { if (this.used.has(id)) return; this.byEl.set(e, id); this.used.add(id); }
+  make(e: El, label: string | undefined, prefix: string) {
+    let base = (label ?? "").replace(/[^\p{L}\p{N}_]+/gu, "_").replace(/^_+|_+$/g, "");
+    if (!base) base = `${prefix}${this.byEl.size + 1}`;
+    if (!/^[\p{L}_]/u.test(base)) base = `_${base}`;
+    let id = base;
+    for (let i = 2; this.used.has(id); i++) id = `${base}_${i}`;
+    this.byEl.set(e, id);
+    this.used.add(id);
+  }
+}
+
+// <x:Reference>名前</x:Reference> の名前（<x:Key> の子は除く）
+function refText(e: El): string | undefined {
+  const t = e.text.trim() || attr(e, "Name");
+  return t || undefined;
+}
+
+// Flowchart のノードの表示名（id を作るのに使う）。FlowStep は中のアクティビティの DisplayName
+function flowLabel(e: El): string | undefined {
+  if (e.local !== "FlowStep") return attr(e, "DisplayName");
+  const act = e.kids.find((k) => !k.ignorable.has(k.uri) && !/\/xaml\/activities\/(presentation|debugger)/.test(k.uri) && !k.local.includes("."));
+  return act ? attr(act, "DisplayName") ?? act.local : undefined;
+}
+
 // 子が1つの置き場所に2つ以上書くと、生成器は「置き場所の名前」の Sequence で包む（single）。IR ではその包みを外す
 function unwrap(n: Node, slotName: string): Node[] {
   const plain = n.act === "Sequence" && n.name === slotName && !n.variables && !n.props && (n.body?.length ?? 0) >= 2;
@@ -866,9 +1145,83 @@ export function normalizeXaml(s: string): string {
 }
 
 // 意味の比較用に、XAML を「場所 属性=値」の行の並びにする。接頭辞、属性の順、ViewState、{x:Null}、要素と属性の書き分けの違いは無視する
+// 図（Flowchart・StateMachine）を、書き方によらない形にする（canonLines 用）。
+// Studio はノードを最初に指した場所に中身ごと書き、生成器は平らに並べる。x:Name も違う。
+// ノードを平らに並べ、start から矢印の順にたどった番号（#0, #1 …）を名前にし、矢印は <X.Next>#1</X.Next> のような要素にする
+const GRAPH_NODES: Record<string, { nodes: string[]; start: string }> = {
+  Flowchart: { nodes: ["FlowStep", "FlowDecision", "FlowSwitch"], start: "StartNode" },
+  StateMachine: { nodes: ["State"], start: "InitialState" },
+};
+const LINKS: Record<string, string[]> = { FlowStep: ["Next"], FlowDecision: ["True", "False"], FlowSwitch: ["Default"], Transition: ["To"] };
+
+function canonGraphs(el: El): El {
+  const g = el.uri === ACT ? GRAPH_NODES[el.local] : undefined;
+  if (!g) return { ...el, kids: el.kids.map(canonGraphs) };
+  const isNode = (e: El) => e.uri === ACT && g.nodes.includes(e.local);
+  const nameOf = (e: El) => e.attrs.find((a) => a.uri === X && a.local === "Name")?.value;
+  // ノードを集める（入れ子の図の中には入らない）
+  const all: El[] = [];
+  const byName = new Map<string, El>();
+  const collect = (e: El) => {
+    for (const k of e.kids) {
+      if (k.uri === ACT && GRAPH_NODES[k.local]) continue;
+      if (isNode(k) && !all.includes(k)) { all.push(k); const n = nameOf(k); if (n) byName.set(n, k); }
+      collect(k);
+    }
+  };
+  collect(el);
+  const refOf = (v: string) => v.match(/^\{x:Reference\s+(?:Name=)?([^\s}]+)\s*\}$/)?.[1];
+  const target = (v: El | string | undefined): El | undefined => {
+    if (v === undefined) return undefined;
+    if (typeof v === "string") return byName.get(refOf(v) ?? "");
+    if (v.uri === X && v.local === "Reference") return byName.get(v.text.trim());
+    if (isNode(v)) return v;
+    const kids = v.kids.filter((k) => !ignorableEl(k));
+    return kids.length === 1 ? target(kids[0]) : undefined;
+  };
+  // 要素の矢印：[名前, 行き先]。属性・プロパティ要素・x:Key 付きのコンテンツ（FlowSwitch の分岐）
+  const links = (e: El): [string, El | undefined][] => {
+    const out: [string, El | undefined][] = [];
+    for (const p of LINKS[e.local] ?? []) {
+      const a = e.attrs.find((x) => x.local === p && !x.prefix);
+      const k = e.kids.find((x) => x.local === `${e.local}.${p}`);
+      if (a || k) out.push([p, target(a ? a.value : k)]);
+    }
+    for (const k of e.kids) {
+      if (k.local.includes(".") || ignorableEl(k)) continue;
+      const key = k.attrs.find((x) => x.uri === X && x.local === "Key")?.value ?? k.kids.find((x) => x.uri === X && x.local === "Key")?.text.trim();
+      if (key !== undefined) out.push([`Case_${key}`, target(k)]);
+    }
+    return out;
+  };
+  const transitions = (s: El) => s.kids.filter((k) => k.local === "State.Transitions").flatMap((k) => k.kids.flatMap((t) => (t.local === "Collection" ? t.kids : [t]))).filter((t) => t.local === "Transition");
+  const outs = (e: El) => (e.local === "State" ? transitions(e).flatMap(links) : links(e)).map(([, t]) => t).filter((t): t is El => !!t);
+  // start からたどった順の番号
+  const startAttr = el.attrs.find((a) => a.local === g.start && !a.prefix);
+  const startEl = el.kids.find((k) => k.local === `${el.local}.${g.start}`);
+  const start = target(startAttr ? startAttr.value : startEl);
+  const order: El[] = [];
+  const q = start ? [start] : [];
+  while (q.length) { const e = q.shift()!; if (order.includes(e)) continue; order.push(e); q.push(...outs(e)); }
+  for (const e of all) if (!order.includes(e)) order.push(e);
+  const label = (e: El | undefined) => (e ? `#${order.indexOf(e)}` : "?");
+  const linkEl = (owner: El, name: string, to: El | undefined): El => ({ ...owner, name: `${owner.name}.${name}`, local: `${owner.local}.${name}`, attrs: [], kids: [], text: label(to), selfClosed: false });
+  // ノード（と Transition）の写し：x:Name・x:Key と矢印を除き、矢印は番号の要素にする
+  const copy = (e: El): El => {
+    const ls = links(e);
+    const names = new Set(LINKS[e.local] ?? []);
+    const attrs = e.attrs.filter((a) => !(a.uri === X && (a.local === "Name" || a.local === "Key")) && !(names.has(a.local) && !a.prefix));
+    const kids = e.kids.filter((k) => !(names.has(k.local.slice(k.local.indexOf(".") + 1)) && k.local.startsWith(`${e.local}.`)) && !(!k.local.includes(".") && ls.some(([n]) => n.startsWith("Case_")) && (k.uri === X || isNode(k))))
+      .map((k) => (k.local === "State.Transitions" ? { ...k, kids: transitions(e).map(copy) } : canonGraphs(k)));
+    return { ...e, attrs, kids: [...kids, ...ls.map(([n, t]) => linkEl(e, n, t))] };
+  };
+  const rest = el.kids.filter((k) => !isNode(k) && !(k.uri === X && k.local === "Reference") && k.local !== `${el.local}.${g.start}` && !/\.(Nodes|States)$/.test(k.local)).map(canonGraphs);
+  return { ...el, attrs: el.attrs.filter((a) => !(a.local === g.start && !a.prefix)), kids: [...rest, linkEl(el, g.start, start), ...order.map(copy)] };
+}
+
 export function canonLines(xml: string): string[] {
   const out: string[] = [];
-  const root = parseXml(xml);
+  const root = canonGraphs(parseXml(xml));
   const norm = (v: string) => {
     let s = v.replace(/\r\n/g, "\n").replace(GUID, "<guid>");
     if (s.startsWith("{}")) s = s.slice(2);
@@ -916,6 +1269,8 @@ export function canonLines(xml: string): string[] {
         lines.push(`${path} @${pn}=${norm(t)}`);
         continue;
       }
+      // 式の子（<X.Condition><VisualBasicValue ExpressionText="..."/></X.Condition>）は、属性の [式] と同じに扱う
+      if (kids.length === 1 && /^VisualBasicValue$/.test(kids[0].local)) { lines.push(`${path} @${pn}=${norm(`[${kids[0].attrs.find((a) => a.local === "ExpressionText")?.value}]`)}`); continue; }
       // Activities / Branches はコンテンツなので、包む・包まないを同じに扱う
       if (/^(Activities|Branches|Cases)$/.test(pn)) { kids.forEach((x) => walk(x, `${path}/${x.local}[${idx++}]`)); continue; }
       walk(k, `${path}.${pn}`);

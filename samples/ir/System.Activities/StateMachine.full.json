@@ -1,0 +1,135 @@
+{
+  "workflow": "StateMachine_Full",
+  "body": [
+    {
+      "act": "StateMachine",
+      "name": "状態遷移",
+      "variables": [
+        {
+          "name": "n",
+          "type": "Int32",
+          "default": "0"
+        }
+      ],
+      "stateMachine": {
+        "initial": "Init",
+        "states": [
+          {
+            "id": "Init",
+            "name": "初期化",
+            "entry": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": {
+                    "lit": "init"
+                  }
+                }
+              }
+            ],
+            "exit": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": {
+                    "lit": "exit init"
+                  }
+                }
+              }
+            ],
+            "transitions": [
+              {
+                "to": "Work",
+                "name": "開始",
+                "trigger": [
+                  {
+                    "act": "Delay",
+                    "props": {
+                      "Duration": "TimeSpan.FromMilliseconds(10)"
+                    }
+                  }
+                ],
+                "action": [
+                  {
+                    "act": "LogMessage",
+                    "props": {
+                      "Level": "Info",
+                      "Message": {
+                        "lit": "go"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "Work",
+            "variables": [
+              {
+                "name": "label",
+                "type": "String",
+                "default": "\"work \""
+              }
+            ],
+            "entry": [
+              {
+                "act": "Assign",
+                "props": {
+                  "To": "n",
+                  "Value": "n + 1"
+                }
+              },
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": "label & n.ToString"
+                }
+              }
+            ],
+            "transitions": [
+              {
+                "to": "Work",
+                "name": "もう一度",
+                "condition": "n < 3",
+                "action": [
+                  {
+                    "act": "LogMessage",
+                    "props": {
+                      "Level": "Info",
+                      "Message": {
+                        "lit": "again"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "to": "Done",
+                "name": "終わる",
+                "condition": "n >= 3"
+              }
+            ]
+          },
+          {
+            "id": "Done",
+            "name": "終わり",
+            "final": true,
+            "entry": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": "\"done n=\" & n.ToString"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
