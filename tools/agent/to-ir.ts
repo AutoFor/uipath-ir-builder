@@ -308,6 +308,8 @@ export function toIR(dir: string): AgentIR {
       if (r.description && r.description !== r.properties.toolDescription) t.description = r.description;
       const statics = (r.properties.parameters ?? []).filter((p: any) => p.fieldVariant === "static");
       if (statics.length) t.values = Object.fromEntries(statics.map((p: any) => [p.name, p.value]));
+      const args = (r.properties.parameters ?? []).filter((p: any) => p.fieldVariant === "argument" && /^\{\{(.+)\}\}$/.test(p.value ?? ""));
+      if (args.length) t.args = Object.fromEntries(args.map((p: any) => [p.name, String(p.value).slice(2, -2)]));
       tools.push(t);
     } else if (r.$resourceType === "tool" && r.type === "function" && r.location === "solution" && r.properties?.processName) {
       const t: any = { function: r.properties.processName };

@@ -541,3 +541,15 @@ test("インデックスのコンテキストの query・prefix：Static / Argum
   assert.deepEqual(ctx({ query: { arg: "text" }, prefix: { arg: "text" } }).folderPathPrefix, { variant: "argument", value: "{{text}}" });
   assert.deepEqual(generate(ir({ input: { text: "string" }, user: "{{input.text}}", contexts: [{ index: "Idx", folder: "Shared", query: { arg: "nope" } }] } as any), BASE, ALL).problems.map((p) => p.code), ["UNKNOWN_INPUT"]);
 });
+
+test("IS の活動の項目の Argument（args。AUT-1201 の 14）", () => {
+  const web = { integration: "uipath-uipath-airdk", activity: "v2::webSearch", args: { query: "text" } };
+  const r = generate(ir({ input: { text: "string" }, user: "{{input.text}}", tools: [web] } as any), BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  const q = (Object.values(r.result!.resources)[0] as any).properties.parameters.find((p: any) => p.name === "query");
+  assert.deepEqual({ v: q.fieldVariant, value: q.value, d: q.displayValue, dyn: q.dynamic }, { v: "argument", value: "{{text}}", d: "{{text}}", dyn: true });
+  const codes = (t: any) => generate(ir({ input: { text: "string" }, user: "{{input.text}}", tools: [t] } as any), BASE, ALL).problems.map((p) => p.code);
+  assert.deepEqual(codes({ ...web, args: { query: "nope" } }), ["UNKNOWN_INPUT"]);
+  assert.deepEqual(codes({ ...web, args: { nope: "text" } }), ["UNKNOWN_FIELD"]);
+  assert.deepEqual(codes({ ...web, values: { query: "x" } }), ["BAD_TOOL"]);
+});

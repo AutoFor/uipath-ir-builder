@@ -40,7 +40,8 @@ export type Tool =
   /** AgentHub の MCP サーバー（slug）。tools で使う道具を絞る（書かなければ全部） */
   | { mcp: string; tools?: string[]; description?: string }
   /** Integration Service の活動。connection は接続の Id か名前（書かなければその connector の既定の接続）。values は固定の値 */
-  | { integration: string; activity: string; connection?: string; name?: string; description?: string; values?: Record<string, unknown> }
+  // args は項目 → エージェントの入力の名前（入力方式「Argument」。fieldVariant argument・value "{{入力}}"。2026-11-17 に Studio Web で作って書き出した形。AUT-1201 の 14）
+  | { integration: string; activity: string; connection?: string; name?: string; description?: string; values?: Record<string, unknown>; args?: Record<string, string> }
   /**
    * 同じソリューションの中の coded function（Python / TS。Studio Web の Tools → Function、Preview）。function はプロジェクトのフォルダの名前。
    * 入出力は <プロジェクト>/entry-points.json、referenceKey は resources/solution_folder/process/function/<名前>.json の key（AUT-1201 の 16）
@@ -623,6 +624,10 @@ function integrationResource(t: Extract<Tool, { integration: string }>, i: numbe
   const req = f.meta.RequestFields ?? [];
   const known = new Set([...req.map(r => r.Name), ...(f.meta.Parameters ?? []).map(r => r.Name)]);
   for (const k of Object.keys(t.values ?? {})) if (!known.has(k)) probs.push({ path: `${p}.values.${k}`, code: "UNKNOWN_FIELD", message: `活動に "${k}" が無い（ある物: ${[...known].join(", ")}）` });
+  for (const k of Object.keys(t.args ?? {})) {
+    if (!known.has(k)) probs.push({ path: `${p}.args.${k}`, code: "UNKNOWN_FIELD", message: `活動に "${k}" が無い（ある物: ${[...known].join(", ")}）` });
+    if (t.values && k in t.values) probs.push({ path: `${p}.args.${k}`, code: "BAD_TOOL", message: `"${k}" を values と args の両方に書いている` });
+  }
   for (const r of req) if (r.Name.includes(".")) probs.push({ path: p, code: "NESTED_FIELD", message: `入れ子の項目 "${r.Name}" は未対応。raw で書く` });
 
   // 入力：固定の値（values）と選択肢のある項目は LLM に渡さない。ほかは LLM が埋める
@@ -633,7 +638,8 @@ function integrationResource(t: Extract<Tool, { integration: string }>, i: numbe
   const param = (r: IsField, loc: string) => {
     const enums = enumObjs(r.Enum);
     const fixed = t.values && r.Name in t.values;
-    const isStatic = fixed || enums.length > 0;
+    const arg = t.args?.[r.Name];
+    const isStatic = !arg && (fixed || enums.length > 0);
     // 固定の項目も入力のスキーマに残す（Studio Web と同じ。enum を選んだ値だけにし、oneOf に選択肢を全部並べる）
     const prop: Record<string, unknown> = { type: r.Type ?? "string", title: r.DisplayName ?? r.Name, description: r.Description ?? "" };
     if (isStatic) {
@@ -645,10 +651,11 @@ function integrationResource(t: Extract<Tool, { integration: string }>, i: numbe
     if (r.Required) required.push(r.Name);
     parameters.push({
       name: r.Name, displayName: r.DisplayName ?? r.Name, type: r.Type ?? "string", fieldLocation: loc,
-      value: fixed ? t.values![r.Name] : enums.length ? enums[0].value : "{{prompt}}",
+      value: arg ? `{{${arg}}}` : fixed ? t.values![r.Name] : enums.length ? enums[0].value : "{{prompt}}",
       description: r.Description ?? "", position: r.Required ? "primary" : "secondary", sortOrder: order++, required: !!r.Required,
-      fieldVariant: isStatic ? "static" : "dynamic", isCascading: false, dynamic: !isStatic,
+      fieldVariant: arg ? "argument" : isStatic ? "static" : "dynamic", isCascading: false, dynamic: !isStatic,
       enumValues: enums.length ? enums : null, loadReferenceOptionsByDefault: null, dynamicBehavior: [], reference: null,
+      ...(arg ? { displayValue: `{{${arg}}}` } : {}),
     });
   };
   for (const r of req) param(r, "body");
@@ -884,6 +891,10 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
     const n = String(r.name);
     if (resources[n]) probs.push({ path: `tools[${i}]`, code: "DUP_NAME", message: `名前 "${n}" が重なる` });
     resources[n] = r;
+  });
+  // IS の活動の args は、エージェントの入力の名前
+  (ir.tools ?? []).forEach((tl, ti) => {
+    if ("integration" in tl) for (const [k, a] of Object.entries(tl.args ?? {})) if (!(a in ((inputSchema as any).properties ?? {}))) probs.push({ path: `tools[${ti}].args.${k}`, code: "UNKNOWN_INPUT", message: `入力に "${a}" が無い` });
   });
   (ir.contexts ?? []).forEach((c, i) => {
     if ("index" in c) for (const k of ["query", "prefix"] as const) {
