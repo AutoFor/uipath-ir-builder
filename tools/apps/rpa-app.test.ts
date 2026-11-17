@@ -181,3 +181,51 @@ test("IR の型：DataService.Entities.<表> は de:<表>（DataService.DataServ
 test("名前は _ で始められない", () => {
   assert.deepEqual(codes(one([{ type: "label", name: "_A" }])), ["APP_NAME"]);
 });
+
+const approval: RpaApp = JSON.parse(readFileSync(join(root, "samples", "apps", "rpa-app-approval.json"), "utf8"));
+const act = (action: any, controls: RpaApp["pages"][0]["controls"] = []): RpaApp => ({ app: "T", action, pages: [{ name: "P", controls }] });
+
+test("アクション：見本は検証を通る（AUT-1193）", () => {
+  assert.deepEqual(check(approval), []);
+});
+
+test("アクション：名前は 4 つの節と outcomes をまたいで重ねられず、結果が要る（AUT-1193）", () => {
+  assert.deepEqual(codes(act({ inputs: [{ name: "A" }], outcomes: ["A"] })), ["APP_NAME"]);
+  assert.deepEqual(codes(act({ inputs: [{ name: "A" }], outcomes: [] })), ["APP_SHAPE"]);
+  assert.deepEqual(codes(act({ inputs: [{ name: "A", type: "date" }], outcomes: ["ok"] })), ["APP_UNSUPPORTED"]);
+});
+
+test("アクション：submit と { action } の参照（AUT-1193）", () => {
+  const btn = (onClick: any) => [{ type: "button" as const, name: "B", onClick }];
+  assert.deepEqual(codes(act({ outcomes: ["ok"] }, btn([{ submit: "no" }]))), ["APP_REF"]);
+  assert.deepEqual(codes(act({ inputs: [{ name: "Src" }], outcomes: ["ok"] }, btn([{ submit: "ok", values: { Src: "\"x\"" } }]))), ["APP_REF"]); // inputs には書けない
+  assert.deepEqual(codes({ app: "T", pages: [{ name: "P", controls: btn([{ submit: "ok" }]) }] }), ["APP_REF"]); // action が無い
+  assert.deepEqual(codes(act({ outputs: [{ name: "Out" }], outcomes: ["ok"] }, [{ type: "label", name: "L", text: { action: "Out" } }])), ["APP_REF"]); // outputs は読めない
+});
+
+test("アクション：Studio Web の Simple Approval の書き出しと同じファイルと形（AUT-1193）", () => {
+  const f = generateFiles(approval);
+  const app = Object.entries(f).filter(([k]) => /\/models\/models-/.test(k)).map(([, v]) => JSON.parse(v));
+  const main = app.find((m) => m.type === "app");
+  const action = app.find((m) => m.type === "action");
+  assert.equal(main.appUsageType, 1);
+  const schema = JSON.parse(Object.entries(f).find(([k]) => k.includes("/.app/schemas/schema-"))![1]);
+  assert.equal(schema.key, main.actionDefinitionId);
+  assert.deepEqual(schema.inputs.map((x: any) => x.name), ["Content"]);
+  assert.deepEqual(schema.outcomes.map((x: any) => x.name), ["approve", "reject"]);
+  assert.equal(action.instances[0].actionSchemaKey, schema.key);
+  // 画面の式：ActionProperties.<名> と、アクションの instance・プロパティへのトークン
+  const e = exprOf(pageOf(f, "Review"), "ContentLabel", "text");
+  assert.equal(e.expression, "ActionProperties.Content");
+  assert.equal(e.tokens[0].tokenId, action.instances[0].key);
+  assert.equal(e.tokens[1].tokenId, action.instances[0].inputs[0].guid);
+  // ボタン：Submit Action と Properties override、アクションの名前空間
+  const x = f["ApprovalAction/Review_ApproveButton_click.xaml"];
+  assert.match(x, /<uwana:SubmitAction [^>]*Outcome="approve">/);
+  assert.match(x, /<InArgument x:TypeArguments="x:String" x:Key="Comment">\[Controls\.Review\.CommentBox\.Value\]<\/InArgument>/);
+  assert.match(x, /<x:String>__Action_ActionSchema<\/x:String>/);
+  // ソリューション：app は workflow Action
+  const res = JSON.parse(f["resources/solution_folder/app/workflow Action/ApprovalAction.json"]);
+  assert.equal(res.resource.type, "workflow Action");
+  assert.equal(res.resource.spec.type, "workflow Action");
+});

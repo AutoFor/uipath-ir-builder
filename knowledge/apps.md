@@ -217,6 +217,19 @@ node tools/verify/queue-run.mjs --name wcal --template 'C:\Users\Public\uipath-i
 <uwana:OpenAppsPage CurrentFormId="<今のページの formId>" PageFormId="<開くページの formId>" PageName="SimpleApproval" … />
 ```
 
+### アクション（Action Center のタスクの画面にする。`samples/apps/rpa-app-approval.json`）
+
+Studio Web のエージェントのエスカレーションで「+ New App」→ Simple Approval のテンプレートで作ったアプリを `solution download` して取った形（2026-11-17、AUT-1193）。生成器は IR の `action` から同じものを書く。
+
+- **App 本体**：`appUsageType: 1`、`actionDefinitionId`（定義の key）、`actionDefinitionVersion: 0`。
+- **定義**：`.app/schemas/schema-<key>.json`。`name: "ActionSchema"`、`inputs`・`outputs`・`inOuts`・`outcomes`（`type` は .NET の型、`key` は GUID）。
+- **model**：`.app/models/models-<id>.json` の `type: "action"`。`instances[0]` に同じ 4 つの節と、プロパティごとの `guid`、instance の `key`。
+- **画面の式**：`ActionProperties.<名>`。tokens は 2 つ（`ActionProperties` は type `action.ActionSchema`・tokenId が instance の `key`、`<名>` は type `action.ActionProperties`・tokenId がプロパティの `guid`）。読めるのは inputs と inOuts。
+- **ボタン**：`<uwana:SubmitAction Outcome="approve">`。`OutcomeExpression`（`expressionId`・`formId`）と、`PropertyOverrides`（`<InArgument x:Key="Comment">[Controls.<ページ>.<部品>.Value]</InArgument>`。outputs と inOuts に入る値）。名前空間に `action` と `__Action_ActionSchema`。
+- **ソリューション**：`resources/solution_folder/app/workflow Action/<アプリ>.json`（resource と spec の `type` が `workflow Action`）。
+- IR：`"action": { "inputs": [{ "name", "description" }], "inOuts": [...], "outputs": [...], "outcomes": ["approve", { "name": "reject", "description": "…" }] }`、値は `{ "action": "Content" }`、手順は `{ "submit": "approve", "values": { "Comment": "<VB の式>" } }`。型は string と boolean だけ。名前は 4 つの節をまたいで重ねられない。
+- **確かめたこと**：生成したものを `uip solution upload` で取り込めて、書き出し直しても形は崩れなかった。**まだ**：Studio Web のアプリの画面で開くこと（この PC の Assistant が別の組織にサインインしていて「Signing in to Assistant」で止まる）、Action Center でタスクとして開くこと、エージェントのエスカレーションのアプリとして選べること。
+
 App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：アプリのページを開く（Open Apps Page）、アプリで URL を開く、アプリの値をリセット、アプリのメッセージを表示、スピナーの表示/非表示、ポップオーバー/ボトムシートを閉じる。値は「代入」（Assign）で `AppVariable.<名>` や `Controls.<ページ>.<部品>.Value` に入れる。
 
 ### 取り込み（`uip solution upload`）で確かめたこと

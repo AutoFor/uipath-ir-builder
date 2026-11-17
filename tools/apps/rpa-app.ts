@@ -26,9 +26,11 @@ const TEMPLATES = join(root, "templates", "rpa-app");
 
 // ---- IR ----
 
-export type Value = string | boolean | number | { var: string } | { vb: string };
+// { action }：アクションのプロパティ（ActionProperties.<名>）。アクションを持つアプリだけ
+export type Value = string | boolean | number | { var: string } | { vb: string } | { action: string };
 // ボタンを押したときの手順。式（value / fields / id / if）は VB
 export type Step =
+  | { submit: string; values?: Record<string, string> } // Submit Action。結果（outcome）と、outputs / inOuts に入れる VB の式
   | { set: string; value: string } // App の変数に代入
   | { open: string } // ページを開く
   | { create: string; fields: Record<string, string> } // Data Fabric の表に 1 行足す
@@ -49,7 +51,10 @@ export type Control = {
 export type Page = { name: string; controls: Control[] };
 export type Variable = { name: string; type: "string"; default?: string } | { name: string; type: "list"; of: string; default?: undefined };
 // entities：Data Fabric の表の定義（tools/apps/rpa-app-entities.ts で作る）。IR のファイルからの相対パス
-export type RpaApp = { app: string; solution?: string; kind?: "rpa-app"; entities?: string; variables?: Variable[]; pages: Page[] };
+// action：Action Center のタスクの画面にする（アプリ 1 つに 1 つ）。形は Studio Web の Simple Approval の書き出し（AUT-1193）
+export type ActionField = { name: string; type?: "string" | "boolean"; description?: string; required?: boolean };
+export type Action = { description?: string; inputs?: ActionField[]; outputs?: ActionField[]; inOuts?: ActionField[]; outcomes: (string | { name: string; description?: string })[] };
+export type RpaApp = { app: string; solution?: string; kind?: "rpa-app"; entities?: string; variables?: Variable[]; action?: Action; pages: Page[] };
 export type Store = any; // rpa-app-entities.ts の出力
 export type Issue = { path: string; code: string; message: string };
 
@@ -82,7 +87,9 @@ export function entitiesOf(store: Store | undefined): Map<string, Entity> {
   }
   return m;
 }
-const STEP_KEYS = ["set", "open", "create", "update", "delete", "query", "if"] as const;
+const STEP_KEYS = ["submit", "set", "open", "create", "update", "delete", "query", "if"] as const;
+const ACTION_TYPE = { string: { net: "System.String", xaml: "x:String" }, boolean: { net: "System.Boolean", xaml: "x:Boolean" } } as const;
+const outcomeName = (o: string | { name: string }) => (typeof o === "string" ? o : o?.name);
 const usesEntities = (steps: Step[]): boolean => steps.some((s: Json) => "create" in s || "update" in s || "delete" in s || "query" in s || ("if" in s && (usesEntities(s.then) || usesEntities(s.else ?? []))));
 // 文書：英字で始まる英数字と _。日本語は VB の制限で使えない（AUT-1208 の 19）
 const IDENT = /^[A-Za-z][A-Za-z0-9_]*$/;
@@ -122,6 +129,27 @@ export function check(a: RpaApp, store?: Store): Issue[] {
     else if (v.type === "list" && !ents.has(v.of)) add(`${at}.of`, "APP_REF", `表 ${v.of} が entities に無い`);
   });
   if (a.entities && !store) add("entities", "APP_REF", `表の定義 ${a.entities} が読めない`);
+  // アクション：名前は inputs / outputs / inOuts / outcomes をまたいで 1 回だけ（AUT-1187 と同じ決まり）
+  const readable = new Set<string>(), writable = new Set<string>(), outcomes = new Set<string>();
+  if (a.action !== undefined) {
+    const act = a.action;
+    const seenA = new Set<string>();
+    const one = (n: unknown, at: string) => {
+      name(n, at);
+      if (typeof n === "string") { if (seenA.has(n)) add(at, "APP_NAME", `アクションの名前は inputs・outputs・inOuts・outcomes をまたいで重ねられない（${n}）`); seenA.add(n); }
+    };
+    for (const sec of ["inputs", "outputs", "inOuts"] as const) {
+      (act[sec] ?? []).forEach((f, i) => {
+        const at = `action.${sec}[${i}]`;
+        one(f?.name, `${at}.name`);
+        if (f?.type !== undefined && !(f.type in ACTION_TYPE)) add(`${at}.type`, "APP_UNSUPPORTED", `アクションの型 ${f.type} はまだ書けない（string と boolean だけ）`);
+        if (sec !== "outputs") readable.add(f?.name);
+        if (sec !== "inputs") writable.add(f?.name);
+      });
+    }
+    if (!Array.isArray(act.outcomes) || !act.outcomes.length) add("action.outcomes", "APP_SHAPE", "結果（outcomes）を 1 つ以上書く（Submit Action が選ぶ）");
+    (act.outcomes ?? []).forEach((o, i) => { one(outcomeName(o), `action.outcomes[${i}]`); outcomes.add(outcomeName(o)); });
+  }
   if (!Array.isArray(a.pages) || !a.pages.length) { add("pages", "APP_SHAPE", "ページが 1 つも無い"); return out; }
   const pages = new Map<string, Set<string>>();
   a.pages.forEach((p, i) => {
@@ -133,7 +161,8 @@ export function check(a: RpaApp, store?: Store): Issue[] {
   const value = (v: Value, at: string) => {
     if (v && typeof v === "object") {
       if ("var" in v) { if (!vars.has(v.var)) add(at, "APP_REF", `変数 ${v.var} が無い`); }
-      else if (!("vb" in v) || typeof v.vb !== "string" || !v.vb.trim()) add(at, "APP_SHAPE", "値は文字・真偽・数、{ var }、{ vb } のどれか");
+      else if ("action" in v) { if (!a.action) add(at, "APP_REF", "{ action } はアクションを持つアプリだけ（action を書く）"); else if (!readable.has(v.action)) add(at, "APP_REF", `アクションの inputs・inOuts に ${v.action} が無い`); }
+      else if (!("vb" in v) || typeof v.vb !== "string" || !v.vb.trim()) add(at, "APP_SHAPE", "値は文字・真偽・数、{ var }、{ vb }、{ action } のどれか");
       else controlsRef(v.vb, at);
     } else if (!["string", "boolean", "number"].includes(typeof v)) add(at, "APP_SHAPE", "値は文字・真偽・数、{ var }、{ vb } のどれか");
   };
@@ -204,7 +233,14 @@ export function check(a: RpaApp, store?: Store): Issue[] {
             const sat = `${base}[${si}]`;
             const kinds = STEP_KEYS.filter((k) => s && typeof s === "object" && k in s);
             if (kinds.length !== 1) { add(sat, "APP_SHAPE", `手順は ${STEP_KEYS.map((k) => `{ ${k} }`).join(" / ")} のどれか 1 つ`); return; }
-            if ("set" in s) {
+            if ("submit" in s) {
+              if (!a.action) add(`${sat}.submit`, "APP_REF", "submit はアクションを持つアプリだけ（action を書く）");
+              else if (!outcomes.has(s.submit)) add(`${sat}.submit`, "APP_REF", `結果 ${s.submit} が action.outcomes に無い`);
+              for (const [k, x] of Object.entries(s.values ?? {})) {
+                if (a.action && !writable.has(k)) add(`${sat}.values.${k}`, "APP_REF", `アクションの outputs・inOuts に ${k} が無い`);
+                vb(x, `${sat}.values.${k}`);
+              }
+            } else if ("set" in s) {
               const v = vars.get(s.set);
               if (!v) add(`${sat}.set`, "APP_REF", `変数 ${s.set} が無い`);
               vb(s.value, `${sat}.value`);
@@ -295,9 +331,21 @@ function tableSetup(ctl: Json, group: Json, c: Control, appFields: Map<string, J
   });
 }
 
+// アクションの id（generateFiles が作り、式と Submit Action が使う）
+type ActCtx = { instanceKey: string; guid: Map<string, string>; xaml: Map<string, string> };
+let ACT: ActCtx | undefined;
+
 function writeExpr(e: Json, eid: string, v: Value, appFields: Map<string, Json>, refs: Json) {
   e.tokens = [];
-  if (v && typeof v === "object" && "var" in v) {
+  if (v && typeof v === "object" && "action" in v) {
+    // Studio Web の書き出しと同じ：ActionProperties（アクションの instance の key）と、そのプロパティ（guid）の 2 つのトークン
+    const n = v.action;
+    Object.assign(e, { expression: `ActionProperties.${n}`, isLiteral: false, addedVia: "VEB" });
+    e.tokens = [
+      { token: "ActionProperties", type: "action.ActionSchema", startIndex: 0, endIndex: 16, tokenId: ACT!.instanceKey, tokenType: "action", isContextualArg: false, properties: [] },
+      { token: n, type: "action.ActionProperties", startIndex: 17, endIndex: 17 + n.length, tokenId: ACT!.guid.get(n), tokenType: "action-property", isContextualArg: false, properties: [] },
+    ];
+  } else if (v && typeof v === "object" && "var" in v) {
     const f = appFields.get(v.var)!;
     Object.assign(e, { expression: v.var, isLiteral: false, addedVia: "VEB" });
     e.tokens = [{ token: v.var, type: "AppVariables.AppVariable", startIndex: 0, endIndex: v.var.length, tokenId: f.id, tokenType: "app-variable", isContextualArg: false, properties: [] }];
@@ -347,6 +395,19 @@ ${sel.join("\n")}
 const SCOPE = 'ScopeValue="テナント" TimeoutInMs="30000"';
 
 function stepXaml(c: Ctx, s: Step): string {
+  if ("submit" in s) {
+    // Studio Web の Simple Approval のボタンの XAML と同じ形。values は Properties override（outputs・inOuts に入る値）
+    const ov = Object.entries(s.values ?? {}).map(([k, x]) => `    <InArgument x:TypeArguments="${ACT?.xaml.get(k) ?? "x:String"}" x:Key="${k}">[${xml(x)}]</InArgument>`);
+    return `<uwana:SubmitAction Result="{x:Null}" DisplayName="Submit Action" sap2010:WorkflowViewState.IdRef="${nextId(c, "SubmitAction")}" Outcome="${xml(s.submit)}">
+  <uwana:SubmitAction.OutcomeExpression>
+    <x:String x:Key="expressionId">id${hex()}</x:String>
+    <x:String x:Key="formId">${c.forms.get(c.page)!.formId}</x:String>
+  </uwana:SubmitAction.OutcomeExpression>${ov.length ? `
+  <uwana:SubmitAction.PropertyOverrides>
+${ov.join("\n")}
+  </uwana:SubmitAction.PropertyOverrides>` : ""}
+</uwana:SubmitAction>`;
+  }
   if ("set" in s) return assignXaml(c, `AppVariable.${s.set}`, xamlType(c.vars.get(s.set)!), s.value);
   if ("create" in s || "update" in s) {
     const kind = "create" in s ? "CreateEntityRecord" : "UpdateEntityRecord";
@@ -415,7 +476,10 @@ function eventXaml(page: string, control: string, steps: Step[], forms: Map<stri
   const c: Ctx = { page, forms, vars, ents, n: new Map([["Sequence", 1]]), locals: [] };
   const body = steps.map((s) => ind(stepXaml(c, s), 4)).join("\n");
   const locals = c.locals.length ? `    <Sequence.Variables>\n${c.locals.map((l) => `      ${l}`).join("\n")}\n    </Sequence.Variables>\n` : "";
-  return `${withEntities ? T.eventEntities : T.event}  <Sequence sap:VirtualizedContainerService.HintSize="356,732" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  let head: string = withEntities ? T.eventEntities : T.event;
+  // Submit Action の式はアクションの名前空間を使う（Studio Web の書き出しと同じ 2 つ）
+  if (body.includes("<uwana:SubmitAction ")) head = head.replace("<x:String>UiPath.WorkflowEvents.Activities.NetCore.Activities</x:String>", "<x:String>UiPath.WorkflowEvents.Activities.NetCore.Activities</x:String>\n      <x:String>action</x:String>\n      <x:String>__Action_ActionSchema</x:String>");
+  return `${head}  <Sequence sap:VirtualizedContainerService.HintSize="356,732" sap2010:WorkflowViewState.IdRef="Sequence_1">
 ${locals}    <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -434,6 +498,13 @@ export function generateFiles(a: RpaApp, store?: Store): Record<string, string> 
   const solutionId = randomUUID(), projectId = randomUUID(), projectKey = randomUUID();
   const appSystemName = `ID${hex()}`;
   const vars = new Map((a.variables ?? []).map((v) => [v.name, v]));
+  const actionKey = randomUUID();
+  const fieldsOf = (sec: "inputs" | "outputs" | "inOuts") => a.action?.[sec] ?? [];
+  ACT = a.action ? {
+    instanceKey: `id${hex()}`,
+    guid: new Map(["inputs", "outputs", "inOuts"].flatMap((sec) => fieldsOf(sec as "inputs").map((f) => [f.name, `id${hex()}`] as [string, string]))),
+    xaml: new Map(["outputs", "inOuts"].flatMap((sec) => fieldsOf(sec as "inputs").map((f) => [f.name, ACTION_TYPE[f.type ?? "string"].xaml] as [string, string]))),
+  } : undefined;
 
   // App の変数
   const appFields = new Map<string, Json>();
@@ -497,6 +568,35 @@ export function generateFiles(a: RpaApp, store?: Store): Record<string, string> 
     defaultForm: { ...app.defaultForm, rootSystemName: start.systemName, instanceJPath: `$.rootReferences.${start.systemName}.instances[?(@.id=="${ref.instances[0].id}")]` },
     unifiedProjectId: projectId, unifiedBuildSolutionId: solutionId, cacheKey: String(Date.now()),
   });
+  if (a.action && ACT) {
+    // アクション：App 本体に appUsageType 1 と定義の key、schemas/ に定義、models/ に type "action" の model（Simple Approval の書き出しの形）
+    Object.assign(app, { appUsageType: 1, actionDefinitionId: actionKey, actionDefinitionVersion: 0 });
+    const act = a.action;
+    const schemaId = `ID${hex()}`, actionSys = `ID${hex()}`;
+    const keys = new Map<string, string>();
+    const keyOf = (n: string) => { if (!keys.has(n)) keys.set(n, randomUUID()); return keys.get(n)!; };
+    const net = (f: ActionField) => ACTION_TYPE[f.type ?? "string"].net;
+    const schemaField = (f: ActionField) => ({ name: f.name, ...(f.description ? { description: f.description } : {}), required: !!f.required, customType: null, properties: [], type: net(f), typeNamespace: "system", isList: false, collectionDataType: null, key: keyOf(f.name) });
+    const outs = act.outcomes.map((o) => (typeof o === "string" ? { name: o } : o));
+    const outcomeSchema = (o: { name: string; description?: string }) => ({ name: o.name, ...(o.description ? { description: o.description } : {}), required: false, customType: null, properties: [], type: "System.String", typeNamespace: "system", isList: false, collectionDataType: null, key: keyOf(o.name) });
+    files[P(`.app/schemas/schema-${actionKey}.json`)] = JSON.stringify({
+      key: actionKey, version: 0, __isDeleted: false, dateLastModified: new Date().toISOString(), description: act.description ?? "", id: schemaId,
+      inOuts: fieldsOf("inOuts").map(schemaField), inputs: fieldsOf("inputs").map(schemaField), name: "ActionSchema",
+      outcomes: outs.map(outcomeSchema), outputs: fieldsOf("outputs").map(schemaField), actionSchemaGenerationSource: "manual",
+    });
+    const modelField = (f: ActionField) => ({ id: `id${hex()}`, uniqueIdentifier: f.name, guid: ACT!.guid.get(f.name), key: keyOf(f.name), name: f.name, type: net(f), customType: null, typeNamespace: "system", isList: false, fields: [], collectionDataType: null, required: !!f.required, ...(f.description ? { description: f.description } : {}) });
+    files[P(`.app/models/models-${actionSys}.json`)] = JSON.stringify({
+      id: actionSys, order: a.pages.length, dateCreated: new Date().toISOString(), dateLastOpened: new Date().toISOString(), type: "action", iconUrl: "assets/svg/action/action.svg", idCounter: 3000,
+      ownerFqn: "", ownerId: "", createdByFqn: "", createdById: "", systemName: actionSys, categorySystemName: "j-category-integration-organization", appSystemName,
+      buildVersion: app.buildVersion, modelVersion: 1, currentModelVersion: 2, dllVersion: 1, modelTypesVersion: 0, ownerDisplayName: "", rootReferences: {}, title: "DefaultTenant", description: "",
+      allModelErrors: {}, valueBindingMetadata: {}, url: null, properties: [],
+      instances: [{
+        id: schemaId, uniqueIdentifier: "ActionSchema", name: "ActionSchema", description: "Action Schema", key: ACT.instanceKey, schemaId, schemaType: "apps-schema", dirtySaveMetadata: null,
+        actionSchemaKey: actionKey, version: 0, inputs: fieldsOf("inputs").map(modelField), outputs: fieldsOf("outputs").map(modelField), inOuts: fieldsOf("inOuts").map(modelField),
+        outcomes: outs.map((o) => ({ id: `id${hex()}`, uniqueIdentifier: o.name, guid: `id${hex()}`, key: keyOf(o.name), name: o.name, type: "string", customType: "", typeNamespace: "system", isList: false, fields: [], collectionDataType: null, required: true, ...(o.description ? { description: o.description } : {}) })),
+      }],
+    });
+  }
   files[P(`.app/models/models-${appSystemName}.json`)] = JSON.stringify(app);
   files[P(`.app/.context/${appSystemName}.json`)] = JSON.stringify({ expressionLanguage: "VB", isBlankApp: "true", projectType: "Process" }, null, 2);
   files[P(".app/documents/libraries-metadata.json")] = JSON.stringify({ [app.id]: { id: app.id, isPublic: false, parentId: null, metadata: { createdByDisplayName: "", createdByEmail: "", createdByFqn: "", createdOnDate: new Date().toISOString(), description: "", title: a.app } } });
@@ -525,7 +625,9 @@ export function generateFiles(a: RpaApp, store?: Store): Record<string, string> 
   files["SolutionStorage.json"] = JSON.stringify({ SolutionId: solutionId, Projects: [{ ProjectId: projectId, ProjectRelativePath: P("project.uiproj") }] }, null, 2);
   const key = { app: randomUUID(), appVersion: randomUUID(), package: randomUUID(), process: randomUUID() };
   const res = (kind: string, apiVersion: string, deps: Json[], spec: Json, folders = true, extra: Json = {}) => JSON.stringify({ docVersion: "1.0.0", resource: { name: a.app, kind, ...extra, apiVersion, projectKey, isOverridable: true, dependencies: deps, runtimeDependencies: [], files: [], folders: folders ? [{ fullyQualifiedName: "solution_folder" }] : [], spec, locks: [], key: (key as Json)[kind] } }, null, 2);
-  files[`resources/solution_folder/app/${a.app}.json`] = res("app", "apps.uipath.com/v1", [{ name: a.app, kind: "appVersion" }, { name: a.app, kind: "process" }], { name: a.app, description: null, type: "Regular", version: null, appSystemName: null, appVersionRef: { key: key.appVersion }, codeBehindProcess: { key: key.process }, actionSchema: null, manualActivationActions: null });
+  // アクションを持つアプリは type が "workflow Action"、置き場も app/workflow Action/（Simple Approval の書き出し）
+  const appType = a.action ? "workflow Action" : "Regular";
+  files[`resources/solution_folder/app/${a.action ? "workflow Action/" : ""}${a.app}.json`] = res("app", "apps.uipath.com/v1", [{ name: a.app, kind: "appVersion" }, { name: a.app, kind: "process" }], { name: a.app, description: null, type: appType, version: null, appSystemName: null, appVersionRef: { key: key.appVersion }, codeBehindProcess: { key: key.process }, actionSchema: null, manualActivationActions: null }, true, a.action ? { type: appType } : {});
   files[`resources/solution_folder/appVersion/${a.app}.json`] = res("appVersion", "apps.uipath.com/v2", [], { name: a.app, description: null, publishNote: null, version: null, projectId: null, isAppPublic: false, packageFile: null, packageKey: null }, false);
   files[`resources/solution_folder/package/${a.app}.json`] = res("package", "orchestrator.uipath.com/v1", [], { fileName: null, fileReference: null, name: a.app, description: null });
   files[`resources/solution_folder/process/webApp/${a.app}.json`] = res("process", "orchestrator.uipath.com/v1", [{ name: a.app, kind: "package" }], {

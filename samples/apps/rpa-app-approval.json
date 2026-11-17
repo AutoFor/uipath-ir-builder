@@ -1,0 +1,29 @@
+{
+  "kind": "rpa-app",
+  "app": "ApprovalAction",
+  "solution": "ApprovalActionSolution",
+  "action": {
+    "description": "経費の承認",
+    "inputs": [
+      { "name": "Content", "description": "承認してほしい内容" }
+    ],
+    "inOuts": [
+      { "name": "Comment", "description": "承認者のコメント" }
+    ],
+    "outcomes": [
+      { "name": "approve", "description": "承認した" },
+      { "name": "reject", "description": "却下した" }
+    ]
+  },
+  "pages": [
+    {
+      "name": "Review",
+      "controls": [
+        { "type": "label", "name": "ContentLabel", "text": { "action": "Content" } },
+        { "type": "textarea", "name": "CommentBox", "label": "コメント", "text": { "action": "Comment" } },
+        { "type": "button", "name": "ApproveButton", "text": "承認", "onClick": [ { "submit": "approve", "values": { "Comment": "Controls.Review.CommentBox.Value" } } ] },
+        { "type": "button", "name": "RejectButton", "text": "却下", "onClick": [ { "submit": "reject", "values": { "Comment": "Controls.Review.CommentBox.Value" } } ] }
+      ]
+    }
+  ]
+}
