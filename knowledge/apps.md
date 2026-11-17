@@ -91,7 +91,15 @@ uip codedapp pack dist -n <app> -v 1.0.0                                   # pub
 - `baseUrl` の既定は `https://api.uipath.com`（`cloud.uipath.com` は `APP_SHAPE`）、`redirectUri` の既定は `http://localhost:5173`。`clientId`・`orgName`・`tenantName` が無ければ印を入れて注意
 - 版：`@uipath/coded-apps-dev` は npm に `1.0.0-beta.1` しかない。build で SDK の `crypto` の import に「externalized」の注意が出る（落ちない）
 
-確かめたこと（2026-11-17）：`expense-review`（SDK なし）、`expense-attach`（SDK あり）、`work-portal`（Web）を作り、`npm install --prefer-offline` → `npm run build`（tsc strict + vite）→ `uip codedapp pack` がすべて通った。`expense-attach` の nupkg に `action-schema.json` と `uipath.json` が入り、スキーマはスキルの検証も通った。**まだ**：Action Center・テナントでの動き全部（`setTaskData` / `completeTask` の新しい値の形、`{ ID }` を automation が受け取れるか、SDK の呼び出し、iframe の中の `<a download>` と `blob:` の画像、Web App の OAuth のサインイン）、`bindings_v2.json`（作っていない。pack が空のものを入れる）、デプロイ先で `uipathCodedApps()` が `dist/index.html` に入れる localhost の meta とプラットフォームの meta のどちらが勝つか
+**テナントで確かめたこと**（2026-11-17、trial。外部アプリ「IR テスト Coded Apps」：Non-confidential、user スコープ OR.Folders・OR.Jobs・OR.Execution・DataFabric.Schema.Read・DataFabric.Data.Read、リダイレクト URI は `http://localhost:5173`・`https://<org>.uipath.host/<path-name>`・`https://cloud.uipath.com/<orgId>/<tenantId>/actions_`。`uip admin external-apps create "<名前>" --non-confidential --user-scope "…" --redirect-uri "a,b,c"`。client ID は返りの `Id`）
+
+- Action App（`expense-attach` に clientId と試しの表を入れたもの）を `deploy --client-id <Id>` で出し、Action Center で開いた：
+  - `records`：iframe の中の `new UiPath()`（引数なし、`initialize()` なし）で Data Fabric が読めた。`pageSize: 2` で「1–2 件 / 全 3 件」→「次へ」で「3–3 件」
+  - `show`：入力の file に、API で作った添付の `{ ID }` を渡すと、`getById` の名前（receipt.png）と、Blob の URL の `<img>` が iframe の中に出た（CSP で止まらない）
+  - 試しの添付は Orchestrator の `POST /odata/Attachments`（`{"Name": "…"}`）→ 返りの `BlobFileAccess`（`Verb: PUT`、`RequiresAuth: false`、`Headers` は Keys / Values）へ中身を PUT して作った
+- Web App（`work-portal` に clientId・orgName・tenantName・`redirectUri: https://<org>.uipath.host/<path-name>` と試しの表）を `publish -t Web` → `deploy --path-name <path-name> --client-id <Id>`。開いて「UiPath でサインイン」を押すと、Chrome の UiPath のサインインがそのまま使われ、同意の画面も出ずに戻り、表が読めた（2 件ずつ、全 3 件）
+
+、`expense-attach`（SDK あり）、`work-portal`（Web）を作り、`npm install --prefer-offline` → `npm run build`（tsc strict + vite）→ `uip codedapp pack` がすべて通った。`expense-attach` の nupkg に `action-schema.json` と `uipath.json` が入り、スキーマはスキルの検証も通った。**まだ**：Action Center・テナントでの動き全部（`setTaskData` / `completeTask` の新しい値の形、`{ ID }` を automation が受け取れるか、SDK の呼び出し、iframe の中の `<a download>` と `blob:` の画像、Web App の OAuth のサインイン）、`bindings_v2.json`（作っていない。pack が空のものを入れる）、デプロイ先で `uipathCodedApps()` が `dist/index.html` に入れる localhost の meta とプラットフォームの meta のどちらが勝つか
 
 ### 確かめたこと
 
