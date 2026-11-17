@@ -22,6 +22,8 @@ const knownPrefixes: Record<string, string> = {
   "clr-namespace:UiPath.Testing.Activities.Coverage;assembly=UiPath.Testing.Activities": "utac",
   "clr-namespace:UiPath.Testing.Activities.Mocks;assembly=UiPath.Testing.Activities": "utam",
   "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities": "utat",
+  // Form（Studio の既定 XAML と同じ接頭辞）
+  "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities": "ufa",
 };
 
 // Studio の BlankTemplate の Main.xaml と同じ並び
@@ -284,7 +286,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
       // InvokeWorkflowFile（args）だけは、run で確かめた包まない形のまま
       const wrap = !(n.args?.length && prop === "Arguments");
       const p = a.props.find((x) => x.name === prop);
-      const valueType = /InArgument>$/.test(p?.type ?? "") ? "InArgument" : "Argument";
+      const valueType = /(In|Out)Argument>$/.exec(p?.type ?? "")?.[0].slice(0, -1) ?? "Argument";
       if (wrap) xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
       emit(depth + 1, `<${tag}.${prop}>`);
       if (wrap) emit(depth + 2, `<scg:Dictionary x:TypeArguments="x:String, ${valueType}">`);

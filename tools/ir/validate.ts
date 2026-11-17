@@ -133,9 +133,11 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       if (!p || !isArgumentDict(p.type)) { add(at, "BAD_DICT", `${a.className} に引数の辞書のプロパティ "${k}" は無い`); continue; }
       given.add(k);
       const inOnly = /InArgument>$/.test(p.type);
+      const outOnly = /OutArgument>$/.test(p.type);
       list.forEach((x, i) => {
         checkType(x.type, `${at}[${i}]`, add);
         if (inOnly && x.dir !== "In") add(`${at}[${i}]`, "BAD_DICT", `"${k}" には In の引数しか入らない`);
+        if (outOnly && x.dir !== "Out") add(`${at}[${i}]`, "BAD_DICT", `"${k}" には Out の引数しか入らない`);
         if (x.dir !== "In") checkLValue(x.value, `${at}[${i}]`, scope);
       });
     }
@@ -247,7 +249,7 @@ export function itemNames(n: Node, count: number): string[] {
 }
 
 // Dictionary<String, Argument> / Dictionary<String, InArgument>（IDictionary も）
-export const isArgumentDict = (t: string) => /^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(t);
+export const isArgumentDict = (t: string) => /^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In|Out)?Argument>$/.test(t);
 
 // 非ジェネリックの InArgument / OutArgument（Assign.To など）は、要素形式で型を書く必要がある
 export const isUntypedArgument = (t: string) => t === "System.Activities.InArgument" || t === "System.Activities.OutArgument";

@@ -241,7 +241,7 @@ export function writable(a: Activity, p: Prop): Writable {
   const nullable = p.type.match(/^System\.Nullable<(.+)>$/);
   if (nullable) return attrTypes.has(nullable[1]) || nullable[1].includes(".") ? { ok: true, how: "属性（Nullable）" } : { ok: false, group: "Nullable", reason: `${p.type} は未対応` };
   if (p.type === "System.Type") return { ok: true, how: "型名（{x:Type}）" };
-  if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
+  if (/^System\.Collections\.Generic\.I?Dictionary<System\.String, System\.Activities\.(In|Out)?Argument>$/.test(p.type)) return { ok: true, how: "dicts" };
   if (literalMapValue(p.type)) return { ok: true, how: "dicts" };
   if (plainListElement(p.type)) return { ok: true, how: "lists" };
   const listOf = listElementType(p.type);
