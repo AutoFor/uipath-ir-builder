@@ -46,13 +46,13 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 | Agent Registry / Agents | デプロイ済みのエージェント（フォルダごと）。開くと Dashboard・Design・Review runs・Feedback・Evaluations (Preview)・Memory (Preview)・Run now |
 | Conversational (Preview) | デプロイ済みの会話型（会話型のエージェントと、会話のトリガーを持つ Maestro Flow）。開くと Dashboard（利用者・メッセージ・会話の数）・Design・Review runs・Feedback・Evaluations・**Channels**（Microsoft Teams のアプリとして出す）・**A2A**（ほかのエージェントから呼ぶ口。Endpoint と Agent card の JSON。「Copy A2A URL」）・**Chat**（その場で話せる） |
 | Draft agents | まだ出していない Studio Web のエージェント |
-| Templates | UiPath のテンプレート 23 種。「Use」で Studio Web にソリューションができる。自分のエージェントは Studio Web の「Submit as template」（名前と説明）で組織のテンプレートにできる：Studio Web の Templates（種類は Solution）と `agents_` の Templates の両方に出る。Studio Web の Templates のカードの ⋮ に New solution from template（Cloud / Local Workspace）・Edit solution・Demote to User level・Pin・Delete |
-| Guardrails | ガードレールの説明だけの画面（Configure / Fine-tune / Monitor の 3 つの絵と、公式の文書へのリンク。押せるものは無い。設定は Studio Web の各エージェント、試すのは評価、見るのは各エージェントの Review runs）。使える検証器は `uip agent guardrails list`：pii_detection・prompt_injection・harmful_content・intellectual_property・user_prompt_attacks・llm_as_judge |
+| Templates | UiPath のテンプレート（2026-11-17 に 22 種。文書の 2026-01 の「Templates タブを外した」に反して、左のメニューにまだある）。「Use」で Studio Web にソリューションができる。自分のエージェントは Studio Web の「Submit as template」（名前と説明）で組織のテンプレートにできる：Studio Web の Templates（種類は Solution）と `agents_` の Templates の両方に出る。Studio Web の Templates のカードの ⋮ に New solution from template（Cloud / Local Workspace）・Edit solution・Demote to User level・Pin・Delete |
+| Guardrails | ガードレールの説明だけの画面（2026-11-17 も同じ。文書の円グラフ・Top Invoked Actions・エージェントごとの表は、ガードレールのあるエージェントがデプロイされて動いたあとに出るものと思われる。Configure / Fine-tune / Monitor の 3 つの絵と、公式の文書へのリンク。押せるものは無い。設定は Studio Web の各エージェント、試すのは評価、見るのは各エージェントの Review runs）。使える検証器は `uip agent guardrails list`：pii_detection・prompt_injection・harmful_content・intellectual_property・user_prompt_attacks・llm_as_judge |
 | Context grounding indexes | インデックス（RAG）の一覧と、検索・取り込みのジョブの数のグラフ、使っている数（trial は 10 個まで）。「Create Index」：名前・説明・フォルダ、Ingestion（Basic＝文字だけ・無料、Advanced＝表や画像も・Platform Units を使う）、Data Source（Storage Bucket か Connector）→ Orchestrator のフォルダ・バケット（「Add New」でその場で作れる）・ファイルの種類・Include Subfolders、右の File Upload でバケットにファイルを上げる、Schedule Ingestion（定期の取り込み。無ければ手で）。Save で取り込みが始まる |
 | Feedback | 実行への👍👎。メモリの元になる。「View API docs」あり |
 | Memory spaces (Preview) | エージェントのメモリ。作成（名前・説明・フォルダ）、開くと Configure・**Import**（JSON から）・**Export**（`memory-space-<名前>-<Id>.json`）・Add memory（Feedback の一覧から選ぶ）・Delete（名前を打って確かめる）。Export した JSON を別の memory space に Import すると、同じ項目が入った（下の「メモリの Export / Import の形」） |
 | Phone numbers (Preview) | 電話番号を Flow の着信トリガー（voiceTrigger）につなぐ。「Connect number」は SIP Trunk（ラベル・番号・向き・SIP のドメイン）か Twilio、「Manage inbound access」は自分の SIP のドメイン・許す IP・SIP のユーザーとパスワード。番号は電話会社の契約が要る |
-| MCP servers (Preview) | 道具として呼べる MCP サーバーの一覧（足すのは Orchestrator） |
+| MCP servers (Preview) | 道具として呼べる MCP サーバーの一覧（足すのは Orchestrator）。種類は `uip agenthub mcp create` の 6 つ：`uipath`（UiPath のプロセスを道具に）・`coded`（`--process-key`）・`command`（`--command`・`--arg`・`--env`。npm・PyPI のパッケージ）・`remote`（`--uri`・`--header`・`--connection-id`・`--use-relay`）・`swagger`（`--spec-url`）・`platform`（`--service`・`--tool`）。生成器と trial で確かめたのは `uipath` だけ（AUT-1201 の 33） |
 
 デプロイしたエージェントの Evaluations には、データセット・評価器・評価の実行・スケジュールがある（実行時の評価）。
 
