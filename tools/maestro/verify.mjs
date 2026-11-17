@@ -19,6 +19,7 @@
 //     --tenant     成果物が指す資源がテナントにあるかを照合する（一覧を読むだけ。ログインが要る）
 //     --workspace  .flow-sdk/（bindings.json、connectors-local）がある場所。コネクタを使うソースで指定する
 //     --profile    --tenant で照合するテナントを、uip login --profile で作ったログインにする（既定は既定のログイン）
+//   Case のソースの横に <名前>.quickform.json があれば、compile の後で QuickForm のタスクを足す（case-quickform.mjs）
 //     --automate   Flow を Maestro Automate として扱う（--pack の雛形を init --automate で作る。operate.json の profile が Lite になる）
 // 既定ではテナントに一切触らない。テナントを読むのは --tenant のときだけで、書き込みは無い。
 // 終了コード: 0 = すべて OK、1 = NG がある、2 = 使い方の間違いか、環境の問題（uip や SDK が無い）
@@ -30,6 +31,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
 import { allUsersTasks, unassignedTasks } from "./task-assign.mjs";
 import { extractLimitIssues } from "./extract-limits.mjs";
+import { addQuickForms, checkSpec } from "./case-quickform.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -269,6 +271,11 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     const r = runUip(uipJs, step.args);
     // compile が失敗したのに古いものが残らないように、上で dir を消してある
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
+    // Case の QuickForm（SDK に無い）：ソースの横に <名前>.quickform.json があれば、compile の後で足す（AUT-1211、case-quickform.mjs）
+    if (step.name === "compile" && info.family === "case" && info.source && existsSync(artifact)) {
+      const specPath = join(dirname(abs), `${info.name}.quickform.json`);
+      if (existsSync(specPath)) results.push({ name: "quickform", ...applyQuickForm(artifact, specPath) });
+    }
     if (step.name === "compile" && info.family === "flow" && existsSync(artifact)) {
       const fixed = fixProcessInputTypes(readFileSync(artifact, "utf8"));
       const http = fixHttpV2(fixed.text);
@@ -289,6 +296,18 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   const j = judge(results, opts.strict);
   const steps = results.map(({ data, ...s }) => s);
   return { file: input, family: info.family, artifact: existsSync(artifact) ? artifact : null, ...j, steps };
+}
+
+function applyQuickForm(artifact, specPath) {
+  const started = Date.now();
+  const plan = JSON.parse(readFileSync(artifact, "utf8"));
+  const spec = JSON.parse(readFileSync(specPath, "utf8"));
+  const errs = checkSpec(plan, spec);
+  if (errs.length) return { status: "ng", ms: Date.now() - started, diagnostics: errs.map((message) => ({ level: "error", code: "QUICKFORM_SPEC", where: basename(specPath), message })) };
+  const { files } = addQuickForms(plan, spec);
+  writeFileSync(artifact, JSON.stringify(plan, null, 2) + "\n");
+  for (const f of files) writeFileSync(join(dirname(artifact), f.name), JSON.stringify(f.content, null, 2) + "\n");
+  return { status: "ok", ms: Date.now() - started, diagnostics: [] };
 }
 
 // 割り当て先の無い人のタスク（AUT-1090）。未割り当てでも動くので error にしない。--strict では NG になる

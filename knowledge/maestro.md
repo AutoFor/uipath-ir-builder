@@ -38,6 +38,8 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - `debug.mjs` は一時フォルダに `flow init`（`--automate` なら Automate）し、`.flow` を入れて `uip maestro flow debug` を流す。**テナントの Studio Web に試しのソリューションが 1 つ増える**
 - `verify.mjs` の `--out` は `<dir>/<名前>.flow/<名前>.flow`（フォルダと同じ名前のファイル）に書く
 - `verify.mjs --tenant` は既定のログインのテナントと照合する。別のログインのテナント（trial など）で動かすものは `--profile <名前>` を付ける（照合の一覧を読むときだけ使う）
+- **BPMN の `debug.mjs` は、変数と失敗の理由も出す**（AUT-1211）。`bpmn debug` の結果には変数が無いので、続けて `uip maestro bpmn debug-instance variables`（ノードの出力とプロセスの変数）と、Completed でなければ `incidents` を読む。スクリプトが投げた文は incident の `ErrorDetails` にそのまま入る（`traces spans get` を読まなくてよくなった）。CLI はキーの先頭を大文字にして返す（`Response.Level`）ので、プロセスの変数は `GlobalDefinitions` の `Name` で宣言した名前に戻して出す
+- **Case の `debug.mjs` は入力を渡せない**（`uip maestro case debug` に `-i` が無い。渡すと ValidationError で何も動かない。`debug.mjs` は先に止める）。入力の要るケースはデプロイして `uip or jobs start <プロセスの Key> --input-arguments` で動かす
 - SDK の最新は 6.96.1（2026-11-13）。6.66.5 との差は関数 2 つ（`ANY_ESCALATION`、`taskOutput`）と、Case の型がいくつか。どちらにも Switch の「Match all cases」（テナントでは 11 月に入った）は無い
 
 ## 3. Flow の書き方で、つまずくところ
@@ -110,10 +112,11 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `hitl`（Quick Form）：作る → 完了 → 再開 → 分岐 | テナント（Community と trial。`uip tasks complete` で完了） | テナント（人が完了） | `fixtures/ok/Approval.flow` |
 | 会話（`conversationTrigger`、`waitForMessage`、`conversationalAgent`、`sendMessage`） | テナント（Studio Web のデバッグのチャットで） | 手元 | `Chat` |
 | `documentClassify` | テナント（分類器なしで Completed、結果は空） | 手元 | `Documents` |
-| `summarize`、`batchTransform` | 動かない：このテナントのプランでは `Unavailable with current plan`（一時インデックスが作れない） | 同じ | `Documents` |
+| `summarize`、`batchTransform` | Community では動かない（`Unavailable with current plan`、一時インデックスが作れない）。**trial（Standard）ではテナントで動いた**（2026-11-17、AUT-1211）：要約の出力は `$vars.<id>.output.content.Text`（と `Citations[]`）、一括変換は列を足した CSV のファイル参照（`ID`・`FullName`・`MimeType`） | 同じ（trial で Orchestrate として流した） | `Documents` |
 | `ixpExtract` / `dynamicExtract` | `ixpExtract` は動いた（Standard のトライアル。Community はデプロイが 403）。`dynamicExtract` は Studio Web の Debug で抽出サービスまで届くが、実行時の SingleExtract が INVALID_DOCUMENT。Studio Web だけで作った Flow でも同じ（設計時の Dataset の予測は通る）（10 節） | 同じ | — |
 | 音声（`voiceTrigger`、`voiceAgent`、`endCall`、`createOutgoingCall`） | 手元と、テナントの登録簿との突き合わせ（下の「音声のノード」）。着信はデプロイと電話番号（SIP の電話会社か Twilio の契約）が要り、発信はデバッグでも本当にかけて課金されるので、試せない | 同じ | `Voice` |
-| `queueItem`、`publishedFunction` | 手元（キューは書き込みになる。関数は、pack → publish → deploy したものを Service Task から呼べる（文書、AUT-1197）。まだテナントで試していない） | 手元 | `LocalOnly` |
+| `publishedFunction`（Function ノード、JS/TS の関数） | — | テナント（trial、2026-11-17。`samples/function-ts/quote` を pack → `or packages upload` → `or processes create` した「AUT1211Quote」を呼び、`{subtotal, discount, total}` が `$vars.<id>.output` に入った） | `deploy/FunctionCall` |
+| BPMN の「Start and wait for Function」（`Orchestrator.ExecuteFunctionAsync`） | — | テナント（trial。SDK に専用のメソッドが無いので `.activity()` に型名を渡す。名前とフォルダで指すときは `typeVersion: "v2"`。出力は `outputs: { total: "=total" }` で変数に入った） | `deploy/FunctionTask` |
 | `apiWorkflow`（生成器で作った API ワークフローを呼ぶ） | テナント（トライアル。配列の引数も渡せた） | 手元 | `deploy/CallApiWorkflow`（knowledge/api-workflow.md） |
 | BPMN：並列ゲートウェイ、タイマーの中間イベント、サブプロセス、multi-instance、エラーの境界イベント | — | テナント | `BpmnTour.bpmn` |
 | BPMN：Inclusive ゲートウェイ、Event-based ゲートウェイ、エラー開始のイベントサブプロセス | — | テナント | `BpmnEvents.bpmn` |
@@ -121,7 +124,10 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 | `onEvent` / `waitForEvent`（Data Fabric のレコード作成） | 手元。WEBHOOK 方式でデバッグでは動かない。デプロイすると行の作成で起動した（10 節） | デプロイで起動した（`event-bindings.mjs` で整える。10 節） | `EventWait`、`deploy/DfEvent` |
 | 定期実行のトリガー（デプロイ） | テナント（5 分ごとに動いた） | — | `deploy/Nightly` |
 | 定期実行の Cron（デプロイ、AUT-1192） | テナント（2026-11-17、Sorahane Trial の個人ワークスペース。`0 * * * * ?` で毎分 12 秒ごろに動き、3 回とも Successful） | — | `deploy/CronTick` |
-| `queueItem` | テナント（試しのキューに項目ができた） | — | `deploy/QueueTour` |
+| `queueItem` | テナント（試しのキューに項目ができた。trial でも debug で入った） | — | `deploy/QueueTour` |
+| キューの残りのノード（Delete queue items・Set transaction status）と Queue trigger | 下の「キューのノード」 | 同じ | — |
+| BPMN の Custom instance ID | — | テナント（trial。`InstanceDisplayName` が式の値になった） | `InstanceId.bpmn` |
+| Case の QuickForm（`case-quickform.mjs`） | — | テナント（trial。タスクができ、`uip tasks complete` で完了した） | `CaseQuickForm.case` |
 | BPMN の Call activity（`startAgenticProcess`）と戻り値 | — | テナント | `deploy/Parent`、`deploy/Child` |
 | ビジネスルール（`businessRule`、DMN） | — | 評価できた（DMN 1.3、`.uirule` を直す。10 節） | `deploy/RuleCall`、`deploy/Tier` |
 
@@ -174,7 +180,7 @@ node tools/maestro/debug.mjs <dir>/<名前>.flow/<名前>.flow --automate -i '{"
 - Case Manager エージェントの出力は `caseManagerDecisions` の形でないと**黙って無視される**
 - `uip maestro case debug` は JSON の前にログの行を出す（`debug.mjs` は最初の `{` の行から読む）。Case は内部で BPMN にされ、`CaseRulesEvaluatorNode`（ルールの評価）、`CaseManagerNode`、ステージごとの SLA のイベントサブプロセスなどが動く。ステージは `Stage_<id>`、タスクは `t<id>` という要素になる
 - 実行するアカウントに Triggers.view と Triggers.create が無いと、wait-for-trigger の段で 403（実行時にしか出ない）
-- `action` にアプリを指定しないと 170004。QuickForm は SDK で書けず、`caseplan.json` と `.hitl.json` を手で足すと動いた（docs/maestro-tenant-resources.md）
+- `action` にアプリを指定しないと 170004。QuickForm は SDK で書けないので、`tools/maestro/case-quickform.mjs` が compile の後で `caseplan.json` と `<タスク>.hitl.json` に足す（12 節）
 
 ## 8. 運用（Orchestrate）
 
@@ -305,14 +311,56 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 
 ### ノード・機能（まだ見本に無い）
 
-- **HTTP Webhook**（12）：ノードが渡す URL に要求が来ると、run が始まるか、待っていた run が進む。Filter を付けられる。出力の形は最初の要求が来るまで分からない。デプロイしないと届かない。SDK の関数一覧に無い。
-- **Flow のキュー**（13）：Queue trigger がある（1 つのキューで起動できる Flow は 1 本だけ）。キューのノードには Delete queue items と Set transaction status もある。
-- **BPMN のキューの開始イベント**（14）：1 つの項目が 1 つのインスタンスを始める（バッチは 1 に固定）。InProgress のまま 24 時間で Abandoned。終わりに Set transaction status が要る。Get queue items は新しい順に 100 件まで、Bulk add は 1 回 15,000 件まで。Wait for queue event には期限が無い（境界のタイマーを付ける）。
-- **評価**（20）：Flow の評価セットはノード単位か Flow 単位のどちらか。評価器は決定的なもの（Contains・Exact match・JSON similarity）、LLM のもの（semantic similarity・strict JSON similarity・Trajectory）、ツールの呼び出しを見るもの（ノード単位だけ）。デバッグの run からデータを取り込める。BPMN の評価は Preview で、ノード単位も CLI も無い。CLI は `uip maestro flow eval`（[uip-cli.md](uip-cli.md)）。
-- **Function ノード**（21、2026-09-17、Preview）：Python・JS・TS の coded function を呼ぶ。BPMN は Service task の「Start and wait for Function」（06-19）。関数は `uip function` で作れる（[functions.md](functions.md)）。
-- **BPMN の Custom instance ID**（30）：開始イベントの General で、インスタンスの名前を式で決める（開始の直後に 1 回だけ評価。Insights と Process Mining では探せない）。生成器では扱っていない。
-- **BPMN の Data Fabric の式**（31）：2026-07-03 から、エンティティ名と `?folderPath=` にバインディングや変数を書ける（`datafabric[bindings.EntityName?folderPath=bindings.FolderKey][...]`）。09-03 から、絞り込みの値の `=js:` が評価される。
-- **Maestro API**（28）：Swagger は `https://cloud.uipath.com/{org}/{tenant}/pims_/api/swagger`。CaseApp v3 で ad-hoc タスクを起こす（`tasks/trigger`）、ケースを閉じる（`close`）、ケースの状態を読む。どれも `X-UIPATH-FolderKey` が要る。呼ぶときは `node tools/platform/cloud-api.mjs ... --service pims_`（[cloud-ops.md](cloud-ops.md)）。
-- **要約ノード**（35）：1,000 ページまでの文書を扱い、出典付きで答える。
+- **HTTP Webhook**（12）：ノードが渡す URL に要求が来ると、run が始まるか、待っていた run が進む。Filter を付けられる。出力の形は最初の要求が来るまで分からない。デプロイしないと届かない。SDK の関数一覧に無い。（→ 12 節：trial は接続が無く試していない）
+- **Flow のキュー**（13）：Queue trigger がある（1 つのキューで起動できる Flow は 1 本だけ）。キューのノードには Delete queue items と Set transaction status もある。（→ 12 節：Delete queue items は動いた。Queue trigger はこのテナントで無効）
+- **BPMN のキューの開始イベント**（14）：1 つの項目が 1 つのインスタンスを始める（バッチは 1 に固定）。InProgress のまま 24 時間で Abandoned。終わりに Set transaction status が要る。Get queue items は新しい順に 100 件まで、Bulk add は 1 回 15,000 件まで。Wait for queue event には期限が無い（境界のタイマーを付ける）。（→ 12 節：trial の BPMN の登録簿に無い）
+- **評価**（20）：Flow の評価セットはノード単位か Flow 単位のどちらか。評価器は決定的なもの（Contains・Exact match・JSON similarity）、LLM のもの（semantic similarity・strict JSON similarity・Trajectory）、ツールの呼び出しを見るもの（ノード単位だけ）。デバッグの run からデータを取り込める。BPMN の評価は Preview で、ノード単位も CLI も無い。CLI は `uip maestro flow eval`（[uip-cli.md](uip-cli.md)）。（→ 12 節：BPMN の評価は CLI に無い）
+- **Function ノード**（21、2026-09-17、Preview）：Python・JS・TS の coded function を呼ぶ。BPMN は Service task の「Start and wait for Function」（06-19）。関数は `uip function` で作れる（[functions.md](functions.md)）。（→ 12 節：Flow と BPMN の両方でテナントで動いた）
+- **BPMN の Custom instance ID**（30）：開始イベントの General で、インスタンスの名前を式で決める（開始の直後に 1 回だけ評価。Insights と Process Mining では探せない）。生成器では扱っていない。（→ 12 節：見本 InstanceId.bpmn でテナントで動いた）
+- **BPMN の Data Fabric の式**（31）：2026-07-03 から、エンティティ名と `?folderPath=` にバインディングや変数を書ける（`datafabric[bindings.EntityName?folderPath=bindings.FolderKey][...]`）。09-03 から、絞り込みの値の `=js:` が評価される。（→ 12 節：debug では datafabric が空で、動かせていない）
+- **Maestro API**（28）：Swagger は `https://cloud.uipath.com/{org}/{tenant}/pims_/api/swagger`。CaseApp v3 で ad-hoc タスクを起こす（`tasks/trigger`）、ケースを閉じる（`close`）、ケースの状態を読む。どれも `X-UIPATH-FolderKey` が要る。呼ぶときは `node tools/platform/cloud-api.mjs ... --service pims_`（[cloud-ops.md](cloud-ops.md)）。（→ 12 節：v1 は読めた。v3 の CaseApp は Case role が要る）
+- **要約ノード**（35）：1,000 ページまでの文書を扱い、出典付きで答える。（→ 4 節の表：trial で動いた）
 - **画面と開発の道具**（33・34）：BPMN の Simulate はタスクを動かさず、ゲートウェイの道を人が選ぶ。デバッグでブレークポイントを置き、止まっている間に変数を直せる（Studio Web だけ）。VS Code の UiPath Maestro Orchestrate 拡張で `.flow` を見て直せ、検証が Problems に出る（`UiPath: Package` / `Deploy`）。Studio Desktop でも Flow を作れる（Data Fabric のノードは無い）。
 - **公式の skill**（19）：`uip skills install` で入る `uipath-maestro-flow`（09-16 に GA）、`uipath-maestro-case`・`uipath-maestro-bpmn`（Preview）。この道具では、作るのは SDK のソースと `verify.mjs`、skill は CLI の使い方の参照として読む（AGENTS.md の Maestro の行）。
+## 12. Orchestrate の残りを動かした結果（2026-11-17、trial、AUT-1211）
+
+試しの組織 sorahaneworks（`--profile trial`）で確かめた。作った試しの資源は AUT-1211 のコメントに一覧がある。
+
+### Function（JS/TS の関数）を呼ぶ
+
+- **Flow**：`publishedFunction({ key, name, folderPath, inputs, returns })`。key は `uip maestro flow registry search <関数の名前>` に出る `uipath.core.function.<key>`（プロセスの Key）。登録簿は関数を作った後に `registry pull` し直さないと出ない。出力は `$vars.<id>.output.<返した項目>`（見本 `deploy/FunctionCall`）
+- **BPMN**：「Start and wait for Function」（`Orchestrator.ExecuteFunctionAsync`）は SDK に専用のメソッドが無い。`.activity(id, "Orchestrator.ExecuteFunctionAsync", { typeVersion: "v2", context: { name, folderPath }, inputs: {…}, outputs: { total: "=total" } })` で書いて動いた（見本 `deploy/FunctionTask`）。v2 は名前とフォルダで探す。プロセスの binding は無くても動いた
+- 関数は `uip function pack` → `uip or packages upload` → `uip or processes create --entry-point content/functions/<関数>.ts`（[functions.md](functions.md)）
+
+### キューのノード（Flow）
+
+- **SDK にあるのは `queueItem`（Create queue item）だけ**。Delete queue items・Set transaction status・Set transaction progress・Postpone・Queue trigger は無い
+- **テナントの登録簿も出さない**。`uip maestro flow registry search queue` には出るが `AvailableOnTenant: false`、`registry get` は Node not found、`uip maestro flow node add` は「Node type '…' is not enabled for this tenant. Ask an admin to enable the feature flag」（trial も既定のログインの組織も同じ）。それでも **`queueItem`（create）は実行できる**ので、この判定は CLI の側だけのもの
+- **Delete queue items は rawNode で動いた**：`rawNode({ nodeType: "core.action.queue.delete-items", version: "1.0", manifest, inputs: { items: js\`[$vars.enqueue.output]\` } })`。出力は消した数（`$vars.<id>.output` が `1`、debug の結果では `deletedCount`）。消せるのは New の項目で、各項目に `Id` と `RowVersion` が要る（`queueItem` の出力をそのまま渡せる。`check` は `RowVersion` を読むと `QUEUE_READ_UNKNOWN_FIELD` で止める）（見本 `deploy/QueueDelete`）
+- **manifest は CLI から取る**：`node tools/maestro/cli-manifest.mjs core.action.queue.delete-items`（uip の `@uipath/maestro-tool` の bundle の中の定義をそのまま出す。手で書かない）
+- **Set transaction status も実行まで届いた**が、New の項目を渡すと `170048 Failed to set queue transaction status`（`This queue item has not been processed yet.`）。InProgress の項目（Queue trigger が渡すもの）が要る。Orchestrator の API の `StartTransaction` は、ロボットでないログインでは 204（項目を渡さない）で、作れなかった
+- **Queue trigger は試していない**：デプロイが要り、テナントで無効と出ている。SDK の `.trigger()` も manual・scheduled・event・form・conversation・voice だけ
+- テナントで機能を有効にしてもらえば、Studio Web で作って `solution download` した形と比べる
+
+### BPMN
+
+- **キューの開始イベント・Set transaction status・Get queue items・Bulk add・Wait for queue event は、trial の BPMN の登録簿（`uip maestro bpmn registry list`）に無い**。あるのは Create queue item と Create and wait for queue item だけ。文書にはあるが、このテナントでは作れない
+- **Custom instance ID は動いた**（見本 `InstanceId.bpmn`）。Studio Web で開始イベントの General → Custom instance ID に入れて保存した形を `solution download` で読み、SDK で同じものを書いた：内部の変数 `.var("internalCustomInstanceId", "string", { name: "_internalCustomInstanceId", elementId: "start", custom: true, internal: true })` と、開始イベントの `payload: { type: "BPMN.Variables", outputRows: [{ name: "_internalCustomInstanceId", type: "string", source: "=<式>", var: "internalCustomInstanceId", custom: true }] }`。debug のインスタンスの `InstanceDisplayName`（`uip maestro bpmn debug-instance status`）が `注文-A-100` になった。validate は開始イベントで入力を読むところに `VARIABLE_NOT_SET` の warning を出すが、動く。Studio Web は欄に打った文字をそのまま `source` に書く（`=` を付けない）。式として確かめたのは `=` を付けた形
+- **Data Fabric の式（`datafabric.<表>["qes:…"]`）は debug では動かなかった**。テナントの表・フォルダの表（Shared）のどちらでも、表をソリューションの資源に入れても（`uip solution resources add --source remote --kind Entity`）、`datafabric.<表>`、`datafabric["<表>?folderPath=Shared"]`、`datafabric[vars.<変数>]`、`datafabric[bindings.<名前>]` のどれも `Property '<表>' not found against object of type …ExpressionDictionary` だった。何を宣言すれば辞書に入るかは分からない（SDK に書く手段が無く、Studio Web の Data manager にも表を足す欄が無い）。デプロイした実行では試していない
+- **評価（Preview）は CLI に無い**（`uip maestro bpmn` に `eval` が無い。Flow は `uip maestro flow eval`）。Studio Web の BPMN のプロジェクトには Datasets の欄（Run dataset・Manage evaluators）がある。流していない
+
+### Flow の HTTP Webhook
+
+- コネクタのトリガー `uipath.connector.trigger.uipath-http-webhook.http-webhook`（Integration Service の `uipath-http-webhook`）。**接続が要る**：`registry get` も「Trigger nodes require --connection-id」と断る。trial には接続が無く、新しく作らない約束なので、形も確かめていない
+
+### Case
+
+- **QuickForm は `tools/maestro/case-quickform.mjs` で足す**。ソースの横に `<名前>.quickform.json`（ステージの名前・タスクの名前・フォームの項目・ボタン・押したボタンを入れる変数）を置くと、`verify.mjs` が compile の後で caseplan.json にタスク（`type: "action"`、context の `hitlType: "quick"`、`hitlSchemaId`）と `<タスク>.hitl.json` を足してから validate する。形は公式の skill（uipath-human-in-the-loop の hitl-casetask-action.md）と、SDK が action のタスクに書く outputs（`id`・`var`・`source`・`target`・`elementId`）に合わせた。trial の debug でタスク（QuickFormTask）ができ、`uip tasks complete --action Approve --data '{"comment":"…"}'` で完了すると、ケースの変数に `decision: "Approve"` と `comment` が入り、ケースは Completed（見本 `CaseQuickForm.case`）
+  - 出力を書く変数はソースで `.var()` しておく。ステージの出口は `required-tasks-completed` にする（タスクは compile の後に入るので、`selected-tasks-completed` で名前を指せない）。入力をフォームに出すなら `.input({ … }, { from: manualTrigger() })`（`from` が無いと validate が `STRICT_INPUTOUTPUTS_COMPANION`）
+  - `_schemaFileId` は仮の UUID。実行には効かないが、Studio Web の「Edit Schema」は開かない（skill の文書）
+  - validate は `STRICT_BINDINGS_ABSENT` の warning を出す（QuickForm は binding が要らないので気にしなくてよい）
+- **Maestro API（pims_）**：Swagger は `node tools/platform/cloud-api.mjs GET /api/swagger/v1/swagger.json --service pims_`。パスは `/api/v…`（Swagger の `servers` が `/pims_/api`）。フォルダは `X-UIPATH-FolderKey` で指す（`cloud-api.mjs --folder-key` が付ける。個人ワークスペースの Key は Folders で引けないので、引けなくても付けて送る）。Git Bash からは `MSYS_NO_PATHCONV=1` を付ける（`/api/…` が Windows のパスに直される）
+  - **v1 は読めた**（`Jobs.View` で通る）：`GET /api/v1/instances/<id>`、`GET /api/v1/cases/<id>/case-status`（ステージとタスクの状態）、`GET /api/v1/caseapp/instances/<id>/variables`（debug のインスタンスでも通る）
+  - **v3（CaseApp）は 403**（`PIMS-150011` / `150012` / `400037`）。debug でも、デプロイして `uip or jobs start` で動かしたものでも、`.caseApp()` で Case App を有効にしても同じ。Swagger の説明は「Authorized via Cases.ViewSummary at process scope」で、文書（case-app-permissions-reference）では **Case role**（Studio Web のケースの Case roles で作り、デプロイ後に Maestro の Processes → Access で人に割り当てる）が要る。SDK に Case role を書く手段が無い。`tasks/trigger`（ad-hoc のタスクを起こす。`Cases.RunAdhocTasks`）・`close`（`Cases.Close`）・`tasks/adhoc` は v3 にしか無いので、試せていない。v3 の一覧（`GET /api/v3/caseapp/instances`）は 200 で空を返す
+  - ad-hoc のタスクはソースで `.allowAdhocTasks()` とタスクの `entryWhen(rule("adhoc"))`（見本 `CaseApi.case`）
+- `uip maestro case process run` はインスタンスを作ったが、終わるまで返らなかった。デプロイしたケースは `uip or jobs start <プロセスの Key> --folder-key <Key>` で起こす方が扱いやすい
