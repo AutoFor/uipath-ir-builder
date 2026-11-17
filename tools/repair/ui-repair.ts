@@ -21,6 +21,9 @@ import { applyProposal, currentTarget, hintsFromTarget, locateTarget, parseLiveA
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const uipJs = process.env.UIP_CLI_JS ?? join(process.env.APPDATA ?? "", "npm", "node_modules", "@uipath", "cli", "dist", "index.js");
 const py = join(root, "tools", "repair", ".venv", "Scripts", "python.exe");
+// ANTHROPIC_API_KEY が無いとき、1Password の参照（op://…）をこのファイルに書いておけば、observe.py を動かすときだけ op run で渡す（値は残さない）
+const envOp = join(root, "tools", "repair", ".env.op");
+const hasOp = () => spawnSync("op", ["--version"], { encoding: "utf8", shell: true }).status === 0;
 
 const args = process.argv.slice(2);
 const val = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
@@ -106,7 +109,7 @@ if (!match.length) notes.push(`IR のアプリのセレクター ${appSel || "�
 let observation: Record<string, unknown> | undefined;
 let observedAttrs: Record<string, string> | undefined, observedLabel: string | undefined;
 if (args.includes("--no-observe")) notes.push("browser-use は使わなかった（--no-observe）");
-else if (!process.env.ANTHROPIC_API_KEY) notes.push("browser-use は使わなかった（ANTHROPIC_API_KEY が無い）");
+else if (!process.env.ANTHROPIC_API_KEY && !(existsSync(envOp) && hasOp())) notes.push("browser-use は使わなかった（ANTHROPIC_API_KEY も、tools/repair/.env.op と 1Password の CLI（op）も無い）");
 else if (!existsSync(py)) notes.push("browser-use は使わなかった（tools/repair/.venv が無い。knowledge/ui-repair.md の手順で入れる）");
 else {
   const inFile = join(outDir, "observe-in.json"), outFile = join(outDir, "observe-out.json");
@@ -115,7 +118,10 @@ else {
     expectedUrl: appUrl, expectedTitle: htmlAttrs.title, currentTab: tab, error: failure.message,
   }, null, 2), "utf8");
   console.log("browser-use で画面を調べる …");
-  const r = spawnSync(py, [join(root, "tools", "repair", "observe.py"), inFile, outFile], { encoding: "utf8", timeout: 600_000 });
+  const obs = [py, join(root, "tools", "repair", "observe.py"), inFile, outFile];
+  const r = process.env.ANTHROPIC_API_KEY
+    ? spawnSync(obs[0], obs.slice(1), { encoding: "utf8", timeout: 600_000 })
+    : spawnSync("op", ["run", `--env-file=${envOp}`, "--", ...obs], { encoding: "utf8", timeout: 600_000 });
   if (r.status === 0 && existsSync(outFile)) {
     observation = JSON.parse(readFileSync(outFile, "utf8"));
     const el = observation?.element as { label?: string; attributes?: Record<string, string> } | undefined;

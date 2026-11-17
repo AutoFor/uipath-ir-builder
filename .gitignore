@@ -8,3 +8,4 @@ out/
 
 # ui-repair の browser-use（knowledge/ui-repair.md）
 tools/repair/.venv/
+tools/repair/.env.op

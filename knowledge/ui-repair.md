@@ -53,7 +53,9 @@ node tools/repair/ui-repair.ts apply out/repair/login/proposal.json
   tools/repair/.venv/Scripts/python -m pip install -r tools/repair/requirements.txt
   ```
 
-- AI は Anthropic（`ChatAnthropic`）。環境変数 `ANTHROPIC_API_KEY` が要る。無ければ browser-use を飛ばして、uip rpa uia だけで調べる。モデルは `UI_REPAIR_MODEL`（既定 `claude-sonnet-5-5`）、手順の上限は `UI_REPAIR_MAX_STEPS`（既定 8）
+- AI は Anthropic（`ChatAnthropic`）。環境変数 `ANTHROPIC_API_KEY` が要る。
+  - 1Password を使うときは、キーそのものではなく参照を `tools/repair/.env.op`（git に入れない）に書く。`ANTHROPIC_API_KEY=op://<保管庫>/<項目>/<欄>`。ui-repair.ts は observe.py を `op run --env-file=tools/repair/.env.op -- …` で動かし、キーはその子プロセスにだけ渡る（ファイルにも環境変数にも残らない）。`op` は 1Password アプリとの連携かサインインが要る
+  - どちらも無ければ browser-use を飛ばして、uip rpa uia だけで調べる。モデルは `UI_REPAIR_MODEL`（既定 `claude-sonnet-5-5`）、手順の上限は `UI_REPAIR_MAX_STEPS`（既定 8）
 - 普段の Chrome（ログイン済み）に `Browser('chrome')` でつなぐ。Chrome の DevToolsActivePort が要るので、Chrome でリモート デバッグを許可しておく（`chrome://inspect/#remote-debugging`）
 - **読むだけ**：クリック・入力・送信・ページ移動・タブの開け閉めをしないよう指示し、扱うドメインを対象のホストに絞る（`allowed_domains`）。結果に残す属性は `tag`・`id`・`name`・`type`・`aria-label`・`placeholder`・`class` だけ
 - **UiPath と同時に動かさない**。UiPath の入力方式 `DebuggerApi`（Chromium API）も Chrome のデバッガーの仕組みを使うので、つながりがぶつかると「Chromium API プロトコルへのアタッチに失敗しました」になる（Claude in Chrome でも同じことが起きた）
