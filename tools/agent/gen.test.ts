@@ -480,3 +480,27 @@ test("Client-side tool と confirm（会話型だけ。AUT-1201 の 17）", () =
   assert.deepEqual(codes({ tools: [cs] }), ["CLIENT_SIDE_NOT_CONVERSATIONAL", "CONFIRM_NOT_CONVERSATIONAL"]);
   assert.deepEqual(generate({ ...conv, tools: [{ ...cs, output: undefined }] } as any, CONV_BASE, ALL).problems.map((p) => p.code), ["CLIENT_SIDE_SCHEMA"]);
 });
+
+test("function の道具：ソリューションの中の関数の入口と key を使い、to-ir で戻す（AUT-1201 の 16）", () => {
+  const sol = mkdtempSync(join(tmpdir(), "fn-"));
+  try {
+    writeFileSync(join(sol, "S.uipx"), "{}");
+    mkdirSync(join(sol, "Function"));
+    writeFileSync(join(sol, "Function", "entry-points.json"), JSON.stringify({ entryPoints: [{ name: "main", input: { type: "object", properties: { x: { type: "integer" } } }, output: { type: "object", properties: { result: { type: "integer" } } } }] }));
+    mkdirSync(join(sol, "resources", "solution_folder", "process", "function"), { recursive: true });
+    writeFileSync(join(sol, "resources", "solution_folder", "process", "function", "Function.json"), JSON.stringify({ resource: { key: "k-1" } }));
+    const agent = join(sol, "Agent");
+    mkdirSync(agent);
+    const r = generate(ir({ tools: [{ function: "Function" }] } as any), BASE, { ...ALL, project: agent });
+    assert.deepEqual(r.problems, []);
+    const res: any = r.result!.resources.Function;
+    assert.equal(res.type, "function");
+    assert.equal(res.location, "solution");
+    assert.equal(res.referenceKey, "k-1");
+    assert.deepEqual(res.properties, { folderPath: "solution_folder", processName: "Function" });
+    assert.deepEqual(res.inputSchema.properties, { x: { type: "integer" } });
+    assert.deepEqual(generate(ir({ tools: [{ function: "Nope" }] } as any), BASE, { ...ALL, project: agent }).problems.map((p) => p.code), ["FUNCTION_NOT_FOUND"]);
+  } finally {
+    rmSync(sol, { recursive: true, force: true });
+  }
+});

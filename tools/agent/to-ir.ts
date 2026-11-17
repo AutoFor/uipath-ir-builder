@@ -274,6 +274,11 @@ export function toIR(dir: string): AgentIR {
       const statics = (r.properties.parameters ?? []).filter((p: any) => p.fieldVariant === "static");
       if (statics.length) t.values = Object.fromEntries(statics.map((p: any) => [p.name, p.value]));
       tools.push(t);
+    } else if (r.$resourceType === "tool" && r.type === "function" && r.location === "solution" && r.properties?.processName) {
+      const t: any = { function: r.properties.processName };
+      if (r.name !== r.properties.processName) t.name = r.name;
+      if (r.description) t.description = r.description;
+      tools.push(t);
     } else if (r.$resourceType === "tool" && r.type === "clientSide" && r.inputSchema && r.outputSchema) {
       const t: any = { clientSide: r.name };
       if (r.description) t.description = r.description;

@@ -41,6 +41,11 @@ export type Tool =
   | { mcp: string; tools?: string[]; description?: string }
   /** Integration Service の活動。connection は接続の Id か名前（書かなければその connector の既定の接続）。values は固定の値 */
   | { integration: string; activity: string; connection?: string; name?: string; description?: string; values?: Record<string, unknown> }
+  /**
+   * 同じソリューションの中の coded function（Python / TS。Studio Web の Tools → Function、Preview）。function はプロジェクトのフォルダの名前。
+   * 入出力は <プロジェクト>/entry-points.json、referenceKey は resources/solution_folder/process/function/<名前>.json の key（AUT-1201 の 16）
+   */
+  | { function: string; entry?: string; name?: string; description?: string }
   /** Client-side tool（会話型）。呼んだ側（ブラウザ・TypeScript SDK）で動く。input と output は JSON Schema（どちらも必須） */
   | { clientSide: string; description?: string; input: Record<string, unknown>; output: Record<string, unknown> }
   | { raw: Record<string, unknown> };
@@ -335,6 +340,24 @@ function toolResource(t: Tool, i: number, lookup: ProcessLookup | undefined, pro
   const p = `tools[${i}]`;
   if ("raw" in t) return t.raw;
   if ("integration" in t) return integrationResource(t, i, isLookup, project, probs);
+  if ("function" in t) {
+    // Studio Web で Tools → Function を足して書き出した形（location solution、type function、properties の folderPath と processName）
+    const sol = project && findSolution(project);
+    if (!sol) { probs.push({ path: p, code: "NEED_TENANT", message: "function の道具は --project（ソリューションの中のエージェント）で生成する" }); return undefined; }
+    const epFile = join(sol, t.function, "entry-points.json");
+    const resFile = join(sol, "resources", "solution_folder", "process", "function", `${t.function}.json`);
+    if (!existsSync(epFile) || !existsSync(resFile)) { probs.push({ path: `${p}.function`, code: "FUNCTION_NOT_FOUND", message: `ソリューションに関数 "${t.function}" が無い（${epFile} と ${resFile} が要る。Studio Web で作ったものは solution download で取る）` }); return undefined; }
+    const eps: any[] = readJson(epFile).entryPoints ?? [];
+    const ep = t.entry ? eps.find(e => e.name === t.entry || e.filePath === t.entry) : eps[0];
+    if (!ep) { probs.push({ path: `${p}.entry`, code: "FUNCTION_NOT_FOUND", message: `関数 "${t.function}" に入口 "${t.entry ?? ""}" が無い（ある物: ${eps.map(e => e.name).join(", ")}）` }); return undefined; }
+    const name = t.name ?? t.function;
+    return {
+      $resourceType: "tool", name, description: t.description ?? "", location: "solution", type: "function",
+      inputSchema: ep.input ?? { type: "object", properties: {} }, outputSchema: ep.output ?? { type: "object", properties: {} },
+      settings: {}, properties: { folderPath: "solution_folder", processName: t.function }, guardrail: { policies: [] },
+      id: (project && oldId(project, name)) ?? randomUUID(), referenceKey: readJson(resFile).resource?.key, isEnabled: true, argumentProperties: {},
+    };
+  }
   if ("clientSide" in t) {
     const obj = (s: unknown) => !!s && typeof s === "object" && (s as any).type === "object";
     if (!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(t.clientSide)) probs.push({ path: `${p}.clientSide`, code: "BAD_NAME", message: "Client-side tool の名前は英数字と _ -（関数の名前として渡る）" });
