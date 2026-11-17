@@ -19,7 +19,7 @@ node tools/ir/migrate-platform.ts --project <P> --to Windows  [--dry-run]   # �
    IR を直して（別のアクティビティにする）、もう一度流す
 3. IR の無い XAML（Studio で作ったもの）は、移る前のカタログで IR に取り込む
    - IR は XAML と同じフォルダの形に置く（`Main.xaml` → `ir/Main.json`、`Sub/Greet.xaml` → `ir/Sub/Greet.json`）。サブフォルダの XAML（と、`x:Class` とファイル名が違う XAML）は IR に `"file": "Sub/Greet.xaml"` が付き、同じ場所に作り直す
-   - **取り込めない XAML（C# の式、Flowchart など）は、XAML をそのまま移す**。Windows とクロスプラットフォームの XAML の違いはルートの AssemblyReference（WPF の 3 つ）だけなので、そこだけを書き換え、ほかは 1 文字も変えない。その前に、XAML の要素とプロパティを移る前・移る先のカタログと突き合わせ、移る先に無いものがあれば場所（要素の道筋と表示名）を挙げて止める
+   - **取り込めない XAML（C# の式など）は、XAML をそのまま移す**。Flowchart・StateMachine は取り込めるので（AUT-1216）、IR を通して作り直す。このとき Studio で並べた図の位置は、生成器の並べ方に変わる。Windows とクロスプラットフォームの XAML の違いはルートの AssemblyReference（WPF の 3 つ）だけなので、そこだけを書き換え、ほかは 1 文字も変えない。その前に、XAML の要素とプロパティを移る前・移る先のカタログと突き合わせ、移る先に無いものがあれば場所（要素の道筋と表示名）を挙げて止める
      ```
      移せない Main.xaml Activity/Sequence/MultipleAssign「まとめて代入」: MultipleAssign（UiPath.System.Activities）はクロスプラットフォームに無い
      ```
@@ -108,4 +108,4 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 - **C# のプロジェクトの移行**（2026-11-17）：C# の Windows のプロジェクト（`Main.xaml` は IR から作った C# の XAML、`Sub/Greet.xaml` は IR の無い C# の XAML で、Main が `Sub\Greet.xaml` を Invoke Workflow File で呼ぶ）をクロスプラットフォームに移し、Main と Sub/Greet の run、IR から作った Coded（`RunWorkflow("Sub\\Greet.xaml")` で呼ぶ）の run が OK。期待するログも合った。Windows に戻すと、XAML は元と 1 文字も違わず、build・run も OK（`out/verify/migcs-port-run`、`migcs-coded2-run`、`migcs-win-run`）
 - **サブフォルダの XAML の取り込み**（2026-11-17）：VB の Windows のプロジェクトの `Sub/Greet.xaml`（IR なし）を移すと `ir/Sub/Greet.json`（`"file": "Sub/Greet.xaml"`）に取り込まれ、クロスプラットフォームで IR から XAML と C# を作って build・run が OK（`out/verify/migvb-run`）。Windows に戻すと元の XAML と同じ
 - verify.mjs で手書きの XAML をサブフォルダごと試すときは `--base <フォルダ>`（そこからの相対パスのまま写す）。IR に `file` があれば、そのサブフォルダに書く
-- まだ見ていないもの：Flowchart など VB でも取り込めない XAML を「そのまま移す」ときの build（仕組みは C# の XAML と同じ）、Studio が自分で作ったサブフォルダの XAML（ここでは生成器で作った XAML を Studio の形とみなして試した。Studio の `x:Class` の付け方には寄らない：`x:Class` はそのまま `workflow` に、場所は `file` に持つ）
+- まだ見ていないもの：VB でも取り込めない XAML を「そのまま移す」ときの build（仕組みは C# の XAML と同じ）、Studio が自分で作ったサブフォルダの XAML（ここでは生成器で作った XAML を Studio の形とみなして試した。Studio の `x:Class` の付け方には寄らない：`x:Class` はそのまま `workflow` に、場所は `file` に持つ）

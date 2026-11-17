@@ -81,6 +81,7 @@ label = (String)__xaml1["label"];
 - 部分木の式に出てくる名前のうち、その位置で見えている変数・引数を、宣言の型で引数にする
 - 書き込まれるもの（カタログで `out` / `inout` のプロパティ、`Assign.To`、`MultipleAssign` の `to`、Out / InOut の引数の辞書）は `InOut`、読むだけなら `In`。`InOut` は戻りの辞書から変数に戻す
 - 部分木の中で宣言されたもの（Sequence の変数、ForEach などの `item`、ActivityFunc の引数、Catch の変数）は数えない
+- Flowchart・StateMachine・Pick（図）は、C# の構文に直さず図ごと部分木の XAML にする（AUT-1216）。図の中の式（FlowDecision の条件、FlowSwitch の式、遷移の条件）も数え、State・PickBranch の変数はその中だけで見えるものとして数えない。[flowchart-statemachine.md](flowchart-statemachine.md)
 - 数えないもの：文字列リテラルの中（VB の `""`、C# の `\"`、`@"..."`）、`.名前`（メンバー）と `!名前`、`名前:=`（名前付き引数）、VB の文字リテラル `"a"c` の `c`。`$"...{式}..."` の `{}` の中は数える
 - 式として読まないプロパティ：属性に書く値（`kind: prop`）、`System.Type`、enum のメンバー名
 - VB と同じく大文字小文字を区別しない（引数の名前は宣言の名前）

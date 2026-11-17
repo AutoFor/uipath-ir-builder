@@ -6,7 +6,7 @@
 
 | パッケージ | アクティビティ | プロパティ | 書ける | 書けない | サンプルで使用 | Coded 対応表あり / C# の構文 / API なし / 未作成 |
 | --- | --- | --- | --- | --- | --- | --- |
-| System.Activities | 123 | 662 | 628 | 34 | 39 | 2 / 13 / 0 / 108 |
+| System.Activities | 123 | 662 | 633 | 29 | 50 | 2 / 13 / 0 / 108 |
 | UiPath.Excel.Activities | 121 | 682 | 682 | 0 | 487 | 71 / 0 / 29 / 21 |
 | UiPath.Persistence.Activities | 20 | 235 | 232 | 3 | 226 | 0 / 0 / 20 / 0 |
 | UiPath.System.Activities | 171 | 1032 | 1032 | 0 | 966 | 81 / 16 / 67 / 7 |
@@ -19,9 +19,9 @@
 
 | 理由 | 数 | 方針 |
 | --- | --- | --- |
-| コレクション | 15 | List / Collection / 配列の値。要素構文（`<Prop><scg:List>…</scg:List></Prop>`）が要る。IR では JSON の配列で書き、生成器が要素構文にする方針。必要になったアクティビティのイシューで対応する |
+| コレクション | 12 | List / Collection / 配列の値。要素構文（`<Prop><scg:List>…</scg:List></Prop>`）が要る。IR では JSON の配列で書き、生成器が要素構文にする方針。必要になったアクティビティのイシューで対応する |
 | ActivityFunc | 15 | 戻り値のある delegate（RetryScope.Condition など）。IR に `func` の書き方を足す必要がある |
-| オブジェクト | 8 | CultureInfo、フィルター設定などの複合型。型ごとに XAML の書き方を get-default-xaml で確かめてから対応する |
+| オブジェクト | 6 | CultureInfo、フィルター設定などの複合型。型ごとに XAML の書き方を get-default-xaml で確かめてから対応する |
 
 理由と、対応しないものの判断は [coverage-gaps.md](coverage-gaps.md)。
 
@@ -68,7 +68,7 @@
 | ExistsInCollection`1 | 4/4 | - | - | 未作成 |
 | FieldReference | 4/4 | - | - | 未作成 |
 | FieldValue | 4/4 | - | - | 未作成 |
-| Flowchart | 3/5 | Nodes（コレクション）, StartNode（オブジェクト） | - | 未作成 |
+| Flowchart | 5/5 | - | DisplayName, Nodes, StartNode, ValidateUnconnectedNodes, Variables | 未作成 |
 | ForEach`1 | 3/3 | - | - | C# の構文 |
 | FuncReference | 2/2 | - | - | 未作成 |
 | FuncValue | 2/2 | - | - | 未作成 |
@@ -134,14 +134,14 @@
 | Parallel | 4/4 | - | Branches, CompletionCondition, DisplayName, Variables | C# の構文 |
 | ParallelForEach | 4/4 | - | Body, CompletionCondition, DisplayName, Values | C# の構文 |
 | Persist | 1/1 | - | - | 未作成 |
-| Pick | 1/2 | Branches（コレクション） | - | 未作成 |
+| Pick | 2/2 | - | Branches, DisplayName | 未作成 |
 | PropertyReference | 4/4 | - | - | 未作成 |
 | PropertyValue | 4/4 | - | - | 未作成 |
 | Reference | 2/2 | - | - | 未作成 |
 | RemoveFromCollection`1 | 4/4 | - | - | 未作成 |
 | Rethrow | 1/1 | - | - | C# の構文 |
 | Sequence | 3/3 | - | Activities, DisplayName, Variables | C# の構文 |
-| StateMachine | 2/4 | InitialState（オブジェクト）, States（コレクション） | - | 未作成 |
+| StateMachine | 4/4 | - | DisplayName, InitialState, States, Variables | 未作成 |
 | Subtract | 5/5 | - | - | 未作成 |
 | Switch | 4/4 | - | Cases, Default, DisplayName, Expression | C# の構文 |
 | TerminateWorkflow | 3/3 | - | - | 未作成 |

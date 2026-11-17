@@ -86,6 +86,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - VB の予約語（`to`、`step`、`next`、`end` など）を変数名にしない（build が `BC30198: ')' expected` で落ちる）
 - Coded（C#）も作るなら、`System`・`System.Data` など既定の using に無い名前空間の型は完全名で書く（`System.Xml.Linq.XDocument`、`Newtonsoft.Json.Linq.JObject` など）
 - 子は `body`、`then` / `else`、それ以外は `slots`。`Switch` は `cases`、`TryCatch` は `catches`、`MultipleAssign` は `assigns`
+- Flowchart は `flowchart`、StateMachine は `stateMachine`、Pick は `branches`。ノードに `id` を付け、矢印は行き先の `id` で書く（[knowledge/flowchart-statemachine.md](knowledge/flowchart-statemachine.md)）
 - 書き方の詳細は [README.md](README.md) の「IR → XAML 生成器」
 - C# のプロジェクトで C# に直せない式（名前付き引数 `f(x:=1)` など）は、`{ "vb": "...", "cs": "..." }` で両方書く。C# の予約語（`out`、`class`、`string` など）を変数名にしない
 
