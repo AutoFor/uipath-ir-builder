@@ -97,7 +97,22 @@ uip codedapp pack dist -n <app> -v 1.0.0                                   # pub
 
 - 見本（14 フィールド、全部の型と部品）を作り、`npm install --offline`（このマシンの npm のキャッシュだけ）→ `tsc`（strict、`noUnusedLocals`）→ `vite build` が通った。版は react 19.3.1、vite 8.3.5、`@uipath/coded-action-app` 1.0.0
 - `uip codedapp pack` で `.nupkg` ができ、`content/action-schema.json` が入った。スキーマはスキルの `validate-action-schema.js` も通る
-- まだ：Action Center で開くこと（publish / deploy は人に確かめてから）。SDK のサービスと Coded Web App は下の節（作って build・pack まで）
+- **Action Center で開いて完了できた**（2026-11-17、trial）：見本 `expense-review` を `pack -n irtest-expense-review` → `publish -t Action` → `deploy --folder-key <Shared>`。タスクは API の `CreateAppTask` で作り（下の「タスクを API で作る」）、`uip tasks assign` で自分に割り当て、`actions_/tasks/<Id>` で開いた。入力（文字・金額・日付・一覧・JSON）と入出力（区分が初期値で選ばれた）が出て、必須を埋めるまで「承認する」は押せず、埋めると保存のボタンも生きた（`setTaskData`）。「承認する」→ Complete で、タスクに `action: "Approve"` と、書いた出力（`approvedAmount`・`risk`・`comment`）が残った。**注意**：書かなかった欄も既定値で残る（`payOn: ""`、入力に無かった file の `receipt: { ID: "" }`）。automation の側で空を読めるようにするか、値の無い欄を送らないようにするかは、まだ決めていない
+- SDK のサービスと Coded Web App は下の節（作って build・pack まで）
+
+### タスクを API で作る（試すとき）
+
+`uip tasks` に作る命令が無いので、Orchestrator の `POST /tasks/AppTasks/CreateAppTask`（スコープ OR.Tasks）を `tools/platform/cloud-api.mjs` で呼ぶ（Git Bash では `MSYS_NO_PATHCONV=1`）。
+
+```json
+// Coded Action App：appId は publish の結果の System Name、appVersion は Deploy Version
+{ "type": "AppTask", "title": "…", "appId": "ID9f50…", "appVersion": 1, "appType": "Coded", "folderKey": "<deploy したフォルダ>", "data": { "<inputs と inOuts の名前>": … } }
+// RPA のアクション アプリ（ソリューションで deploy したもの）：名前とフォルダを渡すと、Orchestrator が appId と codebehind のプロセスを埋める
+{ "type": "AppTask", "title": "…", "appName": "ApprovalAction", "folderPath": "Shared/<ソリューション>", "data": { … } }
+```
+
+- 返りの `appTasksMetadata.id` はタスクの Id ではない（タスクの Id は根の `id`）。`uip tasks get` は「Action does not exist」になる
+- 結果は `GET /tasks/AppTasks/GetAppTaskById?taskId=<Id>` の `action`（outcome）と `data`
 - **publish しなくても Action Center で試せる**（文書、AUT-1197。まだ試していない）：手元で `npm run dev`（localhost）のまま、`https://<host>/<org>/<tenant>/actions_/debug/coded-action-app` を開く。外部アプリ（OAuth）のリダイレクト URI に `https://<host>/<orgId>/<tenantId>/actions_`（名前ではなく GUID の形）を足しておく。
 
 ## ローコードの Apps
@@ -263,7 +278,7 @@ Studio Web のエージェントのエスカレーションで「+ New App」→
 - **ボタン**：`<uwana:SubmitAction Outcome="approve">`。`OutcomeExpression`（`expressionId`・`formId`）と、`PropertyOverrides`（`<InArgument x:Key="Comment">[Controls.<ページ>.<部品>.Value]</InArgument>`。outputs と inOuts に入る値）。名前空間に `action` と `__Action_ActionSchema`。
 - **ソリューション**：`resources/solution_folder/app/workflow Action/<アプリ>.json`（resource と spec の `type` が `workflow Action`）。
 - IR：`"action": { "inputs": [{ "name", "description" }], "inOuts": [...], "outputs": [...], "outcomes": ["approve", { "name": "reject", "description": "…" }] }`、値は `{ "action": "Content" }`、手順は `{ "submit": "approve", "values": { "Comment": "<VB の式>" } }`。型は string と boolean だけ。名前は 4 つの節をまたいで重ねられない。
-- **確かめたこと**（trial、2026-11-17）：生成したものを `uip solution upload` で取り込めた。同じソリューションにエージェントを足してエスカレーションの Action App を開くと、「Defined resources」に出て選べた。選んだエスカレーションの resource には、入力 Content・Comment、出力 Comment、結果 approve・reject が説明つきで入った（Studio Web がアクションの定義を読めている）。**まだ**：Studio Web のアプリの画面で開くこと（この PC の Assistant が別の組織にサインインしていて「Signing in to Assistant」で止まる）、Action Center でタスクとして開いて Submit すること。
+- **確かめたこと**（trial、2026-11-17）：生成したものを `uip solution upload` で取り込めた。同じソリューションにエージェントを足してエスカレーションの Action App を開くと、「Defined resources」に出て選べた。選んだエスカレーションの resource には、入力 Content・Comment、出力 Comment、結果 approve・reject が説明つきで入った（Studio Web がアクションの定義を読めている）。**Action Center でも確かめた**（2026-11-17、trial）：生成した `.uis` を upload → Studio Web で開いて問題なし → Deploy（publish と deploy。`Shared/<ソリューション>` のフォルダができる）→ `CreateAppTask`（`appName` と `folderPath`）でタスク → Action Center で開くと `Content` がラベルに出た → コメントを書いて「承認」→ 完了の確認 → Complete。タスクに `action: "approve"` と `Comment`（Submit Action の PropertyOverrides で書いた値）が残り、アプリのジョブ（Serverless）は Successful。押したときに Action Center に「Unexpected Error … Please retry」が一度出たが、完了と値には響かなかった（原因は見ていない）。片付け：`uip solution deploy uninstall <名前> --yes` → `uip solution packages delete <名前> <版> --yes` → `uip solution delete <Id> --yes`。Coded は `uip codedapp delete --display-name <名前> --folder-key <Key> --yes` と `uip or packages delete <Id>:<版> --yes`。
 
 App Events（`UiPath.WorkflowEvents.Activities`）のアクティビティ：アプリのページを開く（Open Apps Page）、アプリで URL を開く、アプリの値をリセット、アプリのメッセージを表示、スピナーの表示/非表示、ポップオーバー/ボトムシートを閉じる。値は「代入」（Assign）で `AppVariable.<名>` や `Controls.<ページ>.<部品>.Value` に入れる。
 
