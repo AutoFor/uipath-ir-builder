@@ -13,10 +13,10 @@
 //   テストケース（IR の "testCase"）は、--out か --project に project.json があれば designOptions.fileInfoCollection に載せる
 //   （テストケースでなくなった IR は外す。tools/ir/testcase.ts）
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validate } from "./validate.ts";
+import { validate, workflowFile } from "./validate.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadSelected, projectLanguage, projectRootImports, readRootImportsFile, runSelection, VersionError } from "./versions.ts";
 import type { Workflow } from "./types.ts";
@@ -70,9 +70,11 @@ for (const f of files) {
     continue;
   }
   if (checkOnly) { console.log(`OK ${f}`); continue; }
-  const path = join(outDir!, `${wf.workflow}.xaml`);
+  // IR の file があれば、そのサブフォルダに書く（無ければ <workflow>.xaml）
+  const path = join(outDir!, workflowFile(wf));
+  mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, "﻿" + r!.xaml, "utf8");
-  written.push({ fileName: `${wf.workflow}.xaml`, wf });
+  written.push({ fileName: workflowFile(wf), wf });
   console.log(`OK ${f} -> ${path}`);
 }
 // テストケースを project.json に載せる（--out がプロジェクトのとき。fileName はそこからの相対パス）

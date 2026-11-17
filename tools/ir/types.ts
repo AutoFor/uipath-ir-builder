@@ -3,6 +3,9 @@
 
 export type Workflow = {
   workflow: string;
+  // XAML の置き場所（プロジェクトからの相対パス。例 "Sub/Foo.xaml"）。無ければ "<workflow>.xaml"。
+  // サブフォルダの XAML を取り込んだとき（import-xaml.ts --project、migrate-platform.ts）に付く。x:Class は workflow のまま
+  file?: string;
   arguments?: ArgumentDecl[];
   variables?: VariableDecl[];
   body: Node[];

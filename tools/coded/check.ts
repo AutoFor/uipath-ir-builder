@@ -60,6 +60,15 @@ export function loadServices(files = DEFAULT_SERVICE_FILES): Map<string, Service
   return m;
 }
 
+// Studio がプロジェクトの名前から作る Coded の名前空間（名前に使えない文字を消し、数字で始まれば _ を付ける）
+export const codedNamespaceOf = (name: string) => name.replace(/[^\w]/g, "").replace(/^(\d)/, "_$1");
+// project.uiproj の Name（無ければ undefined）
+export function uiprojName(projectDir: string): string | undefined {
+  const f = join(projectDir, "project.uiproj");
+  if (!existsSync(f)) return undefined;
+  try { const n = JSON.parse(readFileSync(f, "utf8").replace(/^﻿/, "")).Name; return typeof n === "string" && n ? n : undefined; } catch { return undefined; }
+}
+
 // プロジェクトから変数名 → 型と名前空間を読む。まだ一度もビルドしていないプロジェクトには生成コードが無いので、既定値を使う。
 // サービスの API は project.json の dependencies の版のカタログから読む（カタログに無い版、services の無い古い版は VersionError）
 export function loadContext(projectDir?: string): Context {
@@ -83,8 +92,9 @@ export function loadContext(projectDir?: string): Context {
     if (ns) ctx.namespace = ns[1];
   } else if (existsSync(join(projectDir, "project.json"))) {
     const pj = JSON.parse(readFileSync(join(projectDir, "project.json"), "utf8").replace(/^\uFEFF/, ""));
-    // Studio は名前に使えない文字を消す（"uipath-ir-probe-v24" → uipathirprobev24。.local/.codedworkflows/CodedWorkflow.cs で確かめた）
-    ctx.namespace = String(pj.name).replace(/[^\w]/g, "").replace(/^(\d)/, "_$1");
+    // Studio は名前に使えない文字を消す（"uipath-ir-probe-v24" → uipathirprobev24。.local/.codedworkflows/CodedWorkflow.cs で確かめた）。
+    // 名前は project.uiproj の Name を先に見る（project.json の name と違うとき、Studio 26.10 は uiproj の Name で名前空間を作った。2026-11-17）
+    ctx.namespace = codedNamespaceOf(uiprojName(projectDir) ?? String(pj.name));
   }
   return ctx;
 }
@@ -202,7 +212,9 @@ export function checkSource(src: string, file: string, ctx: Context): FileResult
   if (ctx.projectDir) {
     for (const m of code.matchAll(/\bRunWorkflow(?:Async)?\s*\(\s*(@?")/g)) {
       const s = m.index! + m[0].length - m[1].length;
-      const lit = /^@?"([^"]*)"/.exec(src.slice(s))?.[1];
+      const raw = /^@?"([^"]*)"/.exec(src.slice(s))?.[1];
+      // 普通の文字列（@ の無いもの）の "Sub\\Foo.xaml" は Sub\Foo.xaml（サブフォルダの XAML）
+      const lit = raw === undefined || m[1].startsWith("@") ? raw : raw.replace(/\\\\/g, "\\");
       if (lit && !existsSync(join(ctx.projectDir, lit)) && !existsSync(join(dirname(file), lit)))
         add(s, "warning", "WORKFLOW_NOT_FOUND", `RunWorkflow の "${lit}" がプロジェクトに無い`);
     }

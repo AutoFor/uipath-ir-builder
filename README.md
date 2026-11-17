@@ -109,6 +109,7 @@ IR の例：
 - delegate の引数名は `item`。`ForEachFileX` のように2つ取るものは `["file", "index"]` のように配列で書く
 - XAML の xmlns、`x:TypeArguments`、`Assign` の型（代入先の変数の宣言から決める）、IdRef、imports は生成器が付ける
 - `get-default-xaml` で取った既定値（`Version=V5` など）は自動で足す
+- サブフォルダに置く XAML は、IR の一番上に `"file": "Sub/Foo.xaml"`（プロジェクトからの相対パス）を書く。gen.ts はそこに書き出す（無ければ `<workflow>.xaml`）。`x:Class` は `workflow` のまま。Invoke Workflow File の `WorkflowFileName` もプロジェクトからの相対パス（`{ "lit": "Sub\\Foo.xaml" }`）
 
 検証で弾くもの：未知のアクティビティ・プロパティ・型、必須の欠け、enum 外の値、宣言されていない出力先、子を置けない場所への子。例は `samples/ir-invalid/Broken.json`。
 
@@ -206,7 +207,7 @@ Linear のイシュー（1アクティビティ1件）の進め方、ファイ�
 ## XAML → IR の取り込み
 
 ```bash
-node tools/ir/import-xaml.ts <file.xaml>... [--out <dir>] [--print] [--verbose]   # XAML を IR にする
+node tools/ir/import-xaml.ts <file.xaml>... [--project <P>] [--out <dir>] [--print] [--verbose]   # XAML を IR にする（--project：その版のカタログで読み、サブフォルダの XAML に "file" を付け、--out に同じフォルダの形で書く）
 node tools/ir/migrate-report.ts <file.xaml>... [--json]                           # Coded への置き換えの見積もり
 node tools/verify/migrate-verify.mjs --name <作業名> --scan <pkg>...              # 通しの確認の対象を分類する（窓口を使わない）
 node tools/verify/migrate-verify.mjs --name <作業名> --pkg <pkg> --limit 20       # XAML → IR → C# を窓口で build / run し、元の期待ログと比べる。実物の XAML はファイルで渡す（XAML と C# のログを比べる）

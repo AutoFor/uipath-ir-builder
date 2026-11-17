@@ -12,16 +12,22 @@ node tools/ir/migrate-platform.ts --project <P> --to Windows  [--dry-run]   # �
 ```
 
 1. 移る先の版のカタログを選ぶ。クロスプラットフォームは `catalog/<パッケージ>/<版>.portable.json`。無ければ作り方を出して止める（下の「カタログ」）
-2. `<P>/ir/*.json` を移る先のカタログで検証する。移る先に無いアクティビティ・プロパティがあれば、場所を挙げて止める（何も書かない）
+2. `<P>/ir/**/*.json`（サブフォルダも）を移る先のカタログで検証する。移る先に無いアクティビティ・プロパティがあれば、場所を挙げて止める（何も書かない）
    ```
    移せない ir\Main.json body[1]: MultipleAssign（UiPath.System.Activities）はクロスプラットフォームに無い
    ```
    IR を直して（別のアクティビティにする）、もう一度流す
-3. IR の無い XAML（Studio で作ったもの）は、移る前のカタログで `<P>/ir/<workflow>.json` に取り込む。取り込めなければ止める（C# の式の XAML、サブフォルダの XAML はまだ取り込めない）
-4. `project.json` の `targetFramework` を書き換え、XAML を IR から作り直す
+3. IR の無い XAML（Studio で作ったもの）は、移る前のカタログで IR に取り込む
+   - IR は XAML と同じフォルダの形に置く（`Main.xaml` → `ir/Main.json`、`Sub/Greet.xaml` → `ir/Sub/Greet.json`）。サブフォルダの XAML（と、`x:Class` とファイル名が違う XAML）は IR に `"file": "Sub/Greet.xaml"` が付き、同じ場所に作り直す
+   - **取り込めない XAML（C# の式、Flowchart など）は、XAML をそのまま移す**。Windows とクロスプラットフォームの XAML の違いはルートの AssemblyReference（WPF の 3 つ）だけなので、そこだけを書き換え、ほかは 1 文字も変えない。その前に、XAML の要素とプロパティを移る前・移る先のカタログと突き合わせ、移る先に無いものがあれば場所（要素の道筋と表示名）を挙げて止める
+     ```
+     移せない Main.xaml Activity/Sequence/MultipleAssign「まとめて代入」: MultipleAssign（UiPath.System.Activities）はクロスプラットフォームに無い
+     ```
+4. `project.json` の `targetFramework` を書き換え、XAML を IR から作り直す（式の言語は `expressionLanguage` のまま。C# のプロジェクトは C# の XAML になる）
 
 - `--dry-run` で、何も書かずに移せるかだけ調べられる。移す前に、プロジェクトを git に入れるか写しておく
-- Coded の `.cs` は作り直さない（`gen-coded.ts` で作り直す）
+- Invoke Workflow File のパス（プロジェクトからの相対パス。`Sub\Greet.xaml`）は変えない。呼び先が移したあとのプロジェクトに無ければ注意を出す（止めない）
+- Coded の `.cs` は作り直さない（`gen-coded.ts` で作り直す）。Coded の API はどちらも同じ（`UiPath.CodedWorkflows` 24.10.3 は `lib/net6.0` だけで、System の Windows 版も Portable 版も同じ版に依存する）
 - `runtimeOptions.requiresUserInteraction` は変えない（Studio の空のプロジェクトでは Windows が `true`、クロスプラットフォームが `false`。UI を操作するかで決める）
 - 移したあとの `gen.ts` / `gen-coded.ts` は、`--project` の `targetFramework` を見て、そのカタログとルートの参照で作る
 
@@ -94,5 +100,12 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 - **クロスプラットフォームでの run も通った**（2026-11-17）。
   - 手元：`uip rpa init --target-framework Portable` で作った作業用プロジェクト `C:\Users\Public\uipath-ir-probe-portable`（依存は System・Testing・UIAutomation。WebAPI 2.5.2 はカタログが無いので外した）を `--template` にして、AddDataRow・WriteTextFile・ReadTextFile・CompareText の XAML が run の窓口で OK。
   - クラウド：Portable のテスト用プロジェクトを、Sorahane Trial の `Default Serverless` で Test Manager のテストとして流して OK（[testing.md](testing.md)）。Windows のプロジェクトは、このクラウドのロボットでは流れない。
-- **C#（Coded）は、この作業用プロジェクトでは build が落ちた**：「型または名前空間の名前 'CodedWorkflow' が見つかりません」。`uip rpa init` の Portable の空のプロジェクトには、Coded の土台（Studio が作る `.codedworkflows` など）が無いためとみられる。Studio で Coded のファイルを 1 つ足して保存したプロジェクトなら通るかは、まだ見ていない。
-- まだ見ていないもの：C# のプロジェクトの移行、サブフォルダの XAML の取り込み
+- **Coded（C#）もクロスプラットフォームで build・run が通った**（2026-11-17）。前に「'CodedWorkflow' が見つかりません」で落ちたのは、Coded の土台が無いからではなく、**名前空間の食い違い**だった
+  - Studio は build のときに Coded の土台（`.codedworkflows/`、`.local/.codedworkflows/CodedWorkflow.cs`）を自分で作る。名前空間はプロジェクトの名前から作る（作業用プロジェクト `uipath-ir-probe-portable` → `uipathirprobeportable`）
+  - verify.mjs は `--use-project` が無いと、gen-coded.ts の既定の名前空間（`CatalogProbeNet8`。既定のテンプレートの名前）で C# を書いていた。今は作業用プロジェクトの名前空間を渡す（`--use-project` があれば gen-coded.ts がプロジェクトから取る）
+  - `--template C:\Users\Public\uipath-ir-probe-portable --use-project` で、System の AddDataRow・LogMessage・ReadTextFile と Main / Greet（InvokeWorkflowFile）の XAML と C# が、build も run も OK（`out/verify/pcoded-run`、`pcoded2-run`）。クロスプラットフォームのテンプレートで `--use-project` を付け忘れると、verify は注意を出す（Windows のカタログで作ってしまうため）
+- **名前空間の名前は `project.uiproj` の `Name`**：`project.json` の `name` だけを変えたプロジェクトでは、Studio は `project.uiproj` の `Name`（`uipath-ir-probe-cs` → `uipathirprobecs`）で `CodedWorkflow` を作り、そのうえ Coded のファイルのコンパイルが `CodedActivityBuilderUtils.CreateActivity` の「Sequence contains no matching element」で落ちた。2 つの名前はそろえておく。チェッカーと verify は `project.uiproj` の `Name` を先に見る
+- **C# のプロジェクトの移行**（2026-11-17）：C# の Windows のプロジェクト（`Main.xaml` は IR から作った C# の XAML、`Sub/Greet.xaml` は IR の無い C# の XAML で、Main が `Sub\Greet.xaml` を Invoke Workflow File で呼ぶ）をクロスプラットフォームに移し、Main と Sub/Greet の run、IR から作った Coded（`RunWorkflow("Sub\\Greet.xaml")` で呼ぶ）の run が OK。期待するログも合った。Windows に戻すと、XAML は元と 1 文字も違わず、build・run も OK（`out/verify/migcs-port-run`、`migcs-coded2-run`、`migcs-win-run`）
+- **サブフォルダの XAML の取り込み**（2026-11-17）：VB の Windows のプロジェクトの `Sub/Greet.xaml`（IR なし）を移すと `ir/Sub/Greet.json`（`"file": "Sub/Greet.xaml"`）に取り込まれ、クロスプラットフォームで IR から XAML と C# を作って build・run が OK（`out/verify/migvb-run`）。Windows に戻すと元の XAML と同じ
+- verify.mjs で手書きの XAML をサブフォルダごと試すときは `--base <フォルダ>`（そこからの相対パスのまま写す）。IR に `file` があれば、そのサブフォルダに書く
+- まだ見ていないもの：Flowchart など VB でも取り込めない XAML を「そのまま移す」ときの build（仕組みは C# の XAML と同じ）、Studio が自分で作ったサブフォルダの XAML（ここでは生成器で作った XAML を Studio の形とみなして試した。Studio の `x:Class` の付け方には寄らない：`x:Class` はそのまま `workflow` に、場所は `file` に持つ）
