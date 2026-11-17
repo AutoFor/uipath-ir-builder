@@ -171,7 +171,7 @@ UiPath のエージェント（`https://cloud.uipath.com/<組織>/agents_` の�
 - **Studio Web の Debug が終わると、その実行を評価するジョブ（`command: eval`）が自動で 1 つ流れる**。エスカレーションのあるエージェントでは、その評価のジョブもタスクを作って Suspended になる（タスクを完了すれば終わる）。
 - **RPA など時間のかかる道具を呼ぶと、`debug` は Suspended を返して終わる**。結果は `uip or jobs get <JobKey>`（Successful になるまで待つ）。
 - **エスカレーションのアプリ**：
-  - Workflow Action の種類だけ（Studio Web の「RPA app」の Action App。Coded Action App は使えない）。このリポジトリの `rpa-app.ts` は IR に `action` を書くと Workflow Action のアプリを作る（2026-11-17。Studio Web の書き出しに合わせたが、エスカレーションで選べるかはまだ。[apps.md](apps.md) の「アクション」）。
+  - Workflow Action の種類だけ（Studio Web の「RPA app」の Action App。Coded Action App は使えない）。このリポジトリの `rpa-app.ts` は IR に `action` を書くと Workflow Action のアプリを作る（2026-11-17。同じソリューションに置くと、Studio Web のエスカレーションの Action App に出て選べ、入出力と結果も読まれた。タスクで開くのはまだ。[apps.md](apps.md) の「アクション」）。
   - いちばん早いのは、Studio Web でエスカレーションの「Action App」→「+ New App」→ テンプレート（Simple Approval など）。アプリがソリューションの中にできる。
   - ソリューションの中のアプリがあるときに `uip solution resources refresh` を流すと、アプリの宣言を新しい key で作り直し（`app/workflow Action/` → `app/`）、エスカレーションの `resourceKey` が宙に浮く。生成器はアプリがソリューションの中のときは refresh を流さない。
   - Studio Web が書くエスカレーションは受け手が空（`recipients: []`）。生成器は受け手を必ず求める。
