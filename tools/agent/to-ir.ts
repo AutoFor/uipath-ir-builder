@@ -51,10 +51,12 @@ function textOf(m: any): string {
 }
 
 /** コンテキストを省略形に戻す。戻せない形（ソリューションの中に取り込んだインデックスなど）は undefined（raw で持つ） */
-function contextToIR(r: any): Context | undefined {
-  if (r.contextType === "index" && r.folderPath && r.folderPath !== "solution_folder") {
+function contextToIR(r: any, dir?: string): Context | undefined {
+  // Studio Web で足したインデックスは folderPath が solution_folder。実際のフォルダは debug_overwrites.json にある
+  const idxFolder = r.folderPath === "solution_folder" && dir ? overwriteFolder(dir, r.referenceKey) : r.folderPath;
+  if (r.contextType === "index" && idxFolder && idxFolder !== "solution_folder") {
     const s = r.settings ?? {};
-    const c: any = { index: r.indexName, folder: r.folderPath };
+    const c: any = { index: r.indexName, folder: idxFolder };
     if (r.name !== String(r.indexName).replace(/[^A-Za-z0-9_]/g, "_")) c.name = r.name;
     if (r.description) c.description = r.description;
     if (s.retrievalMode && s.retrievalMode !== "semantic") c.mode = s.retrievalMode;
@@ -62,6 +64,9 @@ function contextToIR(r: any): Context | undefined {
     if (s.threshold !== undefined && s.threshold !== 0) c.threshold = s.threshold;
     if (s.fileExtension?.value && s.fileExtension.value !== "All") c.fileExtension = s.fileExtension.value;
     if (s.query?.description && s.query.description !== "Query for retrieval") c.queryDescription = s.query.description;
+    const val = (x: any) => x?.variant === "argument" && /^\{\{(.+)\}\}$/.test(x.value ?? "") ? { arg: x.value.slice(2, -2) } : x?.variant === "static" && x.value !== undefined && x.value !== "" ? x.value : undefined;
+    if (s.query?.variant !== "dynamic" && val(s.query) !== undefined) c.query = val(s.query);
+    if (val(s.folderPathPrefix) !== undefined) c.prefix = val(s.folderPathPrefix);
     return c;
   }
   if (r.contextType === "datafabricentityset" && r.entitySet?.length) {
@@ -128,7 +133,7 @@ function overwriteFolder(agentDir: string, key: string | undefined): string | un
         const f = join(up, u, "debug_overwrites.json");
         if (!existsSync(f)) continue;
         for (const t of readJson(f).tenants ?? []) for (const r of t.resources ?? [])
-          if (String(r.overwrite?.resourceKey ?? r.solutionResourceKey).toLowerCase() === key.toLowerCase() && r.overwrite?.folderPath) return r.overwrite.folderPath;
+          if (String(r.overwrite?.resourceKey ?? r.solutionResourceKey).toLowerCase() === key.toLowerCase() && (r.overwrite?.folderFullyQualifiedName ?? r.overwrite?.folderPath)) return r.overwrite.folderFullyQualifiedName ?? r.overwrite.folderPath;
       }
       return undefined;
     }
@@ -321,8 +326,8 @@ export function toIR(dir: string): AgentIR {
       const t: any = { mcp: r.slug };
       if (r.toolsConfiguration?.discoveryMode?.type === "cached") t.tools = (r.availableTools ?? []).map((x: any) => x.name);
       tools.push(t);
-    } else if (r.$resourceType === "context" && contextToIR(r)) {
-      contexts.push(contextToIR(r)!);
+    } else if (r.$resourceType === "context" && contextToIR(r, dir)) {
+      contexts.push(contextToIR(r, dir)!);
     } else if (r.$resourceType === "escalation" && escalationToIR(r)) {
       escalations.push(escalationToIR(r)!);
     } else {

@@ -136,7 +136,9 @@ export const EVALUATOR_KIND = {
 export const evaluatorFile = (name: string) => `evaluator-${name.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "x"}.json`;
 
 export type Context =
-  | { index: string; folder: string; name?: string; description?: string; mode?: "semantic" | "deeprag" | "batchtransform"; resultCount?: number; threshold?: number; fileExtension?: string; queryDescription?: string }
+  // query・prefix（AUT-1201 の 13）：文字は Static、{ arg: "<入力の名前>" } は Argument、query を書かなければ Dynamic（モデルが決める）。
+  // prefix はフォルダの前置き。サブフォルダまで含めるなら末尾に /**（無いと DeepRAG が「No valid files…」）。Studio Web で作って書き出した形（2026-11-17）
+  | { index: string; folder: string; name?: string; description?: string; mode?: "semantic" | "deeprag" | "batchtransform"; resultCount?: number; threshold?: number; fileExtension?: string; queryDescription?: string; query?: string | { arg: string }; prefix?: string | { arg: string } }
   | { dataFabric: string[]; folder: string; name?: string; description?: string }
   | { attachments: true; name: string; description?: string };
 
@@ -489,8 +491,10 @@ function contextResource(c: Context, i: number, entities: EntityLookup | undefin
     if (!MODES.has(mode)) { probs.push({ path: `${p}.mode`, code: "BAD_MODE", message: "mode は semantic / deeprag / batchtransform（小文字）" }); return undefined; }
     const settings: Record<string, unknown> = {
       retrievalMode: mode,
-      query: { variant: "dynamic", description: c.queryDescription ?? "Query for retrieval" },
-      folderPathPrefix: { variant: "static" },
+      query: c.query === undefined ? { variant: "dynamic", description: c.queryDescription ?? "Query for retrieval" }
+        : typeof c.query === "string" ? { variant: "static", description: c.queryDescription ?? "Query for retrieval", value: c.query }
+        : { variant: "argument", description: c.queryDescription ?? "Query for retrieval", value: `{{${c.query.arg}}}` },
+      folderPathPrefix: c.prefix === undefined ? { variant: "static" } : typeof c.prefix === "string" ? { variant: "static", value: c.prefix } : { variant: "argument", value: `{{${c.prefix.arg}}}` },
       fileExtension: { value: c.fileExtension ?? "All" },
       threshold: c.threshold ?? 0,
       resultCount: c.resultCount ?? 3,
@@ -882,6 +886,10 @@ export function generate(ir: AgentIR, base: Record<string, any>, opts: { lookup?
     resources[n] = r;
   });
   (ir.contexts ?? []).forEach((c, i) => {
+    if ("index" in c) for (const k of ["query", "prefix"] as const) {
+      const v = c[k];
+      if (v && typeof v === "object" && !(v.arg in ((inputSchema as any).properties ?? {}))) probs.push({ path: `contexts[${i}].${k}.arg`, code: "UNKNOWN_INPUT", message: `入力に "${v.arg}" が無い` });
+    }
     const r = contextResource(c, i, opts.entityLookup, opts.project, probs);
     if (!r) return;
     const n = String(r.name);

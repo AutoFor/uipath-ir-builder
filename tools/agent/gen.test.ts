@@ -532,3 +532,12 @@ test("道具のカスタムガードレールの Filter（AUT-1201 の 8）", ()
   assert.deepEqual(codes({ ...g, filter: [] }), ["MISSING"]);
   assert.deepEqual(codes({ ...g, action: "block" }), ["BAD_GUARDRAIL"]);
 });
+
+test("インデックスのコンテキストの query・prefix：Static / Argument / Dynamic（AUT-1201 の 13）", () => {
+  const ctx = (x: any) => (generate(ir({ input: { text: "string" }, user: "{{input.text}}", contexts: [{ index: "Idx", folder: "Shared", ...x }] } as any), BASE, ALL).result!.resources.Idx as any).settings;
+  assert.deepEqual(ctx({}).query.variant, "dynamic");
+  assert.deepEqual(ctx({ query: "rules", prefix: "policies/**" }).query, { variant: "static", description: "Query for retrieval", value: "rules" });
+  assert.deepEqual(ctx({ query: "rules", prefix: "policies/**" }).folderPathPrefix, { variant: "static", value: "policies/**" });
+  assert.deepEqual(ctx({ query: { arg: "text" }, prefix: { arg: "text" } }).folderPathPrefix, { variant: "argument", value: "{{text}}" });
+  assert.deepEqual(generate(ir({ input: { text: "string" }, user: "{{input.text}}", contexts: [{ index: "Idx", folder: "Shared", query: { arg: "nope" } }] } as any), BASE, ALL).problems.map((p) => p.code), ["UNKNOWN_INPUT"]);
+});
