@@ -8,6 +8,7 @@
 //
 // --service は URL の製品の部分（既定 orchestrator_。testmanager_、du_、dataservice_ など）。
 // --folder-path / --folder-key / --folder-id でフォルダを指す（Orchestrator の X-UIPATH-OrganizationUnitId）。
+// --folder-key は X-UIPATH-FolderKey も付ける（Maestro の pims_ はこちらを読む）。個人ワークスペースの Key は Folders で引けないので、引けなくても続ける。
 // --body は JSON の文字列か @ファイル。GET 以外は、何を変えるかを先に人に確かめてから流す。
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -42,10 +43,11 @@ function session(profile) {
   return d;
 }
 
-async function call(s, o, method, path, body, folderId) {
+async function call(s, o, method, path, body, folderId, folderKey) {
   const url = `${s.BaseUrl.replace(/\/$/, "")}/${s.OrganizationName}/${s.TenantName}/${o.service}${path}`;
   const headers = { Authorization: `Bearer ${s.AccessToken}`, "Content-Type": "application/json; charset=utf-8" };
   if (folderId) headers["X-UIPATH-OrganizationUnitId"] = String(folderId);
+  if (folderKey) headers["X-UIPATH-FolderKey"] = folderKey;
   const r = await fetch(url, { method, headers, body });
   const text = await r.text();
   return { status: r.status, text };
@@ -59,9 +61,9 @@ async function main() {
     const f = o.folderKey ? `Key eq ${o.folderKey}` : `FullyQualifiedName eq '${o.folderPath.replace(/'/g, "''")}'`;
     const r = await call(s, { service: "orchestrator_" }, "GET", `/odata/Folders?$filter=${encodeURIComponent(f)}&$select=Id`);
     folderId = JSON.parse(r.text).value?.[0]?.Id;
-    if (!folderId) throw new Error(`フォルダが見つからない：${o.folderPath ?? o.folderKey}`);
+    if (!folderId && !o.folderKey) throw new Error(`フォルダが見つからない：${o.folderPath}`);
   }
-  const r = await call(s, o, o.method, o.path, o.body, folderId);
+  const r = await call(s, o, o.method, o.path, o.body, folderId, o.folderKey);
   let out = r.text;
   try { out = JSON.stringify(JSON.parse(r.text), null, 2); } catch { /* JSON でなければそのまま */ }
   console.log(JSON.stringify({ status: r.status, org: s.OrganizationName, tenant: s.TenantName }));

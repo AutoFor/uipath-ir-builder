@@ -1,0 +1,17 @@
+{
+  "stage": "Review",
+  "tasks": [
+    {
+      "name": "Approve",
+      "title": "経費の確認",
+      "taskTitle": "経費を確かめて、承認か却下を選んでください",
+      "priority": "Medium",
+      "fields": [
+        { "id": "amount", "label": "金額", "type": "number", "direction": "input", "binding": "=vars.amount" },
+        { "id": "comment", "label": "コメント", "type": "string", "direction": "output", "variable": "vars.comment" }
+      ],
+      "outcomes": ["Approve", "Reject"],
+      "outcomeVar": "decision"
+    }
+  ]
+}

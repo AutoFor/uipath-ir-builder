@@ -12,12 +12,14 @@
 // 一方で validate でしか止まらない間違いもあるので、1回で全部見せるため。前の工程の成果物が無いときだけ skip にする。
 //
 // 使い方:
-//   node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--workspace <dir>] <ファイル>...
+//   node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--profile <名前>] [--workspace <dir>] <ファイル>...
 //     --strict     warning も NG にする
 //     --json       結果を JSON で標準出力に書く（人向けの表は標準エラーに書く）
 //     --pack       成果物を init の雛形に入れて .nupkg まで作る（ローカルだけ）
 //     --tenant     成果物が指す資源がテナントにあるかを照合する（一覧を読むだけ。ログインが要る）
 //     --workspace  .flow-sdk/（bindings.json、connectors-local）がある場所。コネクタを使うソースで指定する
+//     --profile    --tenant で照合するテナントを、uip login --profile で作ったログインにする（既定は既定のログイン）
+//   Case のソースの横に <名前>.quickform.json があれば、compile の後で QuickForm のタスクを足す（case-quickform.mjs）
 //     --automate   Flow を Maestro Automate として扱う（--pack の雛形を init --automate で作る。operate.json の profile が Lite になる）
 // 既定ではテナントに一切触らない。テナントを読むのは --tenant のときだけで、書き込みは無い。
 // 終了コード: 0 = すべて OK、1 = NG がある、2 = 使い方の間違いか、環境の問題（uip や SDK が無い）
@@ -29,6 +31,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkRefs, extractRefs } from "./tenant-refs.mjs";
 import { allUsersTasks, unassignedTasks } from "./task-assign.mjs";
 import { extractLimitIssues } from "./extract-limits.mjs";
+import { addQuickForms, checkSpec } from "./case-quickform.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -268,6 +271,11 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
     const r = runUip(uipJs, step.args);
     // compile が失敗したのに古いものが残らないように、上で dir を消してある
     results.push({ name: step.name, ...r, diagnostics: dropRepeated(r.diagnostics, seen) });
+    // Case の QuickForm（SDK に無い）：ソースの横に <名前>.quickform.json があれば、compile の後で足す（AUT-1211、case-quickform.mjs）
+    if (step.name === "compile" && info.family === "case" && info.source && existsSync(artifact)) {
+      const specPath = join(dirname(abs), `${info.name}.quickform.json`);
+      if (existsSync(specPath)) results.push({ name: "quickform", ...applyQuickForm(artifact, specPath) });
+    }
     if (step.name === "compile" && info.family === "flow" && existsSync(artifact)) {
       const fixed = fixProcessInputTypes(readFileSync(artifact, "utf8"));
       const http = fixHttpV2(fixed.text);
@@ -278,7 +286,7 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   if (existsSync(target)) results.push({ name: "assign", ...checkAssign(info.family, target) });
   if (opts.tenant) {
     if (!existsSync(target)) results.push({ name: "tenant", status: "skip", ms: 0, diagnostics: [], reason: "前の工程の成果物が無い" });
-    else results.push({ name: "tenant", ...checkTenant(uipJs, info.family, target) });
+    else results.push({ name: "tenant", ...checkTenant(uipJs, info.family, target, opts.profile) });
   }
   if (opts.pack) {
     // NG のものは pack しない。Flow の script の文法の間違いは pack を通ってしまうので、pack の OK を合格と読ませない
@@ -288,6 +296,18 @@ export function verifyFile(uipJs, input, outDir, opts = {}) {
   const j = judge(results, opts.strict);
   const steps = results.map(({ data, ...s }) => s);
   return { file: input, family: info.family, artifact: existsSync(artifact) ? artifact : null, ...j, steps };
+}
+
+function applyQuickForm(artifact, specPath) {
+  const started = Date.now();
+  const plan = JSON.parse(readFileSync(artifact, "utf8"));
+  const spec = JSON.parse(readFileSync(specPath, "utf8"));
+  const errs = checkSpec(plan, spec);
+  if (errs.length) return { status: "ng", ms: Date.now() - started, diagnostics: errs.map((message) => ({ level: "error", code: "QUICKFORM_SPEC", where: basename(specPath), message })) };
+  const { files } = addQuickForms(plan, spec);
+  writeFileSync(artifact, JSON.stringify(plan, null, 2) + "\n");
+  for (const f of files) writeFileSync(join(dirname(artifact), f.name), JSON.stringify(f.content, null, 2) + "\n");
+  return { status: "ok", ms: Date.now() - started, diagnostics: [] };
 }
 
 // 割り当て先の無い人のタスク（AUT-1090）。未割り当てでも動くので error にしない。--strict では NG になる
@@ -311,10 +331,10 @@ function checkAssign(family, artifact) {
 
 // テナントの一覧は、1回の実行で1度だけ読む
 let tenantCache = null;
-function readTenant(uipJs) {
+function readTenant(uipJs, profile) {
   if (tenantCache) return tenantCache;
   const list = (args) => {
-    const r = spawnSync(process.execPath, [uipJs, ...args, "--output", "json"], { cwd: here, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    const r = spawnSync(process.execPath, [uipJs, ...args, "--output", "json", ...(profile ? ["--profile", profile] : [])], { cwd: here, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
     const env = parseEnvelope(r.stdout ?? "");
     if (r.status !== 0 || env?.Result !== "Success" || !Array.isArray(env.Data)) throw new Error(`${args.join(" ")}: ${env?.Message ?? "読めない"}`);
     if (env.Pagination?.HasMore) throw new Error(`${args.join(" ")}: 一覧が途中で切れた`);
@@ -328,11 +348,11 @@ function readTenant(uipJs) {
   return tenantCache;
 }
 
-function checkTenant(uipJs, family, artifact) {
+function checkTenant(uipJs, family, artifact, profile) {
   const started = Date.now();
   let diagnostics;
   try {
-    diagnostics = checkRefs(extractRefs(family, readFileSync(artifact, "utf8")), readTenant(uipJs));
+    diagnostics = checkRefs(extractRefs(family, readFileSync(artifact, "utf8")), readTenant(uipJs, profile));
   } catch (e) {
     // 読めないときに OK にしない
     return { status: "ng", ms: Date.now() - started, diagnostics: [{ level: "error", code: "TENANT_UNREADABLE", where: null, message: e.message }] };
@@ -431,10 +451,11 @@ export function main(argv) {
     else if (a === "--automate") opts.automate = true;
     else if (a === "--out") opts.out = resolve(argv[++i] ?? "");
     else if (a === "--workspace") opts.workspace = resolve(argv[++i] ?? "");
+    else if (a === "--profile") opts.profile = argv[++i];
     else if (a.startsWith("--")) { console.error(`知らないオプション: ${a}`); return 2; }
     else files.push(a);
   }
-  if (!files.length) { console.error("使い方: node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--workspace <dir>] <ファイル>..."); return 2; }
+  if (!files.length) { console.error("使い方: node tools/maestro/verify.mjs [--out <dir>] [--strict] [--json] [--pack] [--tenant] [--profile <名前>] [--workspace <dir>] <ファイル>..."); return 2; }
   const uipJs = findUip();
   if (!uipJs) { console.error("uip が見つからない（環境変数 UIP_JS か、npm の全体インストール）"); return 2; }
   if (!existsSync(join(here, "node_modules", "@uipath", "maestro-builder-sdk"))) { console.error("SDK が無い。cd tools/maestro && npm install --ignore-scripts"); return 2; }

@@ -2,3 +2,6 @@ bin/
 obj/
 node_modules/
 out/
+
+# uip maestro registry prepare が tools/maestro に作る作業場（接続の Id が入る）
+.flow-sdk/
