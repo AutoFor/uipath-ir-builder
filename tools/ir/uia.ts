@@ -65,7 +65,7 @@ const findKeys: Record<string, string[]> = {
 
 export const isValue = (v: unknown): v is Value =>
   typeof v === "string" || typeof v === "number" || typeof v === "boolean" ||
-  (typeof v === "object" && v !== null && !Array.isArray(v) && (Object.keys(v).join() === "lit" || Object.keys(v).sort().join() === "cs,vb"));
+  (typeof v === "object" && v !== null && !Array.isArray(v) && (Object.keys(v).join() === "lit" || Object.keys(v).sort().join() === "cs,vb" || Object.keys(v).join() === "cs"));
 
 // IEnumerable<ITarget> などの要素の型。インターフェースのときは具体的な型を決め打つ
 const itemTypeOf = (t: string) => {
@@ -308,6 +308,8 @@ function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx, path: str
 //
 // オブジェクト → Coded のモデル（UiPath.UIAutomationNext.API.Models）。値は「モデルのプロパティ名」、null は Coded では意味がないので捨てる、
 // "!理由" は Coded に直せない（CODED_UNSUPPORTED）
+// props の値：Coded のモデルのプロパティ名。null は Coded では使わないもの（設計時の情報）、"!..." は直せない理由、
+// "area:<名前>" は Rectangle（"x, y, 幅, 高さ"）を AreaModel にして <名前> に入れる
 type ModelMap = { type: string; props: Record<string, string | null> };
 export const codedModels: Record<string, ModelMap> = {
   [TA]: {
@@ -322,6 +324,8 @@ export const codedModels: Record<string, ModelMap> = {
       ElementType: "ElementType", FriendlyName: "FriendlyName", Guid: "Guid", Reference: "Reference", TargetType: "TargetType",
       PointOffset: "PointOffset", RegionOffset: "RegionOffset",
       Version: null, DesignTimeRectangle: null, DesignTimeScaleFactor: null, InformativeScreenshot: null, ContentHash: null, BrowserURL: null, IsResponsive: null,
+      // CV（Computer Vision）のターゲット。CVScreenId は設計時に取った画面の ID で、TargetAnchorableModel に無い（DesignTimeRectangle と同じ扱い）
+      CVScreenId: null, CvElementArea: "area:CvElementArea", CvTextArea: "area:CvTextArea",
       Anchors: "!アンカーは Coded のモデル（TargetAnchorableModel）に無い",
       SemanticTextArgument: "!SemanticTexts（配列）への変換はまだ無い",
     },
@@ -393,6 +397,12 @@ function model(t: ObjType, v: ObjValue, at: string, ctx: CodedCtx): string {
     if (to === null) continue;
     if (to === undefined) { ctx.add(kat, "CODED_UNSUPPORTED", `${t.className}.${k} を ${m.type} に直す表が無い（tools/ir/uia.ts の codedModels に足す）`); continue; }
     if (to.startsWith("!")) { ctx.add(kat, "CODED_UNSUPPORTED", `${t.className}.${k}: ${to.slice(1)}`); continue; }
+    if (to.startsWith("area:")) {
+      const r = typeof x === "string" ? x.match(/^\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*$/) : null;
+      if (!r) { ctx.add(kat, "CODED_UNSUPPORTED", `${t.className}.${k} は "x, y, 幅, 高さ" の形で書く（${JSON.stringify(x)}）`); continue; }
+      sets.push(`${to.slice(5)} = new AreaModel { X = ${r[1]}, Y = ${r[2]}, Width = ${r[3]}, Height = ${r[4]} }`);
+      continue;
+    }
     const p = t.props.find((q) => q.name === k)!;
     const sub = objectTypes.get(p.type);
     let cs: string;
