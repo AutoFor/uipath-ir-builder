@@ -972,8 +972,10 @@ export function canonLines(xml: string): string[] {
       if (argEl) {
         if (!argEl.text.trim() && !argEl.kids.length) continue;
         const vb = argEl.kids.find((x) => /^VisualBasic(Value|Reference)$/.test(x.local));
+        const csx = argEl.kids.find((x) => /^CSharp(Value|Reference)$/.test(x.local));
         const lit = argEl.kids.find((x) => x.local === "Literal");
-        const t = vb ? `[${vb.attrs.find((a) => a.local === "ExpressionText")?.value}]` : lit ? lit.attrs.find((a) => a.local === "Value")?.value ?? lit.text : argEl.text;
+        // C# の式は要素の中身。Studio は前後に改行・字下げを入れないが、比べるときは前後の空白を無視する
+        const t = vb ? `[${vb.attrs.find((a) => a.local === "ExpressionText")?.value}]` : csx ? `[cs:${(csx.attrs.find((a) => a.local === "ExpressionText")?.value ?? csx.text).trim()}]` : lit ? lit.attrs.find((a) => a.local === "Value")?.value ?? lit.text : argEl.text;
         lines.push(`${path} @${pn}=${norm(t)}`);
         continue;
       }
@@ -1025,7 +1027,8 @@ export function checkRoundTrip(xml: string, wf: Workflow, cat: Catalog): { xaml?
 }
 
 // 式の言語が C# の XAML か（ルートの ExpressionActivityEditor="C#"）
-export const isCsXaml = (xml: string) => /ExpressionActivityEditor\s*=\s*"C#"/.test(xml);
+// 属性（ExpressionActivityEditor="C#"）のことも、要素（<sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</...>）のこともある
+export const isCsXaml = (xml: string) => /ExpressionActivityEditor\s*=\s*"C#"|ExpressionActivityEditor>\s*C#\s*</.test(xml);
 
 // ---- まとめ（CLI と migrate-report が使う）----
 

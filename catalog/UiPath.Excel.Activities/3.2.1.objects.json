@@ -1,0 +1,371 @@
+{
+  "package": "UiPath.Excel.Activities",
+  "version": "3.2.1",
+  "objects": [
+    {
+      "className": "CurrencyFormat",
+      "clrType": "UiPath.Excel.Activities.Business.CurrencyFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Currency",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyFormat"
+        },
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "SetAtTheEnd",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CurrencyFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "CustomFormat",
+      "clrType": "UiPath.Excel.Activities.Business.CustomFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "FormatAsString",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CustomFormat"
+        }
+      ]
+    },
+    {
+      "className": "DateFormat",
+      "clrType": "UiPath.Excel.Activities.Business.DateFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Type",
+          "kind": "prop",
+          "type": "UiPath.Excel.DateType",
+          "required": false,
+          "enum": [
+            "Long",
+            "Short"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DateFormat"
+        }
+      ]
+    },
+    {
+      "className": "AdvancedFilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Condition1",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        },
+        {
+          "name": "Condition2",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        },
+        {
+          "name": "LogicalOperator",
+          "kind": "prop",
+          "type": "UiPath.Excel.LogicalOperator",
+          "required": false,
+          "enum": [
+            "And",
+            "Or"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "AdvancedFilterCondition",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterCondition",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Operator",
+          "kind": "prop",
+          "type": "UiPath.Excel.ExcelFilterOperator",
+          "required": false,
+          "enum": [
+            "NONE",
+            "LT",
+            "GT",
+            "LTE",
+            "GTE",
+            "EQ",
+            "NOTEQ",
+            "EMPTY",
+            "NOTEMPTY",
+            "STARTSWITH",
+            "ENDSWITH",
+            "CONTAINS",
+            "NOTSTARTSWITH",
+            "NOTENDSWITH",
+            "NOTCONTAINS"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterCondition"
+        },
+        {
+          "name": "Value",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "AdvancedFilterCondition"
+        }
+      ]
+    },
+    {
+      "className": "BasicFilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.BasicFilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "BasicFilters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.List<System.Activities.InArgument<System.String>>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BasicFilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "FilterArgument",
+      "clrType": "UiPath.Excel.Activities.Business.Filter.FilterArgument",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business.Filter;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AdvancedFiltersArgument",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.AdvancedFilterArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "BasicFiltersArgument",
+          "kind": "prop",
+          "type": "UiPath.Excel.Activities.Business.Filter.BasicFilterArgument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        },
+        {
+          "name": "Mode",
+          "kind": "prop",
+          "type": "UiPath.Excel.FilterMode",
+          "required": false,
+          "enum": [
+            "Basic",
+            "Advanced"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "FilterArgument"
+        }
+      ]
+    },
+    {
+      "className": "GeneralFormat",
+      "clrType": "UiPath.Excel.Activities.Business.GeneralFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "NumberFormat",
+      "clrType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "PercentageFormat",
+      "clrType": "UiPath.Excel.Activities.Business.PercentageFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Excel.Activities.Business.NumberFormat",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DecimalPlaces",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        },
+        {
+          "name": "UseThousandSeparator",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NumberFormat"
+        }
+      ]
+    },
+    {
+      "className": "TextFormat",
+      "clrType": "UiPath.Excel.Activities.Business.TextFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "TimeFormat",
+      "clrType": "UiPath.Excel.Activities.Business.TimeFormat",
+      "assembly": "UiPath.Excel.Activities",
+      "xmlns": "clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "IsAMPM",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TimeFormat"
+        },
+        {
+          "name": "Type",
+          "kind": "prop",
+          "type": "UiPath.Excel.TimeType",
+          "required": false,
+          "enum": [
+            "HoursMinutes",
+            "HoursMinutesSeconds"
+          ],
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TimeFormat"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
