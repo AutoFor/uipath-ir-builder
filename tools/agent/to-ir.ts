@@ -209,7 +209,7 @@ function customToIR(g: any): Guardrail | undefined {
   const names = g.selector?.matchNames ?? [];
   if (g.selector?.scopes?.length !== 1 || g.selector.scopes[0] !== "Tool" || names.length !== 1) return undefined;
   const act = g.action?.$actionType;
-  if (act !== "block" && act !== "log") return undefined;
+  if (act !== "block" && act !== "log" && act !== "filter") return undefined;
   const fields = (fs: any) => (fs?.$selectorType === "specific" ? { fields: fs.fields } : {});
   const rules: any[] = [];
   for (const r of g.rules ?? []) {
@@ -224,6 +224,7 @@ function customToIR(g: any): Guardrail | undefined {
   if (g.description) ir.description = g.description;
   if (act === "block" && g.action.reason !== "Guardrail violation — execution blocked.") ir.reason = g.action.reason;
   if (act === "log" && g.action.severityLevel !== "Warning") ir.severity = g.action.severityLevel;
+  if (act === "filter") ir.filter = (g.action.fields ?? []).map((f: any) => ({ path: f.path, source: f.source }));
   return ir as Guardrail;
 }
 

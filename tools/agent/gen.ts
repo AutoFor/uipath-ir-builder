@@ -66,7 +66,8 @@ export type Guardrail =
   /** LLM as Judge。judge はルール（4,000 字まで）、model は判定のモデル、例は 2 つずつ・各 1,000 字まで、threshold は 0〜6（既定 2）。別に料金がかかる */
   | { judge: string; model: string; positive?: string[]; negative?: string[]; threshold?: number; scopes?: ("Agent" | "Llm" | "Tool")[]; tools?: string[]; action?: "block" | "log"; name?: string; reason?: string; severity?: Severity }
   /** 道具ごとのカスタムガードレール（$guardrailType: custom、Tool の 1 つだけ）。rules は AND */
-  | { tool: string; rules: CustomRule[]; action?: "block" | "log"; name?: string; description?: string; reason?: string; severity?: Severity }
+  // action "filter" は filter の項目（{ path, source: "input" | "output" }）を落とす（Studio Web で作って書き出した形。2026-11-17、AUT-1201 の 8）
+  | { tool: string; rules: CustomRule[]; action?: "block" | "log" | "filter"; filter?: { path: string; source: "input" | "output" }[]; name?: string; description?: string; reason?: string; severity?: Severity }
   | { raw: Record<string, unknown> };
 /** カスタムガードレールの規則。fields を書かなければ全部の項目（$selectorType: all） */
 export type CustomRule =
@@ -798,8 +799,13 @@ function guardrail(g: Guardrail, i: number, old: Record<string, string>, probs: 
       return undefined;
     }).filter(Boolean);
     const name = g.name ?? `${g.tool} guardrail`;
+    let act: Record<string, unknown> = action;
+    if (g.action === "filter") {
+      if (!g.filter?.length) probs.push({ path: `guardrails[${i}].filter`, code: "MISSING", message: "action が filter のときは、落とす項目（filter: [{ path, source }]）を 1 つ以上書く" });
+      act = { $actionType: "filter", fields: (g.filter ?? []).map(f => ({ path: f.path, source: f.source })) };
+    } else if (g.filter) probs.push({ path: `guardrails[${i}].filter`, code: "BAD_GUARDRAIL", message: "filter は action が filter のときだけ" });
     return { $guardrailType: "custom", id: old[name] ?? randomUUID(), name, description: g.description ?? "", enabledForEvals: true,
-      selector: { scopes: ["Tool"], matchNames: [g.tool] }, action, rules };
+      selector: { scopes: ["Tool"], matchNames: [g.tool] }, action: act, rules };
   }
   probs.push({ path: `guardrails[${i}]`, code: "BAD_GUARDRAIL", message: "pii / harmful / promptInjection / ip / userPromptAttacks / judge / tool / raw のどれかを書く" });
   return undefined;

@@ -521,3 +521,14 @@ test("エスカレーションのメモリ：properties.memory の形と検査�
   assert.deepEqual(codes({ memory: mem, escalations: [esc({ fields: ["Nope"] })] }), ["ESC_MEMORY"]);
   assert.deepEqual(codes({ memory: mem, escalations: [esc({ fields: { Content: 0.3, Comment: 0.3 } })] }), ["ESC_MEMORY"]);
 });
+
+test("道具のカスタムガードレールの Filter（AUT-1201 の 8）", () => {
+  const web = { builtin: "create-file", name: "Create File" };
+  const g = { tool: "Create File", rules: [{ always: "inputAndOutput" }], action: "filter", filter: [{ path: "content", source: "input" }] };
+  const r = generate(ir({ tools: [web], guardrails: [g] } as any), BASE, ALL);
+  assert.deepEqual(r.problems, []);
+  assert.deepEqual((r.result!.agent as any).guardrails[0].action, { $actionType: "filter", fields: [{ path: "content", source: "input" }] });
+  const codes = (x: any) => generate(ir({ tools: [web], guardrails: [x] } as any), BASE, ALL).problems.map((p) => p.code);
+  assert.deepEqual(codes({ ...g, filter: [] }), ["MISSING"]);
+  assert.deepEqual(codes({ ...g, action: "block" }), ["BAD_GUARDRAIL"]);
+});
