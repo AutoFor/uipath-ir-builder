@@ -293,3 +293,12 @@ test("C# の変数の既定値：VB と同じ形で書けるものは VB の式�
   assert.equal(v("x:String", "&quot;ab&quot;"), '"ab"');
   assert.deepEqual(v("x:String", "DateTime.Now.ToString(&quot;yyyy&quot;)"), { cs: 'DateTime.Now.ToString("yyyy")' });
 });
+
+test("日本語のワークフロー名・変数名を取り込める（C# でも VB でも識別子）", () => {
+  const xml = csWf(csLog("支出元"), `<Sequence.Variables><Variable x:TypeArguments="x:String" Name="支出元" /></Sequence.Variables>`).replace('x:Class="Cs"', 'x:Class="MF入力"');
+  const r = importAndCheck(xml, cat);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.validation, []);
+  assert.equal(r.wf!.workflow, "MF入力");
+  assert.match(generateCoded(r.wf!, cat, maps, { namespace: "Migrated" }).code, /public class MF入力 : CodedWorkflow[\s\S]*String 支出元 = default;[\s\S]*Log\(message: 支出元\);/);
+});

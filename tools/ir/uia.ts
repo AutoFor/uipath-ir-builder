@@ -127,7 +127,7 @@ export function validateObjs(n: Node, a: Activity, path: string, scope: Map<stri
       if (!isValue(x)) { add(kat, "BAD_OBJ", `"${k}"（${p.type}）は値（式・{ lit }・数値・真偽値）で書く`); continue; }
       if (p.enum && !enumOk(p, x)) add(kat, "BAD_ENUM", `"${k}" は ${p.enum.join(" / ")} のどれか（フラグは "A, B"）`);
       if (p.kind === "out") {
-        const head = typeof x === "string" ? x.match(/^[A-Za-z_]\w*/)?.[0] : undefined;
+        const head = typeof x === "string" ? x.match(/^[\p{L}_][\p{L}\p{N}_]*/u)?.[0] : undefined;
         if (!head || !scope.has(head)) add(kat, "UNDECLARED_NAME", `出力先 "${String(x)}" が宣言されていない`);
       }
       const drawing = p.type.match(/^System\.Nullable<System\.Drawing\.(Rectangle|Point)>$|^System\.Drawing\.(Rectangle|Point)$/);

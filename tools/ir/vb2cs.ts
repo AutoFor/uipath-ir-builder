@@ -105,7 +105,7 @@ function lex(s: string): Tok[] | { error: string } {
       const map: Record<string, string> = { "": "", D: "m", "@": "m", F: "f", "!": "f", R: "d", "#": "d", S: "", I: "", L: "L", UI: "u", UL: "UL", US: "" };
       out.push({ k: "num", v: m[1] + (map[suf] ?? "") }); i += m[0].length; continue;
     }
-    if (/[A-Za-z_]/.test(c)) { const m = /^[A-Za-z_]\w*/.exec(s.slice(i))!; out.push({ k: "id", v: m[0] }); i += m[0].length; continue; }
+    if (/[\p{L}_]/u.test(c)) { const m = /^[\p{L}_][\p{L}\p{N}_]*/u.exec(s.slice(i))!; out.push({ k: "id", v: m[0] }); i += m[0].length; continue; }
     if (c === "[") return { error: "[名前] のエスケープは未対応" };
     const two = s.slice(i, i + 2);
     if (["<>", "<=", ">=", "&=", "+=", "-=", ":="].includes(two)) { out.push({ k: "op", v: two }); i += 2; continue; }

@@ -19,7 +19,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
   const issues: Issue[] = [];
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
 
-  if (!/^[A-Za-z_]\w*$/.test(wf.workflow)) add("workflow", "BAD_NAME", `ワークフロー名 "${wf.workflow}" は識別子にする`);
+  if (!IDENT.test(wf.workflow)) add("workflow", "BAD_NAME", `ワークフロー名 "${wf.workflow}" は識別子にする`);
   if (wf.file !== undefined && !isWorkflowFile(wf.file)) add("file", "BAD_FILE", `file "${wf.file}" は、プロジェクトからの相対パスの .xaml にする（例 "Sub/Foo.xaml"。".." や絶対パスは書けない）`);
 
   const scope: Scope = new Map();
@@ -199,7 +199,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       else given.add("AssignOperations");
       n.assigns.forEach((x, i) => {
         checkLValue(x.to, `${path}.assigns[${i}].to`, scope);
-        if (scope.has(x.to.match(/^[A-Za-z_]\w*/)?.[0] ?? "") && !scope.has(x.to))
+        if (scope.has(x.to.match(IDENT_HEAD)?.[0] ?? "") && !scope.has(x.to))
           add(`${path}.assigns[${i}].to`, "TYPE_UNKNOWN", `代入先の型が決まらない。変数名をそのまま書く`);
       });
     }
@@ -232,14 +232,14 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     // { vb, cs } / { cs }（C# の XAML から取り込んだ dt.Rows(0).Item などの出力先）も、先頭の名前を見る
     const text = typeof v === "string" ? v : typeof v === "object" && "cs" in v ? v.vb ?? v.cs : undefined;
     if (text === undefined) { add(at, "OUT_NOT_LVALUE", "出力先は変数名（式）で書く"); return; }
-    const head = text.match(/^[A-Za-z_]\w*/)?.[0];
+    const head = text.match(IDENT_HEAD)?.[0];
     if (!head || !scope.has(head)) add(at, "UNDECLARED_NAME", `出力先 "${text}" が宣言されていない`);
   }
 }
 
 function declare(vars: VariableDecl[], path: string, scope: Scope, add: (p: string, c: string, m: string) => void) {
   vars.forEach((v, i) => {
-    if (!/^[A-Za-z_]\w*$/.test(v.name)) add(`${path}[${i}]`, "BAD_NAME", `"${v.name}" は識別子にする`);
+    if (!IDENT.test(v.name)) add(`${path}[${i}]`, "BAD_NAME", `"${v.name}" は識別子にする`);
     checkType(v.type, `${path}[${i}]`, add);
     scope.set(v.name, v.type);
   });
@@ -271,6 +271,10 @@ export function argumentType(n: Node, a: Activity, scope: Map<string, string>): 
 }
 
 // 値（式・{ lit }・{ vb, cs }・数値・真偽値）か。lists の要素がオブジェクト（プロパティの辞書）かの見分けに使う
+// 識別子（VB と C# のどちらでも書ける名前）。日本語などの Unicode の文字も使える（Studio の変数名、ワークフロー名）
+export const IDENT = /^[\p{L}_][\p{L}\p{N}_]*$/u;
+export const IDENT_HEAD = /^[\p{L}_][\p{L}\p{N}_]*/u;
+
 export function isValueItem(v: unknown): v is Value {
   if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return true;
   if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
