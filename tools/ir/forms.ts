@@ -17,7 +17,9 @@ import type { Node, Workflow } from "./types.ts";
 
 // level：error は build / run で落ちるか値が読み書きできないもの。warn は見た目の問題（スクショで確かめた）
 export type FormIssue = { file: string; code: string; message: string; level?: "warn" };
-export type FormInfo = { file: string; id: string; kind: "FormIo" | "Html"; keys: string[]; events: string[] };
+export type FormInfo = { file: string; id: string; kind: "FormIo" | "Html"; keys: string[]; events: string[]; types?: Record<string, string> };
+// 値の変化のイベント（changed.<key>）が 26.4.0 の run で発火しなかった、文字の部品（AUT-1210。textfield で確かめた。ほかは同じ String の値なので同じ疑い）
+export const TEXT_KINDS = new Set(["textfield", "textarea", "email", "phoneNumber"]);
 
 const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // form.io の部品のうち、値を持たない（キーで読み書きしない）もの
@@ -36,7 +38,7 @@ export const KNOWN_TYPES = new Set([
 ]);
 // DesignProperties.Theme に書けるもの（FormIoThemes.js。ほかの値は Default になる）
 export const THEMES = ["Default", "Cosmo", "Cyborg", "Flatly", "Sandstone"];
-// ウィンドウとメッセージのイベント（FormEvents の既定。部品のイベントは <key>.click / <key>.changed）
+// ウィンドウとメッセージのイベント（FormEvents の既定）。部品のイベントは click.<key> / changed.<key>（Constants.FormatEventName("click", key)。順に注意。AUT-1210）
 export const WINDOW_EVENTS = ["window.closed", "window.got_focus", "window.lost_focus", "window.state_changed", "form.message"];
 
 const readText = (f: string) => readFileSync(f, "utf8").replace(/^﻿/, "");
@@ -85,6 +87,7 @@ export function checkUiForm(file: string, j: unknown): { issues: FormIssue[]; in
   const width = typeof dp.Width === "number" ? dp.Width : undefined;
   const keys: string[] = [];
   const events: string[] = [];
+  const types: Record<string, string> = {};
   const seen = new Set<string>();
   for (const c of comps) {
     const t = c.type as string;
@@ -101,16 +104,17 @@ export function checkUiForm(file: string, j: unknown): { issues: FormIssue[]; in
     if (seen.has(c.key)) add("FORM_DUP_KEY", `部品の key "${c.key}" が重なっている。値の読み書きがどちらに行くか決まらない`);
     seen.add(c.key);
     if (t === "button") {
-      // action:"event" のボタンは customEvent を出す（<key>.click のトリガー）。"submit" はフォームを送信して閉じる
+      // action:"event" のボタンは customEvent を出す（click.<key> のトリガー）。"submit" はフォームを送信して閉じる
       if (c.action !== undefined && c.action !== "event" && c.action !== "submit" && c.action !== "reset")
         add("FORM_BUTTON_ACTION", `ボタン "${c.key}" の action "${String(c.action)}" は使わない（"submit" か "event"）`);
-      events.push(`${c.key}.click`);
+      events.push(`click.${c.key}`);
       continue;
     }
     keys.push(c.key);
-    events.push(`${c.key}.changed`);
+    types[c.key] = t;
+    events.push(`changed.${c.key}`);
   }
-  return { issues, info: typeof id === "string" ? { file, id, kind: "FormIo", keys, events: [...WINDOW_EVENTS.filter((e) => e !== "form.message"), ...events] } : undefined };
+  return { issues, info: typeof id === "string" ? { file, id, kind: "FormIo", keys, events: [...WINDOW_EVENTS.filter((e) => e !== "form.message"), ...events], types } : undefined };
 }
 
 export function checkHtmlForm(file: string, text: string): { issues: FormIssue[]; info?: FormInfo } {
@@ -192,8 +196,13 @@ export function checkWorkflowRefs(wf: Workflow, irFile: string, forms: FormInfo[
         issues.push({ file: irFile, code: "FORM_KEY_NOT_FOUND", message: `${act} の Arguments の "${a.name}" は ${f.file} の部品の key に無い（${f.keys.join(", ")}）` });
     }
     const ev = n.props?.Event;
-    if (act === "FormTriggerActivity" && typeof ev === "string" && !f.events.includes(ev))
-      issues.push({ file: irFile, code: "FORM_EVENT_NOT_FOUND", message: `FormTriggerActivity の Event "${ev}" は ${f.file} に無い（${f.events.join(", ")}）` });
+    if (act === "FormTriggerActivity" && typeof ev === "string" && !f.events.includes(ev)) {
+      // 順を逆に書いた（greet.click）ときは直し方を出す
+      const swapped = /^([^.]+)\.(click|changed)$/.exec(ev);
+      const hint = swapped && f.events.includes(`${swapped[2]}.${swapped[1]}`) ? `。順が逆："${swapped[2]}.${swapped[1]}" と書く` : "";
+      issues.push({ file: irFile, code: "FORM_EVENT_NOT_FOUND", message: `FormTriggerActivity の Event "${ev}" は ${f.file} に無い${hint}（${f.events.join(", ")}）` });
+    } else if (act === "FormTriggerActivity" && typeof ev === "string" && /^changed\./.test(ev) && TEXT_KINDS.has(f.types?.[ev.slice(8)] ?? ""))
+      issues.push({ file: irFile, code: "FORM_EVENT_TEXT_CHANGED", level: "warn", message: `Event "${ev}"（${f.types![ev.slice(8)]} の値の変化）は 26.4.0 の run で発火しなかった（knowledge/forms.md の 5.）。ボタンの click.<key> か、Get Form Values で読む形にする` });
   }
   return issues;
 }

@@ -66,7 +66,7 @@ Action Center のフォームのタスク（`CreateFormTask` など）は別の�
 - `DesignProperties`：`Title`、`Width`、`Height`、`Padding`、`Theme`、`ShowInTaskbar`、`ShowMargin`、`CustomStyle`。Show Form の同名のプロパティを書かなければ、これが使われる。**窓が小さいと下の部品がはみ出してスクロールが出る**（420×320 では送信ボタンが隠れた。スクショで確かめる）
 - `Data`：form.io のフォーム。`components` の部品の `key` が、Get / Set Form Values と Show Form の `Arguments` のキーになる
 - 部品の種類は Studio の `FormIoComponentTypes` にあるもの：button、checkbox、number、password、radio、select、label、textarea、textfield、datagrid、datatable、day、time、datetime、selectboxes、survey、datamap、currency、url、email、phoneNumber、htmlelement、content、columns、panel、table、tabs、hidden、container、editgrid、filePath
-- ボタン：`"action": "submit"` はフォームを送信して**窓を閉じる**（同期の Show Form が戻る）。`"action": "event"` は閉じずに `<key>.click` のイベントを出す（5.）
+- ボタン：`"action": "submit"` はフォームを送信して**窓を閉じる**（同期の Show Form が戻る）。`"action": "event"` は閉じずに `click.<key>` のイベントを出す（5.）
 - 一覧の部品（select など）の選択肢は、`Arguments` のキーに `.Items` を付けて渡せる（25.2.1 から。公式のリリースノート）。run では確かめていない
 
 ### HTML のフォーム
@@ -145,19 +145,23 @@ gen.ts は FormId の先のファイルを見ない（プロジェクトを知�
 
 ## 5. Form Trigger（イベント）
 
-Studio では「トリガーのワークフロー」（最初のアクティビティが Form Trigger のファイル。Main から **Run Local Triggers** で動かす。Studio が `.local\generated\Triggers.Generated.xaml` を作る）で使う。生成器では、パッケージの説明（triggers.md）にあるもう一つの形、**Trigger Scope の Triggers に置く**形で書く。Action の `args`（`TriggerArgs`）を `CType(args, UiPath.Forms.Activities.<型>)` で読む。
+Studio では「トリガーのワークフロー」（最初のアクティビティが Form Trigger のファイル。Main から **Run Local Triggers** で動かす。Studio が `.local\generated\Triggers.Generated.xaml` を作る）で使う。生成器では、パッケージの説明（triggers.md）にあるもう一つの形、**Trigger Scope の Triggers に置く**形で書く。**Run Local Triggers は要らない**（Trigger Scope の中で、メッセージ・窓・部品のイベントがどれも発火した。AUT-1210）。Action の `args`（`TriggerArgs`）を `CType(args, UiPath.Forms.Activities.<型>)` で読む。
 
 | Event | 型引数 | 中身 | run |
 | --- | --- | --- | --- |
 | `form.message`（HTML の `uiPathApi.sendMessage`） | `MessageTriggerEventArgs` | `Id`、`Data`。`MessageId` で絞る | 発火を確かめた（FormTriggerActivity.min） |
 | `window.state_changed` | `WindowStateTriggerEventArgs` | `State` | 発火を確かめた（FormTriggerActivity.full。Change Form Properties で最小化） |
 | `window.closed` / `window.got_focus` / `window.lost_focus` | `FormInfoTriggerEventArgs` | 共通の `FormSourceId`、`InstanceName`、`Index` | 確かめていない |
-| `<key>.click`（`action: "event"` のボタン） | `FormInfoTriggerEventArgs` | 共通 | **発火しなかった**（下） |
-| `<key>.changed`（値の部品） | 部品の型に合わせる：text → `TextTriggerEventArgs`（`Text`）、number → `NumberTriggerEventArgs`、checkbox → `BooleanTriggerEventArgs`、password → `PasswordTriggerEventArgs`、datatable → `DataTableTriggerEventArgs`、datamap → `DictionaryTriggerEventArgs` | `Value` など | **発火しなかった**（下） |
+| **`click.<key>`**（`action: "event"` のボタン） | `FormInfoTriggerEventArgs` | 共通 | 発火を確かめた（`FormTriggerActivity.component.json`） |
+| **`changed.<key>`**（値の部品） | 部品の型に合わせる：number・currency → `NumberTriggerEventArgs`（`Value`）、checkbox → `BooleanTriggerEventArgs`、text → `TextTriggerEventArgs`（`Text`）、password → `PasswordTriggerEventArgs`、datagrid・datatable・editgrid → `DataTableTriggerEventArgs`、datamap → `DictionaryTriggerEventArgs` | `Value` など | number（`changed.age`）と checkbox（`changed.agree`）は発火を確かめた。**textfield（`changed.name`）は発火しなかった**（下） |
+| 入れ物の中（datagrid の列など） | `changed.<親の key>.<key>`（デザイナーの `CreateEventDefinition`） | | 確かめていない |
 
-- イベント名の作り方は DLL から確かめた：ランタイム（`Constants.FormatEventName`）が `<key>.click` / `<key>.changed` / `window.<名前>` を作り、トリガー（`FormTriggerActivity.HandleEventTriggered`）は `Event` と完全一致で比べる。型引数はどれでもトリガーの引数に包める
+- **イベント名は「種類.key」の順**（`click.greet`、`changed.age`）。Studio の表示は「greet clicked」だが、XAML の `Event` はこの形。DLL の IL で確かめた：`Constants.FormatEventName(a, b)` は `a + "." + b` で、窓は `("window", "state_changed")`、部品は `FormIoRendered.HandleEventTriggered` が `("click", eventId)`、`BrowserController.NotifyValueChanged` が `("changed", key)`、デザイナーの `FormIoElementsEnumerator.CreateEventDefinition` も `("changed", <key のパス>)` で作る。トリガー（`FormTriggerActivity.HandleEventTriggered`）は `Event` と完全一致で比べる
+- AUT-1209 で「部品のイベントが発火しない」と書いたのは、名前を `greet.click` と逆に書いていたため（AUT-1210 で分かった）。`tools/ir/forms.ts check` は逆の順を `FORM_EVENT_NOT_FOUND` で弾き、正しい書き方を出す
 - `Tag` は文書の「Instance Name」で、インスタンスの絞り込み。トリガーごとの名札ではない（名札のつもりで別の値を入れると、どのイベントも合わずに発火しない）
-- **確かめきれていないこと**：`.uiform` の部品のイベント（`greet.click`、`name.changed`）は、run で発火しなかった。JS（`FormIoHost.js`）が `EventTriggered {"eventId":"greet"}` と `ValueChanged {"key":"name"}` を送っていることは、ページの中で記録して確かめた。それでもトリガーには届かなかった（ExecuteScript で `.click()` や input のイベントを起こした。人がマウスで押した場合は確かめていない）。部品のイベントを使うワークフローは、人が押して確かめるまで「未確認」と伝える。代わりに、同期の Show Form（送信で戻る）か、Get Form Values で値を読む形を勧める
+- **textfield の値の変化（`changed.name`）は発火しなかった**。型引数を `TextTriggerEventArgs` にしても `FormInfoTriggerEventArgs` にしても同じ。ページの JS は `ValueChanged {"key":"name","kind":"textfield","value":"…"}` を送っている（ページの中で記録して確かめた）ので、ランタイム（`FormIoRendered.HandleValueChanged`）で落ちている。textfield は `MapResultDataType` の一覧に無く、値の型が String になる。String は IEnumerable でもあるので、一覧の値の分岐（`DeserializeEnumerable`）に入っている疑いがある。人が打っても同じメッセージなので、入れ方の問題ではない。textarea・email・phoneNumber も String の値なので同じ疑いがある（試していない）。検査は文字の部品の `changed.<key>` に注意（`FORM_EVENT_TEXT_CHANGED`）を出す。文字は、ボタンの `click.<key>` を受けてから Get Form Values で読む
+- run での押し方：ExecuteScript で `setTimeout` を仕掛けてから Trigger Scope に入る（見本）。ボタンは `document.querySelector('button[name="data[<key>]"]').click()`、数値は `focus` → `value` → `input` のイベント → `blur`。ワークフローからの Set Form Values では `changed.<key>` は出ない（値の変化はページの操作だけ）
+- ロボットの UI 操作（クラシックの Click / Type Into、`<wnd title='…' /><ctrl name='…' role='push button' />`）は、WebView2 の中の部品に届かなかった（値が変わらない）。押すのは ExecuteScript を使う
 
 ## 6. 動かして確かめたこと（2026-11-17、DESKTOP の RDP の画面、`queue-run.mjs`）
 
@@ -166,7 +170,6 @@ Studio では「トリガーのワークフロー」（最初のアクティビ�
   - **画面全体を撮る**ので、その時のデスクトップ（ほかの窓、ブラウザーの中身）も写る。撮った PNG は確かめたら消し、イシューやチャットに貼らない（2026-11-17 に、API キーの画面の一部が写っていた）
 - **人の入力が要るもの**（run は build だけ。`*.verify.json` の `noRun`）：
   - 同期の Show Form（`IsAsync=False`。`ShowFormActivity.sync.json`）：人が送信するか閉じるまで止まる。Parallel のもう一方の枝から ExecuteScript で送信ボタンを押すと戻り（`Result=True`）、数値の Out は戻った。JS で入れた文字とチェックは、戻ったり戻らなかったりした（人の入力と違う入れ方のため。人が打った場合は未確認）
-  - 部品のイベントのトリガー（5.）
 - 無人（Unattended）では動かさない。窓を出す画面が要る
 
 ## 7. デザイン（見た目を整える）

@@ -24,14 +24,14 @@ test("見本のフォーム（samples/data/forms）は通り、見本の IR の 
   }
 });
 
-test(".uiform：部品の key とイベント名を出す（ボタンは <key>.click、値は <key>.changed、入れ子もたどる）", () => {
+test(".uiform：部品の key とイベント名を出す（ボタンは click.<key>、値は changed.<key>、入れ子もたどる）", () => {
   const r = checkUiForm("a.uiform", form([
     { type: "textfield", key: "name" },
     { type: "columns", key: "cols", columns: [{ components: [{ type: "number", key: "n" }] }, { components: [{ type: "button", key: "go", action: "event" }] }] },
   ]));
   assert.deepEqual(codes(r), []);
   assert.deepEqual(r.info!.keys, ["name", "n"]);
-  assert.ok(r.info!.events.includes("go.click") && r.info!.events.includes("n.changed") && r.info!.events.includes("window.state_changed"));
+  assert.ok(r.info!.events.includes("click.go") && r.info!.events.includes("changed.n") && r.info!.events.includes("window.state_changed"));
 });
 
 test(".uiform：Metadata・Id・Kind・components の欠け、key の重なり、知らない部品を弾く", () => {
@@ -70,7 +70,7 @@ test("HTML：先頭の <!-- form --> を読む。無ければフォームでは�
 });
 
 test("IR：FormId の無いフォーム、無い key、無いイベントを弾く", () => {
-  const forms = [{ file: "f.uiform", id: ID, kind: "FormIo" as const, keys: ["name"], events: ["name.changed", "window.closed"] }];
+  const forms = [{ file: "f.uiform", id: ID, kind: "FormIo" as const, keys: ["name"], events: ["changed.name", "click.go", "window.closed"], types: { name: "textfield" } }];
   const wf: Workflow = {
     workflow: "W",
     body: [
@@ -81,4 +81,14 @@ test("IR：FormId の無いフォーム、無い key、無いイベントを弾�
     ],
   };
   assert.deepEqual(checkWorkflowRefs(wf, "w.json", forms).map((i) => i.code), ["FORM_ID_NOT_FOUND", "FORM_KEY_NOT_FOUND", "FORM_EVENT_NOT_FOUND", "FORM_ID_MISSING"]);
+});
+
+test("IR：Event の順が逆（greet.click）なら直し方を出す。文字の部品の changed は注意（26.4.0 で発火しなかった）", () => {
+  const forms = [{ file: "f.uiform", id: ID, kind: "FormIo" as const, keys: ["name"], events: ["changed.name", "click.go"], types: { name: "textfield" } }];
+  const trig = (ev: string): Workflow => ({ workflow: "W", body: [{ act: "FormTriggerActivity", typeArg: "FormInfoTriggerEventArgs", props: { FormId: ID, Event: ev } }] });
+  const swapped = checkWorkflowRefs(trig("go.click"), "w", forms);
+  assert.deepEqual(swapped.map((i) => i.code), ["FORM_EVENT_NOT_FOUND"]);
+  assert.match(swapped[0].message, /"click\.go" と書く/);
+  assert.deepEqual(checkWorkflowRefs(trig("changed.name"), "w", forms).map((i) => [i.code, i.level]), [["FORM_EVENT_TEXT_CHANGED", "warn"]]);
+  assert.deepEqual(checkWorkflowRefs(trig("click.go"), "w", forms), []);
 });
