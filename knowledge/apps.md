@@ -6,7 +6,7 @@ UiPath の Apps には 2 つある。
 | --- | --- | --- |
 | 作り方 | React + TypeScript を書く | Studio Web の画面で部品を並べる |
 | 道具 | `uip codedapp`（pack / publish / deploy） | `uip` に無い。Studio Web で作り、ソリューションで出し入れする |
-| この道具 | `tools/apps/coded-action.ts`（Action App） | `tools/apps/rpa-app.ts`（RPA アプリ） |
+| この道具 | `tools/apps/coded-action.ts`（Action App）、`tools/apps/coded-web.ts`（Web App） | `tools/apps/rpa-app.ts`（RPA アプリ） |
 
 ## Coded Action App
 
@@ -61,17 +61,43 @@ uip codedapp publish -t Action   /   uip codedapp deploy -n <app> --folder-key <
 | `string` | 文字 | 文字 / `textarea` / `select` / `radio`。`format: date` は日付 |
 | `number` / `integer` | 文字（`currency` で通貨の書式） | 数（`integer` は小数を切る。`min` / `max`） |
 | `boolean` | チェック（押せない） | チェック |
-| `array` | 一覧 | まだ無い（`APP_UNSUPPORTED`） |
-| `object` | JSON | まだ無い |
-| `file` | 添付の Id（`{ ID }`） | まだ無い |
+| `array` | 一覧 | 行ごとの部品と「×」「＋ 行を足す」（`items` が string / number / integer / boolean のときだけ。ほかは `APP_UNSUPPORTED`） |
+| `object` | JSON | 中のフィールドごとの部品（中が string / number / integer / boolean のときだけ。中にも `label`） |
+| `file` | 添付の Id（`{ ID }`）。`show: "download" / "image"` で SDK で開く | ファイルを選ぶと `Attachments.create(name, file)` で上げ、`{ ID: id }` を値にする |
 
-必須（`required`）は、書けるフィールドの `string`（空白だけは空）と `number` / `integer` で、`validate` の結果のボタンを押せなくする。
+必須（`required`）は、書けるフィールドの `string`（空白だけは空）と `number` / `integer`、`array`（1 行以上）、`file`（`ID` がある）、`object`（中の必須が埋まっている）で、`validate` の結果のボタンを押せなくする。
+
+### SDK のサービス（`@uipath/uipath-typescript`。Action App と Web App で共通の部品は `tools/apps/coded-parts.ts`）
+
+見本 `samples/apps/expense-attach.json`。SDK を使う（書ける file、`show`、`records` がある）ときだけ、`src/uipath.ts`（`new UiPath()` を引数なしで。Action App では `sdk.initialize()` を呼ばず iframe のセッションを使う）、`uipath.json`（`{ scope, clientId }`。`clientId` が無ければ印を入れて注意を出す）、`package.json` の `@uipath/uipath-typescript ^1.8.4` を足す。
+
+- 添付を開く（`show`）：`Attachments.getById(ID)` → `blobFileAccess.uri` を fetch（`requiresAuth` なら `headers` も）→ Blob の URL。`download` はボタン、`image` は `<img>`。PDF は iframe で見えないので入れていない
+- 添付を返す：SDK 1.8.4 の `Attachments.create` の JSDoc に「返った id を action の出力の file フィールドの値に使う」とある。automation に渡る形は `JobAttachmentSchema`（`ID`・`FullName`・`MimeType`）。`folderId` は渡していない
+- Data Fabric の表（`records`）：`[{ title, entity | entityId, columns: [{ field, label }], pageSize, folderKey? }]` → `getRecordsByName` / `getAllRecords`。呼び出しはいつも 1 ページなので、カーソル（`nextCursor` / `previousCursor`）でページ送り。choice set の列は数（`numberId`）のまま
+- スコープは使うものから決める：開く `OR.Folders.Read`、上げる `OR.Folders`、表 `DataFabric.Schema.Read DataFabric.Data.Read`、プロセス `OR.Execution OR.Jobs`
+- 出どころ：スキル `uipath-coded-apps`（`references/create-action-app.md`、`references/sdk/*.md`、`assets/templates/*`）と SDK の d.ts
+
+## Coded Web App（`tools/apps/coded-web.ts`）
+
+```bash
+node tools/apps/coded-web.ts samples/apps/work-portal.json --out <dir>     # 作る（--check で検証だけ）
+cd <dir> && npm install --prefer-offline && npm run build
+uip codedapp pack dist -n <app> -v 1.0.0                                   # publish / deploy は人に確かめてから
+```
+
+- IR：`{ "app", "kind": "web", "title", "clientId", "orgName", "tenantName", "baseUrl", "records": [...], "processes": [{ "title", "name", "folderPath" | "folderKey", "inputs": [{ "name", "label", "type", "required" }], "button" }] }`
+- 形はスキルの `web-app-template.md` の Tailwind だけの版（Q6 = no）：`vite.config.ts`（`base: './'`、`uipathCodedApps()`）、`uipath.json`、`src/hooks/useAuth.tsx`（PKCE：`sdk.initialize()` → `isInOAuthCallback()` → `completeOAuth()`）、Tailwind 4。`.env` は使わない
+- プロセス：`processes.start({ name }, { folderPath | folderKey, inputArguments: JSON.stringify(値) })`。フォルダを書かなければデプロイしたフォルダ
+- `baseUrl` の既定は `https://api.uipath.com`（`cloud.uipath.com` は `APP_SHAPE`）、`redirectUri` の既定は `http://localhost:5173`。`clientId`・`orgName`・`tenantName` が無ければ印を入れて注意
+- 版：`@uipath/coded-apps-dev` は npm に `1.0.0-beta.1` しかない。build で SDK の `crypto` の import に「externalized」の注意が出る（落ちない）
+
+確かめたこと（2026-11-17）：`expense-review`（SDK なし）、`expense-attach`（SDK あり）、`work-portal`（Web）を作り、`npm install --prefer-offline` → `npm run build`（tsc strict + vite）→ `uip codedapp pack` がすべて通った。`expense-attach` の nupkg に `action-schema.json` と `uipath.json` が入り、スキーマはスキルの検証も通った。**まだ**：Action Center・テナントでの動き全部（`setTaskData` / `completeTask` の新しい値の形、`{ ID }` を automation が受け取れるか、SDK の呼び出し、iframe の中の `<a download>` と `blob:` の画像、Web App の OAuth のサインイン）、`bindings_v2.json`（作っていない。pack が空のものを入れる）、デプロイ先で `uipathCodedApps()` が `dist/index.html` に入れる localhost の meta とプラットフォームの meta のどちらが勝つか
 
 ### 確かめたこと
 
 - 見本（14 フィールド、全部の型と部品）を作り、`npm install --offline`（このマシンの npm のキャッシュだけ）→ `tsc`（strict、`noUnusedLocals`）→ `vite build` が通った。版は react 19.3.1、vite 8.3.5、`@uipath/coded-action-app` 1.0.0
 - `uip codedapp pack` で `.nupkg` ができ、`content/action-schema.json` が入った。スキーマはスキルの `validate-action-schema.js` も通る
-- まだ：Action Center で開くこと（publish / deploy は人に確かめてから）、SDK のサービス（Data Fabric、添付の表示など）、Coded Web App
+- まだ：Action Center で開くこと（publish / deploy は人に確かめてから）。SDK のサービスと Coded Web App は下の節（作って build・pack まで）
 - **publish しなくても Action Center で試せる**（文書、AUT-1197。まだ試していない）：手元で `npm run dev`（localhost）のまま、`https://<host>/<org>/<tenant>/actions_/debug/coded-action-app` を開く。外部アプリ（OAuth）のリダイレクト URI に `https://<host>/<orgId>/<tenantId>/actions_`（名前ではなく GUID の形）を足しておく。
 
 ## ローコードの Apps

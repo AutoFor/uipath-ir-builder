@@ -1,0 +1,31 @@
+{
+  "app": "expense-attach",
+  "kind": "action",
+  "title": "経費の明細と領収書を直す",
+  "subtitle": "明細と支払先を直し、領収書を差し替えて返す。稼働日カレンダーも見られる。",
+  "fields": [
+    { "name": "applicant", "dir": "in", "type": "string", "required": true, "label": "申請者", "section": "申請" },
+    { "name": "receipt", "dir": "in", "type": "file", "label": "領収書", "show": "image", "section": "申請" },
+    { "name": "contract", "dir": "in", "type": "file", "label": "契約書", "show": "download", "section": "申請" },
+    { "name": "items", "dir": "inout", "type": "array", "items": { "type": "string" }, "required": true, "label": "明細", "section": "直す" },
+    { "name": "amounts", "dir": "inout", "type": "array", "items": { "type": "number" }, "label": "明細ごとの金額", "section": "直す" },
+    { "name": "payee", "dir": "inout", "type": "object", "label": "支払先", "section": "直す",
+      "properties": {
+        "name": { "type": "string", "required": true, "label": "名前" },
+        "bank": { "type": "string", "label": "銀行" },
+        "payOn": { "type": "string", "format": "date", "label": "支払日" },
+        "count": { "type": "integer", "label": "回数" },
+        "urgent": { "type": "boolean", "label": "急ぎ" }
+      } },
+    { "name": "fixedReceipt", "dir": "out", "type": "file", "label": "差し替える領収書", "description": "直した領収書があれば上げる", "section": "直す" },
+    { "name": "signedSheet", "dir": "out", "type": "file", "required": true, "show": "download", "label": "押印した申請書", "section": "直す" }
+  ],
+  "records": [
+    { "title": "稼働日カレンダー", "entity": "WorkCalendar", "pageSize": 10,
+      "columns": [ { "field": "WorkDate", "label": "日付" }, { "field": "HolidayName", "label": "祝日" }, { "field": "IsHoliday", "label": "休み" }, { "field": "RunRpa", "label": "RPA を動かす" } ] }
+  ],
+  "outcomes": [
+    { "name": "Reject", "label": "差し戻す", "validate": false },
+    { "name": "Submit", "label": "直して返す", "primary": true }
+  ]
+}

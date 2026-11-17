@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { actionSchema, check, formTsx, generateFiles, type ActionApp } from "./coded-action.ts";
+import { actionSchema, check, formTsx, generateFiles, scopes, type ActionApp } from "./coded-action.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const sample: ActionApp = JSON.parse(readFileSync(join(root, "samples", "apps", "expense-review.json"), "utf8"));
@@ -43,8 +43,14 @@ test("検証：名前、部品、書けない型", () => {
   assert.deepEqual(codes(base([{ name: "class", dir: "in", type: "string" }])), ["APP_NAME"]);
   assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "string", control: "select" }])), ["APP_CONTROL"]);
   assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "number", control: "textarea" }])), ["APP_CONTROL"]);
-  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "file" }])), ["APP_UNSUPPORTED"]);
-  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "file", hidden: true }])), []);
+  // 書ける array は要素が文字・数・真偽だけ、書ける object は中が文字・数・真偽だけ（file は上げられる）
+  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "file" }])), []);
+  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "array", items: { type: "object", properties: { x: { type: "string" } } } }])), ["APP_UNSUPPORTED"]);
+  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "array", items: { type: "object", properties: { x: { type: "string" } } }, hidden: true }])), []);
+  assert.deepEqual(codes(base([{ name: "a", dir: "inout", type: "object", properties: { x: { type: "file" } } }])), ["APP_UNSUPPORTED"]);
+  assert.deepEqual(codes(base([{ name: "a", dir: "in", type: "object", properties: { x: { type: "file" } } }])), []);
+  assert.deepEqual(codes(base([{ name: "a", dir: "out", type: "object", properties: { "my-x": { type: "string" } } }])), ["APP_NAME"]);
+  assert.deepEqual(codes(base([{ name: "a", dir: "in", type: "string", show: "image" }])), ["APP_CONTROL"]);
   assert.deepEqual(codes(base([], [])), ["APP_SHAPE"]);
   assert.deepEqual(codes(base([], [{ name: "A" }, { name: "A" }])), ["APP_NAME"]);
   // outcome とフィールドも同じ名前にできない（outcomes を含めた 4 つで 1 回）
@@ -106,4 +112,70 @@ test("完了に失敗したらメッセージを出す", () => {
   const t = formTsx(base([], [{ name: "Approve" }]));
   assert.match(t, /showMessage\(.*MessageSeverity\.Error\)/);
   assert.match(t, /import \{ MessageSeverity, Theme \}/);
+});
+
+// ---- 書ける array / object / file と SDK（samples/apps/expense-attach.json） ----
+
+const attach: ActionApp = JSON.parse(readFileSync(join(root, "samples", "apps", "expense-attach.json"), "utf8"));
+
+test("見本（添付と SDK）は検証を通る", () => {
+  assert.deepEqual(check(attach), []);
+});
+
+test("書ける array：要素ごとの部品と、行を足す・消すボタン", () => {
+  const t = formTsx(attach);
+  assert.match(t, /<div id="items" className="list-editor">/);
+  assert.match(t, /setField\('items', formData\.items\.map\(\(y, j\) => \(j === i \? e\.target\.value : y\)\)\)/);
+  assert.match(t, /setField\('items', formData\.items\.filter\(\(_, j\) => j !== i\)\)/);
+  assert.match(t, /setField\('items', \[\.\.\.formData\.items, ''\]\)/);
+  assert.match(t, /type="number" step="any" aria-label=\{'明細ごとの金額' \+ ' ' \+ \(i \+ 1\)\}/);
+  assert.match(t, /setField\('amounts', \[\.\.\.formData\.amounts, 0\]\)/);
+  // 必須の array は 1 行は要る
+  assert.match(t, /formData\.items\.length > 0/);
+});
+
+test("書ける object：中のフィールドごとの部品。必須の中身は既定値と判定に入る", () => {
+  const t = formTsx(attach);
+  assert.match(t, /payee: \{ name: string; bank\?: string; payOn\?: string; count\?: number; urgent\?: boolean \};/);
+  assert.match(t, /payee: \{ name: '' \},/);
+  assert.match(t, /<input type="date" value=\{formData\.payee\.payOn \?\? ''\} onChange=\{\(e\) => setField\('payee', \{ \.\.\.formData\.payee, payOn: e\.target\.value \}\)\}/);
+  assert.match(t, /setField\('payee', \{ \.\.\.formData\.payee, count: Math\.trunc\(Number\(e\.target\.value\)\) \|\| 0 \}\)/);
+  assert.match(t, /checked=\{formData\.payee\.urgent \?\? false\} onChange=\{\(e\) => setField\('payee', \{ \.\.\.formData\.payee, urgent: e\.target\.checked \}\)\}/);
+  assert.match(t, /\(formData\.payee\.name \?\? ''\)\.trim\(\) !== ''/);
+});
+
+test("file：書けるものは Attachments.create で上げて { ID } にする。show は SDK で開く", () => {
+  const t = formTsx(attach);
+  assert.match(t, /type FileKey = 'fixedReceipt' \| 'signedSheet';/);
+  assert.match(t, /const created = await attachments\.create\(file\.name, file\);\n {6}setField\(name, \{ ID: created\.id \}\);/);
+  assert.match(t, /<input id="fixedReceipt" type="file" onChange=\{\(e\) => uploadFile\('fixedReceipt', e\)\}/);
+  assert.match(t, /<Attachment id=\{formData\.receipt\?\.ID \?\? ''\} mode="image" \/>/);
+  assert.match(t, /\{formData\.signedSheet\?\.ID \? <Attachment id=\{formData\.signedSheet\?\.ID \?\? ''\} mode="download" \/> : null\}/);
+  assert.match(t, /!!formData\.signedSheet\?\.ID/);
+  assert.match(t, /import \{ codedActionAppService, attachments, entities \} from '\.\.\/uipath';/);
+});
+
+test("records：Data Fabric のレコードの表を出す", () => {
+  const t = formTsx(attach);
+  assert.match(t, /<RecordList\n\s+entities=\{entities\}\n\s+title="稼働日カレンダー"\n\s+entity="WorkCalendar"\n\s+columns=\{\[\{ field: 'WorkDate', label: '日付' \}/);
+  assert.match(t, /pageSize=\{10\}/);
+  assert.deepEqual(codes({ ...base([]), records: [{ title: "x", entity: "A", entityId: "00000000-0000-0000-0000-000000000000", columns: [{ field: "a" }] }] }), ["APP_RECORDS"]);
+  assert.deepEqual(codes({ ...base([]), records: [{ title: "x", entityId: "bad", columns: [] }] }), ["APP_RECORDS", "APP_RECORDS"]);
+});
+
+test("SDK を使うときだけ uipath.json・SDK の uipath.ts・部品を書く。sdk.initialize() は呼ばない", () => {
+  const f = generateFiles(attach);
+  assert.deepEqual(JSON.parse(f["uipath.json"]), { scope: "OR.Folders DataFabric.Schema.Read DataFabric.Data.Read", clientId: "<External Application の client ID>" });
+  assert.match(f["src/uipath.ts"], /const sdk = new UiPath\(\);/);
+  assert.match(f["src/uipath.ts"], /export const attachments = new Attachments\(sdk\);/);
+  assert.ok(!/^[^/\n]*initialize\(/m.test(f["src/uipath.ts"]));
+  assert.ok(f["src/components/Attachment.tsx"].includes("attachments.getById(id)"));
+  assert.ok(f["src/components/RecordList.tsx"].includes("entities.getRecordsByName"));
+  // SDK を使わない見本には無い
+  const g = generateFiles(sample);
+  assert.ok(!("uipath.json" in g) && !("src/components/Attachment.tsx" in g));
+  assert.ok(!g["src/uipath.ts"].includes("uipath-typescript"));
+  // 開くだけなら読む権限だけ
+  assert.equal(scopes(base([{ name: "r", dir: "in", type: "file", show: "download" }])), "OR.Folders.Read");
+  assert.equal(scopes({ ...base([]), clientId: "abc" }), "");
 });
