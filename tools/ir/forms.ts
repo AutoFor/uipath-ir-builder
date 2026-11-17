@@ -18,8 +18,6 @@ import type { Node, Workflow } from "./types.ts";
 // level：error は build / run で落ちるか値が読み書きできないもの。warn は見た目の問題（スクショで確かめた）
 export type FormIssue = { file: string; code: string; message: string; level?: "warn" };
 export type FormInfo = { file: string; id: string; kind: "FormIo" | "Html"; keys: string[]; events: string[]; types?: Record<string, string> };
-// 値の変化のイベント（changed.<key>）が 26.4.0 の run で発火しなかった、文字の部品（AUT-1210。textfield で確かめた。ほかは同じ String の値なので同じ疑い）
-export const TEXT_KINDS = new Set(["textfield", "textarea", "email", "phoneNumber"]);
 
 const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // form.io の部品のうち、値を持たない（キーで読み書きしない）もの
@@ -201,8 +199,7 @@ export function checkWorkflowRefs(wf: Workflow, irFile: string, forms: FormInfo[
       const swapped = /^([^.]+)\.(click|changed)$/.exec(ev);
       const hint = swapped && f.events.includes(`${swapped[2]}.${swapped[1]}`) ? `。順が逆："${swapped[2]}.${swapped[1]}" と書く` : "";
       issues.push({ file: irFile, code: "FORM_EVENT_NOT_FOUND", message: `FormTriggerActivity の Event "${ev}" は ${f.file} に無い${hint}（${f.events.join(", ")}）` });
-    } else if (act === "FormTriggerActivity" && typeof ev === "string" && /^changed\./.test(ev) && TEXT_KINDS.has(f.types?.[ev.slice(8)] ?? ""))
-      issues.push({ file: irFile, code: "FORM_EVENT_TEXT_CHANGED", level: "warn", message: `Event "${ev}"（${f.types![ev.slice(8)]} の値の変化）は 26.4.0 の run で発火しなかった（knowledge/forms.md の 5.）。ボタンの click.<key> か、Get Form Values で読む形にする` });
+    }
   }
   return issues;
 }
