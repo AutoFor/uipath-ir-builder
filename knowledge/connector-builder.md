@@ -99,8 +99,24 @@ node tools/connector/gen.ts <ir.json> --out <空のフォルダ> --import [--pub
 - `auth.validate` は接続を作るときに GET で呼ぶ読み取りだけの API（`provisionAuthValidation` のリソースになる）。
 - まだ扱っていないもの：GET のクエリの引数、ページング、パスの引数（`/items/{id}`）、トリガー、フック。
 
+## テナントに上げて呼ぶ（確かめた。2026-11-19）
+
+```bash
+node tools/connector/gen.ts samples/connector/line-messaging.json --out <空のフォルダ> --import --publish
+uip is connectors list --refresh                          # 公開したものは custom-{組織}-{名前}（下書きは design-…）
+uip is connections list custom-autofor-linemessagingapi --all-folders --refresh   # 接続（フォルダを指定しないと見つからない）
+uip is resources list custom-autofor-linemessagingapi     # オブジェクト（= アクティビティの name）と操作
+uip is resources run create custom-autofor-linemessagingapi push_message --connection-id <接続の Id> --body '<JSON>'
+```
+
+- `--publish` は `--wait` で待つ。終わるとすぐ `connectors list` に出る（`custom-…` のキー）。下書き（`design-…`）は画面で作ったものがあっても、同じキーなら上書きされる。
+- **接続はトークンを入れるので画面で作る**：Integration Service → フォルダ（例 Common）→ コネクタ → 「<名前> に接続」。customApiKey の欄に入れるのはトークンだけ（`Bearer ` は prefix で付く）。保存のとき `auth.validate` の API が呼ばれる。
+- `resources run create` で、接続を使って API を呼べる（LINE のプッシュ送信が届いた。返り値は `sentMessages[*].id`）。ロボットや Studio を使わずに、コネクタと接続の確かめができる。
+- **アクティビティの見え方**：`uip is activities list` では、汎用の「Insert Record」「List Records」（`IsCurated: No`）だけが出る。push_message は「Insert Record」でオブジェクトに選ぶ形。SR の `metadata.method.POST.curated`（名前・表示名）は CLI が作っているが、単独のアクティビティにはなっていない（`connectors metadata` の `HasMethods: false`）。単独のアクティビティにする方法はまだ分かっていない。
+
 ## まだ確かめていないこと
 
-- `import` と `publish`（テナントに上げる。公開は取り消しにくいので、試すときは名前を分ける）
-- 接続を作ってアクティビティを呼ぶ（XAML、Coded）
+- Studio（XAML）・Coded から呼ぶ（Insert Record にオブジェクト push_message、接続は Common）
 - サーバーレス（Linux）のロボットから呼ぶ
+- 単独のアクティビティ（curated）として出す方法
+- 公開したコネクタを消す・版を上げる（`element-metadata.json` の latestVersion を上げて publish）
