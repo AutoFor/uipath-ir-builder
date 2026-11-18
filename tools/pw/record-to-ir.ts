@@ -1,0 +1,356 @@
+// Playwright（C#）の記録（tools/pw/UiRecorder.cs が書く JSON）から、IR と <P>/ir/repository.json を作る（AUT-1219）。
+//
+//   node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge]
+//        [--interaction-mode <NInteractionMode>] <record.ja.json> [<record.en.json>]
+//
+// - 記録は 1 つ（1 つの言語）か 2 つ（日本語と英語）。2 つなら手順の順番で突き合わせる（操作と名前が同じであること）
+// - 書くもの：<P>/ir/<名前>.json（ワークフローの IR。ターゲットは $ref）、<P>/ir/repository.json（同じ名前のアプリを置き換える）、
+//   <P>/ir/<名前>.conversion.md（要素ごとに選んだセレクターと理由、変換できなかったもの）
+// - そのあと objrepo.ts build → gen.ts / gen-coded.ts で XAML と Coded（Descriptors）を作る
+//
+// セレクターの選び方（言語によらない属性を先に使う。どの記録でも 1 つに決まるものだけ）：
+//   1. テスト用の属性（data-testid、data-cy、data-e2e、data-test、data-qa）
+//   2. id（作られた値に見えるものは使わない）、name
+//   3. aria-label → aaname。言語で値が違えば、両方の値の正規表現（matching:aaname='regex'）
+//   4. 表示文字 → innertext。言語で違えば、両方の値の正規表現
+//   5. どれでも決まらなければ css-selector（記録のときの CSS のパス）。壊れやすいので一覧に出す
+
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+
+export type Snapshot = {
+  tag: string;
+  attrs: Record<string, string>;
+  text: string;
+  value: string | null;
+  role: string | null;
+  css: string;
+  ancestors: Record<string, string>[];
+  counts: Record<string, number>;
+  inShadow: boolean;
+  inFrame: boolean;
+  locatorCount?: number;
+};
+export type Step = {
+  i: number;
+  action: "goto" | "click" | "fill" | "text" | "wait" | "unsupported";
+  screen?: string;
+  name?: string;
+  page?: { url: string; title: string; lang: string };
+  element?: Snapshot;
+  url?: string;
+  urlArg?: string;
+  value?: string;
+  valueArg?: string;
+  outVar?: string;
+  result?: string;
+  timeoutMs?: number;
+  what?: string;
+  detail?: string;
+};
+export type Recording = { version: number; locale: string; browser?: string; steps: Step[] };
+
+export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean };
+export type Unconverted = { step: number; what: string; why: string };
+export type ConvertOptions = { workflow: string; app: string; browser: "Chrome" | "Edge"; interactionMode?: string };
+export type ConvertResult = {
+  ir: Record<string, unknown>;
+  app: Record<string, unknown>;
+  choices: { screen: string; name: string; choice: Choice; locales: string[] }[];
+  unconverted: Unconverted[];
+  warnings: string[];
+};
+
+const TEST_ATTRS = ["data-testid", "data-cy", "data-e2e", "data-test", "data-qa"];
+
+// 作られた値に見える id（Angular Material の mat-input-3、React の :r1:、数字の多いもの、GUID）
+export const generatedId = (v: string) =>
+  /^(mat|cdk|ng|mui|ember|ext)-/i.test(v) || /^:r\w*:$/.test(v) || /\d{3,}/.test(v) || /^[0-9a-f-]{16,}$/i.test(v) || /-\d+$/.test(v);
+
+const q = (v: string) => v.replace(/&/g, "&amp;").replace(/'/g, "&apos;");
+const reEsc = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const same = (xs: string[]) => xs.every((x) => x === xs[0]);
+const unique = (snaps: Snapshot[], key: string) => snaps.every((s) => s.counts?.[key] === 1);
+
+// 表示文字・aria-label を、言語で違えば正規表現にする
+function textAttr(attr: "aaname" | "innertext", vals: string[]): { part: string; independent: boolean } {
+  const uniq = [...new Set(vals)];
+  if (uniq.length === 1) return { part: `${attr}='${q(uniq[0])}'`, independent: false };
+  return { part: `${attr}='^(${uniq.map((v) => q(reEsc(v))).join("|")})$' matching:${attr}='regex'`, independent: false };
+}
+
+export function chooseSelector(snaps: Snapshot[]): Choice {
+  const tag = snaps[0].tag.toUpperCase();
+  const has = (k: string) => snaps.every((s) => s.attrs[k] !== undefined && s.attrs[k] !== "");
+  const vals = (k: string) => snaps.map((s) => s.attrs[k]);
+  // 1. テスト用の属性
+  for (const k of TEST_ATTRS) {
+    if (has(k) && same(vals(k)) && unique(snaps, k))
+      return { selector: `<webctrl tag='${tag}' ${k}='${q(vals(k)[0])}' />`, basis: k, languageIndependent: true, fragile: false };
+  }
+  // 2. id、name
+  if (has("id") && same(vals("id")) && !generatedId(vals("id")[0]) && unique(snaps, "id"))
+    return { selector: `<webctrl tag='${tag}' id='${q(vals("id")[0])}' />`, basis: "id", languageIndependent: true, fragile: false };
+  if (has("name") && same(vals("name")) && unique(snaps, "name"))
+    return { selector: `<webctrl tag='${tag}' name='${q(vals("name")[0])}' />`, basis: "name", languageIndependent: true, fragile: false };
+  // テスト用の属性があるが 1 つに決まらないとき、type などと組み合わせない（UiPath の一致の数は確かめられない）。次へ
+  // 3. aria-label → aaname
+  if (has("aria-label") && unique(snaps, "aria-label")) {
+    const t = textAttr("aaname", vals("aria-label"));
+    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("aria-label")) ? "aria-label" : "aria-label（2 言語）", languageIndependent: false, fragile: false };
+  }
+  // 4. 表示文字
+  if (snaps.every((s) => s.text && s.counts?.["#text"] === 1)) {
+    const t = textAttr("innertext", snaps.map((s) => s.text));
+    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(snaps.map((s) => s.text)) ? "表示文字" : "表示文字（2 言語）", languageIndependent: false, fragile: false };
+  }
+  // タグだけで 1 つ（BODY、H1 など）
+  if (snaps.every((s) => s.counts?.["#tag"] === 1))
+    return { selector: `<webctrl tag='${tag}' />`, basis: "タグだけで 1 つ", languageIndependent: true, fragile: false };
+  // 5. CSS のパス
+  const css = snaps[0].css;
+  return { selector: `<webctrl css-selector='${q(css)}' tag='${tag}' />`, basis: "CSS のパス", languageIndependent: same(snaps.map((s) => s.css)), fragile: true };
+}
+
+const TAXONOMY: Record<string, [string, string]> = {
+  click: ["Button", "Click"],
+  fill: ["Input", "TypeInto"],
+  text: ["Text", "GetText"],
+  wait: ["Text", "CheckState"],
+};
+const ELEMENT_TYPE: Record<string, string> = { BUTTON: "Button", INPUT: "InputBox", TEXTAREA: "InputBox", A: "HyperLink", SELECT: "DropDown" };
+
+function urlPattern(urls: string[]): string {
+  const u = new URL(urls[0]);
+  if (u.protocol === "file:") return urls[0];
+  return `${u.protocol}//${u.host}/*`;
+}
+
+export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
+  if (!recs.length) throw new Error("記録が無い");
+  const base = recs[0].steps;
+  for (const r of recs.slice(1)) {
+    if (r.steps.length !== base.length) throw new Error(`記録の手順の数が違う: ${recs[0].locale} ${base.length} / ${r.locale} ${r.steps.length}`);
+    r.steps.forEach((s, i) => {
+      if (s.action !== base[i].action || s.name !== base[i].name || s.screen !== base[i].screen)
+        throw new Error(`手順 ${i} が記録で違う: ${base[i].action} ${base[i].name ?? ""} / ${s.action} ${s.name ?? ""}`);
+    });
+  }
+  const locales = recs.map((r) => r.locale);
+  const unconverted: Unconverted[] = [];
+  const warnings: string[] = [];
+  const app = opt.app;
+  const browserApp = opt.browser === "Edge" ? "msedge.exe" : "chrome.exe";
+
+  // 画面（記録の screen の名前ごと）と要素
+  type Scr = { name: string; urls: string[]; elements: Map<string, { snaps: Snapshot[]; action: string; choice?: Choice }> };
+  const screens = new Map<string, Scr>();
+  const scr = (name: string) => {
+    if (!screens.has(name)) screens.set(name, { name, urls: [], elements: new Map() });
+    return screens.get(name)!;
+  };
+  base.forEach((s, i) => {
+    if (s.action === "unsupported") {
+      unconverted.push({ step: i, what: s.what ?? "?", why: `Playwright にしか無い操作（${s.detail ?? ""}）` });
+      return;
+    }
+    const sc = scr(s.screen ?? "画面");
+    for (const r of recs) {
+      const st = r.steps[i];
+      if (st.page?.url) sc.urls.push(st.page.url);
+      if (st.action === "goto" && st.url) sc.urls.push(st.url);
+    }
+    if (s.action === "goto") return;
+    const snaps = recs.map((r) => r.steps[i].element!).filter(Boolean);
+    if (snaps.length !== recs.length) throw new Error(`手順 ${i}（${s.name}）に要素の記録が無い`);
+    for (const sn of snaps) {
+      if (sn.inFrame) unconverted.push({ step: i, what: s.name ?? "", why: "iframe の中の要素（フレームのセレクターを足す必要がある。まだ作っていない）" });
+      if (sn.inShadow) warnings.push(`手順 ${i}（${s.name}）は Shadow DOM の中。UiPath で探せるかは確かめていない`);
+      if ((sn.locatorCount ?? 1) > 1) warnings.push(`手順 ${i}（${s.name}）の locator は ${sn.locatorCount} 個に当たった（記録は先頭の要素）`);
+    }
+    const key = s.name ?? `要素${i}`;
+    const prev = sc.elements.get(key);
+    if (prev) {
+      if (prev.snaps[0].css !== snaps[0].css) warnings.push(`要素「${key}」が別の要素に当たっている（${prev.snaps[0].css} / ${snaps[0].css}）。先のものを使う`);
+      return;
+    }
+    sc.elements.set(key, { snaps, action: s.action });
+  });
+
+  const choices: ConvertResult["choices"] = [];
+  const repoScreens = [...screens.values()].map((sc) => {
+    const elements: Record<string, unknown>[] = [
+      { name: "ページ本体", taxonomy: "Text", activityType: "GoToUrl", target: { FullSelectorArgument: { lit: "<webctrl tag='BODY' />" }, SearchSteps: "Selector" } },
+    ];
+    for (const [name, e] of sc.elements) {
+      if (name === "ページ本体") throw new Error(`要素の名前「ページ本体」は使えない（URL を開くための要素の名前）`);
+      e.choice = chooseSelector(e.snaps);
+      choices.push({ screen: sc.name, name, choice: e.choice, locales });
+      if (e.choice.fragile) unconverted.push({ step: -1, what: `${sc.name}/${name}`, why: `言語によらない属性も、1 つに決まる属性も無い。CSS のパス（${e.snaps[0].css}）で探す。画面が変わると壊れやすい` });
+      const [taxonomy, activityType] = TAXONOMY[e.action] ?? ["Text", "Click"];
+      const target: Record<string, unknown> = { FullSelectorArgument: { lit: e.choice.selector }, SearchSteps: "Selector" };
+      const et = ELEMENT_TYPE[e.snaps[0].tag.toUpperCase()];
+      if (et) target.ElementType = et;
+      elements.push({ name, taxonomy, activityType, target });
+    }
+    const screen: Record<string, unknown> = {
+      name: sc.name,
+      target: { BrowserType: opt.browser, Selector: { lit: `<html app='${browserApp}' url='${q(urlPattern(sc.urls))}' />` }, Url: { lit: sc.urls[0] }, IsExactTitleEnabled: false },
+      elements,
+    };
+    if (opt.interactionMode) screen.interactionMode = opt.interactionMode;
+    return screen;
+  });
+  const repoApp = { name: app, version: "1.0.0", screens: repoScreens };
+
+  // ワークフロー：最初の画面のカードの中に、手順を順に置く。画面が変わったら、その画面のカード（開かない・閉じない）に入れる
+  const args: Record<string, unknown>[] = [];
+  const vars: Record<string, unknown>[] = [];
+  const addArg = (name: string, dir: "In" | "Out") => {
+    if (!args.some((a) => a.name === name)) args.push({ name, dir, type: "String" });
+  };
+  const addVar = (name: string) => {
+    if (name.startsWith("out_")) return addArg(name, "Out");
+    if (!vars.some((v) => v.name === name)) vars.push({ name, type: "String" });
+  };
+  const ref = (screen: string, el: string) => ({ $ref: [app, screen, el] });
+  const firstScreen = base.find((s) => s.action !== "unsupported")?.screen ?? "画面";
+  const outer: Record<string, unknown> = {
+    act: "NApplicationCard",
+    name: `${firstScreen} を開く`,
+    objs: { TargetApp: { $ref: [app, firstScreen] } },
+    props: { OpenMode: "Always", CloseMode: "Always" },
+    body: [] as unknown[],
+  };
+  let cur = outer.body as unknown[];
+  let curScreen = firstScreen;
+  const strExpr = (lit: string | undefined, arg: string | undefined) => {
+    if (arg) {
+      addArg(arg, "In");
+      return arg;
+    }
+    return { lit: lit ?? "" };
+  };
+  base.forEach((s, i) => {
+    if (s.action === "unsupported") {
+      cur.push({ act: "LogMessage", name: `変換できない手順 ${i}`, props: { Level: "Warn", Message: { lit: `変換できない手順 ${i}: ${s.what}（${s.detail ?? ""}）` } } });
+      return;
+    }
+    const sc = s.screen ?? "画面";
+    if (sc !== curScreen) {
+      const inner = { act: "NApplicationCard", name: `${sc} につなぐ`, objs: { TargetApp: { $ref: [app, sc] } }, props: { OpenMode: "Never", CloseMode: "Never" }, body: [] as unknown[] };
+      (outer.body as unknown[]).push(inner);
+      cur = inner.body;
+      curScreen = sc;
+    }
+    switch (s.action) {
+      case "goto":
+        cur.push({ act: "NGoToUrl", name: `${sc} の URL を開く`, objs: { Target: ref(sc, "ページ本体") }, props: { Url: strExpr(s.url, s.urlArg) } });
+        break;
+      case "click":
+        cur.push({ act: "NClick", name: `${s.name} を押す`, objs: { Target: ref(sc, s.name!) } });
+        break;
+      case "fill":
+        cur.push({ act: "NTypeInto", name: `${s.name} に入れる`, objs: { Target: ref(sc, s.name!) }, props: { Text: strExpr(s.value, s.valueArg) } });
+        break;
+      case "text": {
+        const v = s.outVar ?? `text${i}`;
+        addVar(v);
+        cur.push({ act: "NGetText", name: `${s.name} を読む`, objs: { Target: ref(sc, s.name!) }, props: { TextString: v } });
+        cur.push({ act: "LogMessage", props: { Level: "Info", Message: `"${s.name}: " & ${v}` } });
+        break;
+      }
+      case "wait": {
+        const v = `found${i}`;
+        if (!vars.some((x) => x.name === v)) vars.push({ name: v, type: "Boolean" });
+        cur.push({ act: "NCheckState", name: `${s.name} を待つ`, objs: { Target: ref(sc, s.name!) }, props: { Mode: "WaitAppear", Timeout: String(Math.round((s.timeoutMs ?? 30000) / 1000)), Exists: v } });
+        cur.push({ act: "If", props: { Condition: `Not ${v}` }, then: [{ act: "Throw", props: { Exception: `New Exception("${s.name} が出ない")` } }] });
+        break;
+      }
+    }
+  });
+  const ir: Record<string, unknown> = { workflow: opt.workflow };
+  if (args.length) ir.arguments = args;
+  if (vars.length) ir.variables = vars;
+  ir.body = [outer];
+  return { ir, app: repoApp, choices, unconverted, warnings };
+}
+
+export function report(res: ConvertResult, recs: Recording[]): string {
+  const lines = [`# ${String(res.ir.workflow)}：Playwright の記録からの変換`, "", `記録：${recs.map((r) => `${r.locale}（手順 ${r.steps.length}）`).join("、")}`, ""];
+  lines.push("## 要素ごとのセレクター", "", "| 画面 | 要素 | セレクター | 決め手 | 言語によらない |", "| --- | --- | --- | --- | --- |");
+  for (const c of res.choices) lines.push(`| ${c.screen} | ${c.name} | \`${c.choice.selector.replace(/\|/g, "\\|")}\` | ${c.choice.basis} | ${c.choice.languageIndependent ? "○" : "—"} |`);
+  lines.push("", "## 変換できなかったもの", "");
+  if (!res.unconverted.length) lines.push("なし");
+  for (const u of res.unconverted) lines.push(`- ${u.step >= 0 ? `手順 ${u.step}：` : ""}${u.what}：${u.why}`);
+  if (res.warnings.length) {
+    lines.push("", "## 注意", "");
+    for (const w of res.warnings) lines.push(`- ${w}`);
+  }
+  return lines.join("\n") + "\n";
+}
+
+function main(argv: string[]) {
+  let project = "";
+  let workflow = "";
+  let app = "";
+  let browser: "Chrome" | "Edge" = "Chrome";
+  let interactionMode: string | undefined;
+  const files: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--project") project = argv[++i];
+    else if (a === "--workflow") workflow = argv[++i];
+    else if (a === "--app") app = argv[++i];
+    else if (a === "--browser") browser = argv[++i] as "Chrome" | "Edge";
+    else if (a === "--interaction-mode") interactionMode = argv[++i];
+    else if (a.startsWith("--")) throw new Error(`知らないオプション: ${a}`);
+    else files.push(a);
+  }
+  if (!project || !workflow || !files.length) {
+    console.error("使い方: node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge] [--interaction-mode <モード>] <記録.json>...");
+    process.exit(2);
+  }
+  const recs = files.map((f) => JSON.parse(readFileSync(f, "utf8").replace(/^\uFEFF/, "")) as Recording);
+  const res = convert(recs, { workflow, app: app || `${browser}（${workflow}）`, browser, interactionMode });
+  const irDir = join(project, "ir");
+  mkdirSync(irDir, { recursive: true });
+  writeFileSync(join(irDir, `${workflow}.json`), JSON.stringify(res.ir, null, 2) + "\n");
+  // repository.json：同じ名前のアプリは置き換える（Id は名前が同じ画面・要素から引き継ぐ）
+  const repoFile = join(irDir, "repository.json");
+  const repo = existsSync(repoFile) ? JSON.parse(readFileSync(repoFile, "utf8")) : { apps: [] };
+  const old = (repo.apps as Record<string, unknown>[]).find((a) => a.name === res.app.name);
+  if (old) carryIds(old, res.app);
+  repo.apps = [...(repo.apps as Record<string, unknown>[]).filter((a) => a.name !== res.app.name), res.app];
+  writeFileSync(repoFile, JSON.stringify(repo, null, 2) + "\n");
+  writeFileSync(join(irDir, `${workflow}.conversion.md`), report(res, recs));
+  console.log(`OK ${join(irDir, `${workflow}.json`)}、repository.json（アプリ「${res.app.name}」）`);
+  for (const c of res.choices) console.log(`  ${c.screen}/${c.name}: ${c.choice.selector}（${c.choice.basis}）`);
+  if (res.unconverted.length) console.log(`変換できなかったもの ${res.unconverted.length} 件 → ${workflow}.conversion.md`);
+  for (const w of res.warnings) console.log(`注意: ${w}`);
+}
+
+// 前の repository.json の Id（アプリ・バージョン・画面・要素）を、名前が同じものに引き継ぐ（XAML の Reference が変わらないように）
+export function carryIds(old: Record<string, unknown>, next: Record<string, unknown>) {
+  for (const k of ["id", "versionId"]) if (old[k]) next[k] = old[k];
+  const oldScreens = (old.screens as Record<string, unknown>[]) ?? [];
+  for (const s of (next.screens as Record<string, unknown>[]) ?? []) {
+    const os = oldScreens.find((x) => x.name === s.name);
+    if (!os) continue;
+    if (os.id) s.id = os.id;
+    const oldEls = (os.elements as Record<string, unknown>[]) ?? [];
+    for (const e of (s.elements as Record<string, unknown>[]) ?? []) {
+      const oe = oldEls.find((x) => x.name === e.name);
+      if (oe?.id) e.id = oe.id;
+    }
+  }
+}
+
+if (import.meta.url === `file:///${process.argv[1]?.replace(/\\/g, "/").replace(/^\//, "")}` || process.argv[1]?.endsWith("record-to-ir.ts")) {
+  try {
+    main(process.argv.slice(2));
+  } catch (e) {
+    console.error(`NG ${(e as Error).message}`);
+    process.exit(1);
+  }
+}
