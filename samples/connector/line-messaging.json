@@ -1,0 +1,29 @@
+{
+  "connector": "LINE Messaging API",
+  "description": "LINE 公式アカウントからプッシュメッセージを送る（RPA の通知用）",
+  "categories": ["Messaging"],
+  "baseUrl": "https://api.line.me",
+  "auth": {
+    "type": "apiKey",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "label": "チャネルアクセストークン",
+    "validate": "/v2/bot/info"
+  },
+  "activities": [
+    {
+      "name": "push_message",
+      "displayName": "プッシュメッセージを送る",
+      "method": "POST",
+      "path": "/v2/bot/message/push",
+      "request": [
+        { "name": "to", "label": "送り先", "description": "ユーザー ID（U から始まる）またはグループ ID", "required": true, "primary": true },
+        { "name": "messages[*].type", "label": "種類", "sample": "text", "enum": ["text"] },
+        { "name": "messages[*].text", "label": "本文", "required": true, "primary": true }
+      ],
+      "response": [
+        { "name": "sentMessages[*].id", "label": "送ったメッセージの ID" }
+      ]
+    }
+  ]
+}
