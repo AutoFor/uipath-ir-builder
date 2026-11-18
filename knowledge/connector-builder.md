@@ -46,7 +46,7 @@ uip is connectors publish --wait            # テナント全体に公開
 ## Coded・XAML から使う
 
 - XAML（Studio）：公開したコネクタは `UiPath.IntegrationService.Activities` のアクティビティとして出る（公式文書）。
-- Coded：公式文書では、接続を `connections.<コネクタ>.<接続名>` で取り、そのサービスの Coded の API を呼ぶ（Gmail などの例）。`UiPath.CodedWorkflows` 24.10.3 には `Connnections.ConnectionBase`・`CodedWorkflowsConnectionsAttribute` があり、`UiPath.IntegrationService.Activities` 1.36.0 の Runtime には `CodedWorkflows.ConnectorRequest`（Path / Query / Body / Header の各パラメーター）・`ConnectorResponse`（Output / Items）・`CodedConnectorConfiguration`（ConnectorKey・HttpMethod・Path など）が public である（呼ぶ側の `IntegrationConnectorService` は internal）。**自作コネクタを Coded から呼べるかは、まだ確かめていない**（公開して接続を作り、Studio がプロジェクトに作る `ConnectionsManager` を見る）。呼べなければ、その呼び出しだけ小さな XAML にする（[coded-via-xaml.md](coded-via-xaml.md)）。
+- Coded：公式文書では、接続を `connections.<コネクタ>.<接続名>` で取り、そのサービスの Coded の API を呼ぶ（Gmail などの例。自作コネクタは出ない。下の「Studio・Coded から呼ぶ」）。`UiPath.CodedWorkflows` 24.10.3 には `Connnections.ConnectionBase`・`CodedWorkflowsConnectionsAttribute` があり、`UiPath.IntegrationService.Activities` 1.36.0 の Runtime には `CodedWorkflows.ConnectorRequest`（Path / Query / Body / Header の各パラメーター）・`ConnectorResponse`（Output / Items）・`CodedConnectorConfiguration`（ConnectorKey・HttpMethod・Path など）が public である（呼ぶ側の `IntegrationConnectorService` は internal）。**自作コネクタを Coded から呼べるかは、まだ確かめていない**（公開して接続を作り、Studio がプロジェクトに作る `ConnectionsManager` を見る）。呼べなければ、その呼び出しだけ小さな XAML にする（[coded-via-xaml.md](coded-via-xaml.md)）。
 
 ## IR と生成器（`tools/connector/gen.ts`）
 
@@ -114,9 +114,15 @@ uip is resources run create custom-autofor-linemessagingapi push_message --conne
 - `resources run create` で、接続を使って API を呼べる（LINE のプッシュ送信が届いた。返り値は `sentMessages[*].id`）。ロボットや Studio を使わずに、コネクタと接続の確かめができる。
 - **アクティビティの見え方**：`uip is activities list` では、汎用の「Insert Record」「List Records」（`IsCurated: No`）だけが出る。push_message は「Insert Record」でオブジェクトに選ぶ形。SR の `metadata.method.POST.curated`（名前・表示名）は CLI が作っているが、単独のアクティビティにはなっていない（`connectors metadata` の `HasMethods: false`）。単独のアクティビティにする方法はまだ分かっていない。
 
+## Studio・Coded から呼ぶ（調べた。2026-11-19、使い捨てのクロスプラットフォームのプロジェクト）
+
+- `uip rpa packages install`（`UiPath.IntegrationService.Activities` 1.36.0）を入れると、`uip rpa activities find --query "<コネクタ名>"` で動的なアクティビティが出る：`UiPath.IntegrationService.Activities.Runtime.Activities.ConnectorActivity`、`isDynamicActivity: true`、`configuration` は `{"connectorKey":"custom-…","activityType":"Generic","operation":"Create"}`（Insert Record）と `"List"`（List Records）。`activityTypeId` は GUID（コネクタ・操作ごと）。
+- `uip rpa activities get-default-xaml --activity-type-id <GUID> --connection-id <接続>` は、`<isactr:ConnectorActivity ConnectionId=… UiPathActivityTypeId=… Configuration="{x:Null}">` と空の `FieldObjects` だけを返す。**オブジェクト（push_message）とフィールドは入らない**（`--object-name` は「No dynamic-activities service is registered」で落ちる。パッケージを入れる前は TypeLoadException）。オブジェクトとフィールドは Studio のデザイナーで選んだときに `Configuration` に入る形らしい。**実物は Studio で一度作って見る必要がある**。
+- **Coded**：プロジェクトの `connections`（`ConnectionsManager`）に、自作コネクタのメンバーは無い（`connections.LINE_Messaging_API` などは CS1061）。`ConnectionsManager` はどのパッケージの DLL にも無く、Studio が作るもの。GSuite・Office365 のように、Coded の API を持つパッケージ（`CodedWorkflowsConnectionsAttribute`）のコネクタだけが出るらしい。**自作コネクタは Coded から直接は呼べない**（呼ぶならその部分だけ XAML。[coded-via-xaml.md](coded-via-xaml.md)）。
+
 ## まだ確かめていないこと
 
-- Studio（XAML）・Coded から呼ぶ（Insert Record にオブジェクト push_message、接続は Common）
+- Studio のデザイナーで Insert Record（オブジェクト push_message・フィールド）を作ったときの XAML の実物（`Configuration` の形）と、`bindings_v2.json`（接続のバインド）
 - サーバーレス（Linux）のロボットから呼ぶ
 - 単独のアクティビティ（curated）として出す方法
 - 公開したコネクタを消す・版を上げる（`element-metadata.json` の latestVersion を上げて publish）
