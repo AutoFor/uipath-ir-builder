@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             item = system.GetQueueItem(queueType: "IRQueue");
             // ステータスを設定
             system.SetTransactionStatus(transactionItem: item, status: UiPath.Core.ProcessingStatus.Failed, analytics: new Dictionary<string, object> { ["steps"] = 5 }, output: new Dictionary<string, object> { ["result"] = "NG" }, details: "詳細", errorType: UiPath.Core.Activities.ErrorType.Application, reason: "理由", timeoutMS: 30000);
-            Log(message: "ステータスを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ステータスを設定した");
         }
     }
 }

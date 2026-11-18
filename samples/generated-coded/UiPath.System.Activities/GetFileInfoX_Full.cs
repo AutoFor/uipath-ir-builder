@@ -20,11 +20,11 @@ namespace CatalogProbeNet8
             // GetFileInfoX はCoded API が無い（Coded API なし（FileInfo は System.IO の型。サービスにメソッドが無い））ので XAML 経由（coded/_activities/GetFileInfoX.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetFileInfoX.xaml", new Dictionary<string, object> { ["in_FilePath"] = "output\\GetFileInfoX_Full.csv" });
             fi = (System.IO.FileInfo)__xaml1["out_Output"];
-            Log(message: Convert.ToString(fi.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(fi.Extension), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: fi.Length.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: fi.Exists.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: fi.DirectoryName.EndsWith("output").ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(fi.Name));
+            Log(message: Convert.ToString(fi.Extension));
+            Log(message: fi.Length.ToString());
+            Log(message: fi.Exists.ToString());
+            Log(message: fi.DirectoryName.EndsWith("output").ToString());
         }
     }
 }

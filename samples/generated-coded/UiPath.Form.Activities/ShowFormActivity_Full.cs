@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             // GetFormFieldsActivity は対応表が無いので XAML 経由（coded/_activities/GetFormFieldsActivity_0cd63b.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/GetFormFieldsActivity_0cd63b.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "全部入り" });
             age = (Double)__xaml2["out_Arguments_age"];
-            Log(message: "名前: " + name + " 年齢: " + age.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "名前: " + name + " 年齢: " + age.ToString());
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "全部入り" });
         }

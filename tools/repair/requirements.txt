@@ -1,1 +1,0 @@
-browser-use[anthropic]==1.0.0

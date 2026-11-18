@@ -30,7 +30,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["B2:B4"].FormatRange(format: new UiPath.Excel.Activities.Business.NumberFormat { DecimalPlaces = 2, UseThousandSeparator = true }, alignment: new UiPath.Excel.AlignmentOptions { HorizontalAlignment = UiPath.Excel.ExcelRangeHorizontalAlignment.xlHAlignCenter, VerticalAlignment = UiPath.Excel.ExcelRangeVerticalAlignment.xlVAlignCenter, WrapText = true }, font: new UiPath.Excel.FontOptions { FontFamilyName = "Arial", Size = 14, Style = UiPath.Excel.ExcelRangeFontStyle.Bold, UnderlineStyle = UiPath.Excel.ExcelRangeUnderlineStyle.None });
                 v1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(Object));
             }
-            Log(message: "B2=" + Convert.ToString(v1), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "B2=" + Convert.ToString(v1));
         }
     }
 }

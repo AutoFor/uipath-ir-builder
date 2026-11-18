@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 // A1 の背景色
                 c = Excel.Sheet["Sheet1"].Cell["A1"].GetCellColorInternal();
             }
-            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString());
         }
     }
 }

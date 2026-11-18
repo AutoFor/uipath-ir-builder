@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
                 // 画像に保存
                 ch.GetChart(action: UiPath.Excel.ExcelChartAction.SaveAsPicture, fileName: "output\\CopyChartToClipboardX_Full.png", replaceFile: true);
             }
-            Log(message: "画像: " + System.IO.File.Exists("output\\CopyChartToClipboardX_Full.png").ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "画像: " + System.IO.File.Exists("output\\CopyChartToClipboardX_Full.png").ToString());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             ILocalResource dirRes = default;
             // 入れ子のフォルダを作る
             dirRes = system.CreateFolder(path: "output\\CreateDirectory_Full\\a\\b");
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(dirRes.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(dirRes.LocalPath)));
         }
     }
 }

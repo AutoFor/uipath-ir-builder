@@ -260,14 +260,14 @@ export function readObjects(project: string, cat: Catalog): RepoState {
         const at = `${am.Name}/${sm.Name}`;
         const p = ss.content ? parseContent(ss.content, "screen", cat, at, issues) : undefined;
         if (!p) continue;
-        const screen: RepoScreen = { name: sm.Name ?? "", id: sm.Id, ...(p.keyed.InteractionMode ? { interactionMode: p.keyed.InteractionMode.trim() } : {}), target: p.target, elements: [] };
+        const screen: RepoScreen = { name: sm.Name ?? "", id: sm.Id, ...(p.keyed.InteractionMode ? { interactionMode: p.keyed.InteractionMode.trim() } : {}), target: stripLink(p.target), elements: [] }; // 中身に Studio が書いた Reference / ContentHash は外す
         for (const eDir of subdirs(sDir)) {
           const em = readMeta(eDir);
           if (!em || em.Type !== "Element") continue;
           const es = add(eDir, em, "ObjectRepositoryTargetData");
           const pe = es.content ? parseContent(es.content, "element", cat, `${at}/${em.Name}`, issues) : undefined;
           if (!pe) continue;
-          screen.elements!.push({ name: em.Name ?? "", id: em.Id, ...(em.TaxonomyType ? { taxonomy: em.TaxonomyType } : {}), ...(pe.keyed.ActivityType ? { activityType: pe.keyed.ActivityType.trim() } : {}), target: pe.target });
+          screen.elements!.push({ name: em.Name ?? "", id: em.Id, ...(em.TaxonomyType ? { taxonomy: em.TaxonomyType } : {}), ...(pe.keyed.ActivityType ? { activityType: pe.keyed.ActivityType.trim() } : {}), target: stripLink(pe.target) });
         }
         if (!screen.elements!.length) delete screen.elements;
         app.screens!.push(screen);
@@ -440,7 +440,7 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
   const data = (w: Want, kind: "element" | "screen", content: (img?: { name: string; id: string }) => string, target: ObjValue, keyed: Record<string, string>, hash: number) => {
     const old = state.nodes.get(w.id);
     const prev = old && old.type === w.type ? parsedOld(w.id, kind) : undefined;
-    const sameContent = !!prev?.target && sameJson(withDefaults(prev.target, kind === "element" ? TA : TAPP), withDefaults(target, kind === "element" ? TA : TAPP)) && sameJson(prev.keyed ?? {}, keyed);
+    const sameContent = !!prev?.target && sameJson(withDefaults(stripLink(prev.target), kind === "element" ? TA : TAPP), withDefaults(target, kind === "element" ? TA : TAPP)) && sameJson(prev.keyed ?? {}, keyed);
     const d = kind === "element" ? ".data/ObjectRepositoryTargetData/" : ".data/ObjectRepositoryScreenData/";
     if (sameContent && old) {
       // 中身が同じなら、ContentHash も画像もそのまま（Studio で作った XAML と食い違わないように）

@@ -20,11 +20,11 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\PathExists_Full");
             // フォルダを確かめる
             ex = system.PathExists("output\\PathExists_Full", UiPath.Core.Activities.PathType.Folder); res = ex ? LocalResource.FromPath("output\\PathExists_Full") : null;
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)));
             // 無いファイルを確かめる
             ex2 = system.PathExists(path: "output\\PathExists_Full\\none.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex2.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex2.ToString()));
         }
     }
 }

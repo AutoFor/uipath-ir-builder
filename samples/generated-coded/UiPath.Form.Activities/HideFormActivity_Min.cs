@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             RunWorkflow("coded/_activities/ShowFormActivity_ff54cc.xaml", null);
             // HideFormActivity は対応表が無いので XAML 経由（coded/_activities/HideFormActivity_70b846.xaml）
             RunWorkflow("coded/_activities/HideFormActivity_70b846.xaml", null);
-            Log(message: "隠した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "隠した");
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_126197.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_126197.xaml", null);
         }

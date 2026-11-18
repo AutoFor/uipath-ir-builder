@@ -16,13 +16,13 @@ namespace CatalogProbeNet8
         {
             Int32 total = default;
             // Given
-            Log(message: "price=" + price.ToString() + " quantity=" + quantity.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "price=" + price.ToString() + " quantity=" + quantity.ToString());
             // When
             total = price * quantity;
             // Then
             // 合計が期待どおりか
             _ = testing.VerifyExpressionWithOperator(total, UiPath.Testing.Comparison.Equality, expected, null, true, null, false, false);
-            Log(message: "total=" + total.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "total=" + total.ToString());
         }
     }
 }

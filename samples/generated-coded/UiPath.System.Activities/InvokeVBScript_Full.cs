@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // InvokeVBScript はCoded API が無い（Coded API なし（ISystemService にも基底クラスにも無い。cscript を System.Diagnostics.Process で起動して書く））ので XAML 経由（coded/_xaml/InvokeVBScript_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/InvokeVBScript_Full_1.xaml", new Dictionary<string, object> { ["outText"] = outText });
             outText = (String)__xaml1["outText"];
-            Log(message: Convert.ToString(outText.Trim()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(outText.Trim()));
         }
     }
 }

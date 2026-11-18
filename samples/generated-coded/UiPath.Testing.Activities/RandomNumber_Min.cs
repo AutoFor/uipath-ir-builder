@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Decimal n = default;
             // 乱数
             n = testing.RandomNumber();
-            Log(message: Convert.ToString("type=" + n.GetType().Name), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("type=" + n.GetType().Name));
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             // 止まっているものをもう一度止める
             // StopTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を止める API が無い））ので XAML 経由（coded/_activities/StopTimer.xaml）
             RunWorkflow("coded/_activities/StopTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
-            Log(message: "2回止めた後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "2回止めた後");
         }
     }
 }

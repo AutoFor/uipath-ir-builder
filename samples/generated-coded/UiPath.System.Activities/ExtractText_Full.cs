@@ -48,10 +48,10 @@ namespace CatalogProbeNet8
                 urls = __found;
                 _ = __found.FirstOrDefault();
             }
-            Log(message: Convert.ToString(all.First()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(all.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(string.Join("|", mails)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(string.Join("|", urls)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(all.First()));
+            Log(message: Convert.ToString(all.Count().ToString()));
+            Log(message: Convert.ToString(string.Join("|", mails)));
+            Log(message: Convert.ToString(string.Join("|", urls)));
         }
     }
 }

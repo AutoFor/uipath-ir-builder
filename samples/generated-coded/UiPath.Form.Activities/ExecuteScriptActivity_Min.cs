@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             RunWorkflow("coded/_activities/ShowFormActivity_ff54cc.xaml", null);
             // ExecuteScriptActivity は対応表が無いので XAML 経由（coded/_activities/ExecuteScriptActivity_1d0e15.xaml）
             RunWorkflow("coded/_activities/ExecuteScriptActivity_1d0e15.xaml", new Dictionary<string, object> { ["in_Source"] = "document.title" });
-            Log(message: "動かした", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "動かした");
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_126197.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_126197.xaml", null);
         }

@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // CustomInput はCoded API が無い（Coded API なし（HTML の入力ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/CustomInput.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/CustomInput.xaml", new Dictionary<string, object> { ["in_URI"] = "C:\\Users\\Public\\input.html" });
             r = (System.String)__xaml1["out_Result"];
-            Log(message: "入力した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "入力した");
         }
     }
 }

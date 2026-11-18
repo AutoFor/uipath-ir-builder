@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // DeserializeXml は対応表が無いので XAML 経由（coded/_activities/DeserializeXml.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/DeserializeXml.xaml", new Dictionary<string, object> { ["in_XMLString"] = "<root><item id=\"1\" kind=\"a\">A</item><item id=\"2\">B</item></root>" });
             doc = (System.Xml.Linq.XDocument)__xaml1["out_XMLDocument"];
-            Log(message: "root=" + doc.Root.Name.LocalName + ", items=" + doc.Root.Elements().Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "root=" + doc.Root.Name.LocalName + ", items=" + doc.Root.Elements().Count().ToString());
         }
     }
 }

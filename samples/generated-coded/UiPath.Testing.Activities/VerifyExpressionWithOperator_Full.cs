@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             r2 = testing.VerifyExpressionWithOperator(5, UiPath.Testing.Comparison.GreaterThan, 3, null, true, null, false, false);
             // 成り立たない（続ける）
             r3 = testing.VerifyExpressionWithOperator(1, UiPath.Testing.Comparison.GreaterThanOrEqual, 2, null, true, null, false, false);
-            Log(message: Convert.ToString("r1=" + r1 + " r2=" + r2 + " r3=" + r3), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("r1=" + r1 + " r2=" + r2 + " r3=" + r3));
         }
     }
 }

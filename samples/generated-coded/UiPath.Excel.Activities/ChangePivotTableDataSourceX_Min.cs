@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["A1:C3"].ChangePivotTableDataSource(pivotTable: Excel.Sheet["Sheet2"].PivotTable["Pivot1"]);
                 Excel.Sheet["Sheet2"].PivotTable["Pivot1"].RefreshPivotTable(layoutRowType: UiPath.Excel.PivotTableLayoutRowType.Compact);
                 t = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["D6"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "総計: [" + Convert.ToString(t) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "総計: [" + Convert.ToString(t) + "]");
             }
         }
     }

@@ -24,9 +24,9 @@ namespace CatalogProbeNet8
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\CreateTableX_Min.xlsx", SaveChanges = true, CreateIfNotExist = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 tableName = Excel.Sheet["Sheet1"].Range["A1:C4"].CreateTable(hasHeaders: true, replaceExisting: true, tableName: null);
-                Log(message: "テーブル名: " + tableName, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "テーブル名: " + tableName);
                 dt = Excel.Table[tableName].ReadRange(hasHeaders: true, visibleRowsOnly: true);
-                Log(message: "テーブルの行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "テーブルの行数: " + dt.Rows.Count.ToString());
             }
         }
     }

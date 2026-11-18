@@ -38,9 +38,9 @@ namespace CatalogProbeNet8
             // MoveFolderX はCoded API が無い（Coded API なし（サービスの MoveFile はファイルのリソース用で、フォルダーの移動は無い））ので XAML 経由（coded/_activities/MoveFolderX.xaml）
             RunWorkflow("coded/_activities/MoveFolderX.xaml", new Dictionary<string, object> { ["in_From"] = "output\\MoveFolderX_Min.src", ["in_To"] = "output\\MoveFolderX_Min.dst" });
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFolderX_Min.dst\\MoveFolderX_Min.src\\a.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
             ex = system.PathExists(path: "output\\MoveFolderX_Min.src", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

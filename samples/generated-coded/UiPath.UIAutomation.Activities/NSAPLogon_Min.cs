@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             // SAP Logon
             // NSAPLogon はCoded API が無い（Coded API なし（UiTargetApp に SAPLogon が無い。SAP Logon の起動は uiAutomation.Open で近い動きになるが、別の API なので対応させない））ので XAML 経由（coded/_xaml/NSAPLogon_Min_1.xaml）
             RunWorkflow("coded/_xaml/NSAPLogon_Min_1.xaml", null);
-            Log(message: "NSAPLogon 完了", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "NSAPLogon 完了");
         }
     }
 }

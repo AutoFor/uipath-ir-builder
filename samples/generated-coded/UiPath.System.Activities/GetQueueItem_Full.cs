@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // キューから取得
             item = system.GetQueueItem(queueType: "IRQueue", folderPath: "Shared", filterStrategy: UiPath.Core.Activities.ReferenceFilterStrategy.Equals, reference: "IR-REF-001", timeoutMS: 30000);
             sd = item.SpecificContent;
-            Log(message: "取得した: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "取得した: " + item.Reference);
         }
     }
 }

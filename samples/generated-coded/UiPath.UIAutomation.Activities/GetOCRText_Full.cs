@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/GetOCRText_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["text"] = text, ["words"] = words });
             text = (String)__xaml1["text"];
             words = (IEnumerable<UiPath.Core.TextInfo>)__xaml1["words"];
-            Log(message: "結果: " + text.Trim(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + text.Trim());
         }
     }
 }

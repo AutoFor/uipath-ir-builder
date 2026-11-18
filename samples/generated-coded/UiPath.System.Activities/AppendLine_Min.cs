@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "first", file: LocalResource.FromPath("output\\AppendLine_Min.txt"));
             system.AppendLine(text: "second", file: LocalResource.FromPath("output\\AppendLine_Min.txt"));
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\AppendLine_Min.txt"));
-            Log(message: Convert.ToString(txt.Replace(Environment.NewLine, "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(txt.Replace(Environment.NewLine, "|")));
         }
     }
 }

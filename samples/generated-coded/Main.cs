@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
                     // あいさつを作る
                     var __result1 = RunWorkflow("coded/Greet.cs", new Dictionary<string, object> { ["in_Name"] = name });
                     message = (String)__result1["Output"];
-                    Log(message: message, level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: message);
                     // 数える
                     count = count + 1;
                 }
@@ -36,7 +36,7 @@ namespace CatalogProbeNet8
                 }
             }
             // 件数
-            Log(message: "あいさつした人数: " + count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "あいさつした人数: " + count.ToString());
         }
     }
 }

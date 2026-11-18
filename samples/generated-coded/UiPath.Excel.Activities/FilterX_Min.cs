@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
             {
                 Excel.Sheet["Sheet1"].Range["A1:C4"].Filter(options: new FilterOptions { ColumnName = "Name", ClearFilter = false, Filter = new BasicFilter { Values = new List<string> { "花子" } } });
                 dt = Excel.Sheet["Sheet1"].Range["A1:C4"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
-                Log(message: "行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-                Log(message: "先頭: " + dt.Rows[0][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "行数: " + dt.Rows.Count.ToString());
+                Log(message: "先頭: " + dt.Rows[0][0].ToString());
             }
         }
     }

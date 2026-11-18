@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // GetXMLNodeAttributes は対応表が無いので XAML 経由（coded/_activities/GetXMLNodeAttributes.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/GetXMLNodeAttributes.xaml", new Dictionary<string, object> { ["in_ExistingXMLNode"] = doc.Root.Elements().First() });
             attrs = (System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>)__xaml2["out_Attributes"];
-            Log(message: "attrs=" + String.Join(",", attrs.Select(a => a.Name.LocalName + "=" + a.Value)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "attrs=" + String.Join(",", attrs.Select(a => a.Name.LocalName + "=" + a.Value)));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace CatalogProbeNet8
             var __xaml3 = RunWorkflow("coded/_activities/CompareText_761bbc.xaml", new Dictionary<string, object> { ["in_BaselineText"] = "Order 123 done", ["in_ContinueOnFailure"] = true, ["in_OutputFilePath"] = outPath, ["in_TargetText"] = "Order 456 done" });
             diffs = (System.Collections.Generic.IEnumerable<UiPath.Testing.Activities.Models.Difference>)__xaml3["out_Differences"];
             plain = (System.Boolean)__xaml3["out_Result"];
-            Log(message: Convert.ToString("withRule=" + withRule.ToString() + " plain=" + plain.ToString() + " diffs=" + diffs.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("withRule=" + withRule.ToString() + " plain=" + plain.ToString() + " diffs=" + diffs.Count().ToString()));
         }
     }
 }

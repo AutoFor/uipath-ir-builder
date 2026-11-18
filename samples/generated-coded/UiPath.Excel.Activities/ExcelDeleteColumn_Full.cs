@@ -23,9 +23,9 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelDeleteColumn_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelDeleteColumn_Full_1.xaml", new Dictionary<string, object> { ["dt"] = dt });
             dt = (DataTable)__xaml1["dt"];
-            Log(message: "見出し0: " + dt.Columns[0].ColumnName, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "見出し1: " + dt.Columns[1].ColumnName, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "見出し2: " + dt.Columns[2].ColumnName, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "見出し0: " + dt.Columns[0].ColumnName);
+            Log(message: "見出し1: " + dt.Columns[1].ColumnName);
+            Log(message: "見出し2: " + dt.Columns[2].ColumnName);
         }
     }
 }

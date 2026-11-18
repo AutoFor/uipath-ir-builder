@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.UploadStorageFile(destination: null, fileResource: LocalResource.FromPath("C:\\Temp\\ir-upload.txt"), storageBucketName: "ir-bucket");
-            Log(message: "アップロードした", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アップロードした");
         }
     }
 }

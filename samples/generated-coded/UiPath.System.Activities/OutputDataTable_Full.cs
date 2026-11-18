@@ -35,9 +35,9 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Alice", 30});
             // 表を文字列にする
             s = system.OutputDataTable(dataTable: dt);
-            Log(message: Convert.ToString("hasAge=" + s.Contains("Age").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("has30=" + s.Contains("30").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("hasBob=" + s.Contains("Bob").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("hasAge=" + s.Contains("Age").ToString()));
+            Log(message: Convert.ToString("has30=" + s.Contains("30").ToString()));
+            Log(message: Convert.ToString("hasBob=" + s.Contains("Bob").ToString()));
         }
     }
 }

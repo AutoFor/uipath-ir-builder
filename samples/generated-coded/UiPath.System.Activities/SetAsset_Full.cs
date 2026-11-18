@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // アセットを設定
             system.SetAsset(value: "v2", assetName: "IRAsset", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "アセットを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アセットを設定した");
         }
     }
 }

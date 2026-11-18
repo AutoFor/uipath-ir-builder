@@ -28,8 +28,8 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["B2"].WriteRange(source: dt, append: false, excludeHeaders: false, ignoreEmptySource: false);
                 back = Excel.Sheet["Sheet1"].Range["B2:C5"].ReadRange(hasHeaders: true, visibleRowsOnly: false);
             }
-            Log(message: "書いた行数: " + back.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "最後の行: " + back.Rows[2]["Name"].ToString() + " " + back.Rows[2]["Age"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "書いた行数: " + back.Rows.Count.ToString());
+            Log(message: "最後の行: " + back.Rows[2]["Name"].ToString() + " " + back.Rows[2]["Age"].ToString());
         }
     }
 }

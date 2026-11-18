@@ -32,9 +32,9 @@ namespace CatalogProbeNet8
                 __col.DefaultValue = DBNull.Value;
             }
             dt.Rows.Add(new object[] {"Alice", 30});
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("name=" + dt.Rows[0]["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("age=" + dt.Rows[0]["Age"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("name=" + dt.Rows[0]["Name"].ToString()));
+            Log(message: Convert.ToString("age=" + dt.Rows[0]["Age"].ToString()));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // GetFormFieldsActivity は対応表が無いので XAML 経由（coded/_activities/GetFormFieldsActivity_3d1d13.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetFormFieldsActivity_3d1d13.xaml", null);
             name = (String)__xaml1["out_Arguments_name"];
-            Log(message: "読んだ: " + name, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "読んだ: " + name);
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_126197.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_126197.xaml", null);
         }

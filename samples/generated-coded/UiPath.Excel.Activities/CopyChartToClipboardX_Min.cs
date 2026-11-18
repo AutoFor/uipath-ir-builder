@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             {
                 ch = Excel.Sheet["Sheet1"].Range["A1:B4"].InsertExcelChart(sheet: Excel.Sheet["Sheet1"], chartCategory: UiPath.Excel.ExcelChartCategory.Column, chartType: UiPath.Excel.ExcelChartType.xlColumnClustered, left: 300, top: 10, width: 400, height: 300);
                 ch.GetChart();
-                Log(message: "コピーした", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "コピーした");
             }
         }
     }

@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "attach", file: LocalResource.FromPath(path));
             // ファイルを添付
             testing.AttachDocument(filePath: path, tags: new string[] { "ir", "sample" });
-            Log(message: "添付した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "添付した");
         }
     }
 }

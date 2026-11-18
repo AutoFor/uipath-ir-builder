@@ -1,6 +1,6 @@
-// UI 操作が「要素が見つからない」で落ちたとき、今の画面を調べて IR の直し案を出す。npm の依存なし（browser-use だけ Python）。
+// UI 操作が「要素が見つからない」で落ちたとき、今の画面を調べて IR の直し案を出す。npm の依存なし。画面は UiPath 標準の uip rpa uia だけで読む。
 //
-//   node tools/repair/ui-repair.ts --project <P> --run <ワークフロー>   [--name <作業名>] [--no-observe] [--top <n>]
+//   node tools/repair/ui-repair.ts --project <P> --run <ワークフロー>   [--name <作業名>] [--top <n>]
 //       ワークフロー（coded/Login__Coded.cs、MoneyForward/Login.xaml など）を uip rpa run で動かし、UI 操作で落ちたら止めて直し案を作る
 //   node tools/repair/ui-repair.ts --project <P> --log <run のログ>   [...]
 //       すでにある uip rpa run --output json の出力から直し案を作る（動かさない）
@@ -8,8 +8,8 @@
 //       直し案を IR に当てる（人が確かめてから）。そのあと gen.ts / gen-coded.ts で作り直す
 //
 // 直し案は out/repair/<作業名>/proposal.md と proposal.json。流れと注意は knowledge/ui-repair.md。
-// - IR は直さない（apply を人が呼ぶまで）。画面は読むだけ（browser-use にも、クリックや入力をさせない）
-// - browser-use は ANTHROPIC_API_KEY があり、tools/repair/.venv に入っているときだけ使う。無ければ uip rpa uia だけで調べる
+// - IR は直さない（apply を人が呼ぶまで）。画面は読むだけ（クリックや入力をしない）
+// - Playwright・browser-use（AI）は使わない（2026-11-18 にやめた。UiPath が実際に動かしている Chrome を、セレクターと同じ属性で読めるのは uip rpa uia）
 // - interact get-all の Cookie や HTML の中身は保存しない（repair.ts の LIVE_KEEP）
 
 import { spawnSync } from "node:child_process";
@@ -20,10 +20,6 @@ import { applyProposal, currentTarget, hintsFromTarget, locateTarget, parseLiveA
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const uipJs = process.env.UIP_CLI_JS ?? join(process.env.APPDATA ?? "", "npm", "node_modules", "@uipath", "cli", "dist", "index.js");
-const py = join(root, "tools", "repair", ".venv", "Scripts", "python.exe");
-// ANTHROPIC_API_KEY が無いとき、1Password の参照（op://…）をこのファイルに書いておけば、observe.py を動かすときだけ op run で渡す（値は残さない）
-const envOp = join(root, "tools", "repair", ".env.op");
-const hasOp = () => spawnSync("op", ["--version"], { encoding: "utf8", shell: true }).status === 0;
 
 const args = process.argv.slice(2);
 const val = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
@@ -66,6 +62,7 @@ if (runFile) {
 
 const failure = parseRunFailure(log, project);
 if (!failure) { console.log(/"hasErrors":\s*false/.test(log) ? "OK 失敗していない" : "NG run の結果が読めない"); process.exit(/"hasErrors":\s*false/.test(log) ? 0 : 2); }
+if (failure.hint) { console.log(`NG セレクターの問題ではない（${failure.file ?? "?"}${failure.line ? `:${failure.line}` : ""}：${failure.message}）。直し案は作らない\n  ${failure.hint}`); process.exit(1); }
 if (!failure.ui) { console.log(`NG UI 操作の失敗ではない（${failure.exceptionType ?? "?"}: ${failure.message}）。直し案は作らない`); process.exit(1); }
 console.log(`UI 操作の失敗：${failure.exceptionType} @ ${failure.file}${failure.line ? `:${failure.line}` : ""}`);
 
@@ -91,7 +88,7 @@ if (existsSync(join(work, "window-tree.yml"))) {
   const lines = readFileSync(join(work, "window-tree.yml"), "utf8").split(/\r?\n/);
   lines.forEach((l, i) => {
     const m = l.match(/^\s*- BrowserTab "((?:[^"\\]|\\.)*)" \[ref=(b\d+)\]/);
-    if (m) tabs.push({ ref: m[2], title: m[1], url: lines[i + 1]?.match(/^\s*- \/url: (.*)$/)?.[1] });
+    if (m) tabs.push({ ref: m[2], title: m[1], url: lines[i + 1]?.match(/^\s*- \/url: (.*)$/)?.[1]?.replace(/[?#].*$/, "") }); // クエリ（ログインの state など）は残さない
   });
 }
 // IR のアプリのセレクター（title / url）、無ければ Url のホストで探す
@@ -105,43 +102,27 @@ const tab = match[0] ?? byHost[0];
 const window: Proposal["window"] = tab ? { matched: match.length > 0, title: tab.title, url: tab.url, ref: tab.ref } : { matched: false };
 if (!match.length) notes.push(`IR のアプリのセレクター ${appSel || "（なし）"} に合うタブが無い。${byHost.length ? `同じホストのタブ（${byHost.map((t) => `"${t.title}"`).join(", ")}）はある。ページやログイン状態が違うかもしれない` : `${host ?? "そのアプリ"} のタブも無い。アプリが開いていない`}`);
 
-// ---- 4. browser-use（読むだけ）----
-let observation: Record<string, unknown> | undefined;
-let observedAttrs: Record<string, string> | undefined, observedLabel: string | undefined;
-if (args.includes("--no-observe")) notes.push("browser-use は使わなかった（--no-observe）");
-else if (!process.env.ANTHROPIC_API_KEY && !(existsSync(envOp) && hasOp())) notes.push("browser-use は使わなかった（ANTHROPIC_API_KEY も、tools/repair/.env.op と 1Password の CLI（op）も無い）");
-else if (!existsSync(py)) notes.push("browser-use は使わなかった（tools/repair/.venv が無い。knowledge/ui-repair.md の手順で入れる）");
-else {
-  const inFile = join(outDir, "observe-in.json"), outFile = join(outDir, "observe-out.json");
-  writeFileSync(inFile, JSON.stringify({
-    activity, elementType: lit(L.target.ElementType), selector: lit(L.target.FullSelectorArgument) ?? lit(L.target.FuzzySelectorArgument),
-    expectedUrl: appUrl, expectedTitle: htmlAttrs.title, currentTab: tab, error: failure.message,
-  }, null, 2), "utf8");
-  console.log("browser-use で画面を調べる …");
-  const obs = [py, join(root, "tools", "repair", "observe.py"), inFile, outFile];
-  const r = process.env.ANTHROPIC_API_KEY
-    ? spawnSync(obs[0], obs.slice(1), { encoding: "utf8", timeout: 600_000 })
-    : spawnSync("op", ["run", `--env-file=${envOp}`, "--", ...obs], { encoding: "utf8", timeout: 600_000 });
-  if (r.status === 0 && existsSync(outFile)) {
-    observation = JSON.parse(readFileSync(outFile, "utf8"));
-    const el = observation?.element as { label?: string; attributes?: Record<string, string> } | undefined;
-    observedLabel = el?.label; observedAttrs = el?.attributes;
-  } else notes.push(`browser-use が失敗した：${((r.stderr ?? "") + (r.stdout ?? "")).trim().split(/\r?\n/).slice(-3).join(" / ")}`);
-}
-
-// ---- 5. 要素ツリーから候補を選び、セレクターを作り直す（uip rpa uia）----
-const hints = hintsFromTarget(L.node, L.target, { label: observedLabel, attrs: observedAttrs });
+// ---- 4. 要素ツリーから候補を選び、セレクターを作り直す（uip rpa uia）----
+const hints = hintsFromTarget(L.node, L.target);
 const lastTag = (s?: string) => { const t = parseSelector(s); return t[t.length - 1]?.attrs ?? {}; };
-const wanted = { ...lastTag(lit(L.target.FuzzySelectorArgument)), ...lastTag(lit(L.target.FullSelectorArgument)), ...(observedAttrs ?? {}) };
+const wanted = { ...lastTag(lit(L.target.FuzzySelectorArgument)), ...lastTag(lit(L.target.FullSelectorArgument)) };
 for (const k of Object.keys(wanted)) if (/^(matching|fuzzylevel|check):/.test(k)) delete wanted[k];
 const candidates: Proposal["candidates"] = [];
 let proposed: Record<string, string> | undefined;
-if (tab) {
+let screen: Proposal["screen"];
+// サイトのメンテナンス中・停止中の画面なら、セレクターの直し案は作らない（直しても解決しない）。uia のタブの題名で見る
+const maintenance = /メンテナンス|maintenance|service unavailable/i.test(tab?.title ?? "");
+if (maintenance) notes.push(`サイトがメンテナンス中・停止中（タブの題名「${tab?.title ?? "?"}」）。セレクターの問題ではないので直し案は作らない。メンテナンスが終わってから動かし直す。ワークフローには、この画面を見分けて BusinessRuleException で止める手順を入れておく`);
+if (tab && !maintenance) {
   const app = uip(["rpa", "uia", "target-app", "resolve-defaults", "--refs", JSON.stringify([{ ref: tab.ref, definitionFilePath: `${wsl}/window.xaml` }]), "--name", "repair"]);
   const tree = app.ok ? uip(["rpa", "uia", "snapshot", "capture", tab.ref, "--folder-path", wsl]) : app;
   if (!tree.ok || !existsSync(join(work, "tree.yml"))) notes.push(`タブの要素ツリーが取れない：${tree.out.slice(0, 300)}`);
   else {
-    const ranked = rankCandidates(parseTree(readFileSync(join(work, "tree.yml"), "utf8")), hints).slice(0, top);
+    const nodes = parseTree(readFileSync(join(work, "tree.yml"), "utf8"));
+    // どの画面にいるか（アカウント選択、別のページなど）を人が見られるように、操作できそうな要素を残す
+    screen = nodes.filter((n) => /^(button|link|textbox|combobox|checkbox|radio|menuitem|tab|option)/i.test(n.role) || n.attrs.tag === "INPUT")
+      .slice(0, 60).map((n) => ({ ref: n.ref, role: n.role, name: n.name }));
+    const ranked = rankCandidates(nodes, hints).slice(0, top);
     for (const c of ranked) {
       const g = uip(["rpa", "uia", "interact", "get-all", c.node.ref]);
       const live = g.ok ? parseLiveAttrs(g.out) : undefined;
@@ -152,6 +133,7 @@ if (tab) {
     const [best, second] = candidates;
     if (!best) notes.push("要素ツリーに候補が無い（その画面に要素が無い？ 前の操作で別の画面に進んでいない？）");
     else if (second && best.score - second.score < 3) notes.push(`候補の点数が近い（${best.ref} ${best.score} と ${second.ref} ${second.score}）。どちらか人が決める（uip rpa uia interact highlight <ref> で確かめられる）`);
+    else if (!match.length) notes.push(`タブがアプリのセレクターに合わない（別のページ「${tab.title}」）ので、直し案は作らない。前の手順で思った画面に進んでいないか、その手順がいらない画面か（例：OTP を求められなかった）を確かめる`);
     else if (best.score < 4) notes.push(`いちばん点数の高い候補（${best.ref}、${best.score} 点）でも手がかりが少ない。人が確かめる`);
     else {
       const def = `${wsl}/target-1.xaml`;
@@ -173,7 +155,12 @@ if (tab) {
   }
 }
 
-const proposal: Proposal = { version: 1, project, irFile: L.irFile, path: L.path, activity, failure, current: currentTarget(L.target), proposed, window, observation, candidates, notes };
+// 作り直したセレクターが今と同じなら、直し案ではない（セレクター以外が原因）
+if (proposed) {
+  const now = currentTarget(L.target);
+  if (Object.entries(proposed).every(([k, v]) => now[k] === v)) { proposed = undefined; notes.push("作り直したセレクターが今のものと同じ。セレクター以外（待ち時間、入力方式、前の手順の画面）を疑う"); }
+}
+const proposal: Proposal = { version: 1, project, irFile: L.irFile, path: L.path, activity, failure, current: currentTarget(L.target), proposed, window, screen, candidates, notes };
 writeFileSync(join(outDir, "proposal.json"), JSON.stringify(proposal, null, 2) + "\n", "utf8");
 writeFileSync(join(outDir, "proposal.md"), proposalMarkdown(proposal), "utf8");
 console.log(`${proposed ? "OK 直し案を作った" : "-- 直し案は作れなかった（候補と notes を見る）"} -> ${join(outDir, "proposal.md")}`);

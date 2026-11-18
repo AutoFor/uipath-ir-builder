@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             ILocalResource file = default;
             file = system.DownloadStorageFile(path: "ir/report.txt", storageBucketName: "ir-bucket");
-            Log(message: "ダウンロードした: " + file.LocalPath, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ダウンロードした: " + file.LocalPath);
         }
     }
 }

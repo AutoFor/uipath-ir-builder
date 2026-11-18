@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 v = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Range["A1:B4"].VLookup(label: "次郎", columnIndex: 2, exactMatch: true), typeof(Object));
             }
-            Log(message: "値: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "値: " + Convert.ToString(v));
         }
     }
 }

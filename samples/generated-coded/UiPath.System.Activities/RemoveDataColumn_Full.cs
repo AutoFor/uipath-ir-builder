@@ -62,8 +62,8 @@ namespace CatalogProbeNet8
             dt.Columns.RemoveAt(1);
             // DataColumn で消す
             dt.Columns.Remove(dt.Columns["Zip"]);
-            Log(message: Convert.ToString("columns=" + string.Join(",", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName))), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("columns=" + string.Join(",", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName))));
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
         }
     }
 }

@@ -21,11 +21,11 @@ namespace CatalogProbeNet8
             // 上書き
             System.Environment.SetEnvironmentVariable(envName, "second-" + 2);
             got = System.Environment.GetEnvironmentVariable(envName);
-            Log(message: "value=" + got, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "value=" + got);
             // 空にして消す
             System.Environment.SetEnvironmentVariable(envName, "");
             got = System.Environment.GetEnvironmentVariable(envName);
-            Log(message: "removed=" + String.IsNullOrEmpty(got).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "removed=" + String.IsNullOrEmpty(got).ToString());
         }
     }
 }

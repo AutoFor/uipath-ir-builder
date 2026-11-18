@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String text = default;
             text = system.ReadStorageText(path: "ir/hello.txt", storageBucketName: "ir-bucket");
-            Log(message: "内容: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "内容: " + text);
         }
     }
 }

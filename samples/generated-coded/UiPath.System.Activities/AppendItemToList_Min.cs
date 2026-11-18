@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             List<String> names = new List<String>() { "a" };
             names.Add("b");
-            Log(message: Convert.ToString(String.Join(",", names)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", names)));
         }
     }
 }

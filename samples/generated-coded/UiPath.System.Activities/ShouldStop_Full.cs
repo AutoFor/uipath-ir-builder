@@ -21,11 +21,11 @@ namespace CatalogProbeNet8
             isStopped = (System.Boolean)__xaml1["out_Result"];
             if (isStopped)
             {
-                Log(message: "停止要求あり", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "停止要求あり");
             }
             else
             {
-                Log(message: "停止要求なし", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "停止要求なし");
             }
         }
     }

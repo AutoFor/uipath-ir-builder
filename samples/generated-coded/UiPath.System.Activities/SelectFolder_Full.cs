@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // SelectFolder はCoded API が無い（Coded API なし（フォルダー選択ダイアログの API が ISystemService に無い））ので XAML 経由（coded/_activities/SelectFolder.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/SelectFolder.xaml", null);
             d = (System.String)__xaml1["out_SelectedFolder"];
-            Log(message: "選んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "選んだ");
         }
     }
 }

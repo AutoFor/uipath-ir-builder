@@ -42,9 +42,9 @@ namespace CatalogProbeNet8
             // サブフォルダごと上書きコピー
             system.CopyFolder(from: "output\\CopyFolderX_Full.src", to: "output\\CopyFolderX_Full.dst", overwrite: true, includeSubfolder: true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src\\a.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
             ex = system.PathExists(path: "output\\CopyFolderX_Full.dst\\CopyFolderX_Full.src\\sub\\b.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

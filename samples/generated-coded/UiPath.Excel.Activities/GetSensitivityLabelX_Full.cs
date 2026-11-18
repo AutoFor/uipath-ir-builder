@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 // ラベルを取る
                 lbl = Excel.GetSensitivityLabel();
             }
-            Log(message: Convert.ToString("label is null: " + (lbl == null)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("label is null: " + (lbl == null)));
         }
     }
 }

@@ -21,8 +21,8 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/Matches_1d1fed.xaml", new Dictionary<string, object> { ["in_Input"] = "A1b22C333", ["in_Pattern"] = "[a-z]\\d+", ["in_TimeoutMS"] = 5000 });
             first = (System.String)__xaml1["out_FirstMatch"];
             ms = (System.Collections.Generic.IEnumerable<System.Text.RegularExpressions.Match>)__xaml1["out_Result"];
-            Log(message: Convert.ToString(ms.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: first, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ms.Count().ToString()));
+            Log(message: first);
         }
     }
 }

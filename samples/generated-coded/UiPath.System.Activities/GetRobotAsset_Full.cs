@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Object val = default;
             // アセットを取得
             val = system.GetAsset(assetName: "IRAsset", folderPath: "Shared", cacheStrategy: UiPath.Core.Activities.CacheStrategyEnum.Execution, timeoutMS: 30000);
-            Log(message: "アセット: " + val.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アセット: " + val.ToString());
         }
     }
 }

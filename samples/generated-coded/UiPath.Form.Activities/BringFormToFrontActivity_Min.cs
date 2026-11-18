@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             RunWorkflow("coded/_activities/HideFormActivity_70b846.xaml", null);
             // BringFormToFrontActivity は対応表が無いので XAML 経由（coded/_activities/BringFormToFrontActivity_57cb6e.xaml）
             RunWorkflow("coded/_activities/BringFormToFrontActivity_57cb6e.xaml", null);
-            Log(message: "前に出した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "前に出した");
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_126197.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_126197.xaml", null);
         }

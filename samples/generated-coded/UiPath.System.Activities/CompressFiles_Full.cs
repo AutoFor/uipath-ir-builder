@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "aaa", file: LocalResource.FromPath("output\\CompressFiles_Full.a.txt"));
             // パスワード付きで圧縮
             zipRes = system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { "output\\CompressFiles_Full.a.txt" }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: "output\\CompressFiles_Full.zip", password: "secret", compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.Maximum, codePage: UiPath.Activities.System.Encode.CodePages.UTF_8, overrideExistingFile: true);
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(zipRes.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString((new System.IO.FileInfo(zipRes.LocalPath).Length > 0).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(zipRes.LocalPath)));
+            Log(message: Convert.ToString((new System.IO.FileInfo(zipRes.LocalPath).Length > 0).ToString()));
         }
     }
 }

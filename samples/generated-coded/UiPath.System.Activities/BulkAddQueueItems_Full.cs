@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             DataTable failed = default;
             // 一括追加
             failed = system.BulkAddQueueItems(queueItemsDataTable: table, queueName: "IRQueue", folderPath: "Shared", commitType: UiPath.Core.Activities.BulkAddQueueItems.CommitTypeEnum.ProcessAllIndependently, timeoutMS: 30000);
-            Log(message: "失敗した行数: " + failed.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "失敗した行数: " + failed.Rows.Count.ToString());
         }
     }
 }

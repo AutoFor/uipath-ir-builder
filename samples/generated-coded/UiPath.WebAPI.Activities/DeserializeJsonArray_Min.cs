@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // DeserializeJsonArray は対応表が無いので XAML 経由（coded/_activities/DeserializeJsonArray.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/DeserializeJsonArray.xaml", new Dictionary<string, object> { ["in_JsonString"] = "[10, 20, 30]" });
             arr = (Newtonsoft.Json.Linq.JArray)__xaml1["out_JsonArray"];
-            Log(message: "count=" + arr.Count.ToString() + ", last=" + arr[2].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "count=" + arr.Count.ToString() + ", last=" + arr[2].ToString());
         }
     }
 }

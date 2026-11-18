@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/GetAncestor_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["anc"] = anc, ["ancId"] = ancId });
             anc = (UiPath.Core.UiElement)__xaml1["anc"];
             ancId = (String)__xaml1["ancId"];
-            Log(message: "親: " + ancId, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "親: " + ancId);
         }
     }
 }

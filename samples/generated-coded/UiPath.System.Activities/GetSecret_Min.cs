@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // GetSecret はCoded API が無い（Coded API なし（ISystemService に GetSecret が無い））ので XAML 経由（coded/_activities/GetSecret_668cf9.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetSecret_668cf9.xaml", new Dictionary<string, object> { ["in_AssetName"] = "IRSecret" });
             secret = (System.Security.SecureString)__xaml1["out_Secret"];
-            Log(message: "シークレットを取得した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "シークレットを取得した");
         }
     }
 }

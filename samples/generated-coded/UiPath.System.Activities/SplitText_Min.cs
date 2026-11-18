@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             IEnumerable<String> parts = default;
             parts = true ? system.SplitText("a,b,c", ",") : system.SplitText("a,b,c", UiPath.Activities.System.Text.SeparatorOptions.Custom);
-            Log(message: Convert.ToString(string.Join("|", parts)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(string.Join("|", parts)));
         }
     }
 }

@@ -17,10 +17,10 @@ namespace CatalogProbeNet8
             Boolean ex = default;
             system.WriteTextFile(text: "bye", file: LocalResource.FromPath("output\\DeleteFileX_Min.txt"));
             ex = system.PathExists(path: "output\\DeleteFileX_Min.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\DeleteFileX_Min.txt"));
             ex = system.PathExists(path: "output\\DeleteFileX_Min.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

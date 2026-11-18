@@ -25,10 +25,10 @@ namespace CatalogProbeNet8
             {
                 // 名簿テーブルを作る
                 tableName = Excel.Sheet["Sheet1"].Range["A1:C4"].CreateTable(hasHeaders: true, replaceExisting: true, tableName: "PeopleTable");
-                Log(message: "テーブル名: " + tableName, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "テーブル名: " + tableName);
                 dt = Excel.Table["PeopleTable"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
-                Log(message: "テーブルの行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-                Log(message: "2 行目: " + dt.Rows[1]["Name"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "テーブルの行数: " + dt.Rows.Count.ToString());
+                Log(message: "2 行目: " + dt.Rows[1]["Name"].ToString());
             }
         }
     }

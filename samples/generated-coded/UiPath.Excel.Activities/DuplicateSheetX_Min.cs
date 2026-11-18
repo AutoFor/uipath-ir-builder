@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             {
                 Excel.Sheet["Sheet2"].DuplicateSheet(name: "Sheet2コピー");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet2コピー"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "コピーの A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "コピーの A1: [" + Convert.ToString(a1) + "]");
             }
         }
     }

@@ -28,8 +28,8 @@ namespace CatalogProbeNet8
             System.IO.File.Move("output\\MoveFile_Min.src.txt", "output\\MoveFile_Min.dst.txt", false);
             srcEx = system.PathExists(path: "output\\MoveFile_Min.src.txt", pathType: UiPath.Core.Activities.PathType.File);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFile_Min.dst.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(srcEx.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
+            Log(message: Convert.ToString(srcEx.ToString()));
         }
     }
 }

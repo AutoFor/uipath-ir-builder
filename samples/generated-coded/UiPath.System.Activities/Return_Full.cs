@@ -18,14 +18,14 @@ namespace CatalogProbeNet8
             while (true)
             {
                 i = i + 1;
-                Log(message: "ループ " + i.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "ループ " + i.ToString());
                 if (i == 2)
                 {
                     // ワークフローを抜ける
                     return;
                 }
             }
-            Log(message: "ここには来ない", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ここには来ない");
         }
     }
 }

@@ -3,11 +3,12 @@
 // 流れ（knowledge/ui-repair.md）:
 //   1. run のログから、落ちたアクティビティと場所を読む（parseRunFailure）
 //   2. IR の中のそのアクティビティとターゲットを探す（locateTarget）
-//   3. browser-use で今の画面を調べる（observe.py。読むだけ）
-//   4. uip rpa uia で今の画面の要素ツリーを取り、候補を選んでセレクターを作り直す（parseTree、rankCandidates、scoreLive）
-//   5. 直し案を出す（buildProposal）。IR を直すのは人が確かめてから（applyProposal）
+//   3. uip rpa uia で今の画面の要素ツリーを取り、候補を選んでセレクターを作り直す（parseTree、rankCandidates、scoreLive）
+//      画面を読むのは UiPath 標準の uip rpa uia だけ（Playwright・browser-use は使わない）
+//   4. 直し案を出す（buildProposal）。IR を直すのは人が確かめてから（applyProposal）
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { readDescriptors } from "../ir/coded-descriptors.ts";
 import { join, relative } from "node:path";
 
 // ---- 1. run のログ ----
@@ -19,10 +20,16 @@ export type RunFailure = {
   file?: string; // 落ちた場所のファイル（プロジェクトからの相対パス。coded/Login__Coded.cs、MoneyForward/Login.xaml）
   line?: number; // Coded の行
   activity?: string; // XAML のアクティビティの DisplayName（Source:）
+  hint?: string; // セレクターでは直らない失敗のとき、何を見ればよいか
 };
 
 const UI_EXCEPTION = /UIAutomationNext\.Exceptions\.|NodeNotFoundException|SelectorNotFoundException|ElementNotFoundException|UiAutomationException/;
 const UI_MESSAGE = /UI\) 要素が見つかりませんでした|could not find the user interface \(UI\) element|Cannot find the UI element/i;
+// UI の例外でも、セレクターを直しても直らないもの
+const NOT_SELECTOR: [RegExp, string][] = [
+  [/Chromium API プロトコルへのアタッチに失敗|attach to the Chromium API/i,
+    "入力方式 DebuggerApi（Chromium API）が Chrome にアタッチできなかった。ほかにデバッガーでつないでいるもの（Claude in Chrome などの拡張機能、開いている拡張機能のポップアップ、DevTools）を閉じるか、その操作の InteractionMode を変える"],
+];
 
 // uip rpa run --output json の出力（前に [Information] などの行が付く）から、失敗の中身を読む
 export function parseRunFailure(log: string, projectDir: string): RunFailure | undefined {
@@ -35,7 +42,8 @@ export function parseRunFailure(log: string, projectDir: string): RunFailure | u
   if (!err) return undefined;
   const exceptionType = err.match(/Exception Type:\s*(\S+)/)?.[1];
   const message = err.match(/Message:\s*([^\r\n]+)/)?.[1]?.trim() ?? err.split(/\r?\n/)[0];
-  const f: RunFailure = { ui: UI_EXCEPTION.test(exceptionType ?? "") || UI_MESSAGE.test(err), exceptionType, message };
+  const hint = NOT_SELECTOR.find(([re]) => re.test(err!))?.[1];
+  const f: RunFailure = { ui: !hint && (UI_EXCEPTION.test(exceptionType ?? "") || UI_MESSAGE.test(err)), exceptionType, message, ...(hint ? { hint } : {}) };
   // Coded：プロジェクトの .cs の行（.local の生成物は除く）
   const norm = (p: string) => p.replace(/\\\\/g, "\\").replace(/\//g, "\\").toLowerCase();
   const root = norm(projectDir).replace(/\\$/, "") + "\\";
@@ -99,7 +107,10 @@ export function locateTarget(projectDir: string, f: RunFailure): Located | { err
   if (f.file.endsWith(".cs") && f.line) {
     const src = readFileSync(join(projectDir, f.file), "utf8").split(/\r?\n/);
     const ln = src[f.line - 1] ?? "";
-    const ref = ln.match(/Reference = "([^"]+)"/)?.[1];
+    let ref = ln.match(/Reference = "([^"]+)"/)?.[1];
+    // オブジェクトリポジトリ（Descriptors.<アプリ>.<画面>.<要素>）で書いた行は、ObjectRepository.cs で Reference に引き直す
+    const desc = ln.match(/\(\s*(Descriptors\.[^\s,()]+)/)?.[1];
+    if (!ref && desc) for (const [r, d] of readDescriptors(projectDir) ?? []) if (d.path === desc && d.kind === "element") { ref = r; break; }
     if (!ref) return { error: `${f.file} の ${f.line} 行目にターゲットの Reference が無い（UI 操作の行でない）` };
     pred = (n) => litOf(n.objs.Target.Reference) === ref;
   } else if (f.activity) {
@@ -175,8 +186,8 @@ const ROLES: Record<string, string[]> = {
 
 export type Hints = {
   elementType?: string; // IR の ElementType
-  words: string[]; // 名前に含まれていそうな言葉（DisplayName の '…'、aaname、browser-use が見た表示名など）
-  attrs: Record<string, string>; // 元のセレクター（と browser-use）の属性。tag、id、type、name、aaname など
+  words: string[]; // 名前に含まれていそうな言葉（DisplayName の '…'、aaname、DOM で見つけた要素の表示名など）
+  attrs: Record<string, string>; // 元のセレクター（と DOM で見つけた要素）の属性。tag、id、type、name、aaname など
 };
 
 const HIDDEN = new Set(["invisible", "offscreen", "no rectangle", "disabled"]);
@@ -251,7 +262,7 @@ export type Proposal = {
   current: Record<string, string | undefined>;
   proposed?: Record<string, string>;
   window?: { matched: boolean; title?: string; url?: string; ref?: string };
-  observation?: Record<string, unknown>;
+  screen?: { ref: string; role: string; name: string }[]; // 対象のタブの、操作できそうな要素（uip rpa uia の要素ツリー）。どの画面にいるかを人が見るため
   candidates: { ref: string; role: string; name: string; score: number; why: string[]; live?: Record<string, string> }[];
   notes: string[];
 };
@@ -269,10 +280,12 @@ export function proposalMarkdown(p: Proposal): string {
   L.push(`- 失敗：${p.failure.exceptionType ?? "?"} — ${p.failure.message}`, `- 場所：\`${p.failure.file ?? "?"}${p.failure.line ? `:${p.failure.line}` : ""}\``, "");
   L.push("## 今の画面", "");
   if (p.window) L.push(p.window.matched ? `- 対象のタブ：${p.window.title}（${p.window.url}、${p.window.ref}）` : "- **ターゲットのアプリ（タブ）が今の画面に無い**。アプリが開いていない、別のページにいる、ログイン状態が違う、などを先に確かめる");
-  if (p.observation) {
-    L.push("- browser-use が見たこと：");
-    for (const [k, v] of Object.entries(p.observation)) L.push(`  - ${k}：${typeof v === "string" ? v : JSON.stringify(v)}`);
-  } else L.push("- browser-use：調べていない（notes を見る）");
+  if (p.screen?.length) {
+    L.push("", `<details><summary>そのタブの操作できそうな要素（${p.screen.length} 個、uip rpa uia）</summary>`, "", "| ref | 種類 | 名前 |", "| --- | --- | --- |");
+    const cell = (s: string) => s.replace(/\|/g, "\\|");
+    for (const e of p.screen) L.push(`| ${e.ref} | ${e.role} | ${cell(e.name)} |`);
+    L.push("", "</details>");
+  }
   L.push("", "## 直し案", "");
   if (p.proposed) {
     L.push("| プロパティ | 今 | 案 |", "| --- | --- | --- |");

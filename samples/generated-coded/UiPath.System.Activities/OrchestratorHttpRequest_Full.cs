@@ -19,8 +19,8 @@ namespace CatalogProbeNet8
             String body = default;
             // Orchestrator に問い合わせる
             status = system.OrchestratorHTTPRequest(method: UiPath.Core.Activities.OrchestratorAPIHttpMethods.POST, relativeEndpoint: "/odata/Assets", jSONPayload: "{\"Name\":\"ir-asset\",\"ValueScope\":\"Global\",\"ValueType\":\"Text\",\"StringValue\":\"ir\"}", folderPath: "Shared", responseHeaders: out headers, result: out body, timeoutMS: 30000);
-            Log(message: "ステータス: " + status.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "本文の長さ: " + body.Length.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ステータス: " + status.ToString());
+            Log(message: "本文の長さ: " + body.Length.ToString());
         }
     }
 }

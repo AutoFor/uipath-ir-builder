@@ -1,0 +1,58 @@
+{
+  "_": "Coded のオプションのクラスを new したときの値（C# 側の既定値）。gen-coded.ts は、これと同じ値の代入を書かない（書いても書かなくても同じ動き）。UiPath.UIAutomation.Activities 26.10.6（moneyforward_cs、2026-11-18）で、new した値を Log に出して確かめた。版を上げたら確かめ直す（knowledge/coded-option-defaults.md）。メソッドの引数は「<メソッド名>()」のキーに書く（Log の level の既定は Info：LogLevel の Info=8 を確かめた）",
+  "ClickOptions": {
+    "KeyModifiers": "None",
+    "ClickType": "Single",
+    "MouseButton": "Left",
+    "CursorMotionType": "Instant",
+    "AlterIfDisabled": "False",
+    "InteractionMode": "SameAsCard",
+    "ActivateBefore": "True",
+    "UnblockInput": "False",
+    "Timeout": "30",
+    "DelayAfter": "0.3",
+    "DelayBefore": "0.2",
+    "ContinueOnError": "False",
+    "HealingAgentBehavior": "SameAsCard"
+  },
+  "TypeIntoOptions": {
+    "DelayBetweenKeys": "0.02",
+    "ActivateBefore": "True",
+    "ClickBeforeMode": "Single",
+    "EmptyFieldMode": "SingleLine",
+    "ClipboardMode": "Never",
+    "DeselectAfter": "False",
+    "AlterIfDisabled": "False",
+    "InteractionMode": "SameAsCard",
+    "Timeout": "30",
+    "DelayAfter": "0.3",
+    "DelayBefore": "0.2",
+    "ContinueOnError": "False",
+    "HealingAgentBehavior": "SameAsCard"
+  },
+  "CheckStateOptions": {
+    "Mode": "WaitAppear",
+    "CheckVisibility": "False",
+    "HealingAgentBehavior": "Disabled",
+    "Timeout": "30",
+    "DelayAfter": "0.3",
+    "DelayBefore": "0.2",
+    "ContinueOnError": "False"
+  },
+  "TargetAppOptions": {
+    "Timeout": "30",
+    "InteractionMode": "DebuggerApi",
+    "AttachMode": "ByInstance",
+    "OpenMode": "IfNotOpen",
+    "CloseMode": "Always",
+    "WindowResize": "None",
+    "UserDataFolderMode": "Automatic",
+    "IsIncognito": "False",
+    "WebDriverMode": "Disabled",
+    "ContinueOnError": "False",
+    "HealingAgentBehavior": "SameAsCard"
+  },
+  "Log()": {
+    "level": "Info"
+  }
+}

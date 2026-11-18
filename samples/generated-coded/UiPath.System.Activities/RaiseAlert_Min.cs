@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.RaiseAlert(severity: UiPath.Core.Activities.AlertSeverity.Info, notification: "IR テストのアラート");
-            Log(message: "アラートを上げた", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アラートを上げた");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/ModifyDate_Full_1.xaml", new Dictionary<string, object> { ["d"] = d, ["r"] = r, ["t"] = t });
             r = (DateTime)__xaml1["r"];
             t = (String)__xaml1["t"];
-            Log(message: t, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: t);
         }
     }
 }

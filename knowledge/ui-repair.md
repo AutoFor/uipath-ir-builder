@@ -10,8 +10,7 @@
 uip rpa run が UI 操作で落ちる
   → 止める（ui-repair.ts がログから、落ちたファイルと行・アクティビティを読む）
   → IR の中で、そのアクティビティのターゲット（objs.Target）を探す（Coded は行の Reference、XAML は DisplayName）
-  → browser-use（observe.py）で今の画面を読む：どんな画面か、要素はあるか、その HTML の属性、ありそうな原因
-  → uip rpa uia で今のタブの要素ツリーを取り、候補に点数を付け、interact get-all で属性を確かめる
+  → uip rpa uia（UiPath 標準）で今のタブの要素ツリーを取り、候補に点数を付け、interact get-all で属性を確かめる
   → いちばん合う候補から target-anchorable resolve-defaults でセレクターを作り直す（セレクターは UiPath が作る。手で組み立てない）
   → out/repair/<作業名>/proposal.md と proposal.json
 人が確かめる → ui-repair.ts apply → gen.ts / gen-coded.ts で作り直す → もう一度 run
@@ -24,8 +23,6 @@ uip rpa run が UI 操作で落ちる
 node tools/repair/ui-repair.ts --project <P> --run coded/Login__Coded.cs --name login
 # すでにある run のログ（uip rpa run --output json の出力）から作る
 node tools/repair/ui-repair.ts --project <P> --log <run.log> --name login
-# browser-use を使わない（API キーが無いとき、画面を AI に見せたくないとき）
-node tools/repair/ui-repair.ts --project <P> --log <run.log> --name login --no-observe
 # 直し案を IR に当てる（人が proposal.md を確かめてから）
 node tools/repair/ui-repair.ts apply out/repair/login/proposal.json
 ```
@@ -39,30 +36,23 @@ node tools/repair/ui-repair.ts apply out/repair/login/proposal.json
 - **タブ**：IR のアプリのセレクター（`TargetApp.Selector` の `title` / `url`）に合うタブを、`snapshot capture` の一覧から探す。合うタブが無ければ、同じホストのタブで調べ、「ページやログイン状態が違うかもしれない」と notes に書く。ホストのタブも無ければ「アプリが開いていない」で止める（直し案は出さない）
 - **候補の点数**（`repair.ts` の `rankCandidates` と `scoreLive`）
   - 役割が ElementType に合う（InputBox、Button など。合わないものは外す）。見えない（`[invisible]` など）ものは外す
-  - DisplayName の `'…'`、セレクターの `aaname`、browser-use が見た表示名と、名前がちょうど同じ（+7）か、含む（+4）
+  - DisplayName の `'…'`、セレクターの `aaname` と、名前がちょうど同じ（+7）か、含む（+4）
   - 元のセレクターの属性（`tag`、`type`、`id` など）が今の属性に合う（+3）、合わない（-1）
 - 1 位と 2 位の差が 3 点未満、または 1 位が 4 点未満なら、直し案は出さず、候補を並べて人に決めてもらう（`uip rpa uia interact highlight <ref>` で場所を確かめられる）
 - スコープ（`ScopeSelectorArgument`）は、今のものが今のタブの題名・URL に合わないときだけ変える
 
-## browser-use（observe.py）
+## 画面の読み方：uip rpa uia だけ（Playwright・browser-use はやめた）
 
-- browser-use 1.0.0。`tools/repair/.venv` に入れる（git に入れない）：
-
-  ```bash
-  python -m venv tools/repair/.venv
-  tools/repair/.venv/Scripts/python -m pip install -r tools/repair/requirements.txt
-  ```
-
-- AI は Anthropic（`ChatAnthropic`）。環境変数 `ANTHROPIC_API_KEY` が要る。
-  - 1Password を使うときは、キーそのものではなく参照を `tools/repair/.env.op`（git に入れない）に書く。`ANTHROPIC_API_KEY=op://<保管庫>/<項目>/<欄>`。ui-repair.ts は observe.py を `op run --env-file=tools/repair/.env.op -- …` で動かし、キーはその子プロセスにだけ渡る（ファイルにも環境変数にも残らない）。`op` は 1Password アプリとの連携かサインインが要る
-  - どちらも無ければ browser-use を飛ばして、uip rpa uia だけで調べる。モデルは `UI_REPAIR_MODEL`（既定 `claude-sonnet-5-5`）、手順の上限は `UI_REPAIR_MAX_STEPS`（既定 8）
-- 普段の Chrome（ログイン済み）に `Browser('chrome')` でつなぐ。Chrome の DevToolsActivePort が要るので、Chrome でリモート デバッグを許可しておく（`chrome://inspect/#remote-debugging`）
-- **読むだけ**：クリック・入力・送信・ページ移動・タブの開け閉めをしないよう指示し、扱うドメインを対象のホストに絞る（`allowed_domains`）。結果に残す属性は `tag`・`id`・`name`・`type`・`aria-label`・`placeholder`・`class` だけ
-- **UiPath と同時に動かさない**。UiPath の入力方式 `DebuggerApi`（Chromium API）も Chrome のデバッガーの仕組みを使うので、つながりがぶつかると「Chromium API プロトコルへのアタッチに失敗しました」になる（Claude in Chrome でも同じことが起きた）
+- 画面を読むのは UiPath 標準の `uip rpa uia` だけ。追加で入れるもの（Python、API キー、自動化専用の Chrome）は要らない
+  - `snapshot capture`：ウィンドウとブラウザーのタブの一覧（`window-tree.yml`）。ref（`b12` など）を渡すと、そのタブの要素ツリー（`tree.yml`）
+  - `interact get-all <ref>`：要素の属性。`selector-intelligence evaluate --selector "<…>"`：セレクターを今の画面で評価する
+  - `snapshot capture` に `--output` を付けると失敗する（出力の形は変えられない）
+- 直し案の「今の画面」に、対象のタブの操作できそうな要素（ボタン・リンク・入力欄など、60 個まで）を ref・種類・名前で並べる。アカウント選択など、別の画面にいるときに人が気づけるように
+- やめた理由（2026-11-18）：UiPath は URL を開くとき普段の Chrome を使い、Playwright・browser-use がつなぐ自動化専用の Chrome とは別の画面を見ていた。uip rpa uia なら、UiPath が実際に動かしている画面を、セレクターと同じ属性で読める。前の版（observe.py、observe_ai.py、cdp.py、automation-chrome.ps1）は git の履歴と `out/archive/repair-observe-2026-11-18/` にある
 
 ## 気をつけること
 
 - `interact get-all` の出力には Cookie や HTML の中身が入る。`repair.ts` の `LIVE_KEEP` にある属性だけを残し、直し案やログに書かない
 - アプリカードの `CloseMode` が `IfOpenedByAppBrowser` / `Always` だと、ロボットが開いたタブは落ちたときに閉じられ、あとから調べられない。調べるときは、先に対象のページを Chrome で開いておき、ロボットがそのタブにつなぐようにする
-- 「要素が見つからない」の原因がセレクターでないこともある（前の手順で別の画面に進んでいない、ログイン状態が違う、読み込みが遅い）。そのときは直し案ではなく notes と browser-use の `cause` を見て、ワークフローか画面の準備を直す
-- 確かめたこと（2026-11-17）：moneyforward_cs の Login__Coded の失敗ログで、落ちた行 → IR のターゲットまでを特定し、MoneyForward のタブが無いことを notes に出した。GitHub のタブで、古いセレクターから候補を選び、resolve-defaults で作り直したセレクターを直し案にし、apply で IR に当てた。browser-use は API キーが無く、まだ動かしていない
+- 「要素が見つからない」の原因がセレクターでないこともある（前の手順で別の画面に進んでいない、ログイン状態が違う、読み込みが遅い）。そのときは直し案ではなく notes と「今の画面」の要素の一覧を見て、ワークフローか画面の準備を直す
+- 確かめたこと（2026-11-17）：moneyforward_cs の Login__Coded の失敗ログで、落ちた行 → IR のターゲットまでを特定し、MoneyForward のタブが無いことを notes に出した。GitHub のタブで、古いセレクターから候補を選び、resolve-defaults で作り直したセレクターを直し案にし、apply で IR に当てた

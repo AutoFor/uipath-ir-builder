@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             item = system.GetQueueItem(queueType: "IRQueue");
             // トランザクションを延期
             system.PostponeTransactionItem(transactionItem: item, deferDate: DateTime.Now.AddHours(1), dueDate: DateTime.Now.AddDays(1), timeoutMS: 30000);
-            Log(message: "延期した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "延期した");
         }
     }
 }

@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             // ComparePdfDocuments は対応表が無いので XAML 経由（coded/_activities/ComparePdfDocuments_143f60.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/ComparePdfDocuments_143f60.xaml", new Dictionary<string, object> { ["in_BaselinePath"] = a, ["in_OutputFolderPath"] = "output", ["in_TargetPath"] = b });
             same = (System.Boolean)__xaml1["out_Result"];
-            Log(message: Convert.ToString("same=" + same.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("same=" + same.ToString()));
         }
     }
 }

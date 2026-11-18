@@ -27,10 +27,10 @@ namespace CatalogProbeNet8
             c = system.ChangeCase(source: "HELLO WORLD", changeCaseOptions: UiPath.Activities.System.Text.ChangeCaseOptions.SentenceCase);
             // 各単語の先頭を大文字にする
             d = system.ChangeCase(source: "hello big world", changeCaseOptions: UiPath.Activities.System.Text.ChangeCaseOptions.CapitalizeEachWord);
-            Log(message: a, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: b, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: c, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: d, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: a);
+            Log(message: b);
+            Log(message: c);
+            Log(message: d);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 ch = Excel.Sheet["Sheet1"].Range["A1:B4"].InsertExcelChart(sheet: Excel.Sheet["Sheet1"], chartCategory: UiPath.Excel.ExcelChartCategory.Column, chartType: UiPath.Excel.ExcelChartType.xlColumnClustered, left: 300, top: 10, width: 400, height: 300);
                 // UpdateChartX はCoded API が無い（Coded API なし（UpdateChart はクラシックの IWorkHandle にしか無く、モダンの IChartRef を渡す形が無い。1回に1種類の変更しか渡せず、複数の子も表せない））ので XAML 経由（coded/_xaml/UpdateChartX_Min_1.xaml）
                 RunWorkflow("coded/_xaml/UpdateChartX_Min_1.xaml", new Dictionary<string, object> { ["ch"] = ch });
-                Log(message: "題名: " + ch.ChartInfo.Title, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "題名: " + ch.ChartInfo.Title);
             }
         }
     }

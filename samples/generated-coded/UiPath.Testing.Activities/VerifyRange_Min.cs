@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // 範囲内か
             _ = testing.VerifyRange(5, UiPath.Testing.Activities.VerificationType.IsWithin, 1, 10, null, true, null, false, false);
-            Log(message: "after verify", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "after verify");
         }
     }
 }

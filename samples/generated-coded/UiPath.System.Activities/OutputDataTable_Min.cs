@@ -37,9 +37,9 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Carol", 35});
             dt.Rows.Add(new object[] {"Bob", 25});
             s = system.OutputDataTable(dataTable: dt);
-            Log(message: Convert.ToString("hasHeader=" + s.Contains("Name").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("hasAlice=" + s.Contains("Alice").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("hasCarol=" + s.Contains("Carol").ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("hasHeader=" + s.Contains("Name").ToString()));
+            Log(message: Convert.ToString("hasAlice=" + s.Contains("Alice").ToString()));
+            Log(message: Convert.ToString("hasCarol=" + s.Contains("Carol").ToString()));
         }
     }
 }

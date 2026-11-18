@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // DeserializeJson は対応表が無いので XAML 経由（coded/_xaml/DeserializeJson_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/DeserializeJson_Min_1.xaml", new Dictionary<string, object> { ["obj"] = obj });
             obj = (Newtonsoft.Json.Linq.JObject)__xaml1["obj"];
-            Log(message: "name=" + obj["name"].ToString() + ", age=" + obj["age"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "name=" + obj["name"].ToString() + ", age=" + obj["age"].ToString());
         }
     }
 }

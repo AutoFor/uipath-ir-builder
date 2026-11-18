@@ -19,25 +19,25 @@ namespace CatalogProbeNet8
             {
                 String tag = "p";
                 {
-                    Log(message: tag + "1", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: tag + "1");
                     done = done + 1;
                 }
                 if (!(done >= 2))
                 {
                     {
-                        Log(message: tag + "2", level: UiPath.CodedWorkflows.LogLevel.Info);
+                        Log(message: tag + "2");
                         done = done + 1;
                     }
                     if (!(done >= 2))
                     {
                         {
-                            Log(message: tag + "3", level: UiPath.CodedWorkflows.LogLevel.Info);
+                            Log(message: tag + "3");
                             done = done + 1;
                         }
                     }
                 }
             }
-            Log(message: "done=" + done.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "done=" + done.ToString());
         }
     }
 }

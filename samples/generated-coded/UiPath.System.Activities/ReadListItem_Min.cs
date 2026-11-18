@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             List<String> names = new List<String>() { "a", "b", "c" };
             String got = default;
             got = names[1];
-            Log(message: "got=" + got, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "got=" + got);
         }
     }
 }

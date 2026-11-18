@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Dictionary<String, Object> item = default;
             // テストデータを1件取る
             item = testing.GetTestDataQueueItem(queueName: "IRTestDataQueue", folderPath: "Shared", markConsumed: true, timeoutMs: 30000);
-            Log(message: Convert.ToString("件数=" + item.Count.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("件数=" + item.Count.ToString()));
         }
     }
 }

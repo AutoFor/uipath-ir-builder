@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             IEnumerable<UiPath.Core.QueueItem> items = default;
             // キューの項目を取得
             items = system.GetQueueItems(queueName: "IRQueue", folderPath: "Shared", duration: 60, from: DateTime.Now.AddDays(-1), priority: 1, queueItemStates: UiPath.Core.Activities.QueueItemStates.New, to: DateTime.Now, filterStrategy: UiPath.Core.Activities.ReferenceFilterStrategy.Equals, reference: "IR-REF-001", skip: 0, top: 10, timeoutMS: 30000);
-            Log(message: Convert.ToString("取得した件数: " + items.Count()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("取得した件数: " + items.Count()));
         }
     }
 }

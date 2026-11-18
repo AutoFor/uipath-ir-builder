@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             Int32 b = default;
             a = 1;
             b = 2;
-            Log(message: "a=" + a.ToString() + ", b=" + b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "a=" + a.ToString() + ", b=" + b.ToString());
         }
     }
 }

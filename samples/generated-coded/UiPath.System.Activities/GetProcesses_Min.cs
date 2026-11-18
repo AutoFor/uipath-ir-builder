@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
         {
             System.Collections.ObjectModel.Collection<System.Diagnostics.Process> procs = default;
             procs = new System.Collections.ObjectModel.Collection<System.Diagnostics.Process>(System.Diagnostics.Process.GetProcesses());
-            Log(message: "any=" + (procs.Count > 0).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "any=" + (procs.Count > 0).ToString());
         }
     }
 }

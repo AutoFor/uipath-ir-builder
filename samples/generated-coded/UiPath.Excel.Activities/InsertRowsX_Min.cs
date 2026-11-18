@@ -30,11 +30,11 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Cell["A6"].WriteCell(value: "下の行");
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertRows(nbOfRows: 1, insertPosition: UiPath.Excel.InsertRowPosition.End, specificIndex: 0, hasHeaders: true);
                 a5 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A5"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A5: [" + Convert.ToString(a5) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A5: [" + Convert.ToString(a5) + "]");
                 a6 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A6"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A6: [" + Convert.ToString(a6) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A6: [" + Convert.ToString(a6) + "]");
                 a7 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A7"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A7: [" + Convert.ToString(a7) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A7: [" + Convert.ToString(a7) + "]");
             }
         }
     }

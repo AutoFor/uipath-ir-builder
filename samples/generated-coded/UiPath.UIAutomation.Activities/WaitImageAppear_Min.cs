@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/WaitImageAppear_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["img"] = img, ["found"] = found });
             img = (UiPath.Core.Image)__xaml1["img"];
             found = (UiPath.Core.UiElement)__xaml1["found"];
-            Log(message: "結果: " + (found != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + (found != null).ToString());
         }
     }
 }

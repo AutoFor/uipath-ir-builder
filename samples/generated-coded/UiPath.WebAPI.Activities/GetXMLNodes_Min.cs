@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // GetXMLNodes は対応表が無いので XAML 経由（coded/_activities/GetXMLNodes_4c2987.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetXMLNodes_4c2987.xaml", new Dictionary<string, object> { ["in_XMLString"] = "<root><item id=\"1\" kind=\"a\">A</item><item id=\"2\">B</item></root>" });
             nodes = (System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>)__xaml1["out_XMLNodes"];
-            Log(message: "nodes=" + nodes.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "nodes=" + nodes.Count().ToString());
         }
     }
 }

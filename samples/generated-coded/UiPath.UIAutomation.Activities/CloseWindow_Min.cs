@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // メモ帳を開く（Classic）
             // WindowScope はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/CloseWindow_Min_1.xaml）
             RunWorkflow("coded/_xaml/CloseWindow_Min_1.xaml", null);
-            Log(message: "closed", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "closed");
         }
     }
 }

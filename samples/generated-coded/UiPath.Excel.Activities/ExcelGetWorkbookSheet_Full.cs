@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 // 2番目のシート名
                 nm = ExcelWorkbookScope.GetSheets(false).ElementAt(1);
             }
-            Log(message: "sheet1=" + nm, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "sheet1=" + nm);
         }
     }
 }

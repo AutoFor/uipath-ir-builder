@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelSelectRange_Full_1.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/ExcelSelectRange_Full_1.xaml", new Dictionary<string, object> { ["addr"] = addr });
             addr = (String)__xaml2["addr"];
-            Log(message: "selected: " + addr, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "selected: " + addr);
         }
     }
 }

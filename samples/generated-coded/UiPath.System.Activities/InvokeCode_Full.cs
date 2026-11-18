@@ -22,13 +22,13 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/InvokeCode_41ae28.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["io_Arguments_counter"] = count, ["in_Arguments_who"] = name });
             count = (Int32)__xaml1["io_Arguments_counter"];
             greeting = (String)__xaml1["out_Arguments_greeting"];
-            Log(message: greeting, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "count=" + count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: greeting);
+            Log(message: "count=" + count.ToString());
             // VB のコードを呼ぶ
             // InvokeCode はCoded API が無い（Coded では C# をそのまま書くので InvokeCode は要らない）ので XAML 経由（coded/_activities/InvokeCode_d45e2e.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/InvokeCode_d45e2e.xaml", new Dictionary<string, object> { ["in_Arguments_who"] = name });
             greeting = (String)__xaml2["out_Arguments_greeting"];
-            Log(message: greeting, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: greeting);
         }
     }
 }

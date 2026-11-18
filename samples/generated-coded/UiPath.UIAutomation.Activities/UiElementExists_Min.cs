@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/UiElementExists_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/UiElementExists_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["exists"] = exists });
             exists = (Boolean)__xaml1["exists"];
-            Log(message: "存在: " + exists.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "存在: " + exists.ToString());
         }
     }
 }

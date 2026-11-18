@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // 1 + 1 が 2 か確かめる
             _ = testing.VerifyExpression(1 + 1 == 2, null, true, null, false, false);
-            Log(message: "after verify", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "after verify");
         }
     }
 }

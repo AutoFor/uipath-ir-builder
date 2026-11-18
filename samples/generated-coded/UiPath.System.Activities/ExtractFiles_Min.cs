@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { "output\\ExtractFiles_Min.a.txt" }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: "output\\ExtractFiles_Min.zip", password: null, compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.Normal, codePage: UiPath.Activities.System.Encode.CodePages.Default, overrideExistingFile: true);
             system.ExtractUnzipFiles(file: LocalResource.FromPath("output\\ExtractFiles_Min.zip"), destinationFolder: "output\\ExtractFiles_Min", extractToADedicatedFolder: true, password: null, codePage: UiPath.Activities.System.Encode.CodePages.Default);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\ExtractFiles_Min\\ExtractFiles_Min\\ExtractFiles_Min.a.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

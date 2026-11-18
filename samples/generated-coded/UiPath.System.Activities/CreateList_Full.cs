@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // 数のリストを作る
             nums = new List<Int32>();
             nums.Add(5);
-            Log(message: "count=" + nums.Count.ToString() + ", first=" + nums[0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "count=" + nums.Count.ToString() + ", first=" + nums[0].ToString());
         }
     }
 }

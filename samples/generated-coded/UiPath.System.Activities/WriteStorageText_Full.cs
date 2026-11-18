@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // ストレージへ文字を書く
             system.WriteStorageText(path: "ir/hello.txt", text: "こんにちは", storageBucketName: "ir-bucket", folderPath: "Shared", encoding: "utf-8", timeoutMS: 30000);
-            Log(message: "書き込んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "書き込んだ");
         }
     }
 }

@@ -22,9 +22,9 @@ namespace CatalogProbeNet8
             {
                 idx++;
                 n = n + 1;
-                Log(message: "idx=" + idx.ToString() + ", n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "idx=" + idx.ToString() + ", n=" + n.ToString());
             }
-            Log(message: "終了 n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "終了 n=" + n.ToString());
         }
     }
 }

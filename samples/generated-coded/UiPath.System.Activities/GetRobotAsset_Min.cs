@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             Object val = default;
             val = system.GetAsset(assetName: "IRAsset");
-            Log(message: "アセット: " + val.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アセット: " + val.ToString());
         }
     }
 }

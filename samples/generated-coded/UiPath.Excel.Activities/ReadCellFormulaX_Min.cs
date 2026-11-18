@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 var __xaml1 = RunWorkflow("coded/_activities/ReadCellFormulaX.xaml", new Dictionary<string, object> { ["in_Cell"] = Excel.Sheet["Sheet1"].Cell["C2"] });
                 f = (System.String)__xaml1["out_SaveTo"];
             }
-            Log(message: "C2 の式: " + f, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "C2 の式: " + f);
         }
     }
 }

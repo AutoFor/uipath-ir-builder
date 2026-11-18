@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String val = default;
             val = System.Environment.GetEnvironmentVariable("OS");
-            Log(message: "OS=" + val, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "OS=" + val);
         }
     }
 }

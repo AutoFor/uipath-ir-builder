@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // MessageBox はCoded API が無い（Coded API なし（メッセージボックスの API が ISystemService に無い））ので XAML 経由（coded/_activities/MessageBox_81e3dd.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/MessageBox_81e3dd.xaml", new Dictionary<string, object> { ["in_AutoCloseAfter"] = TimeSpan.FromSeconds(5), ["in_Caption"] = "確認", ["in_Text"] = "続けますか", ["in_TopMost"] = true });
             b = (System.String)__xaml1["out_ChosenButton"];
-            Log(message: "閉じた", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "閉じた");
         }
     }
 }

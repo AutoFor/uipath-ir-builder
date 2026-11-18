@@ -25,9 +25,9 @@ namespace CatalogProbeNet8
             r2 = false ? system.CombineText(parts, " ") : system.CombineText(parts, UiPath.Activities.System.Text.SeparatorOptions.Space);
             // 任意の文字でつなぐ
             r3 = true ? system.CombineText(parts, "::") : system.CombineText(parts, UiPath.Activities.System.Text.SeparatorOptions.Custom);
-            Log(message: r1, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: r2, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: r3, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r1);
+            Log(message: r2);
+            Log(message: r3);
         }
     }
 }

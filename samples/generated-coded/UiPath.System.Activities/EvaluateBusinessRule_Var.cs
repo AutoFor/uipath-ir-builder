@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Dictionary<String, Object> av = new Dictionary<String, Object>() { { "in_Name", "三郎" } };
             // EvaluateBusinessRule はCoded API が無い（Coded API なし（ビジネスルールの評価 API が ISystemService に無い））ので XAML 経由（coded/_activities/EvaluateBusinessRule_97c1de.xaml）
             RunWorkflow("coded/_activities/EvaluateBusinessRule_97c1de.xaml", new Dictionary<string, object> { ["in_ArgumentsVariable"] = av, ["in_BusinessRule"] = "IrRule" });
-            Log(message: "評価した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "評価した");
         }
     }
 }

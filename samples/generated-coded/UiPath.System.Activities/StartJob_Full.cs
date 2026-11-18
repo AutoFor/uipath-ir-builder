@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             String jobKey = default;
             // ジョブを開始
             jobKey = system.StartJob(processName: "IrChildProcess", folderPath: "Shared", jobPriority: UiPath.Orchestrator.Client.Models.StartProcessDtoJobPriority.High, resumeOnSameContext: false, jobId: out jobId);
-            Log(message: "ジョブを開始した: " + jobKey, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ジョブを開始した: " + jobKey);
         }
     }
 }

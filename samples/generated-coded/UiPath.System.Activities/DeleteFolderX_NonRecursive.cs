@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             // 空のフォルダーを消す
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\DeleteFolderX_NonRecursive.d"));
             ex = system.PathExists(path: "output\\DeleteFolderX_NonRecursive.d", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

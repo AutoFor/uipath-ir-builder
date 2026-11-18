@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "bbb", file: LocalResource.FromPath("output\\CompressFiles_Min.b.txt"));
             system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { "output\\CompressFiles_Min.a.txt", "output\\CompressFiles_Min.b.txt" }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: "output\\CompressFiles_Min.zip", password: null, compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.Normal, codePage: UiPath.Activities.System.Encode.CodePages.Default, overrideExistingFile: true);
             ex = system.PathExists(path: "output\\CompressFiles_Min.zip", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

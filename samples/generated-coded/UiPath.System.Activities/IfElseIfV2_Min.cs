@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // IfElseIfV2 は対応表が無いので XAML 経由（coded/_xaml/IfElseIfV2_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/IfElseIfV2_Min_1.xaml", new Dictionary<string, object> { ["count"] = count, ["label"] = label });
             label = (String)__xaml1["label"];
-            Log(message: "結果: " + label, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + label);
         }
     }
 }

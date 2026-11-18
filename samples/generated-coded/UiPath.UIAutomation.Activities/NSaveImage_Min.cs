@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NSaveImage_Min_1.xaml）
             var __xaml3 = RunWorkflow("coded/_xaml/NSaveImage_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["img"] = img, ["imgPath"] = imgPath });
             img = (UiPath.Core.Image)__xaml3["img"];
-            Log(message: "saved=" + (System.IO.File.Exists(imgPath) && new System.IO.FileInfo(imgPath).Length > 0).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "saved=" + (System.IO.File.Exists(imgPath) && new System.IO.FileInfo(imgPath).Length > 0).ToString());
         }
     }
 }

@@ -40,6 +40,10 @@ const simple: Record<string, [string, Record<string, string>]> = {
   ArgumentException: ["s:ArgumentException", { s: S }],
   InvalidOperationException: ["s:InvalidOperationException", { s: S }],
   TimeoutException: ["s:TimeoutException", { s: S }],
+  // 業務上の例外（Orchestrator で「ビジネス例外」になる）。UiPath.Core.Activities ではなく UiPath.Core にある
+  // （UiPath.System.Activities 25.10.0 の Windows・Portable のどちらも。knowledge/business-rule-exception.md）
+  BusinessRuleException: ["ucore:BusinessRuleException", { ucore: UCORE }],
+  "UiPath.Core.BusinessRuleException": ["ucore:BusinessRuleException", { ucore: UCORE }],
   IOException: ["sio:IOException", { sio: SIO }],
   FileNotFoundException: ["sio:FileNotFoundException", { sio: SIO }],
   FileInfo: ["sio:FileInfo", { sio: SIO }],

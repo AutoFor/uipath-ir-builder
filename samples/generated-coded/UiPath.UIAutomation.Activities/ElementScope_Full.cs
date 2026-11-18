@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/ElementScope_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["scopeEl"] = scopeEl, ["text"] = text });
             scopeEl = (UiPath.Core.UiElement)__xaml1["scopeEl"];
             text = (String)__xaml1["text"];
-            Log(message: "スコープ内: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "スコープ内: " + text);
         }
     }
 }

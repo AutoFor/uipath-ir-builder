@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             // CompareText は対応表が無いので XAML 経由（coded/_activities/CompareText_783ae1.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/CompareText_783ae1.xaml", new Dictionary<string, object> { ["in_BaselineText"] = "see file_01", ["in_ContinueOnFailure"] = true, ["in_OutputFilePath"] = outPath, ["in_RulesList"] = new List<UiPath.Testing.Activities.Models.ComparisonRule> { rule }, ["in_TargetText"] = "see file_99" });
             same = (System.Boolean)__xaml2["out_Result"];
-            Log(message: Convert.ToString("same=" + same.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("same=" + same.ToString()));
         }
     }
 }

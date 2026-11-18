@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             String r = default;
             parts = new List<string> { "a", "b", "c" };
             r = true ? system.CombineText(parts, "-") : system.CombineText(parts, UiPath.Activities.System.Text.SeparatorOptions.Custom);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r);
         }
     }
 }

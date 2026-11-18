@@ -28,11 +28,11 @@ namespace CatalogProbeNet8
                 try
                 {
                     Excel.Sheet["Sheet1"].Cell["E1"].WriteCell(value: "書けた");
-                    Log(message: "保護されていない", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "保護されていない");
                 }
                 catch (Exception ex)
                 {
-                    Log(message: "保護されていて書けなかった", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "保護されていて書けなかった");
                 }
             }
         }

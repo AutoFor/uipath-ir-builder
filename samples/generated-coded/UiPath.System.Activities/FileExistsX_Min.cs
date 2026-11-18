@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Boolean ex = default;
             system.WriteTextFile(text: "hi", file: LocalResource.FromPath("output\\FileExistsX_Min.txt"));
             ex = system.FileExists(path: "output\\FileExistsX_Min.txt");
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

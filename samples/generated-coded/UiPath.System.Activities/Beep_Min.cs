@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // Beep はCoded API が無い（Coded API なし（ISystemService にも基底クラスにも無い））ので XAML 経由（coded/_activities/Beep.xaml）
             RunWorkflow("coded/_activities/Beep.xaml", null);
-            Log(message: "Beep の後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "Beep の後");
         }
     }
 }

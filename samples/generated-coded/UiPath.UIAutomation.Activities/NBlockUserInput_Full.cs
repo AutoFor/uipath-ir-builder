@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // 入力をブロックして処理する（全部入り）
             using (var block1 = uiAutomation.BlockUserInput(blockUserInputOptions: new BlockUserInputOptions { BlockType = UiPath.UIAutomationNext.Enums.NBlockInputType.Both, KeyModifiers = UiPath.UIAutomationNext.Enums.NKeyModifiers.Alt, Keys = "F10", Allow3rdPartyApps = false }))
             {
-                Log(message: "blocked", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "blocked");
             }
         }
     }

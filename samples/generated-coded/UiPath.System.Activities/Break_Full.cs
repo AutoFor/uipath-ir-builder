@@ -26,13 +26,13 @@ namespace CatalogProbeNet8
                     // 3回目で抜ける
                     break;
                 }
-                Log(message: "i=" + i.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "i=" + i.ToString());
             }
             var __loop2 = -1;
             do
             {
                 __loop2++;
-                Log(message: "DoWhile の中", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "DoWhile の中");
                 break;
             } while (true);
             foreach (Int32 it in items)
@@ -41,9 +41,9 @@ namespace CatalogProbeNet8
                 {
                     break;
                 }
-                Log(message: "ForEach: " + it.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "ForEach: " + it.ToString());
             }
-            Log(message: "ループの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ループの後");
         }
     }
 }

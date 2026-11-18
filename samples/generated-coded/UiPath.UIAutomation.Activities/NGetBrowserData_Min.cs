@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NGetBrowserData_Min_1.xaml）
             var __xaml3 = RunWorkflow("coded/_xaml/NGetBrowserData_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["sessionData"] = sessionData });
             sessionData = (String)__xaml3["sessionData"];
-            Log(message: "len>0=" + (sessionData.Length > 0).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "len>0=" + (sessionData.Length > 0).ToString());
         }
     }
 }

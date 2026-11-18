@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
             // 中身ごと消す
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\DeleteFolderX_Full.d"));
             ex = system.PathExists(path: "output\\DeleteFolderX_Full.d", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

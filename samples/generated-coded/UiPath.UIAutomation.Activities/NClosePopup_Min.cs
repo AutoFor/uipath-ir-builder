@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NClosePopup_Min_1.xaml）
             var __xaml3 = RunWorkflow("coded/_xaml/NClosePopup_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["handled"] = handled });
             handled = (UiPath.UIAutomationNext.Enums.NPopupHandleState)__xaml3["handled"];
-            Log(message: "popup=" + handled.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "popup=" + handled.ToString());
         }
     }
 }

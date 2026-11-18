@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
                 try
                 {
                     count = count + 1;
-                    Log(message: "試行 " + count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "試行 " + count.ToString());
                     if (count < 2)
                     {
                         throw new InvalidOperationException("まだだめ");
@@ -33,7 +33,7 @@ namespace CatalogProbeNet8
                     Delay(TimeSpan.FromMilliseconds(100));
                 }
             }
-            Log(message: "成功 count=" + count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "成功 count=" + count.ToString());
         }
     }
 }

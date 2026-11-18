@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String msg = default;
             var __result1 = RunWorkflow("coded/InvokeWorkflowFile_Callee.cs", new Dictionary<string, object> { ["in_Name"] = "太郎", ["in_Count"] = 3 });
             msg = (String)__result1["Output"];
-            Log(message: "戻り値: " + msg, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "戻り値: " + msg);
         }
     }
 }

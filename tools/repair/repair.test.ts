@@ -1,4 +1,4 @@
-// ui-repair（UI 操作の直し案）のテスト。外のコマンド（uip、browser-use）は呼ばない
+// ui-repair（UI 操作の直し案）のテスト。外のコマンド（uip）は呼ばない
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -130,4 +130,12 @@ test("直し案を当てる：セレクターと SearchSteps だけを変える�
   // もう一度当てると、今の値が案を作ったときと違うので当てない
   assert.ok("error" in applyProposal(wf, p));
   assert.match(proposalMarkdown(p), /\| FullSelectorArgument \| `（なし）` \| `<webctrl id='mfid_user\[email\]' tag='INPUT' \/>` \|/);
+});
+
+test("Chromium API のアタッチ失敗はセレクターの問題にしない", () => {
+  const err = "Message: Chromium API プロトコルへのアタッチに失敗しました。このページで Chromium API を使用するには…\nException Type: UiPath.UIAutomationNext.Exceptions.UiAutomationException\n";
+  const log = `[Error] x\n{\n  "Result": "Success",\n  "Data": { "hasErrors": true, "errorMessage": ${JSON.stringify(err)} }\n}\n`;
+  const f = parseRunFailure(log, "C:\p");
+  assert.equal(f?.ui, false);
+  assert.match(f?.hint ?? "", /DebuggerApi/);
 });

@@ -18,14 +18,14 @@ namespace CatalogProbeNet8
             {
                 var __check1 = 1 + 1 == 3;
                 if (__check1) throw new Exception("");
-                Log(message: "チェックを通った", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "チェックを通った");
                 var __check2 = 1 + 1 == 2;
                 if (__check2) throw new Exception("");
-                Log(message: "ここには来ない", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "ここには来ない");
             }
             catch (Exception ex)
             {
-                Log(message: "例外が出た", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "例外が出た");
             }
         }
     }

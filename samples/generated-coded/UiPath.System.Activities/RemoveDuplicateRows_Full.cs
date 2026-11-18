@@ -38,9 +38,9 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Bob", 25});
             // 重複行を除く
             res = system.RemoveDuplicateRows(dataTable: dt);
-            Log(message: Convert.ToString("rows=" + res.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns=" + string.Join(",", res.Columns.Cast<DataColumn>().Select(c => c.ColumnName))), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + res.Rows.Count));
+            Log(message: Convert.ToString("columns=" + string.Join(",", res.Columns.Cast<DataColumn>().Select(c => c.ColumnName))));
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
         }
     }
 }

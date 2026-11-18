@@ -37,9 +37,9 @@ namespace CatalogProbeNet8
             // RenameFolderX はCoded API が無い（Coded API なし（名前の変更はサービスにメソッドが無い））ので XAML 経由（coded/_activities/RenameFolderX.xaml）
             RunWorkflow("coded/_activities/RenameFolderX.xaml", new Dictionary<string, object> { ["in_FolderPath"] = "output\\RenameFolderX_Min.old", ["in_NewName"] = "RenameFolderX_Min.new" });
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\RenameFolderX_Min.new\\a.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
             ex = system.PathExists(path: "output\\RenameFolderX_Min.old", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             t = (UiPath.Core.Timer)__xaml1["out_Timer"];
             // ResumeTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を再開する API が無い））ので XAML 経由（coded/_activities/ResumeTimer.xaml）
             RunWorkflow("coded/_activities/ResumeTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
-            Log(message: "ResumeTimer の後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ResumeTimer の後");
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // 警告を上げる
             system.RaiseAlert(severity: UiPath.Core.Activities.AlertSeverity.Warning, notification: "IR テストのアラート（警告）", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "アラートを上げた", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アラートを上げた");
         }
     }
 }

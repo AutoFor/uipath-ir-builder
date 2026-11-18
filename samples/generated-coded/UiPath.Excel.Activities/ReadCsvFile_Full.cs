@@ -21,10 +21,10 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "\"Name\";\"Age\"\n\"Alice\";30\n\"Bob\";25", file: LocalResource.FromPath("output\\ReadCsvFile_Full.csv"));
             // 見出し無しで読む
             dt = ExcelOperations.ReadCsvFile(filePath: "output\\ReadCsvFile_Full.csv", delimiter: UiPath.CSV.DelimitatorOptions.Semicolon, includeColumnNames: false, encodingStr: "utf-8", ignoreQuotes: true);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("first=" + dt.Rows[0][0].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("col0=" + dt.Columns[0].ColumnName), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("columns=" + dt.Columns.Count));
+            Log(message: Convert.ToString("first=" + dt.Rows[0][0].ToString()));
+            Log(message: Convert.ToString("col0=" + dt.Columns[0].ColumnName));
         }
     }
 }

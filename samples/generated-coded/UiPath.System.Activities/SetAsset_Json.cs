@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.SetAsset(value: "{\"a\":1}", assetName: "IRJsonAsset", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "JSON アセットを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "JSON アセットを設定した");
         }
     }
 }

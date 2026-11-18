@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String r = default;
             // 正規表現で置き換える
             r = system.Replace(input: "John@Example", pattern: "(\\w+)@(\\w+)", replacement: "$2 at $1", regexOption: System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Compiled);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r);
         }
     }
 }

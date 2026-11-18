@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/QueueTrigger_966a11.xaml", null);
             eq = (UiPath.Core.QueueItem)__xaml1["out_ExtractedQueueItem"];
             qi = (UiPath.Core.QueueItem)__xaml1["out_TransactionItem"];
-            Log(message: "キューで開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "キューで開始した");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             img = (UiPath.Core.Image)__xaml1["img"];
             found = (UiPath.Core.UiElement)__xaml1["found"];
             found2 = (UiPath.Core.UiElement)__xaml1["found2"];
-            Log(message: "結果: " + (found != null).ToString() + " " + (found2 != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + (found != null).ToString() + " " + (found2 != null).ToString());
         }
     }
 }

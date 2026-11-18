@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 v = (String)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A4"].ReadCellValue(getFormattedText: true), typeof(String));
             }
-            Log(message: "A4: " + v, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "A4: " + v);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 Excel.InsertSheet(sheetName: "Sheet3");
                 Excel.Sheet["Sheet3"].Cell["A1"].WriteCell(value: "新しいシート");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet3"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "Sheet3 の A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "Sheet3 の A1: [" + Convert.ToString(a1) + "]");
             }
         }
     }

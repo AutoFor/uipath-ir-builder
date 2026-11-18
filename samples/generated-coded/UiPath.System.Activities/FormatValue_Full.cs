@@ -32,9 +32,9 @@ namespace CatalogProbeNet8
             // FormatValue はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い））ので XAML 経由（coded/_activities/FormatValue_a4a042.xaml）
             var __xaml3 = RunWorkflow("coded/_activities/FormatValue_a4a042.xaml", new Dictionary<string, object> { ["io_Value"] = c });
             c = (UiPath.Core.GenericValue)__xaml3["io_Value"];
-            Log(message: a.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: c.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: a.ToString());
+            Log(message: b.ToString());
+            Log(message: c.ToString());
         }
     }
 }

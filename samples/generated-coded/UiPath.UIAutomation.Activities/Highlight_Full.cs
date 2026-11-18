@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/Highlight_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["t0"] = t0, ["sec"] = sec });
             t0 = (DateTime)__xaml1["t0"];
             sec = (Double)__xaml1["sec"];
-            Log(message: "3秒近くかかった: " + (sec >= 2.5).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "3秒近くかかった: " + (sec >= 2.5).ToString());
         }
     }
 }
