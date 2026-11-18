@@ -49,6 +49,8 @@ export type CodedOptions = {
   labels?: Record<string, string>;
   // 1つの操作の直前に、手順名を Trace のログに出す（// 手順名 の代わり）
   traceLog?: boolean;
+  // プロジェクト設定（.settings/<プロファイル>）の既定値。XAML では未設定のプロパティがこの値で動くので、IR で未設定なら補う（project-settings.ts）
+  projectDefaults?: Record<string, Record<string, Value>>;
 };
 
 const NL = String.fromCharCode(10);
@@ -480,7 +482,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     // IR に無い props の意味は XAML と同じにする。generate.ts は既定 XAML の値を足すので、C# でもその値として扱う
     const act0 = resolve(cat, n.act, n.typeArg !== undefined);
     const xamlDefaults = "activity" in act0 ? xamlDefaultProps(cat, act0.activity) : {};
-    const effective: Record<string, Value> = { ...xamlDefaults, ...(n.props ?? {}) };
+    // 強い順：IR の値 > 既定 XAML の値（Studio が書く属性）> プロジェクト設定（XAML で未設定のときの値）
+    const effective: Record<string, Value> = { ...(opt.projectDefaults?.[className] ?? {}), ...xamlDefaults, ...(n.props ?? {}) };
     // "Prop" は IR にあること、"Prop=値" は props の値が等しいこと
     const whenIn = (names: string[], vals: Record<string, Value> | undefined) => (w: string) => {
       const eq = w.indexOf("=");

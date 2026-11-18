@@ -131,13 +131,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const { readDescriptors } = await import("./coded-descriptors.ts");
     const { maps } = loadMappings(root);
     const descriptors = project ? readDescriptors(project) : undefined;
+    const { projectDefaults, readSettings } = await import("./project-settings.ts");
+    const pdefs = project ? projectDefaults(cat, readSettings(project)) : undefined;
     const { validate } = await import("./validate.ts");
     const { generate } = await import("./generate.ts");
     // gen-coded.ts と同じく、検証を通ること・XAML 経由の小さな XAML の中身も含めて比べる（C# だけ比べると、検証で落ちる IR や、XAML 経由の部分の意味が変わる IR を作ってしまう）
     gen = (wf) => {
       const ex = expandRefs(structuredClone(wf), cat, project);
       if (ex.issues.length || validate(ex.wf, cat).length) return undefined;
-      const r = generateCoded(ex.wf, cat, maps, { namespace: "Slim", descriptors, viaXaml: { dir: "_xaml" } });
+      const r = generateCoded(ex.wf, cat, maps, { namespace: "Slim", descriptors, viaXaml: { dir: "_xaml" }, projectDefaults: pdefs });
       if (r.issues.length) return undefined;
       return [r.code, ...r.xamls.map((x) => { try { return generate(x.wf, cat); } catch (e) { return `!${(e as Error).message}`; } })].join("\n----\n");
     };

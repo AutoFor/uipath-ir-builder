@@ -11,6 +11,7 @@
 //                          そのプロジェクトの .local/.codedworkflows/ObjectRepository.cs があれば、リポジトリにあるターゲット（Reference）は Descriptors.<アプリ>.<画面>.<要素> で書く
 //     --no-descriptors     リポジトリにあるターゲットも、これまでどおり new TargetAnchorableModel { ... } で書く
 //     --compact            オプションを1行にまとめて書く（既定は1行に1つ、行末に // Studio の日本語の名前。catalog/<パッケージ>/<版>.ja.json がある版だけ）
+//     --settings <Release|Debug>  プロジェクト設定（.settings/<プロファイル>）の既定値を、IR で未設定の props に補う。既定は Release（Orchestrator のジョブ）。--no-settings で補わない
 //     --no-trace-log       操作（クリック・入力・待機など）の直前に入れる Log(…, Trace) を入れない（既定は、読みやすい形のとき入れる。// 手順名 の代わり）
 //                          カタログに無い版、services の無い古いカタログ（対応表のあるパッケージ）はエラー
 //     --no-via-xaml        対応表の無いアクティビティを XAML 経由にしない（NO_MAPPING のエラーにする）
@@ -29,6 +30,7 @@ import { fileURLToPath } from "node:url";
 import { validate } from "./validate.ts";
 import { expandRefs } from "./objrepo.ts";
 import { descriptorsFile, readDescriptors } from "./coded-descriptors.ts";
+import { projectDefaults, readSettings } from "./project-settings.ts";
 import { generateCoded, type ViaXamlFile } from "./generate-coded.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadMappings } from "./mapping.ts";
@@ -47,7 +49,7 @@ const invokeDir = val("--invoke-dir");
 const checkOnly = args.includes("--check");
 const print = args.includes("--print");
 const noViaXaml = args.includes("--no-via-xaml");
-const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project"]);
+const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project", "--settings"]);
 const descriptors = project && !args.includes("--no-descriptors") ? readDescriptors(project) : undefined;
 if (project && !args.includes("--no-descriptors") && !descriptors) console.error(`注意: ${descriptorsFile(project)} が無い。ターゲットは new TargetAnchorableModel で書く（Studio でビルドすると作られる）`);
 const files = args.filter((a, i) => !a.startsWith("--") && !valued.has(args[i - 1]) && !/\.(verify|expected|args)\.json$/i.test(a));
@@ -92,7 +94,7 @@ for (const f of files) {
   let warns: { path: string; code: string; message: string }[] = [];
   const subs: { file: ViaXamlFile; xaml: string }[] = [];
   if (!issues.length) {
-    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck }, descriptors, labels: args.includes("--compact") || !Object.keys(labels).length ? undefined : labels, traceLog: !args.includes("--compact") && !args.includes("--no-trace-log") && Object.keys(labels).length > 0 });
+    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck }, descriptors, projectDefaults: project && !args.includes("--no-settings") ? projectDefaults(cat, readSettings(project, val("--settings") === "Debug" ? "Debug" : "Release")) : undefined, labels: args.includes("--compact") || !Object.keys(labels).length ? undefined : labels, traceLog: !args.includes("--compact") && !args.includes("--no-trace-log") && Object.keys(labels).length > 0 });
     issues.push(...r.issues);
     code = r.code;
     // Coded のテストケースにはデータ駆動のテストをつなげない（data は使わず、注意だけ出す）
