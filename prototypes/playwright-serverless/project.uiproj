@@ -1,0 +1,6 @@
+{
+  "Name": "PwServerlessProbe",
+  "ProjectType": "Process",
+  "Description": "Coded + Playwright がサーバーレスで動くかの試作",
+  "MainFile": "Main.cs"
+}
