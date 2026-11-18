@@ -11,9 +11,10 @@ namespace PwServerlessProbe
     public class Main : CodedWorkflow
     {
         [Workflow]
-        public (string out_Title, string out_Info) Execute(string in_Url, bool in_Headless)
+        public (string out_Title, string out_Info) Execute(string in_Url, bool in_Headless, string in_Channel)
         {
             if (string.IsNullOrEmpty(in_Url)) in_Url = "https://example.com/";
+            if (string.IsNullOrEmpty(in_Channel)) in_Channel = "chrome";
 
             // どこから Playwright と driver を読もうとしているかを残す（落ちたときの手がかり）
             var asmDir = Path.GetDirectoryName(typeof(IPlaywright).Assembly.Location) ?? "";
@@ -52,7 +53,9 @@ namespace PwServerlessProbe
             var browsers = new[] { "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/opt/google/chrome/chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser",
                 Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Google\Chrome\Application\chrome.exe"),
                 Environment.ExpandEnvironmentVariables(@"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"),
-                Environment.ExpandEnvironmentVariables(@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe") };
+                Environment.ExpandEnvironmentVariables(@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"),
+                Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"),
+                Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Google\Chrome\Application\chrome.exe") };
             Log("ブラウザーの候補: " + string.Join(", ", browsers.Select(b => b + "=" + File.Exists(b))));
 
             // node が動くかを先に確かめる（driver は node + package/cli.js）
@@ -68,22 +71,24 @@ namespace PwServerlessProbe
             using var pw = createTask.Result;
             Log("Playwright の driver が起動した");
 
-            var opts = new BrowserTypeLaunchOptions { Headless = in_Headless, Channel = "chrome" };
+            var opts = new BrowserTypeLaunchOptions { Headless = in_Headless, Channel = in_Channel };
             IBrowser browser;
             try
             {
                 browser = pw.Chromium.LaunchAsync(opts).GetAwaiter().GetResult();
-                Log("Chrome を Channel=chrome で起動した");
+                Log($"Channel={in_Channel} で起動した");
             }
             catch (Exception ex)
             {
-                Log("Channel=chrome で起動できない: " + ex.Message.Split('\n')[0]);
+                Log($"Channel={in_Channel} で起動できない: " + ex.Message.Split('\n')[0]);
                 var exe = new[]
                 {
                     Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Google\Chrome\Application\chrome.exe"),
                     Environment.ExpandEnvironmentVariables(@"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"),
                     Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Google\Chrome\Application\chrome.exe"),
                     "/usr/bin/google-chrome",
+                    Environment.ExpandEnvironmentVariables(@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"),
+                    Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"),
                     "/opt/google/chrome/chrome",
                     "/usr/bin/chromium",
                 }.FirstOrDefault(File.Exists);
