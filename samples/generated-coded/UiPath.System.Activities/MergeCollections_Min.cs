@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             List<String> second = new List<String>() { "b", "c" };
             List<String> merged = default;
             merged = first.Concat(second).ToList();
-            Log(message: Convert.ToString(String.Join(",", merged)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", merged)));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // StartTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を作る・測る API が無い））ので XAML 経由（coded/_activities/StartTimer.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/StartTimer.xaml", null);
             t = (UiPath.Core.Timer)__xaml1["out_Timer"];
-            Log(message: "タイマーを開始: " + (t != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "タイマーを開始: " + (t != null).ToString());
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             IList<String> made = default;
             made = new List<String>();
-            Log(message: "count=" + made.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "count=" + made.Count.ToString());
         }
     }
 }

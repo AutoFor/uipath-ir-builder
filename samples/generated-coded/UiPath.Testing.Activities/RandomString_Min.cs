@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String s = default;
             // 大文字 8 文字
             s = testing.RandomString(caseValue: UiPath.Testing.Enums.Case.UpperCase, length: 8);
-            Log(message: Convert.ToString("length=" + s.Length + " upper=" + (s == s.ToUpper())), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("length=" + s.Length + " upper=" + (s == s.ToUpper())));
         }
     }
 }

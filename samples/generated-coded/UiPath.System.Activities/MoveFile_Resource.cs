@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             // リソースでフォルダーへ移動
             system.MoveFile(pathResource: src, destinationResource: dst, overwrite: true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFile_Resource.dir\\MoveFile_Resource.src.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

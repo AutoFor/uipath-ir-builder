@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             // Then
             // 合計が 360 か
             _ = testing.VerifyExpressionWithOperator(total, UiPath.Testing.Comparison.Equality, 360, null, true, null, false, false);
-            Log(message: "total=" + total.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "total=" + total.ToString());
         }
     }
 }

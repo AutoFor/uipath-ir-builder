@@ -44,7 +44,7 @@ namespace CatalogProbeNet8
                 if (__row1 >= 3) break;
                 __row1++;
                 idx++;
-                Log(message: Convert.ToString(idx + ":" + CurrentRow["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: Convert.ToString(idx + ":" + CurrentRow["Name"].ToString()));
             }
         }
     }

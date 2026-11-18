@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Dictionary<String, String> addr = default;
             // 国と都市を指定
             addr = testing.Address("USA", "New York");
-            Log(message: Convert.ToString("country=" + addr["Country"] + " city=" + addr["City"]), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("country=" + addr["Country"] + " city=" + addr["City"]));
         }
     }
 }

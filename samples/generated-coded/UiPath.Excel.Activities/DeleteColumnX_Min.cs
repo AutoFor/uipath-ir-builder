@@ -26,11 +26,11 @@ namespace CatalogProbeNet8
             {
                 Excel.Sheet["Sheet1"].Range["A1:C4"].DeleteColumn(columnName: "Double", hasHeaders: true);
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A1: [" + Convert.ToString(a1) + "]");
                 b1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "B1: [" + Convert.ToString(b1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "B1: [" + Convert.ToString(b1) + "]");
                 c1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["C1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "C1: [" + Convert.ToString(c1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "C1: [" + Convert.ToString(c1) + "]");
             }
         }
     }

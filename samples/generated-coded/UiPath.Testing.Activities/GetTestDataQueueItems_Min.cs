@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             List<UiPath.Testing.Core.TestDataQueueItem> items = default;
             // テストデータの一覧を取る
             items = testing.GetTestDataQueueItems(queueName: "IRTestDataQueue");
-            Log(message: Convert.ToString("件数=" + items.Count.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("件数=" + items.Count.ToString()));
         }
     }
 }

@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileX_Full.xlsx", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["E1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "開き直した E1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "開き直した E1: [" + Convert.ToString(a1) + "]");
             }
         }
     }

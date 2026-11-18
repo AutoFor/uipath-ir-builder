@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/SelectFile_fbde82.xaml", new Dictionary<string, object> { ["in_InitialDirectory"] = "C:\\Users\\Public", ["in_Multiselect"] = true });
             f = (System.String)__xaml1["out_SelectedFile"];
             fs = (System.Collections.Generic.IEnumerable<System.String>)__xaml1["out_SelectedFiles"];
-            Log(message: "選んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "選んだ");
         }
     }
 }

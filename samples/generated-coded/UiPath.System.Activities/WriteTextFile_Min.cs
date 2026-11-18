@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String txt = default;
             system.WriteTextFile(text: "written", file: LocalResource.FromPath("output\\WriteTextFile_Min.txt"));
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\WriteTextFile_Min.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

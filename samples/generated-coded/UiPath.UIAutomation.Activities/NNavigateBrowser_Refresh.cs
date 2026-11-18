@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             var __xaml2 = RunWorkflow("coded/_xaml/NNavigateBrowser_Refresh_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["before"] = before, ["after"] = after });
             before = (String)__xaml2["before"];
             after = (String)__xaml2["after"];
-            Log(message: "before=" + before + ", after=" + after, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "before=" + before + ", after=" + after);
         }
     }
 }

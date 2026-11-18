@@ -39,7 +39,7 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Bob", 25});
             row = dt.Rows[1];
             v = (Object)system.GetRowItem(row: row, columnName: "Name");
-            Log(message: Convert.ToString("value=" + v.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("value=" + v.ToString()));
         }
     }
 }

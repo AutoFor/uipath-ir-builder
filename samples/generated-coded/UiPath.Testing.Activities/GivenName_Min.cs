@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String name = default;
             // 名前
             name = testing.GivenName();
-            Log(message: Convert.ToString("hasName=" + !string.IsNullOrEmpty(name)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("hasName=" + !string.IsNullOrEmpty(name)));
         }
     }
 }

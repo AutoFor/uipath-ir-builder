@@ -1,0 +1,1561 @@
+{
+  "package": "UiPath.WebAPI.Activities",
+  "version": "2.3.0",
+  "assemblies": [
+    "UiPath.Web.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "DeserializeJson",
+      "clrType": "UiPath.Web.Activities.DeserializeJson",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 1,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "JsonObject",
+          "kind": "out",
+          "type": "T",
+          "required": false,
+          "displayName": "JsonObjectDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJson"
+        },
+        {
+          "name": "JsonSample",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "displayName": "DeserializeJson_JsonSample_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJson"
+        },
+        {
+          "name": "JsonString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "JsonStringDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJson"
+        },
+        {
+          "name": "Settings",
+          "kind": "in",
+          "type": "UiPath.Web.Activities.JSON.Models.JsonDeserializationSettings",
+          "required": false,
+          "displayName": "SerializeJson_Settings_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJson"
+        }
+      ]
+    },
+    {
+      "className": "DeserializeJsonArray",
+      "clrType": "UiPath.Web.Activities.DeserializeJsonArray",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "JsonArray",
+          "kind": "out",
+          "type": "Newtonsoft.Json.Linq.JArray",
+          "required": false,
+          "category": "Output",
+          "displayName": "JsonArrayDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJsonArray"
+        },
+        {
+          "name": "JsonString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "JsonStringDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeJsonArray"
+        }
+      ]
+    },
+    {
+      "className": "DeserializeXml",
+      "clrType": "UiPath.Web.Activities.DeserializeXml",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "XMLDocument",
+          "kind": "out",
+          "type": "System.Xml.Linq.XDocument",
+          "required": false,
+          "category": "Output",
+          "displayName": "XMLDocumentDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeXml"
+        },
+        {
+          "name": "XMLString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "XMLStringDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DeserializeXml"
+        }
+      ]
+    },
+    {
+      "className": "ExecuteXPath",
+      "clrType": "UiPath.Web.Activities.ExecuteXPath",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity<System.Object>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExistingXML",
+          "kind": "in",
+          "type": "System.Xml.Linq.XDocument",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExistingXMLDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "ExistingXML"
+          ],
+          "obsolete": false,
+          "declaredOn": "ExecuteXPath"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.Object",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "XMLString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "XMLStringDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "XMLString"
+          ],
+          "obsolete": false,
+          "declaredOn": "ExecuteXPath"
+        },
+        {
+          "name": "XPathExpression",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "XPathExpressionDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ExecuteXPath"
+        }
+      ]
+    },
+    {
+      "className": "GetNodes",
+      "clrType": "UiPath.Web.Activities.GetNodes",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExistingXML",
+          "kind": "in",
+          "type": "System.Xml.Linq.XDocument",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExistingXMLDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Existing XML Document"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetNodes"
+        },
+        {
+          "name": "XMLNodes",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>",
+          "required": false,
+          "category": "Output",
+          "displayName": "XMLNodesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetNodes"
+        },
+        {
+          "name": "XMLString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "XMLStringDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "XML Text"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetNodes"
+        }
+      ]
+    },
+    {
+      "className": "GetXMLNodeAttributes",
+      "clrType": "UiPath.Web.Activities.GetXMLNodeAttributes",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Attributes",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>",
+          "required": false,
+          "category": "Output",
+          "displayName": "AttributesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetXMLNodeAttributes"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExistingXMLNode",
+          "kind": "in",
+          "type": "System.Xml.Linq.XNode",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExistingXMLNodeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetXMLNodeAttributes"
+        }
+      ]
+    },
+    {
+      "className": "GetXMLNodes",
+      "clrType": "UiPath.Web.Activities.GetXMLNodes",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.CodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "ExistingXML",
+          "kind": "in",
+          "type": "System.Xml.Linq.XDocument",
+          "required": true,
+          "category": "Input",
+          "displayName": "ExistingXMLDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "Existing XML Document"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetXMLNodes"
+        },
+        {
+          "name": "XMLNodes",
+          "kind": "out",
+          "type": "System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>",
+          "required": false,
+          "category": "Output",
+          "displayName": "XMLNodesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "GetXMLNodes"
+        },
+        {
+          "name": "XMLString",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "XMLStringDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "XML Text"
+          ],
+          "obsolete": false,
+          "declaredOn": "GetXMLNodes"
+        }
+      ]
+    },
+    {
+      "className": "HttpClient",
+      "clrType": "UiPath.Web.Activities.HttpClient",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.AsyncCodeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AcceptFormat",
+          "kind": "prop",
+          "type": "UiPath.Web.AcceptHeaderType",
+          "required": false,
+          "enum": [
+            "ANY",
+            "JSON",
+            "XML",
+            "CUSTOM"
+          ],
+          "category": "Input",
+          "displayName": "AcceptFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Attachments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Options",
+          "displayName": "AttachmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "AuthenticationType",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.HttpClient+AuthType",
+          "required": false,
+          "enum": [
+            "None",
+            "SimpleHttp",
+            "OAuth1",
+            "OAuth2",
+            "ClientCertificate"
+          ],
+          "browsable": false,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Body",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "BodyDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "BodyFormat",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "BodyFormatDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ClientCertificate",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ClientCertAuth",
+          "displayName": "ClientCertificateDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ClientCertificatePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "ClientCertAuth",
+          "displayName": "ClientCertificatePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ConsumerKey",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "OAuth1",
+          "displayName": "ConsumerKeyDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "OAuth1"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ConsumerSecret",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "OAuth1",
+          "displayName": "ConsumerSecretDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "OAuth1"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "Common",
+          "displayName": "ContinueOnErrorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Cookies",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Options",
+          "displayName": "CookiesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnableSSLVerification",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "category": "ClientCertAuth",
+          "displayName": "EnableSSLCertVerification",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "EndPoint",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "category": "Input",
+          "displayName": "EndPointDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "FileAttachments",
+          "kind": "in",
+          "type": "System.Collections.Generic.ICollection<UiPath.Platform.ResourceHandling.ILocalResource>",
+          "required": false,
+          "category": "Options",
+          "displayName": "FileAttachmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Headers",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Options",
+          "displayName": "HeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Method",
+          "kind": "prop",
+          "type": "UiPath.Web.Method",
+          "required": false,
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "HEAD",
+            "OPTIONS",
+            "PATCH",
+            "MERGE"
+          ],
+          "category": "Input",
+          "displayName": "MethodDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "OAuth1Token",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "OAuth1",
+          "displayName": "OAuth1TokenDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "OAuth1"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "OAuth1TokenSecret",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "OAuth1",
+          "displayName": "OAuth1TokenSecretDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "OAuth1"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "OAuth2Token",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "OAuth2",
+          "displayName": "OAuth2TokenDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "OAuth2"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Parameters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Options",
+          "displayName": "ParametersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "SimpleAuth",
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ResourcePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "Options",
+          "displayName": "ResourcePathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ResponseAttachment",
+          "kind": "out",
+          "type": "UiPath.Platform.ResourceHandling.ILocalResource",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResponseAttachmentDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "ResponseHeaders",
+          "kind": "out",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "category": "Output",
+          "displayName": "HeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "category": "Output",
+          "displayName": "ResultDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "SecureClientCertificatePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "ClientCertAuth",
+          "displayName": "SecureClientCertificatePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "category": "SimpleAuth",
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "StatusCode",
+          "kind": "out",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Output",
+          "displayName": "StatusCodeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "TimeoutMS",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "category": "Common",
+          "displayName": "TimeoutMSDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "UrlSegments",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument<System.String>>",
+          "required": false,
+          "category": "Options",
+          "displayName": "UrlSegmentsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        },
+        {
+          "name": "Username",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "category": "SimpleAuth",
+          "displayName": "UsernameDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "HttpClient"
+        }
+      ]
+    },
+    {
+      "className": "NetHttpRequest",
+      "clrType": "UiPath.Web.Activities.Http.NetHttpRequest",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "clr-namespace:UiPath.Web.Activities.Http;assembly=UiPath.Web.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Sdk.Activities.SdkActivity<UiPath.Web.Activities.Http.Models.HttpResponseSummary, UiPath.Web.Activities.Http.HttpRequestServicePolicy>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "AuthenticationType",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.Http.Models.AuthenticationType",
+          "required": false,
+          "enum": [
+            "None",
+            "BasicUsernamePassword",
+            "OAuthToken",
+            "NegotiatedAuthentication"
+          ],
+          "displayName": "AuthenticationTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "BasicAuthPassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "BasicAuthPasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "BasicAuthSecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "displayName": "BasicAuthSecurePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "BasicAuthUsername",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "BasicAuthUsernameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "BinaryPayload",
+          "kind": "in",
+          "type": "System.Byte[]",
+          "required": false,
+          "displayName": "BinaryPayloadDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ClientCertPassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "ClientCertPasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ClientCertPath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "ClientCertPathDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ClientCertSecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "displayName": "ClientCertSecurePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnErrorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Cookies",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "displayName": "AdditionalCookiesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "CustomNegotiatedAuthCredentials",
+          "kind": "in",
+          "type": "System.Net.NetworkCredential",
+          "required": false,
+          "displayName": "CustomNegotiatedAuthCredentialsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "DisableSslVerification",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "DisableSslVerificationDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EnableCookies",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "EnableCookiesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "FileOverwrite",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.Http.Models.FileOverwriteOption",
+          "required": false,
+          "enum": [
+            "AutoRename",
+            "Replace",
+            "Discard"
+          ],
+          "displayName": "FileOverwriteDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "FilePath",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "LocalFileDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "FollowRedirects",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "FollowRedirects",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "FormData",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "displayName": "FormDataDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "FormDataParts",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Web.Activities.Http.Models.FormDataPart>",
+          "required": false,
+          "displayName": "FormDataPartsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Headers",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "displayName": "HeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "InitialDelay",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "InitialDelayDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "LocalFiles",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.String>",
+          "required": false,
+          "displayName": "LocalFilesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "MaxRedirects",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "MaxRedirects",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "MaxRetryAfterDelay",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "MaxRetryAfterDelayDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Method",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.Http.Models.HttpMethod",
+          "required": false,
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "HEAD",
+            "OPTIONS",
+            "PATCH",
+            "TRACE"
+          ],
+          "displayName": "MethodDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Multiplier",
+          "kind": "in",
+          "type": "System.Double",
+          "required": false,
+          "displayName": "MultiplierDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "OAuthToken",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "OAuthTokenDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "OutputFileName",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "OutputFileNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "OutputFileTargetFolder",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "OutputFileTargetFolderDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Parameters",
+          "kind": "in",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "displayName": "ParametersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "PathResource",
+          "kind": "in",
+          "type": "UiPath.Platform.ResourceHandling.IResource",
+          "required": false,
+          "displayName": "ResourceFileDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "PreferRetryAfterValue",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "PreferRetryAfterValueDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ProxyConfiguration",
+          "kind": "in",
+          "type": "UiPath.Web.Activities.Http.Models.WebProxyConfiguration",
+          "required": false,
+          "displayName": "ProxyConfigurationDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "RequestBodyType",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.Http.Models.HttpRequestBodyType",
+          "required": false,
+          "enum": [
+            "None",
+            "Text",
+            "FormUrlEncoded",
+            "MultipartFormData",
+            "Binary",
+            "Stream"
+          ],
+          "displayName": "RequestBodyTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "RequestUrl",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "RequestUrlDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "ResourceFiles",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<UiPath.Platform.ResourceHandling.IResource>",
+          "required": false,
+          "displayName": "ResourceFilesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "UiPath.Web.Activities.Http.Models.HttpResponseSummary",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "RetryCount",
+          "kind": "in",
+          "type": "System.Int32",
+          "required": false,
+          "displayName": "RetryCountDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "RetryPolicyType",
+          "kind": "prop",
+          "type": "UiPath.Web.Activities.Http.Models.RetryPolicyType",
+          "required": false,
+          "enum": [
+            "None",
+            "Basic",
+            "ExponentialBackoff"
+          ],
+          "displayName": "RetryPolicyTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "RetryStatusCodes",
+          "kind": "in",
+          "type": "System.Collections.Generic.IEnumerable<System.Net.HttpStatusCode>",
+          "required": false,
+          "displayName": "RetryStatusCodesDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "SaveRawRequestResponse",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "SaveRawRequestResponseDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "SaveResponseAsFile",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "SaveResponseAsFileDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "TextPayload",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "JsonPayloadDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "TextPayloadContentType",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "TextPayloadContentTypeDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "TextPayloadEncoding",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "TextPayloadEncodingDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "TimeoutInMiliseconds",
+          "kind": "in",
+          "type": "System.Nullable<System.Int32>",
+          "required": false,
+          "displayName": "TimeoutInMilisecondsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "TlsProtocol",
+          "kind": "in",
+          "type": "UiPath.Web.Activities.Http.Models.SupportedTlsProtocols",
+          "required": false,
+          "enum": [
+            "Automatic",
+            "Tls12",
+            "Tls13"
+          ],
+          "displayName": "TlsProtocolDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "UseJitter",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "UseJitterDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        },
+        {
+          "name": "UseOsNegotiatedAuthCredentials",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "UseOsNegotiatedAuthCredentialsDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NetHttpRequest"
+        }
+      ]
+    },
+    {
+      "className": "SerializeJson",
+      "clrType": "UiPath.Web.Activities.JSON.SerializeJson",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "clr-namespace:UiPath.Web.Activities.JSON;assembly=UiPath.Web.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Sdk.Activities.SdkActivity<System.String>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "InputObject",
+          "kind": "in",
+          "type": "System.Object",
+          "required": true,
+          "displayName": "SerializeJson_InputObject_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SerializeJson"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "Settings",
+          "kind": "in",
+          "type": "UiPath.Web.Activities.JSON.Models.JsonSerializationSettings",
+          "required": false,
+          "displayName": "SerializeJson_Settings_DisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SerializeJson"
+        }
+      ]
+    },
+    {
+      "className": "SoapClient",
+      "clrType": "UiPath.Web.Activities.SoapClient",
+      "assembly": "UiPath.Web.Activities",
+      "xmlns": "http://schemas.uipath.com/workflow/activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Sdk.Activities.SdkActivity<System.String, UiPath.Web.Activities.HttpSoapRequestServicePolicy>",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "ClientCertificate",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "ClientCertPathDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "ClientCertificateAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "ClientCertificatePassword",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "ClientCertPasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "ContinueOnError",
+          "kind": "in",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "ContinueOnErrorDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "ContractName",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "SoapContractNameDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EndPoint",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "SoapEndPointDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "Method",
+          "kind": "in",
+          "type": "System.String",
+          "required": true,
+          "displayName": "SoapMethodDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "Parameters",
+          "kind": "prop",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.Activities.InArgument>",
+          "required": false,
+          "displayName": "SoapParametersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "Password",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "PasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "ResponseHeaders",
+          "kind": "out",
+          "type": "System.Collections.Generic.Dictionary<System.String, System.String>",
+          "required": false,
+          "displayName": "HeadersDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "Result",
+          "kind": "out",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "SecureClientCertificatePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "displayName": "ClientCertSecurePasswordDisplayName",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "SecurePassword",
+          "kind": "in",
+          "type": "System.Security.SecureString",
+          "required": false,
+          "displayName": "SecurePasswordDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "Username",
+          "kind": "in",
+          "type": "System.String",
+          "required": false,
+          "displayName": "UsernameDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "SimpleAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        },
+        {
+          "name": "UseWindowsCredentials",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "displayName": "UseWindowsCredentialsDisplayName",
+          "browsable": true,
+          "overloadGroups": [
+            "WindowsAuthentication"
+          ],
+          "obsolete": false,
+          "declaredOn": "SoapClient"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "format": 2
+}

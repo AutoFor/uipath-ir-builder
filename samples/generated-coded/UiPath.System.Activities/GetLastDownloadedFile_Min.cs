@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             // GetLastDownloadedFile はCoded API が無い（Coded API なし（ISystemService に Get Last Downloaded File 相当が無い。Body の中で起きたダウンロードを待つ ActivityAction 型））ので XAML 経由（coded/_xaml/GetLastDownloadedFile_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/GetLastDownloadedFile_Min_1.xaml", new Dictionary<string, object> { ["f"] = f });
             f = (FileInfo)__xaml1["f"];
-            Log(message: Convert.ToString(f.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(f.Name));
         }
     }
 }

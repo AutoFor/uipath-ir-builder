@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NNavigateBrowser_Full_1.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/NNavigateBrowser_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["currentUrl"] = currentUrl });
             currentUrl = (String)__xaml2["currentUrl"];
-            Log(message: "forward ok=" + currentUrl.EndsWith("#next").ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "forward ok=" + currentUrl.EndsWith("#next").ToString());
         }
     }
 }

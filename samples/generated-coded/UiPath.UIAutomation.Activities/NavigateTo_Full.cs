@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/NavigateTo_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["browser"] = browser, ["page2Path"] = page2Path, ["result"] = result });
             browser = (Browser)__xaml1["browser"];
             result = (String)__xaml1["result"];
-            Log(message: "結果: " + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + result);
         }
     }
 }

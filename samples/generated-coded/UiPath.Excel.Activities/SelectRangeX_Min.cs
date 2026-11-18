@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["B2:C3"].SelectRange();
                 rng = Excel.SelectedRange;
             }
-            Log(message: "selected: " + rng.Address, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "selected: " + rng.Address);
         }
     }
 }

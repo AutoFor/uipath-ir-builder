@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
             // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch_f36fae.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/IsMatch_f36fae.xaml", new Dictionary<string, object> { ["in_Input"] = "ABC123", ["in_Pattern"] = "^[a-z]+\\d+$" });
             b = (System.Boolean)__xaml2["out_Result"];
-            Log(message: a.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: a.ToString());
+            Log(message: b.ToString());
         }
     }
 }

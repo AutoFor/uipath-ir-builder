@@ -14,7 +14,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { droppedSummary, importAndCheck, type ImportIssue } from "./import-xaml.ts";
+import { droppedSummary, importAndCheck, isCsXaml, type ImportIssue } from "./import-xaml.ts";
 import { generateChecked, templateRootImports } from "./generate.ts";
 import { loadSelected, projectRootImports, readRootImports, runSelection } from "./versions.ts";
 
@@ -50,6 +50,13 @@ mkdirSync(outDir, { recursive: true });
 for (const f of files) {
   if (!existsSync(f)) { console.log(`NG ${f}: ファイルが無い`); failed = true; continue; }
   const xml = readFileSync(f, "utf8");
+  // 変換は VB → C# だけ。もとから C# の XAML は変換しない（取り込めても、作り直すと Studio の書いた形から変わるだけ）
+  if (isCsXaml(xml)) {
+    failed = true;
+    console.log(`NG ${f}: もとから C# の式の XAML`);
+    console.log(`  エラー ${line({ path: "Activity", code: "CSHARP_EXPR", message: "変換は VB → C# だけ" })}`);
+    continue;
+  }
   const r = importAndCheck(xml, cat);
   if (!r.wf || r.errors.length || r.validation.length) {
     failed = true;

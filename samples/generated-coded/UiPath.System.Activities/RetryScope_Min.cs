@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             {
                 try
                 {
-                    Log(message: "リトライの中", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "リトライの中");
                     break;
                 }
                 catch (Exception) when (__retry1 < 3)
@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
                     Delay(TimeSpan.FromSeconds(5));
                 }
             }
-            Log(message: "リトライの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "リトライの後");
         }
     }
 }

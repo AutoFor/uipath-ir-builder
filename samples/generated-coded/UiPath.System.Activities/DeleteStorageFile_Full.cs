@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // ストレージのファイルを消す
             system.DeleteStorageFile(path: "ir/delete-me.txt", storageBucketName: "ir-bucket", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "削除した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "削除した");
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 pos = Excel.Sheet["Sheet1"].Range["B3:B4"].MatchFunction(valueToMatch: 30, matchFunctionType: UiPath.Excel.MatchType.LargestValueLessOrEqual);
             }
-            Log(message: "位置: " + pos.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "位置: " + pos.ToString());
         }
     }
 }

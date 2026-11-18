@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             String newValue = "A" + "!";
             // 位置で更新
             names[at] = newValue;
-            Log(message: Convert.ToString(String.Join(",", names)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", names)));
         }
     }
 }

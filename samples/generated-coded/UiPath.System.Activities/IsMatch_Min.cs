@@ -22,8 +22,8 @@ namespace CatalogProbeNet8
             // IsMatch はCoded API が無い（Coded API なし（ISystemService に IsMatch が無い。正規表現は System.Text.RegularExpressions.Regex で書ける））ので XAML 経由（coded/_activities/IsMatch.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/IsMatch.xaml", new Dictionary<string, object> { ["in_Input"] = "abc", ["in_Pattern"] = "\\d+" });
             ng = (System.Boolean)__xaml2["out_Result"];
-            Log(message: ok.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: ng.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: ok.ToString());
+            Log(message: ng.ToString());
         }
     }
 }

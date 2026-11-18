@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             Int32 status = default;
             status = system.OrchestratorHTTPRequest(method: UiPath.Core.Activities.OrchestratorAPIHttpMethods.GET, relativeEndpoint: "/odata/Folders?$top=1", jSONPayload: null, responseHeaders: out _, result: out _, folderPath: null);
-            Log(message: "ステータス: " + status.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ステータス: " + status.ToString());
         }
     }
 }

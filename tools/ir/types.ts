@@ -22,7 +22,8 @@ export type Workflow = {
 
 export type ArgumentDecl = { name: string; dir: "In" | "Out" | "InOut"; type: string };
 
-export type VariableDecl = { name: string; type: string; default?: string };
+// default：VB の式。C# の式のプロジェクトから取り込んだ既定値は { cs }（VB に直せないので vb は無いこともある）
+export type VariableDecl = { name: string; type: string; default?: string | CsExpr };
 
 // 値の書き方:
 //   "row(0).ToString"   … VB の式。[...] は生成器が付ける
@@ -31,7 +32,10 @@ export type VariableDecl = { name: string; type: string; default?: string };
 //   "Info"              … enum のプロパティなら、メンバー名はそのままリテラルになる
 //   { vb: "...", cs: "..." } … VB と C# を別々に書く式。XAML には vb、Coded には cs を使う。
 //                          VB の式を C# に機械的に直せないとき（If(...)、ラムダなど）に使う
-export type Value = string | number | boolean | { lit: string } | { vb: string; cs: string };
+//   { cs: "..." }        … C# だけの式。式の言語が C# の XAML から取り込んだもの（import-xaml.ts）。
+//                          C# の XAML と Coded には使えるが、VB の XAML には書けない（生成器が VB_EXPR にする）
+export type CsExpr = { vb?: string; cs: string };
+export type Value = string | number | boolean | { lit: string } | CsExpr;
 
 export type Node = {
   act: string; // ClassName（例 "LogMessage"）。曖昧なときは完全名（例 "System.Activities.Statements.ForEach"）

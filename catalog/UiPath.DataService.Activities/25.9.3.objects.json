@@ -1,0 +1,97 @@
+{
+  "package": "UiPath.DataService.Activities",
+  "version": "25.9.3",
+  "objects": [
+    {
+      "className": "DynamicEntityField",
+      "clrType": "UiPath.DataService.Activities.Models.DynamicEntityField",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities.Models;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "ArgumentValue",
+          "kind": "prop",
+          "type": "System.Activities.Argument",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DynamicEntityField"
+        },
+        {
+          "name": "Id",
+          "kind": "prop",
+          "type": "System.Guid",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DynamicEntityField"
+        },
+        {
+          "name": "IsRequired",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DynamicEntityField"
+        },
+        {
+          "name": "Name",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DynamicEntityField"
+        }
+      ]
+    },
+    {
+      "className": "RecordState",
+      "clrType": "UiPath.DataService.Activities.Models.RecordState",
+      "assembly": "UiPath.DataService.Activities.Core",
+      "xmlns": "clr-namespace:UiPath.DataService.Activities.Models;assembly=UiPath.DataService.Activities.Core",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "IsInRecordView",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RecordState"
+        },
+        {
+          "name": "RequiredFieldCount",
+          "kind": "prop",
+          "type": "System.Int32",
+          "required": false,
+          "default": "0",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RecordState"
+        },
+        {
+          "name": "SelectedFields",
+          "kind": "prop",
+          "type": "System.Collections.Generic.IList<UiPath.DataService.Activities.Models.DynamicEntityField>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "RecordState"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

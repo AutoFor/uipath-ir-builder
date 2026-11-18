@@ -14,9 +14,9 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Log(message: "return の前", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "return の前");
             return;
-            Log(message: "return の後（出ない）", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "return の後（出ない）");
         }
     }
 }

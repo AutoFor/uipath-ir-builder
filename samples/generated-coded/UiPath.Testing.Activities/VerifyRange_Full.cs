@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             outside = testing.VerifyRange(15, UiPath.Testing.Activities.VerificationType.IsNotWithin, 1, 10, null, true, "15 は 1〜10 の外", false, false);
             // 範囲内でない（続ける）
             inside = testing.VerifyRange(0.5, UiPath.Testing.Activities.VerificationType.IsWithin, 1.0, 10.0, null, true, null, false, false);
-            Log(message: Convert.ToString("outside=" + outside + " inside=" + inside), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("outside=" + outside + " inside=" + inside));
         }
     }
 }

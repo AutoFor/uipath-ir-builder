@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // ManualTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/ManualTrigger.xaml）
             RunWorkflow("coded/_activities/ManualTrigger.xaml", null);
-            Log(message: "手動で開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "手動で開始した");
         }
     }
 }

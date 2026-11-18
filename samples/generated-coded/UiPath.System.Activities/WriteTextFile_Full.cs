@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // リソースへ書く
             system.WriteTextFile("全部入り", res, "utf-8"); outRes = res;
             txt = system.ReadTextFile(file: outRes, encoding: "utf-8");
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

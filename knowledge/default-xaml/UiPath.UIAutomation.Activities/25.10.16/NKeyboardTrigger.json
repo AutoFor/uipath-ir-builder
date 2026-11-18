@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"NKeyboardTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NKeyboardTrigger Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"be6acb7c-8450-4a73-97cd-3784222a7f6d\" />\r\n</Activity>"
+  }
+}

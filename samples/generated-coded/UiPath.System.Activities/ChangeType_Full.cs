@@ -20,16 +20,16 @@ namespace CatalogProbeNet8
             Boolean flag = default;
             // 文字列を整数に
             n = (Int32)Convert.ChangeType(numText, typeof(Int32));
-            Log(message: "整数+1: " + (n + 1).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "整数+1: " + (n + 1).ToString());
             // 文字列を真偽値に
             flag = (Boolean)Convert.ChangeType(flagText, typeof(Boolean));
             if (flag)
             {
-                Log(message: "真偽値: True", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "真偽値: True");
             }
             else
             {
-                Log(message: "真偽値: False", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "真偽値: False");
             }
         }
     }

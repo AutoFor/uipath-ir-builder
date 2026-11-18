@@ -226,7 +226,7 @@ export function checkExcel(n: Node, a: Activity, scope: Map<string, string>, pat
     const p: Prop | undefined = a.props.find((p) => p.name === k);
     if (!p || p.kind !== "in" || !(isRefType(p.type) || p.type === "UiPath.Excel.IWorkbookQuickHandle")) continue;
     const at = `${path}.props.${k}`;
-    const s = typeof v === "string" ? v : typeof v === "object" && "vb" in v ? v.vb : undefined;
+    const s = typeof v === "string" ? v : typeof v === "object" && "vb" in v && v.vb !== undefined ? v.vb : undefined;
     if (s === undefined) { add(at, "EXCEL_REF", `"${k}" は Excel の参照。Excel.Sheet("Sheet1").Range("A1") のような VB の式で書く`); continue; }
     const head = s.match(/^\s*([A-Za-z_]\w*)/)?.[1];
     const t = head && [...scope].find(([x]) => x.toLowerCase() === head.toLowerCase())?.[1];

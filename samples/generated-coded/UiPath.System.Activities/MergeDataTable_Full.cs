@@ -88,13 +88,13 @@ namespace CatalogProbeNet8
             src2.Rows.Add(new object[] {"Eve", 20, "100"});
             // 列を足して結合
             system.MergeDataTable(src, ref dest, System.Data.MissingSchemaAction.Add);
-            Log(message: Convert.ToString("rows=" + dest.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns=" + string.Join(",", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("city2=" + dest.Rows[2]["City"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dest.Rows.Count));
+            Log(message: Convert.ToString("columns=" + string.Join(",", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))));
+            Log(message: Convert.ToString("city2=" + dest.Rows[2]["City"].ToString()));
             // 足りない列は無視
             system.MergeDataTable(src2, ref dest, System.Data.MissingSchemaAction.Ignore);
-            Log(message: Convert.ToString("rows=" + dest.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns2=" + string.Join(",", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dest.Rows.Count));
+            Log(message: Convert.ToString("columns2=" + string.Join(",", dest.Columns.Cast<DataColumn>().Select(c => c.ColumnName))));
         }
     }
 }

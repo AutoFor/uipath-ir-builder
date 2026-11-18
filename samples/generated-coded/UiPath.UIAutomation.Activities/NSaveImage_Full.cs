@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             var __xaml4 = RunWorkflow("coded/_xaml/NSaveImage_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["img"] = img, ["imgPath"] = imgPath, ["outFile"] = outFile });
             img = (UiPath.Core.Image)__xaml4["img"];
             outFile = (ILocalResource)__xaml4["outFile"];
-            Log(message: "saved=" + System.IO.File.Exists(outFile.LocalPath).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "saved=" + System.IO.File.Exists(outFile.LocalPath).ToString());
         }
     }
 }

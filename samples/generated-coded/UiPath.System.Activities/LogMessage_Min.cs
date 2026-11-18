@@ -14,7 +14,7 @@ namespace CatalogProbeNet8
         [Workflow]
         public void Execute()
         {
-            Log(message: "最小のログ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "最小のログ");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NAccessibilityCheck_Full_1.xaml）
             var __xaml3 = RunWorkflow("coded/_xaml/NAccessibilityCheck_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["a11y"] = a11y });
             a11y = (UiPath.UIAutomationNext.Activities.Models.AccessibilityCheckResult)__xaml3["a11y"];
-            Log(message: "a11y ok=" + (!(a11y == null)).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "a11y ok=" + (!(a11y == null)).ToString());
         }
     }
 }

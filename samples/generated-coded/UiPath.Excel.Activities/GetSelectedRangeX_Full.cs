@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
                 // 選択範囲を取る
                 rng = Excel.SelectedRange;
             }
-            Log(message: "selected: " + rng.Address, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "rows: " + rng.RowCount.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "selected: " + rng.Address);
+            Log(message: "rows: " + rng.RowCount.ToString());
         }
     }
 }

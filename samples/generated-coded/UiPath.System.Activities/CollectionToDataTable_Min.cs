@@ -19,8 +19,8 @@ namespace CatalogProbeNet8
             // CollectionToDataTable はCoded API が無い（Coded API なし（ISystemService に CollectionToDataTable が無い））ので XAML 経由（coded/_xaml/CollectionToDataTable_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/CollectionToDataTable_Min_1.xaml", new Dictionary<string, object> { ["items"] = items, ["dt"] = dt });
             dt = (DataTable)__xaml1["dt"];
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("columns=" + dt.Columns.Count));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // トランザクションを追加
             item = system.AddTransactionItem(queueType: "IRQueue", folderPath: "Shared", reference: "IR-REF-001", transactionInformation: new Dictionary<string, object> { ["customer"] = "A-001", ["count"] = 3 }, timeoutMS: 30000);
             sd = item.SpecificContent;
-            Log(message: "追加した: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "追加した: " + item.Reference);
         }
     }
 }

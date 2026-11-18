@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // EvaluateBusinessRule はCoded API が無い（Coded API なし（ビジネスルールの評価 API が ISystemService に無い））ので XAML 経由（coded/_activities/EvaluateBusinessRule_55c092.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/EvaluateBusinessRule_55c092.xaml", new Dictionary<string, object> { ["in_BusinessRule"] = "IrRule" });
             o = (Object)__xaml1["out_Output"];
-            Log(message: "評価した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "評価した");
         }
     }
 }

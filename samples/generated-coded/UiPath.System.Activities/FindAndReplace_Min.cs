@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String r = default;
             r = system.FindAndReplace(valueToFind: "Hello hello World", source: "hello", replaceWith: "bye", matchCase: false);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             var __xaml3 = RunWorkflow("coded/_xaml/NBrowserDialogScope_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["dialogMessage"] = dialogMessage, ["result"] = result });
             dialogMessage = (String)__xaml3["dialogMessage"];
             result = (String)__xaml3["result"];
-            Log(message: "dialog=" + dialogMessage + ", result=" + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "dialog=" + dialogMessage + ", result=" + result);
         }
     }
 }

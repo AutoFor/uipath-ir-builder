@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Int32 n = default;
             // 無効にした処理
             // CommentOut（中のアクティビティは実行されない）
-            Log(message: "n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "n=" + n.ToString());
         }
     }
 }

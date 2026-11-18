@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"URL \u3092\u53d6\u5f97\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NGetUrl CurrentUrl=\"{x:Null}\" DisplayName=\"URL \u3092\u53d6\u5f97\" Version=\"V5\" />\r\n</Activity>"
+  }
+}

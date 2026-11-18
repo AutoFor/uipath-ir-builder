@@ -20,8 +20,8 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/TextToLeftRight.xaml", new Dictionary<string, object> { ["in_FullText"] = "key=value", ["in_Separator"] = "=" });
             l = (System.String)__xaml1["out_TextToLeft"];
             r = (System.String)__xaml1["out_TextToRight"];
-            Log(message: l, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: l);
+            Log(message: r);
         }
     }
 }

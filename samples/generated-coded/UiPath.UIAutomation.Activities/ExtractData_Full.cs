@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/ExtractData_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ExtractData_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["dt"] = dt });
             dt = (DataTable)__xaml1["dt"];
-            Log(message: "行数: " + dt.Rows.Count.ToString() + " 先頭: " + dt.Rows[0][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "行数: " + dt.Rows.Count.ToString() + " 先頭: " + dt.Rows[0][0].ToString());
         }
     }
 }

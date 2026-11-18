@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             for (var __repeat1 = 0; __repeat1 < times; __repeat1++)
             {
                 int n = 5 + __repeat1;
-                Log(message: "n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "n=" + n.ToString());
             }
         }
     }

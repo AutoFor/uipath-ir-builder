@@ -25,8 +25,8 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelAutoFillRange_Full_1.xaml", new Dictionary<string, object> { ["v"] = v, ["w"] = w });
             v = (String)__xaml1["v"];
             w = (Object)__xaml1["w"];
-            Log(message: "C4 の式: " + v, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "C4: " + Convert.ToString(w), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "C4 の式: " + v);
+            Log(message: "C4: " + Convert.ToString(w));
         }
     }
 }

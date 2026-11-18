@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             // CommentOut（中のアクティビティは実行されない）
-            Log(message: "コメントアウトの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "コメントアウトの後");
         }
     }
 }

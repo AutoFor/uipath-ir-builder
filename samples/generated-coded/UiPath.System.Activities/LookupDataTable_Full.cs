@@ -45,10 +45,10 @@ namespace CatalogProbeNet8
             v2 = system.LookupDataTable(dataTable: dt, lookupValue: "Carol", lookupColumnName: dt.Columns[0].ColumnName, targetColumnName: dt.Columns[1].ColumnName, rowIndex: out _);
             // DataColumn で探す
             v3 = system.LookupDataTable(dataTable: dt, lookupValue: "Alice", lookupColumnName: dt.Columns["Name"].ColumnName, targetColumnName: dt.Columns["Age"].ColumnName, rowIndex: out _);
-            Log(message: Convert.ToString("byName=" + v1.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("rowIndex=" + idx.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byIndex=" + v2.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byColumn=" + v3.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("byName=" + v1.ToString()));
+            Log(message: Convert.ToString("rowIndex=" + idx.ToString()));
+            Log(message: Convert.ToString("byIndex=" + v2.ToString()));
+            Log(message: Convert.ToString("byColumn=" + v3.ToString()));
         }
     }
 }

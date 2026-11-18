@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { loadCatalog } from "./catalog.ts";
 import type { Catalog } from "./catalog.ts";
 import { refsForPlatform, templateRootImports } from "./generate.ts";
+import { registerEntityNamespaces } from "./types-xaml.ts";
 
 // 既定の版（C:\Users\Public\uipath-ir-probe に合わせたもの）。読み込む順もこのまま
 export const DEFAULT_VERSIONS: Record<string, string> = {
@@ -169,6 +170,13 @@ export function sampleCatalogFiles(root: string, pkg: string | undefined): strin
 export function loadSelected(root: string, projectDir?: string, opts: { coded?: boolean; platform?: Platform } = {}): { cat: Catalog; selection: Selection; warnings: string[] } {
   const selection = selectCatalogs(root, projectDir, opts);
   const cat = loadCatalog(root, selection.files);
+  // Data Fabric の表の型の名前空間（project.json の entitiesStores）。<名前空間>.<表> を型として読み書きする（types-xaml.ts）
+  if (projectDir) {
+    try {
+      const pj = JSON.parse(readFileSync(join(projectDir, "project.json"), "utf8").replace(/^﻿/, ""));
+      registerEntityNamespaces((pj.entitiesStores ?? []).map((e: { namespace?: string }) => e.namespace).filter(Boolean));
+    } catch { /* project.json が読めなければ、既定の DataService.Entities だけ */ }
+  }
   const warnings = [...selection.warnings];
   for (const [pkg, s] of Object.entries(cat.defaultSources))
     if (!s.flat) warnings.push(`${pkg} ${cat.versions[pkg]} の既定 XAML は ${s.versioned} 件（knowledge/default-xaml/${pkg}/${cat.versions[pkg]}/）。無いアクティビティには既定値（Version=V5 など）を足さない。必要なら取る（docs/version-upgrade.md の手順 5）`);

@@ -9,6 +9,8 @@ const scope = new Map([
 
 const ok: [string, string][] = [
   ['"あいさつした人数: " & count.ToString', '"あいさつした人数: " + count.ToString()'],
+  // 日本語の名前（Studio の変数名）
+  ['支出元 & "-" & 分類2.ToString', '支出元 + "-" + 分類2.ToString()'],
   ['it = "item2"', 'it == "item2"'],
   ["New List(Of String)", "new List<String>()"],
   ['New InvalidOperationException("わざと")', 'new InvalidOperationException("わざと")'],

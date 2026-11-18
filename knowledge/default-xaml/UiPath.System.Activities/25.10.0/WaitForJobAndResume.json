@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"WaitForJobAndResume\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uasj=\"clr-namespace:UiPath.Activities.System.Jobs;assembly=UiPath.System.Activities\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uasj:WaitForJobAndResume JobInput=\"{x:Null}\" JobOutput=\"{x:Null}\" WaitItemDataObject=\"{x:Null}\" ContinueOnError=\"False\" TimeoutMS=\"30000\" />\r\n</Activity>"
+  }
+}

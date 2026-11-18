@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 // 1 ページ目だけ PDF
                 Excel.SaveAsPdf(filePath: "output\\SaveAsPdfX_Full.pdf", replaceExisting: true, startPage: 1, endPage: 1, saveQuality: UiPath.Excel.PdfSaveQuality.MinimumQuality);
             }
-            Log(message: Convert.ToString("PDF: " + System.IO.File.Exists(@"output\SaveAsPdfX_Full.pdf").ToString() + " " + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Full.pdf"), 0, 4) + " " + (System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Full.pdf").Length > 0).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("PDF: " + System.IO.File.Exists(@"output\SaveAsPdfX_Full.pdf").ToString() + " " + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Full.pdf"), 0, 4) + " " + (System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Full.pdf").Length > 0).ToString()));
         }
     }
 }

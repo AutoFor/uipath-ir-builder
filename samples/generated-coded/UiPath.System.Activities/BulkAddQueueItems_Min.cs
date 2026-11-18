@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             DataTable table = new DataTable();
             system.BulkAddQueueItems(queueItemsDataTable: table, queueName: "IRQueue");
-            Log(message: "一括追加した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "一括追加した");
         }
     }
 }

@@ -27,11 +27,11 @@ namespace CatalogProbeNet8
                 // Age の前に列を足す
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertColumn(columnName: "Age", position: UiPath.Excel.ColumnRelativePosition.Before, hasHeaders: true, newColumnHeader: "追加", columnFormat: new UiPath.Excel.Activities.Business.NumberFormat { DecimalPlaces = 2, UseThousandSeparator = true });
                 b1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "B1: [" + Convert.ToString(b1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "B1: [" + Convert.ToString(b1) + "]");
                 c1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["C1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "C1: [" + Convert.ToString(c1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "C1: [" + Convert.ToString(c1) + "]");
                 d1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["D1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "D1: [" + Convert.ToString(d1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "D1: [" + Convert.ToString(d1) + "]");
             }
         }
     }

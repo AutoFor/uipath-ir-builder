@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String src = "42";
             Int32 num = default;
             num = (Int32)Convert.ChangeType(src, typeof(Int32));
-            Log(message: (num + 1).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: (num + 1).ToString());
         }
     }
 }

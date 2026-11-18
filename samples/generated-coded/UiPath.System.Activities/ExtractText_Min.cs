@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 res = __found;
                 _ = __found.FirstOrDefault();
             }
-            Log(message: Convert.ToString(res.First()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(res.First()));
         }
     }
 }

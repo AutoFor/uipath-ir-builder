@@ -30,15 +30,15 @@ namespace CatalogProbeNet8
                 // 2 行目に 2 行足す
                 Excel.Sheet["Sheet1"].Range["A1:C4"].InsertRows(nbOfRows: 2, insertPosition: UiPath.Excel.InsertRowPosition.Specific, specificIndex: 2, hasHeaders: true);
                 a2 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A2: [" + Convert.ToString(a2) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A2: [" + Convert.ToString(a2) + "]");
                 a3 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A3"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A3: [" + Convert.ToString(a3) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A3: [" + Convert.ToString(a3) + "]");
                 a4 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A4"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A4: [" + Convert.ToString(a4) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A4: [" + Convert.ToString(a4) + "]");
                 a5 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A5"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A5: [" + Convert.ToString(a5) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A5: [" + Convert.ToString(a5) + "]");
                 a6 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A6"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A6: [" + Convert.ToString(a6) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A6: [" + Convert.ToString(a6) + "]");
             }
         }
     }

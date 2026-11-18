@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.AddQueueItem(queueType: "IRQueue", folderPath: null, itemInformationCollection: new Dictionary<string, object> { ["customer"] = "A-001" });
-            Log(message: "キューに追加した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "キューに追加した");
         }
     }
 }

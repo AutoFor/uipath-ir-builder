@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // ExecuteScriptActivity は対応表が無いので XAML 経由（coded/_activities/ExecuteScriptActivity_47aec8.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/ExecuteScriptActivity_47aec8.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "スクリプト", ["in_Source"] = "1 + 2" });
             res = (UiPath.Studio.Forms.Runtime.ExecuteScriptResult[])__xaml1["out_Result"];
-            Log(message: "結果: " + res[0].OK.ToString() + " " + (res[0].Value == null ? "(なし)" : res[0].Value.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + res[0].OK.ToString() + " " + (res[0].Value == null ? "(なし)" : res[0].Value.ToString()));
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "スクリプト" });
         }

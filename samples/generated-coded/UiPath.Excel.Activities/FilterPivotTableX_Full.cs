@@ -29,11 +29,11 @@ namespace CatalogProbeNet8
                 // 絞り込む
                 Excel.Sheet["Sheet2"].PivotTable["Pivot1"].FilterPivotTable(columnName: "Name", values: new List<string> { "花子", "太郎" }, clearFilter: false);
                 t = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["D6"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "2人の総計: [" + Convert.ToString(t) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "2人の総計: [" + Convert.ToString(t) + "]");
                 // 解除する
                 Excel.Sheet["Sheet2"].PivotTable["Pivot1"].FilterPivotTable(columnName: "Name", values: new List<string> { "花子" }, clearFilter: true);
                 t = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["D7"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "解除後の総計: [" + Convert.ToString(t) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "解除後の総計: [" + Convert.ToString(t) + "]");
             }
         }
     }

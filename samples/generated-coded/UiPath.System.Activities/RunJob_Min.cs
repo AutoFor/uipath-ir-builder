@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         {
             UiPath.Core.Activities.OrchestratorJob job = default;
             (job, _) = system.RunJob(processName: "IrChildProcess", orchestratorFolderPath: null, inputArguments: null, doNotWait: false, runJobOptionalParameters: new UiPath.Activities.System.Jobs.Coded.RunJobOptionalParameters { TimeoutMS = 600000, FailWhenJobFails = true, Priority = UiPath.Activities.System.Jobs.JobPriorityV2.Inherited, EntryPointPath = null, RuntimeType = UiPath.Activities.System.Jobs.JobRuntimeType.Default, Machine = null, Account = null });
-            Log(message: "ジョブを実行した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ジョブを実行した");
         }
     }
 }

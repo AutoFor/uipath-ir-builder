@@ -22,10 +22,10 @@ namespace CatalogProbeNet8
             // テスト用の HTML を書く
             system.WriteTextFile(text: "<!DOCTYPE html><html><head><meta charset='utf-8'><title>UIA Test Form</title></head><body><h1>UIA Test Form</h1><input id='name' type='text' value=''><button id='greet' onclick=\"document.getElementById('result').textContent='Hello, ['+document.getElementById('name').value+']'\">Greet</button><label><input id='agree' type='checkbox'>agree</label><div id='result'>ready</div></body></html>", file: LocalResource.FromPath(htmlPath));
             // UIA Test Form を開く
-            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { Url = new Uri(htmlPath).AbsoluteUri, BrowserType = UiPath.UIAutomationNext.Enums.NBrowserType.Edge, Selector = "<html app='msedge.exe' title='UIA Test Form' />" }, targetAppOptions: new TargetAppOptions { AttachMode = UiPath.UIAutomationNext.Enums.NAppAttachMode.ByInstance, OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, CloseMode = UiPath.UIAutomationNext.Enums.NAppCloseMode.Always, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
+            using (var app1 = uiAutomation.Open(targetApp: new TargetAppModel { Url = new Uri(htmlPath).AbsoluteUri, BrowserType = UiPath.UIAutomationNext.Enums.NBrowserType.Edge, Selector = "<html app='msedge.exe' title='UIA Test Form' />" }, targetAppOptions: new TargetAppOptions { OpenMode = UiPath.UIAutomationNext.Enums.NAppOpenMode.Always, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Job }))
             {
                 // 無い要素を確かめる（全部入り）
-                var __state2 = app1.WaitState(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='missing' tag='DIV' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, checkStateOptions: new CheckStateOptions { Mode = UiPath.UIAutomationNext.Enums.NCheckStateMode.WaitAppear, CheckVisibility = false, Timeout = 2, DelayBefore = 0.1, HealingAgentBehavior = UiPath.UIAutomationNext.Enums.NChildHealingAgentBehavior.Disabled });
+                var __state2 = app1.WaitState(target: new TargetAnchorableModel { PartialSelector = "<webctrl id='missing' tag='DIV' />", ScopeSelector = "<html app='msedge.exe' title='UIA Test Form' />", SearchSteps = UiPath.UIAutomationNext.Enums.TargetSearchSteps.Selector }, checkStateOptions: new CheckStateOptions { Timeout = 2, DelayBefore = 0.1 });
                 found = __state2;
                 if (__state2)
                 {
@@ -33,10 +33,10 @@ namespace CatalogProbeNet8
                 }
                 else
                 {
-                    Log(message: "missing は無い", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "missing は無い");
                 }
             }
-            Log(message: "found=" + found.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "found=" + found.ToString());
         }
     }
 }

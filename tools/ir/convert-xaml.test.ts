@@ -26,7 +26,7 @@ test("VB の XAML を C# の XAML にする。元の imports は残し、C# の�
 });
 
 test("取り込めない XAML（C# の式）と、C# に直せない式は変換しない。C# → VB はできない", () => {
-  const cs = convert(join(root, "samples", "xaml-import", "unsupported", "CSharpExpr.xaml"), "--to", "CSharp", "--out", work);
+  const cs = convert(join(root, "samples", "xaml-import", "CSharpExpr.xaml"), "--to", "CSharp", "--out", work);
   assert.equal(cs.status, 1);
   assert.match(cs.stdout, /CSHARP_EXPR/);
 

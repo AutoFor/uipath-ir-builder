@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             List<String> built = default;
             built = new List<String> { "one" }; built.AddRange(new String[] {  });
-            Log(message: Convert.ToString(String.Join(",", built)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", built)));
         }
     }
 }

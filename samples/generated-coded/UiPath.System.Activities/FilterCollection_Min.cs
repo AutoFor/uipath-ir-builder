@@ -19,8 +19,8 @@ namespace CatalogProbeNet8
             // FilterCollection はCoded API が無い（Coded API なし（ISystemService に FilterCollection が無い。公開の CollectionFilterSettingsExtensions.ApplyFilters は ActivityContext を取るので Coded から呼べない。C# では LINQ で書く））ので XAML 経由（coded/_xaml/FilterCollection_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/FilterCollection_Min_1.xaml", new Dictionary<string, object> { ["numbers"] = numbers, ["filtered"] = filtered });
             filtered = (List<Int32>)__xaml1["filtered"];
-            Log(message: "filtered=" + String.Join(",", filtered), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "source=" + String.Join(",", numbers), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "filtered=" + String.Join(",", filtered));
+            Log(message: "source=" + String.Join(",", numbers));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // 固定の項目と式の項目を足す
             // AddLogFields はCoded API が無い（Coded API なし（基底クラスの Log の additionalLogFields で、ログ1件ごとに渡す））ので XAML 経由（coded/_activities/AddLogFields_ba4af6.xaml）
             RunWorkflow("coded/_activities/AddLogFields_ba4af6.xaml", new Dictionary<string, object> { ["in_Fields_case_id"] = "A-002", ["in_Fields_count"] = n * 2, ["in_Fields_flag"] = n > 5 });
-            Log(message: "n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "n=" + n.ToString());
             // 同じ名前を上書き
             // AddLogFields はCoded API が無い（Coded API なし（基底クラスの Log の additionalLogFields で、ログ1件ごとに渡す））ので XAML 経由（coded/_activities/AddLogFields_2c868e.xaml）
             RunWorkflow("coded/_activities/AddLogFields_2c868e.xaml", new Dictionary<string, object> { ["in_Fields_case_id"] = "A-003" });

@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             List<String> items = new List<String>() { "a", "b", "c" };
             items.Remove("b");
-            Log(message: Convert.ToString(String.Join(",", items)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", items)));
         }
     }
 }

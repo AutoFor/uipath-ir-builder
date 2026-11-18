@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // SetSecret はCoded API が無い（Coded API なし（ISystemService に SetSecret が無い））ので XAML 経由（coded/_activities/SetSecret.xaml）
             RunWorkflow("coded/_activities/SetSecret.xaml", new Dictionary<string, object> { ["in_AssetName"] = "IRSecret", ["in_SecretValue"] = "s1" });
-            Log(message: "シークレットを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "シークレットを設定した");
         }
     }
 }

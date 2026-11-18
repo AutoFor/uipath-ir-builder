@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             var __xaml2 = RunWorkflow("coded/_activities/GetFormFieldsActivity_965d56.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "書く" });
             age = (Double)__xaml2["out_Arguments_age"];
             name = (String)__xaml2["out_Arguments_name"];
-            Log(message: "書いた: " + name + " " + age.ToString() + " OK=" + res[0].OK.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "書いた: " + name + " " + age.ToString() + " OK=" + res[0].OK.ToString());
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "書く" });
         }

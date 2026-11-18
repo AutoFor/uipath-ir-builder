@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
             // ModifyText はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い。個々の加工は ChangeCase / FindAndReplace などで書き分ける））ので XAML 経由（coded/_xaml/ToUpperLowerTextModification_Full_2.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/ToUpperLowerTextModification_Full_2.xaml", new Dictionary<string, object> { ["b"] = b });
             b = (String)__xaml2["b"];
-            Log(message: a, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: b, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: a);
+            Log(message: b);
         }
     }
 }

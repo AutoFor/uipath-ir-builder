@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Dictionary<String, Object> av = new Dictionary<String, Object>() { { "in_Name", "三郎" } };
             // InvokeWorkflowInteractive はCoded API が無い（Coded API なし（対話セッションでのワークフロー呼び出しの API が無い））ので XAML 経由（coded/_activities/InvokeWorkflowInteractive_3c3c1a.xaml）
             RunWorkflow("coded/_activities/InvokeWorkflowInteractive_3c3c1a.xaml", new Dictionary<string, object> { ["in_ArgumentsVariable"] = av, ["in_WorkflowFileName"] = "InvokeWorkflowFile_Callee.xaml" });
-            Log(message: "呼んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "呼んだ");
         }
     }
 }

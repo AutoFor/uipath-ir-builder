@@ -44,9 +44,9 @@ namespace CatalogProbeNet8
             r2 = system.SortDataTable(dataTable: dt, columnName: dt.Columns[1].ColumnName, sortOrder: UiPath.Core.Activities.SortOrder.Ascending);
             // DataColumn・降順
             r3 = system.SortDataTable(dataTable: dt, columnName: dt.Columns["Age"].ColumnName, sortOrder: UiPath.Core.Activities.SortOrder.Descending);
-            Log(message: Convert.ToString("byName=" + string.Join(",", r1.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byIndex=" + string.Join(",", r2.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byColumn=" + string.Join(",", r3.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("byName=" + string.Join(",", r1.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))));
+            Log(message: Convert.ToString("byIndex=" + string.Join(",", r2.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))));
+            Log(message: Convert.ToString("byColumn=" + string.Join(",", r3.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))));
         }
     }
 }

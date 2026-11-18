@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // 上書きでコピー
             system.CopyFile(path: "output\\CopyFile_Full.src.txt", destination: "output\\CopyFile_Full.dst.txt", overwrite: true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\CopyFile_Full.dst.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

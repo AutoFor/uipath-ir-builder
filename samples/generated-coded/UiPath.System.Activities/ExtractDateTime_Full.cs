@@ -22,8 +22,8 @@ namespace CatalogProbeNet8
                 ds = __dates;
                 first = __dates.FirstOrDefault();
             }
-            Log(message: Convert.ToString(ds.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(first.ToString("yyyy-MM-dd")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ds.Count().ToString()));
+            Log(message: Convert.ToString(first.ToString("yyyy-MM-dd")));
         }
     }
 }

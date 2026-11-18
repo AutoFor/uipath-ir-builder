@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String got = default;
             System.Environment.SetEnvironmentVariable("IRB_ENV_SET_MIN", "min-value");
             got = System.Environment.GetEnvironmentVariable("IRB_ENV_SET_MIN");
-            Log(message: "value=" + got, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "value=" + got);
         }
     }
 }

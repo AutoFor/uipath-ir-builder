@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/TextExists_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["exists"] = exists, ["missing"] = missing });
             exists = (Boolean)__xaml1["exists"];
             missing = (Boolean)__xaml1["missing"];
-            Log(message: "結果: " + exists.ToString() + " " + missing.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + exists.ToString() + " " + missing.ToString());
         }
     }
 }

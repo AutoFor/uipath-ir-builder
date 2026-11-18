@@ -21,9 +21,9 @@ namespace CatalogProbeNet8
             zipRes = system.CompressZipFiles(resourcesToArchive: System.Linq.Enumerable.Select(new string[] { "output\\ExtractFiles_Full.a.txt" }, __p => (UiPath.Platform.ResourceHandling.IResource)LocalResource.FromPath(__p)), compressedFileName: "output\\ExtractFiles_Full.zip", password: "secret", compressionLevel: UiPath.Activities.System.Compression.Zip.ArchiveCompressionLevel.Normal, codePage: UiPath.Activities.System.Encode.CodePages.Default, overrideExistingFile: true);
             // パスワード付き zip を展開
             files = system.ExtractUnzipFiles(file: zipRes, destinationFolder: "output\\ExtractFiles_Full", extractToADedicatedFolder: false, password: "secret", codePage: UiPath.Activities.System.Encode.CodePages.UTF_8);
-            Log(message: Convert.ToString(files.Length.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(files.Length.ToString()));
             txt = system.ReadTextFile(file: files[0]);
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

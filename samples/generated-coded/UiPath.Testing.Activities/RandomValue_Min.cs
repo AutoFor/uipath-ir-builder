@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "color" + Environment.NewLine + "red", file: LocalResource.FromPath(path));
             // 一覧から選ぶ
             v = testing.RandomValue(filePath: path);
-            Log(message: Convert.ToString("value=" + v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("value=" + v));
         }
     }
 }

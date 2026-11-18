@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             UiPath.Core.QueueItem item = default;
             // キューから1件取る
             item = system.GetQueueItem(queueType: "IRQueue");
-            Log(message: "取得した: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "取得した: " + item.Reference);
         }
     }
 }

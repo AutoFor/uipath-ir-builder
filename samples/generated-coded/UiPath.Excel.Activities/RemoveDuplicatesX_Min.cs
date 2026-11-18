@@ -32,9 +32,9 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Cell["C5"].WriteCell(value: 60);
                 Excel.Sheet["Sheet1"].Range["A1:C5"].RemoveDuplicates(hasHeaders: true, columnsMode: UiPath.Excel.ColumnsCompare.IndividualColumns, columns: new string[] { "Name", "Age", "Double" });
                 a4 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A4"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A4: [" + Convert.ToString(a4) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A4: [" + Convert.ToString(a4) + "]");
                 a5 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A5"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A5: [" + Convert.ToString(a5) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A5: [" + Convert.ToString(a5) + "]");
             }
         }
     }

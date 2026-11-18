@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // キューから1件取る
             item = system.GetQueueItem(queueType: "IRQueue");
             system.SetTransactionStatus(transactionItem: item, status: UiPath.Core.ProcessingStatus.Failed, analytics: ana, output: outd, details: "詳細", errorType: UiPath.Core.Activities.ErrorType.Business, reason: "理由", timeoutMS: 30000);
-            Log(message: "ステータスを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ステータスを設定した");
         }
     }
 }

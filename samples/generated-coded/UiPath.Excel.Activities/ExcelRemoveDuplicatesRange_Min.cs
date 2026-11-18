@@ -21,10 +21,10 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelRemoveDuplicatesRange_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelRemoveDuplicatesRange_Min_1.xaml", new Dictionary<string, object> { ["dt"] = dt });
             dt = (DataTable)__xaml1["dt"];
-            Log(message: "行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "1 行目: " + dt.Rows[0][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "2 行目: " + dt.Rows[1][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "3 行目: " + dt.Rows[2][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "行数: " + dt.Rows.Count.ToString());
+            Log(message: "1 行目: " + dt.Rows[0][0].ToString());
+            Log(message: "2 行目: " + dt.Rows[1][0].ToString());
+            Log(message: "3 行目: " + dt.Rows[2][0].ToString());
         }
     }
 }

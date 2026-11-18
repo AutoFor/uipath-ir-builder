@@ -19,11 +19,11 @@ namespace CatalogProbeNet8
             // 2つ終わったら止める
             foreach (String it in names)
             {
-                Log(message: "item", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "item");
                 done = done + 1;
                 if (done >= 2) break;
             }
-            Log(message: "done=" + done.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "done=" + done.ToString());
         }
     }
 }

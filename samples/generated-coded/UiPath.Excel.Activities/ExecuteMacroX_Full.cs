@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
                 __collect1.Add(2);
                 __collect1.Add(3);
                 r = Excel.ExecuteMacro(macroName: "AddNumbers", macroArguments: __collect1);
-                Log(message: "結果: [" + Convert.ToString(r) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "結果: [" + Convert.ToString(r) + "]");
             }
         }
     }

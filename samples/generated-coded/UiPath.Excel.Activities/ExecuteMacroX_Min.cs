@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             {
                 var __collect1 = new List<object>();
                 Excel.ExecuteMacro(macroName: "Hello", macroArguments: __collect1);
-                Log(message: "実行した", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "実行した");
             }
         }
     }

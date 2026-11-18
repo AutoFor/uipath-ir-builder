@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             List<String> items = new List<String>() { "a", "b" };
             Boolean found = default;
             found = items.Contains("b");
-            Log(message: "found=" + found.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "found=" + found.ToString());
         }
     }
 }

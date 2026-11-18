@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NElementScope_Full_1.xaml）
             var __xaml3 = RunWorkflow("coded/_xaml/NElementScope_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["result"] = result });
             result = (String)__xaml3["result"];
-            Log(message: "結果: " + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + result);
         }
     }
 }

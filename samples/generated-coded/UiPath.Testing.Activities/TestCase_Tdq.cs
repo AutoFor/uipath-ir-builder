@@ -43,16 +43,16 @@ namespace CatalogProbeNet8
             testing.BulkAddTestDataQueueItems(queueName: "IRTestDataQueue", queueItemsDataTable: dt, folderPath: "Shared");
             // 全件を取る
             items = testing.GetTestDataQueueItems(queueName: "IRTestDataQueue", folderPath: "Shared", idFilter: null, testDataQueueItemStatus: UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus.All, skip: null, top: null, timeoutMs: 60000);
-            Log(message: "all=" + items.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "all=" + items.Count.ToString());
             // 3 件ある
             _ = testing.VerifyExpressionWithOperator(items.Count, UiPath.Testing.Comparison.Equality, 3, null, true, null, false, false);
             // When
             // 1 件取って使用済みにする
             item = testing.GetTestDataQueueItem(queueName: "IRTestDataQueue", folderPath: "Shared");
-            Log(message: "got=" + item["customer"].ToString() + " count=" + item["count"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "got=" + item["customer"].ToString() + " count=" + item["count"].ToString());
             // 未使用を取る
             items = testing.GetTestDataQueueItems(queueName: "IRTestDataQueue", folderPath: "Shared", idFilter: null, testDataQueueItemStatus: UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus.OnlyNotConsumed, skip: null, top: null, timeoutMs: 60000);
-            Log(message: "notConsumed=" + items.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "notConsumed=" + items.Count.ToString());
             // 未使用は 2 件
             _ = testing.VerifyExpressionWithOperator(items.Count, UiPath.Testing.Comparison.Equality, 2, null, true, null, false, false);
             // 添付するファイルを書く
@@ -66,7 +66,7 @@ namespace CatalogProbeNet8
             testing.DeleteTestDataQueueItems(testDataQueueItems: items, folderPath: "Shared");
             // 消えたか見る
             items = testing.GetTestDataQueueItems(queueName: "IRTestDataQueue", folderPath: "Shared", idFilter: null, testDataQueueItemStatus: UiPath.Testing.Activities.TestDataQueues.Enums.TestDataQueueItemStatus.All, skip: null, top: null, timeoutMs: 60000);
-            Log(message: "afterDelete=" + items.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "afterDelete=" + items.Count.ToString());
             // 0 件になった
             _ = testing.VerifyExpressionWithOperator(items.Count, UiPath.Testing.Comparison.Equality, 0, null, true, null, false, false);
         }

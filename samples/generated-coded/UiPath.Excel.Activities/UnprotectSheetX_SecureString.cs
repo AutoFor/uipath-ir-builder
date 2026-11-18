@@ -28,7 +28,7 @@ namespace CatalogProbeNet8
                     Excel.Sheet["Sheet1"].UnprotectSheet(securedPassword: pw);
                     Excel.Sheet["Sheet1"].Cell["E1"].WriteCell(value: "解除後に書いた");
                     a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["E1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                    Log(message: "E1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "E1: [" + Convert.ToString(a1) + "]");
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["A1:C4"].ExportExcelToSCV(fileName: "output\\ExportExcelToCsvX_Full.csv");
             }
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\ExportExcelToCsvX_Full.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")));
         }
     }
 }

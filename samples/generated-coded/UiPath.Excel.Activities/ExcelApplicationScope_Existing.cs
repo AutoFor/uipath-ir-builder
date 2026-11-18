@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelApplicationScope_Existing_1.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/ExcelApplicationScope_Existing_1.xaml", new Dictionary<string, object> { ["v"] = v });
             v = (String)__xaml2["v"];
-            Log(message: "A3: " + v, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "A3: " + v);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Boolean ex = default;
             system.WriteTextFile(text: "x", file: LocalResource.FromPath("output\\PathExists_Min.txt"));
             ex = system.PathExists(path: "output\\PathExists_Min.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // InvokeWorkflowFile はこの形の Coded API が無い（InvokeWorkflowFile の ContinueOnError は、呼び先の例外を握りつぶす try / catch を、RunWorkflow に被せる形をまだ作っていない）ので XAML 経由（coded/_xaml/InvokeWorkflowFile_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/InvokeWorkflowFile_Full_1.xaml", new Dictionary<string, object> { ["msg"] = msg });
             msg = (String)__xaml1["msg"];
-            Log(message: "戻り値: " + msg, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "戻り値: " + msg);
         }
     }
 }

@@ -38,11 +38,11 @@ namespace CatalogProbeNet8
             var __switch1 = color;
             if (Equals(__switch1, "red"))
             {
-                Log(message: label + ": 赤", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: label + ": 赤");
             }
             else if (Equals(__switch1, "blue"))
             {
-                Log(message: label + ": 青", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: label + ": 青");
             }
             else
             {
@@ -59,17 +59,17 @@ namespace CatalogProbeNet8
             }
             finally
             {
-                Log(message: "finally を通った", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "finally を通った");
             }
             system.WriteTextFile(text: String.Join(",", items), file: LocalResource.FromPath("controls-out.txt"));
             text = system.ReadTextFile(file: LocalResource.FromPath("controls-out.txt"));
-            Log(message: "ファイルの中身: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ファイルの中身: " + text);
             // リトライ
             for (var __retry2 = 1; ; __retry2++)
             {
                 try
                 {
-                    Log(message: "リトライの中", level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "リトライの中");
                     break;
                 }
                 catch (Exception) when (__retry2 < 2)
@@ -86,10 +86,10 @@ namespace CatalogProbeNet8
                 }
                 else
                 {
-                    Log(message: "要素: " + it, level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "要素: " + it);
                 }
             }
-            Log(message: "i=" + i.ToString() + ", total=" + total.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "i=" + i.ToString() + ", total=" + total.ToString());
         }
     }
 }

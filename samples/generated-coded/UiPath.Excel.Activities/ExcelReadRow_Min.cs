@@ -22,8 +22,8 @@ namespace CatalogProbeNet8
             {
                 row = ExcelWorkbookScope.ReadRow(sheetName: "Sheet1", startingCell: "A2", preserveFormat: false);
             }
-            Log(message: "件数: " + row.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "行: " + String.Join(",", row), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "件数: " + row.Count().ToString());
+            Log(message: "行: " + String.Join(",", row));
         }
     }
 }

@@ -25,6 +25,13 @@ export const EXPRESSION_IMPORTS = new Set<string>([UISAD]);
 
 const UI = "http://schemas.uipath.com/workflow/activities";
 
+// Data Fabric の表の型の名前空間。Studio は project.json の entitiesStores[].namespace の名前空間に、
+// アセンブリ DataService.<名前空間> のクラスを作る（Windows の既定は DataService.Entities、クロスプラットフォームはプロジェクト名など）
+const entityNamespaces = new Set<string>(["DataService.Entities"]);
+export function registerEntityNamespaces(list: string[]) { for (const ns of list) if (/^[\w.]+$/.test(ns)) entityNamespaces.add(ns); }
+export const isEntityNamespace = (ns: string) => entityNamespaces.has(ns);
+export const entityXmlns = (ns: string) => `clr-namespace:${ns};assembly=DataService.${ns}`;
+
 const simple: Record<string, [string, Record<string, string>]> = {
   String: ["x:String", {}],
   Int32: ["x:Int32", {}],
@@ -40,6 +47,10 @@ const simple: Record<string, [string, Record<string, string>]> = {
   ArgumentException: ["s:ArgumentException", { s: S }],
   InvalidOperationException: ["s:InvalidOperationException", { s: S }],
   TimeoutException: ["s:TimeoutException", { s: S }],
+  // 業務上の例外（Orchestrator で「ビジネス例外」になる）。UiPath.Core.Activities ではなく UiPath.Core にある
+  // （UiPath.System.Activities 25.10.0 の Windows・Portable のどちらも。knowledge/business-rule-exception.md）
+  BusinessRuleException: ["ucore:BusinessRuleException", { ucore: UCORE }],
+  "UiPath.Core.BusinessRuleException": ["ucore:BusinessRuleException", { ucore: UCORE }],
   IOException: ["sio:IOException", { sio: SIO }],
   FileNotFoundException: ["sio:FileNotFoundException", { sio: SIO }],
   FileInfo: ["sio:FileInfo", { sio: SIO }],
@@ -148,6 +159,7 @@ const generic: Record<string, [string, Record<string, string>]> = {
   IList: ["scg:IList", { scg: SCG }],
   ICollection: ["scg:ICollection", { scg: SCG }],
   Nullable: ["s:Nullable", { s: S }],
+  Tuple: ["s:Tuple", { s: S }], // Data Fabric の「複数のレコードを作成・更新」の失敗の一覧 IList<Tuple<String, 表>> など
   "UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction.IDocumentData": ["uisad:IDocumentData", { uisad: UISAD }],
   IDocumentData: ["uisad:IDocumentData", { uisad: UISAD }], // C# の XAML では名前空間を落とした名前で来る
 };
@@ -176,8 +188,11 @@ const alias: Record<string, string> = {
 export function toXamlType(t: string): XamlType | { error: string } {
   if (simple[t.trim()]) return { text: simple[t.trim()][0], xmlns: simple[t.trim()][1] }; // 完全名で登録したもの（UiPath.Core.Image）
   // Data Fabric の表の型（project.json の entitiesStores から Studio が作るクラス。knowledge/apps.md の「Data Fabric の表」）
-  const ent = /^DataService\.Entities\.(\w+)$/.exec(t.trim());
-  if (ent) return { text: `de:${ent[1]}`, xmlns: { de: "clr-namespace:DataService.Entities;assembly=DataService.DataService.Entities" } };
+  //   <名前空間>.<表> → de:<表>（clr-namespace:<名前空間>;assembly=DataService.<名前空間>）
+  for (const ns of entityNamespaces) {
+    const ent = new RegExp(`^${ns.replace(/\./g, "\\.")}\\.(\\w+)$`).exec(t.trim());
+    if (ent) return { text: `de:${ent[1]}`, xmlns: { de: entityXmlns(ns) } };
+  }
   // カタログの型（"System.Data.DataRow" など）も受ける。名前空間は捨てて短い名前で引く
   const s = t.trim().replace(/^UiPath\.Core\.(?:Activities\.)?(?=\w+$)/, "").replace(/^System\.(?:(?:IO|Data|Drawing|Activities|Collections\.Generic)\.)?(?=\w+(?:$|<|\[))/, "");
   if (s.endsWith("[]")) {

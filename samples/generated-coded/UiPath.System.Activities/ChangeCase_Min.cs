@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String r = default;
             r = system.ChangeCase(source: "hello world", changeCaseOptions: UiPath.Activities.System.Text.ChangeCaseOptions.UpperCase);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // 上書きで移動
             System.IO.File.Move("output\\MoveFile_Full.src.txt", "output\\MoveFile_Full.dst.txt", true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\MoveFile_Full.dst.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

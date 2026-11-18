@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // トレース（Information では出ない）
             Log(message: "trace は出ない", level: UiPath.CodedWorkflows.LogLevel.Trace);
             // 情報
-            Log(message: "info の行", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "info の行");
             // 警告
             Log(message: "warn n=" + n.ToString(), level: UiPath.CodedWorkflows.LogLevel.Warn);
             // エラー
@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             // 致命
             Log(message: "fatal の行", level: UiPath.CodedWorkflows.LogLevel.Fatal);
             // Object の Message
-            Log(message: Convert.ToString(n), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(n));
         }
     }
 }

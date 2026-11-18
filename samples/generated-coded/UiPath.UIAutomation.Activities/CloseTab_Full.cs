@@ -28,7 +28,7 @@ namespace CatalogProbeNet8
             // Browser 変数でタブを閉じる
             // CloseTab はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_activities/CloseTab_827042.xaml）
             RunWorkflow("coded/_activities/CloseTab_827042.xaml", new Dictionary<string, object> { ["in_Browser"] = browser, ["in_ContinueOnError"] = false });
-            Log(message: "結果: " + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + result);
         }
     }
 }

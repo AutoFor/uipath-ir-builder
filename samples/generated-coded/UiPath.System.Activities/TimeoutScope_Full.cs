@@ -23,9 +23,9 @@ namespace CatalogProbeNet8
             }
             catch (Exception exception)
             {
-                Log(message: "捕まえた: " + exception.Message, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "捕まえた: " + exception.Message);
             }
-            Log(message: "終わり", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "終わり");
         }
     }
 }

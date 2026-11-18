@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelGetTableRange_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelGetTableRange_Min_1.xaml", new Dictionary<string, object> { ["r"] = r });
             r = (String)__xaml1["r"];
-            Log(message: "範囲: " + r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "範囲: " + r);
         }
     }
 }

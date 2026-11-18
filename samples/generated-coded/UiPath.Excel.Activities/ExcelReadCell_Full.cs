@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 // 式の結果を読む
                 v = (Object)Convert.ChangeType(ExcelWorkbookScope.ReadCell(sheetName: "Sheet1", cell: "C4", preserveFormat: true), typeof(Object));
             }
-            Log(message: "C4: " + v.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "C4: " + v.ToString());
         }
     }
 }

@@ -2,7 +2,8 @@
 //
 // - samples/generated/**/*.xaml … XAML → IR → XAML で文字まで元に戻ること（GUID は出てきた順の番号にして比べる）。IR が検証を通ること
 // - knowledge/default-xaml/*.json … Studio の既定 XAML が例外なく読めて、捨てたものが一覧に出ること
-// - samples/xaml-import/ … Studio が書く形（要素で書く引数、ViewState、注釈など）と、取り込めない形（C#、Flowchart など）
+// - samples/xaml-import/ … Studio が書く形（要素で書く引数、ViewState、注釈など）と、取り込めない形（Flowchart など）
+// - samples/generated-csharp/*.xaml … 式の言語が C# の XAML も、XAML → IR → XAML で文字まで元に戻ること
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -10,7 +11,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { loadCatalog, type Catalog } from "./catalog.ts";
 import { DEFAULT_CATALOG_FILES, sampleCatalogFiles } from "./versions.ts";
-import { generate } from "./generate.ts";
+import { generate, generateChecked } from "./generate.ts";
 import { generateCoded } from "./generate-coded.ts";
 import { CATALOG_FILES, canonLines, checkRoundTrip, importAndCheck, importXaml, irType, normalizeXaml, parseXml, repoRoot as root } from "./import-xaml.ts";
 import { loadMappings } from "./mapping.ts";
@@ -119,7 +120,6 @@ const expectErrors = (name: string, codes: string[]) => test(`取り込めない
   assert.deepEqual([...got].sort(), [...codes].sort());
 });
 expectErrors("FlowStepOutside.xaml", ["UNSUPPORTED_FLOWCHART"]);
-expectErrors("CSharpExpr.xaml", ["CSHARP_EXPR"]);
 expectErrors("Unknowns.xaml", ["UNKNOWN_ACT", "UNKNOWN_PROP", "UNKNOWN_TYPE"]);
 
 test("壊れた XML と、ワークフローでない XML はエラーになる", () => {
@@ -287,4 +287,66 @@ test("往復の意味の比べ方は、図の矢印の違いを見つける", ()
   const d = wf.body[0].flowchart!.nodes.find((n) => n.id === "正か") as { false?: string };
   d.false = "たくさん";
   assert.equal(checkRoundTrip(fixture("StudioFlowchart.xaml"), wf, cat).sameMeaning, false);
+});
+
+// ---- 式の言語が C# の XAML ----
+
+test("C# の式の XAML を取り込む：式は { cs }、VB の XAML は作れない（VB_EXPR）、C# の XAML と Coded は作れる", () => {
+  const xml = fixture("CSharpExpr.xaml");
+  const r = importAndCheck(xml, cat);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.validation, []);
+  const log = r.wf!.body[0].body![0];
+  assert.equal(log.act, "LogMessage");
+  assert.deepEqual(log.props!.Message, { cs: '"a" + "b"' });
+  assert.ok(r.dropped.some((d) => /ExpressionActivityEditor/.test(d.name)), "式の言語の属性は捨てて、生成器が足し直す");
+  const vb = generateChecked(r.wf!, cat);
+  assert.deepEqual(vb.issues.map((i) => `${i.code} ${i.path}`), ["VB_EXPR body[0].body[0].props.Message"]);
+  const csx = generateChecked(r.wf!, cat, { language: "CSharp" });
+  assert.deepEqual(csx.issues, []);
+  assert.match(csx.xaml, /<mca:CSharpValue x:TypeArguments="x:Object">&quot;a&quot; \+ &quot;b&quot;<\/mca:CSharpValue>/);
+  const coded = generateCoded(r.wf!, cat, maps, { namespace: "Migrated" });
+  assert.deepEqual(coded.issues, []);
+  assert.match(coded.code, /Log\(message: Convert\.ToString\("a" \+ "b"\)\);/);
+});
+
+for (const f of xamls(join(root, "samples", "generated-csharp"))) {
+  test(`C# の XAML の往復 ${rel(f)}`, () => {
+    const r = importAndCheck(readFileSync(f, "utf8"), cat);
+    assert.deepEqual(r.errors, []);
+    assert.deepEqual(r.validation, []);
+    assert.equal(r.roundTrip?.identical, true, r.warnings.map((w) => `${w.code} ${w.message}`).join(" / "));
+  });
+}
+
+const csWf = (inner: string, vars = "") => `<Activity mc:Ignorable="sap2010" x:Class="Cs" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Sequence DisplayName="Main">${vars}${inner}</Sequence>
+</Activity>`;
+const csLog = (e: string) => `<ui:LogMessage><ui:LogMessage.Message><InArgument x:TypeArguments="x:Object"><mca:CSharpValue x:TypeArguments="x:Object">${e}</mca:CSharpValue></InArgument></ui:LogMessage.Message></ui:LogMessage>`;
+
+test("C# の式のうち、VB と同じ形で書けるもの（変数名、数値、文字列リテラル）は VB の形にする", () => {
+  const msg = (e: string) => importXaml(csWf(csLog(e), `<Sequence.Variables><Variable x:TypeArguments="x:String" Name="名前" /></Sequence.Variables>`), cat).wf!.body[0].body![0].props!.Message;
+  assert.equal(msg("名前"), "名前");
+  assert.equal(msg("42"), "42");
+  assert.deepEqual(msg(String.raw`&quot;a\tb\&quot;c&quot;`), { lit: 'a\tb"c' });
+  assert.deepEqual(msg(String.raw`@&quot;C:\x&quot;&quot;y&quot;`), { lit: String.raw`C:\x"y` });
+  assert.deepEqual(msg("名前.ToUpper()"), { cs: "名前.ToUpper()" });
+  assert.deepEqual(msg(String.raw`&quot;\q&quot;`), { cs: String.raw`"\q"` }, "知らないエスケープはリテラルにしない");
+});
+
+test("C# の変数の既定値：VB と同じ形で書けるものは VB の式、それ以外は { cs }", () => {
+  const v = (t: string, e: string) => importXaml(csWf(csLog("1"), `<Sequence.Variables><Variable x:TypeArguments="${t}" Name="v"><Variable.Default><mca:CSharpValue x:TypeArguments="${t}">${e}</mca:CSharpValue></Variable.Default></Variable></Sequence.Variables>`), cat).wf!.body[0].variables![0].default;
+  assert.equal(v("x:Int32", "3"), "3");
+  assert.equal(v("x:Boolean", "true"), "True");
+  assert.equal(v("x:String", "&quot;ab&quot;"), '"ab"');
+  assert.deepEqual(v("x:String", "DateTime.Now.ToString(&quot;yyyy&quot;)"), { cs: 'DateTime.Now.ToString("yyyy")' });
+});
+
+test("日本語のワークフロー名・変数名を取り込める（C# でも VB でも識別子）", () => {
+  const xml = csWf(csLog("支出元"), `<Sequence.Variables><Variable x:TypeArguments="x:String" Name="支出元" /></Sequence.Variables>`).replace('x:Class="Cs"', 'x:Class="MF入力"');
+  const r = importAndCheck(xml, cat);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.validation, []);
+  assert.equal(r.wf!.workflow, "MF入力");
+  assert.match(generateCoded(r.wf!, cat, maps, { namespace: "Migrated" }).code, /public class MF入力 : CodedWorkflow[\s\S]*String 支出元 = default;[\s\S]*Log\(message: 支出元\);/);
 });

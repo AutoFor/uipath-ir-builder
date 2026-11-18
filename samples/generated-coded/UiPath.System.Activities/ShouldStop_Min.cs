@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // ShouldStop はCoded API が無い（Coded API なし（ジョブの停止要求を調べる API が ISystemService / CodedWorkflow に無い））ので XAML 経由（coded/_activities/ShouldStop.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/ShouldStop.xaml", null);
             isStopped = (System.Boolean)__xaml1["out_Result"];
-            Log(message: "isStopped=" + isStopped.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "isStopped=" + isStopped.ToString());
         }
     }
 }

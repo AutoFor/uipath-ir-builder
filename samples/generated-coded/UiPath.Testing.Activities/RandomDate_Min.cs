@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             DateTime d = default;
             // 2020 年の日付
             d = testing.RandomDate(minDate: new DateTime(2020, 1, 1), maxDate: new DateTime(2020, 12, 31));
-            Log(message: Convert.ToString("year=" + d.Year), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("year=" + d.Year));
         }
     }
 }

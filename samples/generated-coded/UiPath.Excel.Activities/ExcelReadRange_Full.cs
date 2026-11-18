@@ -23,8 +23,8 @@ namespace CatalogProbeNet8
                 // 見出しなしで読む
                 dt = ExcelWorkbookScope.ReadRange(sheetName: "Sheet1", range: "A2:B4", addHeaders: false, preserveFormat: true);
             }
-            Log(message: "行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "1 行目: " + dt.Rows[0][0].ToString() + " " + dt.Rows[0][1].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "行数: " + dt.Rows.Count.ToString());
+            Log(message: "1 行目: " + dt.Rows[0][0].ToString() + " " + dt.Rows[0][1].ToString());
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "日本語の中身", file: res, encoding: "utf-8");
             // UTF-8 で読む
             txt = system.ReadTextFile(file: res, encoding: "utf-8");
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // GetFromClipboard はCoded API が無い（Coded API なし（Classic のクリップボード操作。Coded の uiAutomation.GetClipboard は Modern（NGetClipboard）のオプションで、Classic の Result（Object）・TimeoutMS とは対応しない））ので XAML 経由（coded/_activities/GetFromClipboard_bdb3ee.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetFromClipboard_bdb3ee.xaml", null);
             got = (Object)__xaml1["out_Result"];
-            Log(message: "クリップボード: " + Convert.ToString(got), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "クリップボード: " + Convert.ToString(got));
         }
     }
 }

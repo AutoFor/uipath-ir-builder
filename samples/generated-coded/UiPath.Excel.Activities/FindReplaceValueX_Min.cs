@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 at = Excel.Sheet["Sheet1"].Range["A1:B4"].FindReplaceValue(valueToFind: "花子", operation: UiPath.Excel.FindReplaceOptions.Find, replaceWith: null, lookIn: UiPath.Excel.LookInOptions.Values, matchCase: false, matchEntireCellContents: false);
             }
-            Log(message: "見つかった場所: " + at, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "見つかった場所: " + at);
         }
     }
 }

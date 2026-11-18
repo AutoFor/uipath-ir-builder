@@ -31,7 +31,7 @@ namespace CatalogProbeNet8
                 v1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
                 v2 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A3"].ReadCellValue(getFormattedText: true), typeof(Object));
             }
-            Log(message: "A2=[" + Convert.ToString(v1) + "] A3=[" + Convert.ToString(v2) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "A2=[" + Convert.ToString(v1) + "] A3=[" + Convert.ToString(v2) + "]");
         }
     }
 }

@@ -22,13 +22,13 @@ namespace CatalogProbeNet8
             // 動いている途中でリセット
             // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_activities/ResetTimer.xaml）
             RunWorkflow("coded/_activities/ResetTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
-            Log(message: "動作中にリセットした", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "動作中にリセットした");
             // StopTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer を止める API が無い））ので XAML 経由（coded/_activities/StopTimer.xaml）
             RunWorkflow("coded/_activities/StopTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
             // 止めた後でリセット
             // ResetTimer はCoded API が無い（Coded API なし（UiPath.Core.Timer をリセットする API が無い））ので XAML 経由（coded/_activities/ResetTimer.xaml）
             RunWorkflow("coded/_activities/ResetTimer.xaml", new Dictionary<string, object> { ["in_Timer"] = t });
-            Log(message: "停止後にリセットした", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "停止後にリセットした");
         }
     }
 }

@@ -33,9 +33,9 @@ namespace CatalogProbeNet8
             ex2 = system.FolderExists(path: "output\\FolderExistsX_Full.none");
             // ファイルはフォルダーではない
             ex3 = system.FolderExists(path: "output\\FolderExistsX_Full.txt");
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(ex2.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(ex3.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
+            Log(message: Convert.ToString(ex2.ToString()));
+            Log(message: Convert.ToString(ex3.ToString()));
         }
     }
 }

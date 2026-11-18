@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/FindOCRText_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["found"] = found, ["found2"] = found2 });
             found = (UiPath.Core.UiElement)__xaml1["found"];
             found2 = (UiPath.Core.UiElement)__xaml1["found2"];
-            Log(message: "結果: " + (found != null).ToString() + " " + (found2 != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + (found != null).ToString() + " " + (found2 != null).ToString());
         }
     }
 }

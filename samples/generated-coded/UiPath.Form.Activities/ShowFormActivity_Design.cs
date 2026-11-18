@@ -34,7 +34,7 @@ namespace CatalogProbeNet8
             outDept = (String)__xaml2["out_Arguments_dept"];
             outItems = (DataTable)__xaml2["out_Arguments_items"];
             outName = (String)__xaml2["out_Arguments_name"];
-            Log(message: "読んだ: " + outName + " " + outAmount.ToString() + " " + outDept + " " + outDate.ToString("yyyy-MM-dd") + " 明細 " + outItems.Rows.Count.ToString() + " 行 " + outItems.Rows[0]["item"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "読んだ: " + outName + " " + outAmount.ToString() + " " + outDept + " " + outDate.ToString("yyyy-MM-dd") + " 明細 " + outItems.Rows.Count.ToString() + " 行 " + outItems.Rows[0]["item"].ToString());
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_0a2862.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_0a2862.xaml", null);
         }

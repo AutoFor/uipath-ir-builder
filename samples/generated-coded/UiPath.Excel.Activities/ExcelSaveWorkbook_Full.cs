@@ -31,7 +31,7 @@ namespace CatalogProbeNet8
             {
                 v = (Object)Convert.ChangeType(ExcelWorkbookScope.ReadCell(sheetName: "Sheet1", cell: "E1", preserveFormat: false), typeof(Object));
             }
-            Log(message: "E1: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "E1: " + Convert.ToString(v));
         }
     }
 }

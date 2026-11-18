@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // MessageBox はCoded API が無い（Coded API なし（メッセージボックスの API が ISystemService に無い））ので XAML 経由（coded/_activities/MessageBox.xaml）
             RunWorkflow("coded/_activities/MessageBox.xaml", new Dictionary<string, object> { ["in_Text"] = "確認" });
-            Log(message: "閉じた", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "閉じた");
         }
     }
 }

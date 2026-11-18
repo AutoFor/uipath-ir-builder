@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // キューに追加
             system.AddQueueItem(queueType: "IRQueue", folderPath: "Shared", dueDate: DateTime.Now.AddDays(2), itemInformationCollection: new Dictionary<string, object> { ["customer"] = "A-001", ["count"] = 3 }, deferDate: DateTime.Now.AddDays(1), priority: UiPath.Core.QueueItemPriority.High, reference: "IR-REF-003", timeoutMS: 30000);
-            Log(message: "キューに追加した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "キューに追加した");
         }
     }
 }

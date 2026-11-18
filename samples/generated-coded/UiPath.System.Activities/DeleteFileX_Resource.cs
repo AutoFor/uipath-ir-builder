@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // リソースで消す
             system.DeleteFileOrFolder(resourceFile: (UiPath.Platform.ResourceHandling.ILocalResource)res);
             ex = system.PathExists(path: "output\\DeleteFileX_Resource.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

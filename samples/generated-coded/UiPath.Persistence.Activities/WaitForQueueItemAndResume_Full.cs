@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             var __xaml2 = RunWorkflow("coded/_activities/WaitForQueueItemAndResume_8e83f0.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_QueueItemInput"] = item, ["in_StatusMessage"] = "処理待ち", ["in_TimeoutMs"] = 30000, ["io_WaitItemDataObject"] = item });
             item = (UiPath.Persistence.Activities.Queue.QueueItemData)__xaml2["out_QueueItemOutput"];
             item = (UiPath.Persistence.Activities.Queue.QueueItemData)__xaml2["io_WaitItemDataObject"];
-            Log(message: "再開した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "再開した");
         }
     }
 }

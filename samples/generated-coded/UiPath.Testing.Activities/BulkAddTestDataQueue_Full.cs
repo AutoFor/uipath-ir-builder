@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             DataTable dt = new DataTable();
             // まとめて追加
             testing.BulkAddTestDataQueueItems(queueName: "IRTestDataQueue", queueItemsDataTable: dt, folderPath: "Shared", timeoutMs: 30000);
-            Log(message: "まとめて追加した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "まとめて追加した");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "copy me", file: LocalResource.FromPath("output\\CopyFile_Min.src.txt"));
             system.CopyFile(path: "output\\CopyFile_Min.src.txt", destination: "output\\CopyFile_Min.dst.txt", overwrite: false);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\CopyFile_Min.dst.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

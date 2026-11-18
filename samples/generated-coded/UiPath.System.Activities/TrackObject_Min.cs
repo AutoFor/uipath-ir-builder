@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // TrackObject はCoded API が無い（Coded API なし（ISystemService に Process Tracking が無い））ので XAML 経由（coded/_activities/TrackObject.xaml）
             RunWorkflow("coded/_activities/TrackObject.xaml", new Dictionary<string, object> { ["in_ObjectId"] = "o1", ["in_ObjectType"] = "Invoice" });
-            Log(message: "記録した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "記録した");
         }
     }
 }

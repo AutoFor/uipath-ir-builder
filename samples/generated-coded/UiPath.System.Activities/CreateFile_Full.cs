@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             Int64 len = default;
             // 空のファイルを作る
             res = system.CreateFile(name: "CreateFile_Full.txt", path: "output");
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(new System.IO.FileInfo(res.LocalPath).Length.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)));
+            Log(message: Convert.ToString(new System.IO.FileInfo(res.LocalPath).Length.ToString()));
         }
     }
 }

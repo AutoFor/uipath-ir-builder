@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             b = a * 2;
             a = b + 1;
             s = "完了";
-            Log(message: s + ": a=" + a.ToString() + ", b=" + b.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: s + ": a=" + a.ToString() + ", b=" + b.ToString());
         }
     }
 }

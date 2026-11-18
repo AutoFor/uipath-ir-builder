@@ -26,9 +26,9 @@ namespace CatalogProbeNet8
                 // 全部の変更
                 // UpdateChartX はCoded API が無い（Coded API なし（UpdateChart はクラシックの IWorkHandle にしか無く、モダンの IChartRef を渡す形が無い。1回に1種類の変更しか渡せず、複数の子も表せない））ので XAML 経由（coded/_xaml/UpdateChartX_Full_1.xaml）
                 RunWorkflow("coded/_xaml/UpdateChartX_Full_1.xaml", new Dictionary<string, object> { ["ch"] = ch, ["Excel"] = Excel });
-                Log(message: "題名: " + ch.ChartInfo.Title, level: UiPath.CodedWorkflows.LogLevel.Info);
-                Log(message: "凡例: " + ch.ChartInfo.HasLegend.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-                Log(message: "ラベル: " + ch.ChartInfo.HasDataLabels.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "題名: " + ch.ChartInfo.Title);
+                Log(message: "凡例: " + ch.ChartInfo.HasLegend.ToString());
+                Log(message: "ラベル: " + ch.ChartInfo.HasDataLabels.ToString());
             }
         }
     }

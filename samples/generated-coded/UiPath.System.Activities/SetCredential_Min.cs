@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.SetCredential(userName: "user1", password: "pw", credentialName: "IRCredential");
-            Log(message: "資格情報を設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "資格情報を設定した");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 // Sheet1 を改名
                 Excel.Sheet["Sheet1"].RenameSheet(name: "名簿");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["名簿"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "名簿の A2: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "名簿の A2: [" + Convert.ToString(a1) + "]");
             }
         }
     }

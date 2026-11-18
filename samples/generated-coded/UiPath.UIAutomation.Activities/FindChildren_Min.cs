@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/FindChildren_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/FindChildren_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["children"] = children });
             children = (IEnumerable<UiPath.Core.UiElement>)__xaml1["children"];
-            Log(message: "子の数: " + children.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "子の数: " + children.Count().ToString());
         }
     }
 }

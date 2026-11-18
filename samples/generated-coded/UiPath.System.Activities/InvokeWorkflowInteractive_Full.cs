@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // InvokeWorkflowInteractive はCoded API が無い（Coded API なし（対話セッションでのワークフロー呼び出しの API が無い））ので XAML 経由（coded/_activities/InvokeWorkflowInteractive_4e0b30.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/InvokeWorkflowInteractive_4e0b30.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = false, ["in_Timeout"] = TimeSpan.FromSeconds(30), ["in_WorkflowFileName"] = "InvokeWorkflowFile_Callee.xaml", ["in_Arguments_in_Count"] = 3, ["in_Arguments_in_Name"] = "次郎" });
             msg = (String)__xaml1["out_Arguments_out_Message"];
-            Log(message: "呼んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "呼んだ");
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             // ModifyDate はCoded API が無い（Coded API なし（ISystemService に該当するメソッドが無い。個々の加工は AddOrSubtractFromDate などで書き分ける））ので XAML 経由（coded/_xaml/ModifyDate_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ModifyDate_Min_1.xaml", new Dictionary<string, object> { ["d"] = d, ["r"] = r });
             r = (DateTime)__xaml1["r"];
-            Log(message: Convert.ToString(r.ToString("yyyy-MM-dd")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(r.ToString("yyyy-MM-dd")));
         }
     }
 }

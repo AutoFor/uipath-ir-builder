@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // InvokeCode はCoded API が無い（Coded では C# をそのまま書くので InvokeCode は要らない）ので XAML 経由（coded/_activities/InvokeCode_947c6a.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/InvokeCode_947c6a.xaml", new Dictionary<string, object> { ["in_Arguments_in_x"] = 21 });
             y = (Int32)__xaml1["out_Arguments_out_y"];
-            Log(message: "y=" + y.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "y=" + y.ToString());
         }
     }
 }

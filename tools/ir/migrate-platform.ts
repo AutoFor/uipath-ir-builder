@@ -26,7 +26,7 @@ import { dirname, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate, workflowFile } from "./validate.ts";
 import { generateChecked, refsForPlatform } from "./generate.ts";
-import { importAndCheck, irFileFor, parseXml, placeImported, type El } from "./import-xaml.ts";
+import { importAndCheck, irFileFor, isCsXaml, parseXml, placeImported, type El } from "./import-xaml.ts";
 import { expandRefs } from "./objrepo.ts";
 import { resolve, type Activity, type Catalog } from "./catalog.ts";
 import { loadSelected, projectLanguage, projectPlatform, projectRootImports, readProject, VersionError, type Platform, type RootImports } from "./versions.ts";
@@ -196,7 +196,8 @@ export function migratePlatform(project: string, to: Platform, opts: { dryRun?: 
     for (const x of toImport) {
       const xml = readFileSync(x, "utf8");
       const rel = relative(project, x).replace(/\\/g, "/");
-      const r = importAndCheck(xml, srcAgain);
+      // C# の式の XAML は取り込めても IR にしない（作り直すと Studio の書いた形から変わる。そのまま移す方が元を保てる）
+      const r = isCsXaml(xml) ? { wf: undefined, errors: [{ path: "Activity", code: "CSHARP_XAML", message: "C# の式の XAML" }], validation: [] } : importAndCheck(xml, srcAgain);
       if (!r.wf || r.errors.length || r.validation.length) {
         const why = [...r.errors, ...r.validation].slice(0, 2).map((i) => `${i.code} ${i.path}`).join(" / ") || "取り込めない";
         const miss = missingInTarget(xml, src, dst, to);

@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelLookUpRange_Min_1.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/ExcelLookUpRange_Min_1.xaml", new Dictionary<string, object> { ["v"] = v });
             v = (Object)__xaml2["v"];
-            Log(message: "結果: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + Convert.ToString(v));
         }
     }
 }

@@ -22,8 +22,8 @@ namespace CatalogProbeNet8
             r1 = system.AddOrSubtractFromDate(source: d, unitOfTime: UiPath.Core.Activities.DateTimeUtilities.UnitsOfTime.Months, amountOfTime: 1, selectedOperation: UiPath.Activities.System.Date.AddOrSubtractFromDate.DateOperations.Subtract);
             // 36時間後
             r2 = system.AddOrSubtractFromDate(source: d, unitOfTime: UiPath.Core.Activities.DateTimeUtilities.UnitsOfTime.Hours, amountOfTime: 36, selectedOperation: UiPath.Activities.System.Date.AddOrSubtractFromDate.DateOperations.Add);
-            Log(message: Convert.ToString(r1.ToString("yyyy-MM-dd")), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(r2.ToString("yyyy-MM-dd HH:mm")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(r1.ToString("yyyy-MM-dd")));
+            Log(message: Convert.ToString(r2.ToString("yyyy-MM-dd HH:mm")));
         }
     }
 }

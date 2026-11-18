@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "一つ目" });
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "二つ目" });
-            Log(message: "二つとも閉じた", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "二つとも閉じた");
         }
     }
 }
