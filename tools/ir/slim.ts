@@ -86,6 +86,28 @@ export function slimByCoded(wf: Workflow, cat: Catalog, gen: (wf: Workflow) => s
       else n.props![k] = v; // 戻す
     }
     if (n.props && !Object.keys(n.props).length) delete n.props;
+    // 操作の対象（objs.Target / objs.TargetApp など）の中の値も同じように確かめる。
+    // Descriptors（オブジェクトリポジトリ）で書く対象は Reference だけで C# が決まるので、セレクターや Studio の設計時の値（DesignTimeRectangle、IconBase64 など）は落ちる。
+    // まず Reference 以外をまとめて消してみて、C# が同じならそれで終わり。違えば1つずつ確かめる
+    for (const [ok, ov] of Object.entries(n.objs ?? {})) {
+      if (!ov || typeof ov !== "object" || Array.isArray(ov)) continue;
+      const obj = ov as Record<string, unknown>;
+      const keys = Object.keys(obj).filter((k) => k !== "Reference");
+      if (!keys.length) continue;
+      const saved = Object.fromEntries(keys.map((k) => [k, obj[k]]));
+      for (const k of keys) delete obj[k];
+      if (gen(wf) === base) {
+        for (const k of keys) hits.push({ path: `${at}.objs.${ok}`, activity: n.name ?? n.act, prop: `${ok}.${k}`, value: saved[k] as Value, why: "C# が同じ" });
+        continue;
+      }
+      Object.assign(obj, saved); // 戻して1つずつ
+      for (const k of keys) {
+        const v = obj[k];
+        delete obj[k];
+        if (gen(wf) === base) hits.push({ path: `${at}.objs.${ok}`, activity: n.name ?? n.act, prop: `${ok}.${k}`, value: v as Value, why: "C# が同じ" });
+        else obj[k] = v;
+      }
+    }
   }
   return hits;
 }
@@ -109,11 +131,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const { readDescriptors } = await import("./coded-descriptors.ts");
     const { maps } = loadMappings(root);
     const descriptors = project ? readDescriptors(project) : undefined;
+    const { validate } = await import("./validate.ts");
+    const { generate } = await import("./generate.ts");
+    // gen-coded.ts と同じく、検証を通ること・XAML 経由の小さな XAML の中身も含めて比べる（C# だけ比べると、検証で落ちる IR や、XAML 経由の部分の意味が変わる IR を作ってしまう）
     gen = (wf) => {
       const ex = expandRefs(structuredClone(wf), cat, project);
-      if (ex.issues.length) return undefined;
-      const r = generateCoded(ex.wf, cat, maps, { namespace: "Slim", descriptors });
-      return r.issues.length ? undefined : r.code;
+      if (ex.issues.length || validate(ex.wf, cat).length) return undefined;
+      const r = generateCoded(ex.wf, cat, maps, { namespace: "Slim", descriptors, viaXaml: { dir: "_xaml" } });
+      if (r.issues.length) return undefined;
+      return [r.code, ...r.xamls.map((x) => { try { return generate(x.wf, cat); } catch (e) { return `!${(e as Error).message}`; } })].join("\n----\n");
     };
   }
   let total = 0;

@@ -112,7 +112,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     if ("error" in r) throw new Error(r.error); // validate 済みなら来ない
     for (const [p, u] of Object.entries(r.xmlns)) xmlns.set(p, u);
     // Data Fabric の表の型は Studio が entitiesStores から作るアセンブリにある。式から使えるよう参照と import を足す
-    if (r.xmlns.de) { refs.add("DataService.DataService.Entities"); imports.add("DataService.Entities"); }
+    { const m = r.xmlns.de ? /^clr-namespace:([\w.]+);assembly=([\w.]+)$/.exec(r.xmlns.de) : null; if (m) { refs.add(m[2]); imports.add(m[1]); } }
     // 式から引けるよう名前空間とアセンブリを足す型（types-xaml.ts の EXPRESSION_IMPORTS。無ければ build が BC30002 で落ちる）
     for (const u of Object.values(r.xmlns)) {
       const m = EXPRESSION_IMPORTS.has(u) ? /^clr-namespace:([\w.]+);assembly=([\w.]+)$/.exec(u) : null;

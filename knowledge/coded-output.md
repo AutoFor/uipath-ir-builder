@@ -63,5 +63,12 @@ node tools/ir/slim.ts --project <P> --coded --write <ir.json>...  # Coded にし
 ```
 
 - 既定：既定 XAML の値・アクティビティの `DefaultValue` と同じ props（XAML でも Coded でも同じ意味）。XAML からの取り込み（import-xaml.ts）は前から既定 XAML の値を落としているので、手で書いた IR に効く
-- `--coded`：1つずつ消してみて、生成する C# がまったく変わらないものも落とす。カタログで既定値が分からない enum（`InteractionMode=SameAsCard`、`ClipboardMode=Never`）は、これで確かめる。XAML にすると意味が変わることがあるので、XAML も作る IR には使わない
+- `--coded`：1つずつ消してみて、生成する C# がまったく変わらないものも落とす（生成の前の検証と、XAML 経由の小さな XAML の中身も比べる）。操作の対象（`objs.Target` / `objs.TargetApp`）の中の値も同じように確かめるので、Descriptors で書く対象はセレクターや設計時の値（`DesignTimeRectangle`、`IconBase64` など）が落ち、`Reference` だけになる（その IR からは XAML を作り直せない。Coded だけのプロジェクトで使う。moneyforward_cs の `ir/` は Login 38KB → 23KB など）。カタログで既定値が分からない enum（`InteractionMode=SameAsCard`、`ClipboardMode=Never`）は、これで確かめる。XAML にすると意味が変わることがあるので、XAML も作る IR には使わない
 - 必須（required）の props は落とさない
+
+## 取り込みで足したもの（2026-11-18）
+
+- `Tuple<…>`（Data Fabric の失敗の一覧など）、Guid のリテラル（`EntityId="…"` → `Guid.Parse("…")` の式）
+- Studio が「表データを抽出」の列から作る型付きの表（`System.Data.DataTable<番号>`、アセンブリ `Studio.Generated.TypedDataTable<番号>`）は `DataTable` として読む
+- 対応表：`NExtractDataGeneric`（`{app}.ExtractData(target, ExtractDataOptions)`。UiPath.UIAutomationNext.API.dll のメタデータで確かめた）、`WriteLine`（`Console.WriteLine`）
+- メール（Gmail・Outlook の「最新のメールを取得」）は、デザイナーの内部の値（Backup、`x:Reference`）が多く取り込めない。Coded の API はある：`google.Gmail(new GmailConnection("<接続 ID>", serviceContainer)).GetNewestEmail(<ラベル>)`、`office365.Mail(new MailConnection("<接続 ID>", serviceContainer)).GetNewestEmail(<フォルダー>)`。ラベル・フォルダーは `GetMailLabels()` / `GetMailFolders()` から ID で探す。moneyforward_cs の `MoneyForwardクラウド認証` は、この式で IR を手で書いた

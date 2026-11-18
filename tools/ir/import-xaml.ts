@@ -26,7 +26,7 @@ import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { argumentListElement, defaultSlot, delegateArgs, funcInfo, isArgumentList, isExpressionChild, listElementType, literalMapValue, loadCatalog, objectImpls, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import { generate } from "./generate.ts";
 import type { ArgumentDecl, AssignOp, CatchDecl, InvokeArg, ListItem, Node, ObjValue, Value, VariableDecl, Workflow } from "./types.ts";
-import { toXamlType, xamlTypeEntries } from "./types-xaml.ts";
+import { isEntityNamespace, toXamlType, xamlTypeEntries } from "./types-xaml.ts";
 import { objDefaults } from "./uia.ts";
 import { isArgumentDict, isUntypedArgument, itemNames, validate, workflowFile } from "./validate.ts";
 import { loadSelected, VersionError } from "./versions.ts";
@@ -189,6 +189,11 @@ export function irType(text: string, ns: Map<string, string>): { type: string } 
     const idx = types();
     const c = clrNs(uri);
     let t = idx.exact.get(`${p}|${uri}|${l}`) ?? idx.byUri.get(`${uri}|${l}`) ?? (c ? idx.byNs.get(`${c}|${l}`) : idx.byLocal.get(l));
+    // Data Fabric の表の型（project.json の entitiesStores の名前空間。types-xaml.ts の registerEntityNamespaces）
+    if (!t && c && isEntityNamespace(c)) t = `${c}.${l}`;
+    // Studio が「表データを抽出」の列の定義から作る型付きの表（System.Data.DataTable<番号>、アセンブリ Studio.Generated.TypedDataTable<番号>）は、
+    // DataTable を継いだクラス。IR では DataTable として読む（列の型付けは使わない。受け取る側も DataTable として扱う）
+    if (!t && /;assembly=Studio\.Generated\.TypedDataTable\d+$/.test(uri) && /^DataTable\d+$/.test(l)) t = "DataTable";
     if (!t) throw new Error(`型 "${name}"（${uri}）が types-xaml.ts の表に無い`);
     if (text[i] === "(") {
       i++;
@@ -311,6 +316,8 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   if (/^(True|False)$/.test(lit)) return lit === "True";
   if (/^-?\d+(\.\d+)?$/.test(lit)) return Number(lit);
   if (p.type === "System.TimeSpan" && /^(\d+\.)?\d+:\d+:\d+(\.\d+)?$/.test(lit)) return `TimeSpan.Parse("${lit}")`;
+  // Guid（Data Fabric の EntityId など）は、VB でも C# でも同じ書き方の式にする
+  if (p.type === "System.Guid" && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(lit)) return `Guid.Parse("${lit}")`;
   if (/^(System\.Object|T\d?|System\.Activities\.InArgument)$/.test(p.type)) return { lit };
   c.err(at, "LITERAL_NOT_REPRESENTABLE", `"${p.name}"（${p.type}）のリテラル ${JSON.stringify(lit)} は IR に書けない`);
   return undefined;

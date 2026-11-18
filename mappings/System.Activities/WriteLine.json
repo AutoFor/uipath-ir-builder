@@ -1,0 +1,9 @@
+{
+  "activity": "WriteLine",
+  "package": "System.Activities",
+  "coded": [
+    { "when": ["TextWriter"], "reason": "書き込み先（TextWriter）を指定した WriteLine はまだ Coded に直していない" },
+    { "code": "Console.WriteLine({Text});" }
+  ],
+  "notes": "「1 行を書き込み」。書き込み先を指定しなければ標準出力（Console.Out）に書く。ロボットは標準出力をログ（Info）として拾う"
+}
