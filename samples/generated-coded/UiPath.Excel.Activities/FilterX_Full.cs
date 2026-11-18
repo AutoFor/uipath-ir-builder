@@ -25,12 +25,12 @@ namespace CatalogProbeNet8
                 // 30 より大きい
                 Excel.Sheet["Sheet1"].Range["A1:C4"].Filter(options: new FilterOptions { ColumnName = "Age", ClearFilter = false, Filter = new AdvancedFilter { Operator = UiPath.Excel.LogicalOperator.And, Condition1 = UiPath.Excel.ExcelFilterOperator.GT, Value1 = "26", Condition2 = UiPath.Excel.ExcelFilterOperator.LT, Value2 = "40" } });
                 dt = Excel.Sheet["Sheet1"].Range["A1:C4"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
-                Log(message: "行数: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-                Log(message: "先頭: " + dt.Rows[0][0].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "行数: " + dt.Rows.Count.ToString());
+                Log(message: "先頭: " + dt.Rows[0][0].ToString());
                 // 解除
                 Excel.Sheet["Sheet1"].Range["A1:C4"].Filter(options: new FilterOptions { ColumnName = "Age", ClearFilter = true });
                 dt = Excel.Sheet["Sheet1"].Range["A1:C4"].ReadRange(hasHeaders: true, visibleRowsOnly: true);
-                Log(message: "解除後: " + dt.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "解除後: " + dt.Rows.Count.ToString());
             }
         }
     }

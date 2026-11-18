@@ -59,8 +59,8 @@ namespace CatalogProbeNet8
             // JoinDataTables はCoded API が無い（Coded API なし（ISystemService に JoinDataTables が無い））ので XAML 経由（coded/_xaml/JoinDataTables_Full_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/JoinDataTables_Full_1.xaml", new Dictionary<string, object> { ["a"] = a, ["b"] = b, ["res"] = res });
             res = (DataTable)__xaml1["res"];
-            Log(message: Convert.ToString("rows=" + res.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("city2=" + res.Rows[2][3].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + res.Rows.Count));
+            Log(message: Convert.ToString("city2=" + res.Rows[2][3].ToString()));
         }
     }
 }

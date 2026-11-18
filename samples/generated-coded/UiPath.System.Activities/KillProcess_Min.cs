@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // ping を起動
             sleeper = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("ping.exe", "-n 60 127.0.0.1") { UseShellExecute = false, CreateNoWindow = true });
             sleeper.Kill();
-            Log(message: "exited=" + sleeper.WaitForExit(5000).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "exited=" + sleeper.WaitForExit(5000).ToString());
         }
     }
 }

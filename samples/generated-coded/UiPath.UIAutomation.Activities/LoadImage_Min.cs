@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/LoadImage_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["img"] = img, ["imgPath"] = imgPath, ["img2"] = img2 });
             img = (UiPath.Core.Image)__xaml1["img"];
             img2 = (UiPath.Core.Image)__xaml1["img2"];
-            Log(message: "結果: " + (img2 != null).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + (img2 != null).ToString());
         }
     }
 }

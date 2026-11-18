@@ -26,8 +26,8 @@ namespace CatalogProbeNet8
                 // 式でないセルを読む
                 plain = ExcelWorkbookScope.ReadCellFormula(sheetName: "Sheet1", cell: "B4");
             }
-            Log(message: "C4 の式: " + f, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "B4 の式: " + plain, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "C4 の式: " + f);
+            Log(message: "B4 の式: " + plain);
         }
     }
 }

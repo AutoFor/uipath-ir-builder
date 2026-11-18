@@ -41,8 +41,8 @@ namespace CatalogProbeNet8
             system.UpdateRowItem(value: "Zed", row: row, columnName: "Name");
             // 列番号で更新
             row[1] = 99;
-            Log(message: Convert.ToString("name2=" + dt.Rows[2]["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("age2=" + dt.Rows[2]["Age"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("name2=" + dt.Rows[2]["Name"].ToString()));
+            Log(message: Convert.ToString("age2=" + dt.Rows[2]["Age"].ToString()));
         }
     }
 }

@@ -19,8 +19,8 @@ namespace CatalogProbeNet8
             Int32 at = 2;
             // 位置で読む
             got = names[at];
-            Log(message: "got=" + got, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(String.Join(",", names)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "got=" + got);
+            Log(message: Convert.ToString(String.Join(",", names)));
         }
     }
 }

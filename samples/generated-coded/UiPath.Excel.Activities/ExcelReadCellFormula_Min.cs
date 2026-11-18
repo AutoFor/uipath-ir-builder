@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 f = ExcelWorkbookScope.ReadCellFormula(sheetName: "Sheet1", cell: "C2");
             }
-            Log(message: "C2 の式: " + f, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "C2 の式: " + f);
         }
     }
 }

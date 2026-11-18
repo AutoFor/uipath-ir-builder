@@ -20,8 +20,8 @@ namespace CatalogProbeNet8
             lower = testing.RandomString(caseValue: UiPath.Testing.Enums.Case.LowerCase, length: 5);
             // 混在 12 文字
             mixed = testing.RandomString(caseValue: UiPath.Testing.Enums.Case.Mixed, length: 12);
-            Log(message: Convert.ToString("lower=" + lower.Length + " " + (lower == lower.ToLower())), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("mixed=" + mixed.Length), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("lower=" + lower.Length + " " + (lower == lower.ToLower())));
+            Log(message: Convert.ToString("mixed=" + mixed.Length));
         }
     }
 }

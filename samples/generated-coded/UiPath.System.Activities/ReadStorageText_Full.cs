@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             String text = default;
             // ストレージの文字を読む
             text = system.ReadStorageText(path: "ir/hello.txt", storageBucketName: "ir-bucket", folderPath: "Shared", encoding: "utf-8", timeoutMS: 30000);
-            Log(message: "内容: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "内容: " + text);
         }
     }
 }

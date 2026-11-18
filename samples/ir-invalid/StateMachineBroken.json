@@ -1,0 +1,56 @@
+{
+  "workflow": "StateMachineBroken",
+  "body": [
+    {
+      "act": "StateMachine",
+      "stateMachine": {
+        "initial": "S",
+        "states": [
+          {
+            "id": "S",
+            "entry": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": {
+                    "lit": "s"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "T",
+            "final": true,
+            "transitions": [
+              {
+                "to": "S"
+              }
+            ],
+            "exit": [
+              {
+                "act": "LogMessage",
+                "props": {
+                  "Level": "Info",
+                  "Message": {
+                    "lit": "x"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "U",
+            "transitions": [
+              {
+                "to": "Gone",
+                "when": "x"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

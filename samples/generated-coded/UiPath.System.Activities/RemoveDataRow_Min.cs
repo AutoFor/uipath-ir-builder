@@ -36,8 +36,8 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Carol", 35});
             dt.Rows.Add(new object[] {"Bob", 25});
             system.RemoveDataRow(ref dt, 0);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("names=" + string.Join(",", dt.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("names=" + string.Join(",", dt.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))));
         }
     }
 }

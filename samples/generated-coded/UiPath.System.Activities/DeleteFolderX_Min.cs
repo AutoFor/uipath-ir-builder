@@ -26,10 +26,10 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\DeleteFolderX_Min.d");
             system.WriteTextFile(text: "x", file: LocalResource.FromPath("output\\DeleteFolderX_Min.d\\a.txt"));
             ex = system.PathExists(path: "output\\DeleteFolderX_Min.d", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\DeleteFolderX_Min.d"));
             ex = system.PathExists(path: "output\\DeleteFolderX_Min.d", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

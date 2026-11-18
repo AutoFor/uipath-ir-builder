@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Cell["B2"].WriteCell(value: 6 * 7);
                 v = (String)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(String));
             }
-            Log(message: "B2: " + v, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "B2: " + v);
         }
     }
 }

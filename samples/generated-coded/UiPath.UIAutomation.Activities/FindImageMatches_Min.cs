@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/FindImageMatches_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["img"] = img, ["matches"] = matches });
             img = (UiPath.Core.Image)__xaml1["img"];
             matches = (IEnumerable<UiPath.Core.UiElement>)__xaml1["matches"];
-            Log(message: "結果: " + matches.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + matches.Count().ToString());
         }
     }
 }

@@ -39,8 +39,8 @@ namespace CatalogProbeNet8
             // FilterDataTable はCoded API が無い（Coded API なし（ISystemService に FilterDataTable が無い。条件の List は DataView.RowFilter などで書き直すことになり、同じ挙動の保証がない））ので XAML 経由（coded/_xaml/FilterDataTable_Num_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/FilterDataTable_Num_1.xaml", new Dictionary<string, object> { ["dt"] = dt, ["res"] = res });
             res = (DataTable)__xaml1["res"];
-            Log(message: Convert.ToString("rows=" + res.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("names=" + string.Join(",", res.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + res.Rows.Count));
+            Log(message: Convert.ToString("names=" + string.Join(",", res.Rows.Cast<DataRow>().Select(r => r["Name"].ToString()))));
         }
     }
 }

@@ -164,6 +164,9 @@ export function collectSampleUsage(file: string, wf: unknown): Usage[] {
       if (o.args) props.Arguments = props.Arguments ?? null;
       if (o.assigns) props.Assigns = null;
       if (o.catches) props.Catches = null;
+      if (o.flowchart) props.Nodes = props.StartNode = null;
+      if (o.stateMachine) props.States = props.InitialState = null;
+      if (o.branches) props.Branches = null;
       out.push({ file, kind: "sample", act: o.act, props });
     }
     for (const x of Object.values(o)) walk(x);

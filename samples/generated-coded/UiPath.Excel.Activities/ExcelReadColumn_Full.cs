@@ -23,8 +23,8 @@ namespace CatalogProbeNet8
                 // 式の列を読む
                 col = ExcelWorkbookScope.ReadColumn(sheetName: "Sheet1", startingCell: "C2", preserveFormat: true);
             }
-            Log(message: "件数: " + col.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "列: " + String.Join(",", col), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "件数: " + col.Count().ToString());
+            Log(message: "列: " + String.Join(",", col));
         }
     }
 }

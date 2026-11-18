@@ -17,8 +17,8 @@ namespace CatalogProbeNet8
             ILocalResource res = default;
             // example.com を保存
             res = system.DownloadFileFromURLAsync("https://example.com/", fileName: "output\\DownloadFileFromUrl_Full.html", conflictResolution: UiPath.Activities.System.FileOperations.FileConflictBehavior.Replace, timeout: 60, userAgentHeaderValue: "ir-builder-test").GetAwaiter().GetResult();
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString((new System.IO.FileInfo(res.LocalPath).Length > 0).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)));
+            Log(message: Convert.ToString((new System.IO.FileInfo(res.LocalPath).Length > 0).ToString()));
         }
     }
 }

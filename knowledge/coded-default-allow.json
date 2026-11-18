@@ -22,6 +22,7 @@
     "NSAPReadStatusbar.Timeout=30": "API の必須の引数を埋める値。SAP が無いので未確認",
     "NSAPReadStatusbar.DelayAfter=0.3": "API の必須の引数を埋める値。SAP が無いので未確認",
     "NSAPReadStatusbar.DelayBefore=0.2": "API の必須の引数を埋める値。SAP が無いので未確認",
-    "NSAPReadStatusbar.HealingAgentBehavior=SameAsCard": "API の必須の引数を埋める値。ほかの UI の活動の既定 XAML と同じ値。SAP が無いので未確認"
+    "NSAPReadStatusbar.HealingAgentBehavior=SameAsCard": "API の必須の引数を埋める値。ほかの UI の活動の既定 XAML と同じ値。SAP が無いので未確認",
+    "GetRobotCredential.TimeoutMS=30000": "カタログに既定値が無い（コンストラクタで入る）。Studio が TimeoutMS={x:Null} で書いたときアクティビティは 30 秒待つ。ISystemService.GetCredential の timeoutMS の既定は 1000 ミリ秒で、moneyforward_cs の Login の run で TimeoutException になったので 30000 を渡す"
   }
 }

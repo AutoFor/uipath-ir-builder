@@ -33,13 +33,13 @@ namespace CatalogProbeNet8
                 __col.DefaultValue = "N/A";
             }
             dt.Columns.Add(new DataColumn("Memo", typeof(string)));
-            Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Id.AutoIncrement=" + dt.Columns["Id"].AutoIncrement.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Id.Unique=" + dt.Columns["Id"].Unique.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Id.AllowDBNull=" + dt.Columns["Id"].AllowDBNull.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Code.DefaultValue=" + dt.Columns["Code"].DefaultValue.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Code.MaxLength=" + dt.Columns["Code"].MaxLength.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("Memo.Type=" + dt.Columns["Memo"].DataType.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("columns=" + dt.Columns.Count));
+            Log(message: Convert.ToString("Id.AutoIncrement=" + dt.Columns["Id"].AutoIncrement.ToString()));
+            Log(message: Convert.ToString("Id.Unique=" + dt.Columns["Id"].Unique.ToString()));
+            Log(message: Convert.ToString("Id.AllowDBNull=" + dt.Columns["Id"].AllowDBNull.ToString()));
+            Log(message: Convert.ToString("Code.DefaultValue=" + dt.Columns["Code"].DefaultValue.ToString()));
+            Log(message: Convert.ToString("Code.MaxLength=" + dt.Columns["Code"].MaxLength.ToString()));
+            Log(message: Convert.ToString("Memo.Type=" + dt.Columns["Memo"].DataType.Name));
         }
     }
 }

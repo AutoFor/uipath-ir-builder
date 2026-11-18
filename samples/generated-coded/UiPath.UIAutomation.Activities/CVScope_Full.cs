@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             // CV スコープ（全部入り）
             // CVScope はCoded API が無い（Coded API なし（Computer Vision の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけで、CV の記述子（CvDescriptor）を受ける API が無い））ので XAML 経由（coded/_xaml/CVScope_Full_1.xaml）
             RunWorkflow("coded/_xaml/CVScope_Full_1.xaml", null);
-            Log(message: "done", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "done");
         }
     }
 }

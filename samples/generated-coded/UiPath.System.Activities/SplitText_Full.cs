@@ -23,9 +23,9 @@ namespace CatalogProbeNet8
             p2 = false ? system.SplitText("1;2;3", ";") : system.SplitText("1;2;3", UiPath.Activities.System.Text.SeparatorOptions.SemiColon);
             // 任意の文字で分ける
             p3 = true ? system.SplitText("p--q--r", "--") : system.SplitText("p--q--r", UiPath.Activities.System.Text.SeparatorOptions.Custom);
-            Log(message: Convert.ToString(string.Join("|", p1)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(string.Join("|", p2)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(string.Join("|", p3)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(string.Join("|", p1)));
+            Log(message: Convert.ToString(string.Join("|", p2)));
+            Log(message: Convert.ToString(string.Join("|", p3)));
         }
     }
 }

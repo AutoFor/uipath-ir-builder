@@ -5,3 +5,7 @@ out/
 
 # uip maestro registry prepare が tools/maestro に作る作業場（接続の Id が入る）
 .flow-sdk/
+
+# 前の ui-repair（Playwright・browser-use、2026-11-18 にやめた）の venv とキーの参照
+tools/repair/.venv/
+tools/repair/.env.op

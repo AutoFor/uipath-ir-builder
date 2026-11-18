@@ -19,6 +19,7 @@ import { isBuiltin } from "./generate-coded.ts";
 import { loadSelected, runSelection } from "./versions.ts";
 import type { Node, Workflow } from "./types.ts";
 import { expandTestCase } from "./testcase.ts";
+import { graphNodes } from "./graph.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const projectIdx = process.argv.indexOf("--project");
@@ -46,7 +47,7 @@ function walkIr(dir: string) {
 }
 function visit(n: Node, file: string) {
   const r = resolve(cat, n.act, n.typeArg !== undefined);
-  const kids = [...(n.body ?? []), ...(n.then ?? []), ...(n.else ?? []), ...Object.values(n.slots ?? {}).flat(), ...Object.values(n.cases ?? {}).flat(), ...(n.catches ?? []).flatMap((c) => c.body)];
+  const kids = [...(n.body ?? []), ...(n.then ?? []), ...(n.else ?? []), ...Object.values(n.slots ?? {}).flat(), ...Object.values(n.cases ?? {}).flat(), ...(n.catches ?? []).flatMap((c) => c.body), ...graphNodes(n).map((g) => g.node)];
   if ("activity" in r) {
     const a = r.activity;
     const s = used.get(a.clrType) ?? new Set<string>();
@@ -63,6 +64,9 @@ function visit(n: Node, file: string) {
     if (n.name) s.add("DisplayName");
     if (n.cases) s.add("Cases");
     if (n.catches) s.add("Catches");
+    if (n.flowchart) { s.add("Nodes"); s.add("StartNode"); }
+    if (n.stateMachine) { s.add("States"); s.add("InitialState"); }
+    if (n.branches) s.add("Branches");
     if (n.assigns) s.add("AssignOperations");
     used.set(a.clrType, s);
     usedBy.set(a.clrType, (usedBy.get(a.clrType) ?? new Set()).add(file));

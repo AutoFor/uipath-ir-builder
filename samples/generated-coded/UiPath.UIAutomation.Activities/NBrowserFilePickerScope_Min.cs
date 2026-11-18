@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NBrowserFilePickerScope_Min_1.xaml）
             var __xaml2 = RunWorkflow("coded/_xaml/NBrowserFilePickerScope_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["result"] = result });
             result = (String)__xaml2["result"];
-            Log(message: "result=" + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "result=" + result);
         }
     }
 }

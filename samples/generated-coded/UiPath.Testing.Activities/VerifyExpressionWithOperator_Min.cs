@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // 2 つの値が等しいか
             _ = testing.VerifyExpressionWithOperator(10 * 2, UiPath.Testing.Comparison.Equality, 20, null, true, null, false, false);
-            Log(message: "after verify", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "after verify");
         }
     }
 }

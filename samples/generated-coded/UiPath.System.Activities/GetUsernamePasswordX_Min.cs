@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // GetUsernamePasswordX はCoded API が無い（Coded API なし（ISystemService に対応するメソッドが無い。認証情報の入力ダイアログを開く XAML 専用のアクティビティ））ので XAML 経由（coded/_activities/GetUsernamePasswordX_574cc9.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/GetUsernamePasswordX_574cc9.xaml", new Dictionary<string, object> { ["in_CredentialName"] = "IRCredential" });
             cred = (UiPath.Core.Activities.PasswordCredentials)__xaml1["out_Credential"];
-            Log(message: "ユーザー: " + cred.Username, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ユーザー: " + cred.Username);
         }
     }
 }

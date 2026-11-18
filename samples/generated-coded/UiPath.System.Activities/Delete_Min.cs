@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             system.WriteTextFile(text: "bye", file: LocalResource.FromPath("output\\Delete_Min.txt"));
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\Delete_Min.txt"));
             ex = system.PathExists(path: "output\\Delete_Min.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

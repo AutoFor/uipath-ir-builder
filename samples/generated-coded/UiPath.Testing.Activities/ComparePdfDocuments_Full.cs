@@ -39,7 +39,7 @@ namespace CatalogProbeNet8
             var __xaml3 = RunWorkflow("coded/_activities/ComparePdfDocuments_55944c.xaml", new Dictionary<string, object> { ["in_BaselinePath"] = a, ["in_ContinueOnFailure"] = true, ["in_IncludeImages"] = false, ["in_OutputFolderPath"] = "output", ["in_TargetPath"] = b });
             diffs = (System.Collections.Generic.IEnumerable<UiPath.Testing.Activities.Models.Difference>)__xaml3["out_Differences"];
             plain = (System.Boolean)__xaml3["out_Result"];
-            Log(message: Convert.ToString("withRule=" + withRule.ToString() + " plain=" + plain.ToString() + " diffs=" + diffs.Count().ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("withRule=" + withRule.ToString() + " plain=" + plain.ToString() + " diffs=" + diffs.Count().ToString()));
         }
     }
 }

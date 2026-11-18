@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             ocrOut = (UiPath.OCR.Contracts.OcrActivityResult)__xaml1["out_Output"];
             words = (System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Drawing.Rectangle, System.String>>)__xaml1["out_Result"];
             txt = (System.String)__xaml1["out_Text"];
-            Log(message: "OCR: " + txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "OCR: " + txt);
         }
     }
 }

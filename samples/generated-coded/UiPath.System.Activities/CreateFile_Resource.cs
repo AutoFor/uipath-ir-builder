@@ -19,8 +19,8 @@ namespace CatalogProbeNet8
             dirRes = system.CreateFolder(path: "output\\CreateFile_Resource");
             // フォルダのリソースを渡す
             res = system.CreateFile(name: "made.txt", path: ((UiPath.Platform.ResourceHandling.ILocalResource)dirRes).LocalPath);
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(System.IO.File.Exists(System.IO.Path.Combine(dirRes.LocalPath, "made.txt")).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)));
+            Log(message: Convert.ToString(System.IO.File.Exists(System.IO.Path.Combine(dirRes.LocalPath, "made.txt")).ToString()));
         }
     }
 }

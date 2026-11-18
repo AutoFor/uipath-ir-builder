@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             age = (Double)__xaml1["out_Arguments_age"];
             agree = (Boolean)__xaml1["out_Arguments_agree"];
             name = (String)__xaml1["out_Arguments_name"];
-            Log(message: "読んだ: " + name + " " + age.ToString() + " " + agree.ToString() + " OK=" + res.OK.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "読んだ: " + name + " " + age.ToString() + " " + agree.ToString() + " OK=" + res.OK.ToString());
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "読む" });
         }

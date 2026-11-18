@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // ストレージへアップロード
             system.UploadStorageFile(destination: "reports/" + "ir-upload.txt", fileResource: in_File, storageBucketName: "ir-bucket", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "アップロードした", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アップロードした");
         }
     }
 }

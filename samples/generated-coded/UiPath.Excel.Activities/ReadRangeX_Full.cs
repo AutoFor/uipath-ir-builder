@@ -23,8 +23,8 @@ namespace CatalogProbeNet8
                 // 表を読む
                 dt = Excel.Sheet["Sheet1"].Range["A1:C4"].ReadRange(hasHeaders: true, readFormattingOptions: UiPath.Excel.ReadFormattingOptions.DisplayValue, visibleRowsOnly: false);
             }
-            Log(message: "列数: " + dt.Columns.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "3行目: " + dt.Rows[2]["Name"].ToString() + " " + dt.Rows[2]["Double"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "列数: " + dt.Columns.Count.ToString());
+            Log(message: "3行目: " + dt.Rows[2]["Name"].ToString() + " " + dt.Rows[2]["Double"].ToString());
         }
     }
 }

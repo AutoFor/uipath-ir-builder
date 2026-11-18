@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             submitted = (System.Nullable<System.Boolean>)__xaml1["out_Result"];
             agree = (Boolean)__xaml1["out_Arguments_agree"];
             name = (String)__xaml1["io_Arguments_name"];
-            Log(message: "入力: " + name + " 同意: " + agree.ToString() + " 結果: " + submitted.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "入力: " + name + " 同意: " + agree.ToString() + " 結果: " + submitted.ToString());
         }
     }
 }

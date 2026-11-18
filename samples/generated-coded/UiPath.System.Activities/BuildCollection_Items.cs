@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             List<String> built = default;
             // 既存のコレクションをつなぐ
             built = new List<String> { "a" }; built.AddRange(rest);
-            Log(message: Convert.ToString(String.Join(",", built)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(String.Join(",", rest)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", built)));
+            Log(message: Convert.ToString(String.Join(",", rest)));
         }
     }
 }

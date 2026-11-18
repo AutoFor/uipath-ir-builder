@@ -38,7 +38,7 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Bob", 25});
             row = dt.Rows[0];
             system.UpdateRowItem(value: "Zed", row: row, columnName: "Name");
-            Log(message: Convert.ToString("name0=" + dt.Rows[0]["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("name0=" + dt.Rows[0]["Name"].ToString()));
         }
     }
 }

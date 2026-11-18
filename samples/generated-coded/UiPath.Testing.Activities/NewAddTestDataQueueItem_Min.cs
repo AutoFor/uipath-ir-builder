@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // テストデータキューに追加
             testing.AddTestDataQueueItem(queueName: "IRTestDataQueue", itemInformation: new Dictionary<string, object> { ["customer"] = "A-001" });
-            Log(message: "追加した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "追加した");
         }
     }
 }

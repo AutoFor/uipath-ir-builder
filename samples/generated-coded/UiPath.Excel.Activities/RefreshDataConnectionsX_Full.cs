@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 // 接続を更新（接続なし）
                 Excel.RefreshDataConnections();
                 a = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "B2: [" + Convert.ToString(a) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "B2: [" + Convert.ToString(a) + "]");
             }
         }
     }

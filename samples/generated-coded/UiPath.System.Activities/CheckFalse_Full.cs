@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             var __check1 = 1 + 1 == 3;
             if (__check1) throw new Exception("ここでは出ない");
             ok = __check1;
-            Log(message: "チェックを通った", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "チェックを通った");
             try
             {
                 // 落ちるチェック
@@ -28,7 +28,7 @@ namespace CatalogProbeNet8
             }
             catch (Exception ex)
             {
-                Log(message: Convert.ToString(ex.Message), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: Convert.ToString(ex.Message));
             }
         }
     }

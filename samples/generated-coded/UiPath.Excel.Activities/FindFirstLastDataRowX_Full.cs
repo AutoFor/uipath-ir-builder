@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 // データ行の範囲
                 (first, last) = Excel.Sheet["Sheet1"].Range["A1:B4"].FindFirstLastDataRow(columnName: "Name", hasHeaders: true, visibleRowsOnly: false, firstRowOffset: 0, lastRowOffset: 0, blankRowsToSkip: 1, configureLastRowAs: UiPath.Excel.LastRowConfiguration.LastPopulatedRow);
             }
-            Log(message: "first=" + first.ToString() + " last=" + last.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "first=" + first.ToString() + " last=" + last.ToString());
         }
     }
 }

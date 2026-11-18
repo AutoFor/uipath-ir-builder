@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 if (__foreach1 >= 2) break;
                 __foreach1++;
                 pos++;
-                Log(message: pos.ToString() + ":" + it, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: pos.ToString() + ":" + it);
             }
         }
     }

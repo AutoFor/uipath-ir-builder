@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 ExcelWorkbookScope.SetRangeColor(sheetName: "Sheet1", range: "B2:B3", color: System.Drawing.Color.Yellow);
                 c = ExcelWorkbookScope.GetCellColor(sheetName: "Sheet1", cell: "B3");
             }
-            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString());
         }
     }
 }

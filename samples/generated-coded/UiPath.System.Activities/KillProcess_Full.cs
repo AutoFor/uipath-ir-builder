@@ -21,10 +21,10 @@ namespace CatalogProbeNet8
             copy = new System.IO.FileInfo("C:/Windows/System32/PING.EXE").CopyTo(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "irb_sleeper.exe"), true);
             // コピーを起動
             sleeper = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(copy.FullName, "-n 60 127.0.0.1") { UseShellExecute = false, CreateNoWindow = true });
-            Log(message: "running=" + System.Diagnostics.Process.GetProcessesByName("irb_sleeper").Length.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "running=" + System.Diagnostics.Process.GetProcessesByName("irb_sleeper").Length.ToString());
             // 名前で止める
             foreach (var p in System.Diagnostics.Process.GetProcessesByName("irb_sleeper")) { p.Kill(); }
-            Log(message: "exited=" + sleeper.WaitForExit(5000).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "exited=" + sleeper.WaitForExit(5000).ToString());
         }
     }
 }

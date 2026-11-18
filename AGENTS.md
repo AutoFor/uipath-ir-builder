@@ -47,6 +47,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - 書けないものと理由は [knowledge/coverage-gaps.md](knowledge/coverage-gaps.md)
 - Studio のフォーム（Show Form などで、ロボットのマシンの画面に窓を出すもの。`UiPath.Form.Activities`）を使うときは [knowledge/forms.md](knowledge/forms.md)。フォームの `.uiform` は AI が直接書き（見本 `samples/data/forms/Hello.uiform`）、IR からは FormId（`Metadata.Id` の GUID）で指す。`node tools/ir/forms.ts check --project <P> <IR>...` で突き合わせる。Action Center のフォームのタスクは別で、[knowledge/persistence.md](knowledge/persistence.md)
 - UiPath Apps（Action Center のタスクの画面など）を作るときは [knowledge/apps.md](knowledge/apps.md)。Coded Action App は `node tools/apps/coded-action.ts <app.json> --out <dir>`（IR は `samples/apps/expense-review.json` を写して直す）。ローコードの RPA アプリ（Studio Web）は `node tools/apps/rpa-app.ts <app.json> --uis <file.uis>` → `uip solution upload <file.uis>`（IR は `samples/apps/rpa-app-request.json`、Data Fabric の表を使う見本は `samples/apps/work-calendar.json`。フォルダを upload に渡さない）
+- UI 操作が `uip rpa run` で「要素が見つからない」などで落ちたら、XAML / `.cs` を手で直さず `node tools/repair/ui-repair.ts --project <P> --run <ワークフロー>` で直し案を作る。今の画面を `uip rpa uia`（UiPath 標準。読むだけ）で調べ、セレクターは UiPath に作り直させる。IR に当てる（`apply`）のと、もう一度動かすのは、人が直し案を確かめてから（[knowledge/ui-repair.md](knowledge/ui-repair.md)）
 - **Orchestrator・Automation Cloud を操作するときは、CLI（`uip`）→ API（`node tools/platform/cloud-api.mjs`）→ 画面の順に選ぶ**。画面は人に頼む。Chrome で AI が操作するのは、人がよいと言ったときだけ。どの操作がどれでできるかは [knowledge/cloud-ops.md](knowledge/cloud-ops.md)
 - `uip`（UiPath の CLI）のつまずきどころ（`--profile`、`--yes`、フォルダ、出力の PascalCase、トリガーのタイムゾーン、デプロイの手順）は [knowledge/uip-cli.md](knowledge/uip-cli.md)。ほかの UiPath の CLI（`uipcli`・Python の `uipath`・Studio の CommandLine・UiRobot）との使い分けは [knowledge/uipath-clis.md](knowledge/uipath-clis.md)
 - API ワークフロー（Studio Web の API workflow。サーバーレスの JSON のワークフロー）を作るときは [knowledge/api-workflow.md](knowledge/api-workflow.md)。`uip api-workflow init` でプロジェクトを作り、IR（`samples/apiwf/*.json` を写して直す）から `node tools/apiwf/gen.ts <ir.json> --project <プロジェクト>` で Workflow.json を作る。`uip api-workflow validate` → `run` で確かめる
@@ -86,6 +87,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - VB の予約語（`to`、`step`、`next`、`end` など）を変数名にしない（build が `BC30198: ')' expected` で落ちる）
 - Coded（C#）も作るなら、`System`・`System.Data` など既定の using に無い名前空間の型は完全名で書く（`System.Xml.Linq.XDocument`、`Newtonsoft.Json.Linq.JObject` など）
 - 子は `body`、`then` / `else`、それ以外は `slots`。`Switch` は `cases`、`TryCatch` は `catches`、`MultipleAssign` は `assigns`
+- Flowchart は `flowchart`、StateMachine は `stateMachine`、Pick は `branches`。ノードに `id` を付け、矢印は行き先の `id` で書く（[knowledge/flowchart-statemachine.md](knowledge/flowchart-statemachine.md)）
 - 書き方の詳細は [README.md](README.md) の「IR → XAML 生成器」
 - C# のプロジェクトで C# に直せない式（名前付き引数 `f(x:=1)` など）は、`{ "vb": "...", "cs": "..." }` で両方書く。C# の予約語（`out`、`class`、`string` など）を変数名にしない
 
@@ -101,7 +103,8 @@ node tools/ir/gen.ts <P>/ir/Main.json <P>/ir/Greet.json --project <P> --out <P> 
 - 「〜のカタログが無い」という注意は、そのパッケージのアクティビティを使わなければ気にしなくてよい
 - エラーが出たら、メッセージを読んで IR を直し、通るまで繰り返す。エラーを避けるために XAML を手で書かない。IR が正しいのに通らないなら、道具を直す（下の「道具を育てる」）
 - 生成した XAML の式まで確かめたいときは `node tools/verify/analyze.mjs <P>`（uipcli の package analyze。式をコンパイルし、未定義の変数などを数秒で出す。SSH から動く。プロジェクトは写しで流す）。5. の verify も build / run の前に自動で流す
-- Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）
+- Coded（C#）のワークフローが欲しいときは `node tools/ir/gen-coded.ts <P>/ir/Main.json --project <P> --out <P>`（同じ IR から作る）。セレクターはオブジェクトリポジトリ（`Descriptors.…`）で書き、既定値と同じオプションは書かず、オプションは1行に1つで行末に Studio の日本語の名前（[knowledge/coded-output.md](knowledge/coded-output.md)）
+- IR を手で書いたら `node tools/ir/slim.ts --project <P> <ir.json>` で既定値と同じ props を落とす（Coded にしか使わない IR は `--coded --write`）
   - 対応表（`mappings/`）の無いアクティビティと、Coded API の無いパッケージ（Mail、Office 365、WebAPI、SAP BAPI、Data Service、Testing 23.4.1 など）のアクティビティは、XAML にして C# から `RunWorkflow` で呼ぶ。注意 `CODED_VIA_XAML` が出る。仕組みと落とし穴は [knowledge/coded-via-xaml.md](knowledge/coded-via-xaml.md)
     - 子の無いアクティビティ：`<--out>/_activities/<アクティビティ名>.xaml`（形が違えば `<アクティビティ名>_<ハッシュ>.xaml`）。アクティビティ 1 つだけを置いた汎用の XAML で、値は C# から引数（`in_<Prop>` など）で渡す。出力・入出力はいつも引数にする。同じ形なら使い回す
     - 子のあるもの（スコープなど）：`<--out>/_xaml/<ワークフロー名>_<連番>.xaml`。その場の部分木をそのまま XAML にする

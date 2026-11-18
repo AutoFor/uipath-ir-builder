@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_activities/HttpClient_3fbf1d.xaml", new Dictionary<string, object> { ["in_EndPoint"] = "https://example.com/" });
             body = (System.String)__xaml1["out_Result"];
             code = (System.Int32)__xaml1["out_StatusCode"];
-            Log(message: "status=" + code.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "status=" + code.ToString());
         }
     }
 }

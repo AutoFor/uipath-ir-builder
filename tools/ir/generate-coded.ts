@@ -12,7 +12,7 @@
 
 import type { Catalog } from "./catalog.ts";
 import { resolve, defaultSlot, delegateArgs } from "./catalog.ts";
-import type { Workflow, Node, Value, Issue } from "./types.ts";
+import type { Workflow, Node, Value, Issue, CsExpr } from "./types.ts";
 import type { Mapping, Variant, ObjArg } from "./mapping.ts";
 import { refs, requiredRefs, scopeRefs, usingScope, versionLess, UIA_APP_TYPE } from "./mapping.ts";
 import { excelVbForCs, excelFilterToCs, excelFilterValuesToCs } from "./excel.ts";
@@ -22,6 +22,15 @@ import { genericActivity, viaXamlArgs, viaXamlWorkflow, type GenericActivity } f
 import { objToCs } from "./uia.ts";
 import { xamlDefaultProps } from "./import-xaml.ts";
 import { isTestCase } from "./testcase.ts";
+import { graphNodes } from "./graph.ts";
+import type { DescriptorMap } from "./coded-descriptors.ts";
+import { readFileSync } from "node:fs";
+
+// Coded のオプションのクラスの、new したときの値（coded-option-defaults.json）。これと同じ値の代入は書かない
+const OPTION_DEFAULTS: Record<string, Record<string, string>> = JSON.parse(readFileSync(new URL("./coded-option-defaults.json", import.meta.url), "utf8"));
+// C# の値を比べられる形にする（UiPath.….NClickType.Single → Single、true → True、30.0 → 30）
+const normCs = (x: string) => { const t = x.trim().replace(/^\((?:double|int)\)\s*/, ""); if (/^(true|false)$/i.test(t)) return t[0].toUpperCase() + t.slice(1).toLowerCase(); if (/^-?\d+(\.\d+)?[dDfFmM]?$/.test(t)) return String(Number(t.replace(/[dDfFmM]$/, ""))); const e = t.match(/^[\w.]+\.(\w+)$/); return e && /^[A-Z]/.test(e[1]) && (t.includes("Enums.") || /^UiPath\.CodedWorkflows\.LogLevel\./.test(t)) ? e[1] : t; };
+const isOptionDefault = (cls: string, prop: string, cs: string) => { const d = OPTION_DEFAULTS[cls.split(".").pop()!]?.[prop]; return d !== undefined && normCs(cs) === d; };
 
 export type CodedOptions = {
   namespace: string;
@@ -33,7 +42,71 @@ export type CodedOptions = {
   // apiCheck は対応表で書いた C# を選んだ版の API で確かめ、合わなければ理由を返す（gen-coded.ts は tools/coded/check.ts の UNKNOWN_METHOD / NO_OVERLOAD）。
   // viaXaml が無ければ、これまでどおり NO_MAPPING / NO_CODED_API のエラー
   viaXaml?: { dir: string; noApi?: Iterable<string>; apiCheck?: (code: string) => string | undefined };
+  // オブジェクトリポジトリ（coded-descriptors.ts の readDescriptors）。あれば、Reference がリポジトリにあるターゲット（objs.Target / objs.TargetApp）を
+  // new TargetAnchorableModel { ... } ではなく Descriptors.<アプリ>.<画面>.<要素> で渡す（中身はリポジトリのもの）。先頭の引数に名前なしで置く
+  descriptors?: DescriptorMap;
+  // 表示名のキー（カタログの displayName）→ Studio の日本語の名前（catalog/<パッケージ>/<版>.ja.json）。
+  // あれば、オプションを1行に1つずつ書き、行末に // <日本語の名前> を付ける
+  labels?: Record<string, string>;
+  // 1つの操作の直前に、手順名を Trace のログに出す（// 手順名 の代わり）
+  traceLog?: boolean;
+  // プロジェクト設定（.settings/<プロファイル>）の既定値。XAML では未設定のプロパティがこの値で動くので、IR で未設定なら補う（project-settings.ts）
+  projectDefaults?: Record<string, Record<string, Value>>;
 };
+
+const NL = String.fromCharCode(10);
+
+// 読みやすい形で前置きを省く名前空間（using があるときだけ）。中の型の名前が、ほかの using の名前空間とぶつからないもの
+// 読みやすい形で、手順名のコメントを書かないアクティビティ（中身を見れば分かるもの）
+const NO_COMMENT_ACTIVITIES = new Set(["LogMessage"]);
+
+// traceLog で Trace のログを入れないアクティビティ（操作ではないもの：まとまり・分岐・繰り返し・例外・ログ・代入・コメントなど）
+const NOT_TRACED_ACTIVITIES = new Set([
+  "Sequence", "Flowchart", "FlowDecision", "FlowSwitch", "StateMachine", "State", "If", "IfElseIf", "Switch", "While", "DoWhile", "ForEach", "ForEachRow", "ParallelForEach", "Parallel",
+  "TryCatch", "RetryScope", "Throw", "Rethrow", "Break", "Continue", "Return", "TerminateWorkflow",
+  "LogMessage", "Comment", "CommentOut", "Assign", "MultipleAssign", "AddToCollection", "InvokeCode",
+]);
+
+// 読みやすい形でも、引数を1行に1つずつにしない呼び出し（短く読めるもの）
+const ONE_LINE_CALLS = new Set(["Log"]);
+
+const SHORTEN_NAMESPACES =["UiPath.UIAutomationNext.Enums", "UiPath.CodedWorkflows"];
+
+// 1行の C#（ひな形）を「頭(引数, 引数, …)尾」に分ける。行の最後の呼び出し（閉じかっこの後ろが ; や空白だけ）だけを見る。
+// 引数の区切りは、かっこ・波かっこ・角かっこ・文字列の外のカンマ。分けられなければ undefined
+export function splitCall(line: string): { head: string; args: string[]; tail: string } | undefined {
+  const tailM = line.match(/\)\s*;?\s*$/);
+  if (!tailM) return undefined;
+  const close = line.length - tailM[0].length;
+  // close に対応する開きかっこを後ろから探す
+  let depth = 0, open = -1, str: string | undefined;
+  for (let i = close; i >= 0; i--) {
+    const c = line[i];
+    if (str) { if (c === str && line[i - 1] !== "\\") str = undefined; continue; }
+    if (c === '"' || c === "'") { str = c; continue; }
+    if (c === ")" || c === "}" || c === "]") depth++;
+    else if (c === "(" || c === "{" || c === "[") { depth--; if (depth === 0) { open = i; break; } }
+  }
+  if (open <= 0 || line[open] !== "(") return undefined;
+  const inner = line.slice(open + 1, close);
+  const args: string[] = [];
+  let cur = "", dep = 0; str = undefined;
+  for (let i = 0; i < inner.length; i++) {
+    const c = inner[i];
+    if (str) { cur += c; if (c === str && inner[i - 1] !== "\\") str = undefined; continue; }
+    if (c === '"' || c === "'") { str = c; cur += c; continue; }
+    if ("({[".includes(c)) dep++;
+    if (")}]".includes(c)) dep--;
+    if (c === "," && dep === 0) { args.push(cur.trim()); cur = ""; continue; }
+    cur += c;
+  }
+  if (str || dep !== 0) return undefined;
+  if (cur.trim()) args.push(cur.trim());
+  return { head: line.slice(0, open), args, tail: line.slice(close + 1) };
+}
+
+// 引数の値が Descriptors のとき、名前なしで先頭に置くための印
+const DESC = "@@DESC@@";
 
 // XAML 経由で呼ぶワークフロー（path はプロジェクトからの相対パス。XAML は呼ぶ側が generate.ts で作る）
 // kind は "activity"（1つのアクティビティだけの汎用の XAML。_activities/）か "subtree"（その場の部分木。_xaml/）
@@ -62,11 +135,15 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  // Descriptors で開いた画面（内側ほど後ろ）と、いま組み立て中の呼び出しで渡した画面
+  const screens: string[] = [];
+  let openedScreen: string | undefined;
   let subtrees = 0; // 部分木の XAML（_xaml/<ワークフロー名>_<連番>）の数
   // ラムダ（"scope": "lambda"）の本体に直接ある Break / Continue。C# では return にする
   const lambdaExits = new Set<Node>();
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
-  const emit = (depth: number, s: string) => lines.push("    ".repeat(depth) + s);
+  // 改行を含む文（オプションを1行に1つずつ書いたもの）は、2行目からも同じ深さに字下げする
+  const emit = (depth: number, s: string) => { for (const l of s.split(NL)) lines.push("    ".repeat(depth) + l); };
 
   const ins = (wf.arguments ?? []).filter((a) => a.dir === "In");
   const outs = (wf.arguments ?? []).filter((a) => a.dir === "Out");
@@ -86,7 +163,16 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   wf.body.forEach((n, i) => node(n, d, `body[${i}]`, scope));
   if (outs.length === 1) emit(d, `return ${outs[0].name};`);
   else if (outs.length > 1) emit(d, `return (${outs.map((a) => a.name).join(", ")});`);
-  const body = lines.splice(0);
+  let body = lines.splice(0);
+  // 読みやすい形（labels があるとき）では、using がある名前空間の前置きを省く（UiPath.UIAutomationNext.Enums.NAppCloseMode.Never → NAppCloseMode.Never）。
+  // 名前がぶつからないと分かっている名前空間だけ。文字列の中は変えない
+  if (opt.labels) {
+    const short = SHORTEN_NAMESPACES.filter((ns) => usings.has(ns));
+    if (short.length) {
+      const re = new RegExp(`\\b(?:${short.map((s) => s.replace(/\./g, "\\.")).join("|")})\\.(?=[A-Z]\\w*\\.)`, "g");
+      body = body.map((l) => l.split(/("(?:[^"\\]|\\.)*")/).map((seg, i) => (i % 2 ? seg : seg.replace(re, ""))).join(""));
+    }
+  }
 
   const out = [
     ...[...usings].map((u) => `using ${u};`),
@@ -120,6 +206,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     return r.cs;
   }
   function lvalue(v: Value, at: string, sc: Map<string, string>): string {
+    if (typeof v === "object" && "cs" in v) return v.cs; // C# の XAML から取り込んだ代入先（dt.Rows[0]["A"] など）
     if (typeof v !== "string") { add(at, "CODED_EXPR", "代入先は変数名で書く"); return "_"; }
     return expr(v, at, sc);
   }
@@ -136,10 +223,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     return `Convert.ToString(${e})`;
   }
 
-  function declare(name: string, type: string, def: string | undefined, depth: number, at: string, sc: Map<string, string>) {
+  function declare(name: string, type: string, def: string | CsExpr | undefined, depth: number, at: string, sc: Map<string, string>) {
     keyword(name, at);
     let init = "default";
-    if (def !== undefined) {
+    if (typeof def === "object") init = def.cs; // C# の XAML から取り込んだ既定値
+    else if (def !== undefined) {
       const r = vbDefaultToCs(def, type, sc);
       if ("error" in r) add(at, "CODED_EXPR", `既定値 ${JSON.stringify(def)} を C# に直せない: ${r.error}`);
       else init = r.cs;
@@ -158,7 +246,17 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     if ("error" in r) { add(at, "UNKNOWN_ACT", r.error); return; }
     const a = r.activity;
     const p = n.props ?? {};
-    if (n.name) emit(depth, `// ${n.name.replace(/\r?\n/g, " ")}`);
+    // 読みやすい形（labels があるとき）では、手順と手順のあいだに空行を入れる。
+    // ブロックの先頭（直前が { か空行）と、まとまり（Sequence など）の見出しのすぐ下（直前がコメント）には入れない
+    if (opt.labels && lines.length && !/^\s*(\{|\/\/.*|)$/.test(lines[lines.length - 1])) lines.push("");
+    // 読みやすい形では、ログ（LogMessage）の手順名は書かない（Log(message: "…") のメッセージが説明になる）
+    const noComment = !!opt.labels && NO_COMMENT_ACTIVITIES.has(a.className);
+    // traceLog：1つの操作（クリック・入力・待機・状態の確認など）の直前に、手順名を Trace のログに出す（落ちたとき、最後に何をしようとしたかが残る）。
+    // そのときは同じ内容の // 手順名 は書かない。まとまり（Sequence）・分岐・繰り返し・ログ・代入などには入れない
+    const traced = !!opt.traceLog && !NOT_TRACED_ACTIVITIES.has(a.className);
+    // 名前の無い手順は、アクティビティの種類名（Delay など）を出す
+    if (traced) emit(depth, `Log(message: ${csLit((n.name ?? a.className).replace(/\r?\n/g, " "))}, level: UiPath.CodedWorkflows.LogLevel.Trace);`);
+    else if (n.name && !noComment) emit(depth, `// ${n.name.replace(/\r?\n/g, " ")}`);
     if (!builtin.has(a.clrType)) return mapped(n, a.className, a.package, depth, at, sc);
 
     switch (a.className) {
@@ -385,7 +483,8 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     // IR に無い props の意味は XAML と同じにする。generate.ts は既定 XAML の値を足すので、C# でもその値として扱う
     const act0 = resolve(cat, n.act, n.typeArg !== undefined);
     const xamlDefaults = "activity" in act0 ? xamlDefaultProps(cat, act0.activity) : {};
-    const effective: Record<string, Value> = { ...xamlDefaults, ...(n.props ?? {}) };
+    // 強い順：IR の値 > 既定 XAML の値（Studio が書く属性）> プロジェクト設定（XAML で未設定のときの値）
+    const effective: Record<string, Value> = { ...(opt.projectDefaults?.[className] ?? {}), ...xamlDefaults, ...(n.props ?? {}) };
     // "Prop" は IR にあること、"Prop=値" は props の値が等しいこと
     const whenIn = (names: string[], vals: Record<string, Value> | undefined) => (w: string) => {
       const eq = w.indexOf("=");
@@ -458,6 +557,20 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
           return filter === "excelFilter" ? excelFilterToCs(fa, `${at}.objs.${name}`, ctx) : excelFilterValuesToCs(fa, `${at}.objs.${name}`, ctx);
         }
         const pat = `${at}.props.${name}`;
+        if (n.objs?.[name] !== undefined && adef && opt.descriptors) {
+          const r = n.objs[name] as Record<string, unknown>;
+          const ref = typeof r?.Reference === "string" ? r.Reference : (r?.Reference as { lit?: string } | undefined)?.lit;
+          const d = ref ? opt.descriptors.get(ref) : undefined;
+          if (d && (d.kind === "element" || d.kind === "screen")) {
+            if (d.namespace) usings.add(`${d.namespace}.ObjectRepository`);
+            if (d.kind === "screen") openedScreen = d.path;
+            // 要素は、開いた画面の下のものでないと動かない（実行時に「Target name '…' is not part of the current screen.」）
+            const scr = screens[screens.length - 1];
+            if (d.kind === "element" && scr && !d.path.startsWith(scr + "."))
+              warnings.push({ path: `${at}.objs.${name}`, code: "CODED_SCREEN_MISMATCH", message: `${d.path} は、開いた画面（${scr}）の要素ではない。実行時に「is not part of the current screen」で落ちる。その画面の下に同じ要素を作り、Reference をそちらにする` });
+            return DESC + d.path;
+          }
+        }
         if (n.objs?.[name] !== undefined && adef) return objToCs(adef, name, n.objs[name], `${at}.objs.${name}`, { expr: (x, xat) => expr(x, xat, sc), add });
         const val = props[name];
         if (val === undefined) return dflt ?? "";
@@ -476,11 +589,22 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       });
     };
     // args の値（文字列のテンプレートか、オプションのオブジェクト { new, set }）。使えないなら undefined（引数ごと省く）
+    // テンプレートが参照するアクティビティの props の、Studio の日本語の名前（labels が無ければ undefined）
+    const labelOf = (t: string): string | undefined => {
+      if (!opt.labels) return undefined;
+      const p = adef?.props.find((x) => x.name === refs(t)[0]);
+      return p?.displayName ? opt.labels[p.displayName] : undefined;
+    };
     const argText = (tpl: string | ObjArg): string | undefined => {
       if (typeof tpl === "string") return avail(tpl) ? fill(tpl) : undefined;
-      const sets = Object.entries(tpl.set).filter(([, t]) => refs(t).length > 0 && avail(t)).map(([k, t]) => `${k} = ${fill(t)}`);
-      if (!sets.length) return tpl.always ? `new ${tpl.new}()` : undefined;
-      return `new ${tpl.new} { ${sets.join(", ")} }`;
+      // new したときの値と同じもの（ClickType = Single など）は書かない
+      const kept = Object.entries(tpl.set).filter(([, t]) => refs(t).length > 0 && avail(t)).map(([k, t]) => [k, fill(t), t] as const)
+        .filter(([k, x]) => !isOptionDefault(tpl.new, k, x));
+      if (!kept.length) return tpl.always ? `new ${tpl.new}()` : undefined;
+      if (!opt.labels) return `new ${tpl.new} { ${kept.map(([k, x]) => `${k} = ${x}`).join(", ")} }`;
+      // 1行に1つ。行末に Studio の日本語の名前（テンプレートが参照するアクティビティの props の displayName）
+      const body = kept.map(([k, x, t]) => { const j = labelOf(t); return `    ${k} = ${x},${j ? ` // ${j}` : ""}`; });
+      return [`new ${tpl.new}`, "{", ...body, "}"].join(NL);
     };
 
     // ContinueOnError は、どのアクティビティでも try / catch で包む（式が真のときだけ例外を握りつぶす）
@@ -493,7 +617,16 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
 
     // 子（body / slots）は scope と branches だけが使う。それ以外で書かれていたら意味が落ちる
     const slotsUsed = new Set<string>();
-    if (v.code) for (const l of fill(v.code).split(/\r?\n/)) emit(d, l);
+    if (v.code) for (const tl of v.code.split(/\r?\n/)) {
+      // ひな形の行が「…呼び出し(名前: 値, 名前: 値, …)…;」で、日本語の名前があるなら、引数を1行に1つずつ書く（行末に // 名前）
+      const sc0 = opt.labels ? splitCall(tl) : undefined;
+      const named = sc0 && sc0.args.length >= 2 && sc0.args.every((a) => /^\w+:\s/.test(a)) && !ONE_LINE_CALLS.has(sc0.head.trim().split(/[\s=]+/).pop()!);
+      const filled = named ? sc0!.args.map((a) => fill(a)) : [];
+      if (!named || filled.some((x) => x.includes(NL))) { for (const l of fill(tl).split(/\r?\n/)) emit(d, l); continue; }
+      emit(d, `${fill(sc0!.head)}(`);
+      sc0!.args.forEach((a, i) => { const j = labelOf(a); emit(d, `    ${filled[i]}${i < filled.length - 1 ? "," : ""}${j ? ` // ${j}` : ""}`); });
+      emit(d, `)${fill(sc0!.tail)}`);
+    }
     else if (v.call) {
       // 子の設定から記述子を作る: 先に変数を作って子を実行し、それを引数に渡す
       if (v.scope === "collect") {
@@ -503,14 +636,34 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         block(n.body, d, `${at}.body`, sc);
         slotsUsed.add("body");
       }
-      const args = Object.entries(v.args ?? {}).map(([param, tpl]) => [param, argText(tpl)] as const).filter(([, t]) => t !== undefined).map(([param, t]) => `${param}: ${t}`);
+      // メソッドの引数も、既定値と同じものは書かない（Log の level = Info など。coded-option-defaults.json の「<メソッド名>()」）
+      const argPairs = Object.entries(v.args ?? {}).map(([param, tpl]) => [param, argText(tpl), tpl] as const)
+        .filter(([param, t]) => t !== undefined && !(typeof t === "string" && !t.startsWith(DESC) && isOptionDefault(`${fill(v.call)}()`, param, t))) as (readonly [string, string, string | ObjArg])[];
+      // Descriptors は引数名がメソッドで違う（target / elementDescriptor / screenDescriptor）ので、名前なしで先頭に置く
+      // 引数ごとの Studio の日本語の名前（文字列のテンプレートの引数だけ。オプションのオブジェクトは中で1行ずつ付ける）
+      const argList: { text: string; label?: string }[] = [
+        ...argPairs.filter(([, t]) => t.startsWith(DESC)).map(([, t]) => ({ text: t.slice(DESC.length) })),
+        ...argPairs.filter(([, t]) => !t.startsWith(DESC)).map(([param, t, tpl]) => ({ text: `${param}: ${t}`, label: typeof tpl === "string" ? labelOf(tpl) : undefined })),
+      ];
       if (v.init) {
         // 引数 param に new Type { ... } を渡す。値が配列なら、使える最初のもの（Password と SecurePassword のどちらか、など）
         const members = Object.entries(v.init.props).map(([k, t]) => [k, (Array.isArray(t) ? t : [t]).find(avail)] as const)
           .filter(([, tpl]) => tpl !== undefined).map(([k, tpl]) => `${k} = ${fill(tpl!)}`);
-        args.push(`${v.init.param}: new ${v.init.type} { ${members.join(", ")} }`);
+        argList.push({ text: `${v.init.param}: new ${v.init.type} { ${members.join(", ")} }` });
       }
-      const call = `${fill(v.call)}(${args.join(", ")})`;
+      const args = argList.map((a) => a.text);
+      // 読みやすい形（labels があるとき）で、引数が2つ以上なら、引数を1行に1つずつ書く（1行の引数は行末に // 名前）。
+      // 複数行の引数（1行に1つずつ書いたオプション）は、2行目からも1段深く字下げする
+      // ただし Log(...) は短く読めるので、1行のまま（// 名前も付けない）
+      const perLine = !!opt.labels && argList.length >= 2 && !ONE_LINE_CALLS.has(fill(v.call));
+      const argLines = (a: { text: string; label?: string }, last: boolean) => {
+        const ls = a.text.split(NL);
+        const end = ls.length - 1;
+        return ls.map((l, k) => `    ${l}${k === end && !last ? "," : ""}${k === end && end === 0 && a.label ? ` // ${a.label}` : ""}`);
+      };
+      const call = perLine
+        ? [`${fill(v.call)}(`, ...argList.flatMap((a, i) => argLines(a, i === argList.length - 1)), ")"].join(NL)
+        : `${fill(v.call)}(${args.join(", ")})`;
       if (v.returns) used.add(v.returns);
       const target = v.returns && n.props?.[v.returns] !== undefined ? lvalue(n.props[v.returns], `${at}.props.${v.returns}`, sc) : undefined;
       const us = usingScope(v);
@@ -539,7 +692,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         const name = us.varPrefix ? `${us.varPrefix}${++tmp}` : itemNames(n, 1)[0];
         const type = us.type ?? (slot ? delegateArgs(slot, n.typeArg)?.[0] : undefined) ?? "Object";
         emit(d, `using (var ${name} = ${call})`);
+        const pushed = openedScreen !== undefined;
+        if (pushed) screens.push(openedScreen!);
+        openedScreen = undefined;
         braces(d, () => block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)));
+        if (pushed) screens.pop();
         slotsUsed.add("body");
       } else if (v.branches) {
         const r = `__state${++tmp}`;
@@ -577,7 +734,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         ? ["ForEach", "ForEachRow", "While", "DoWhile", "ParallelForEach", "RepeatNumberOfTimesX", "InterruptibleWhile", "InterruptibleDoWhile", "RetryScope"].includes(name)
         : !!maps.get(`${r.activity.package}/${name}`)?.coded?.some((x) => x.scope === "lambda");
       if (isLoop) return;
-      const kids = [...(c.body ?? []), ...(c.then ?? []), ...(c.else ?? []), ...Object.values(c.slots ?? {}).flat(), ...Object.values(c.cases ?? {}).flat(), ...(c.catches ?? []).flatMap((x) => x.body)];
+      const kids = [...(c.body ?? []), ...(c.then ?? []), ...(c.else ?? []), ...Object.values(c.slots ?? {}).flat(), ...Object.values(c.cases ?? {}).flat(), ...(c.catches ?? []).flatMap((x) => x.body), ...graphNodes(c).map((g) => g.node)];
       kids.forEach((k) => walk(k, cat_at));
     };
     nodes.forEach((c, i) => walk(c, `${at}.body[${i}]`));

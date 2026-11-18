@@ -26,9 +26,9 @@ namespace CatalogProbeNet8
                 // Sheet1 を控えに写す
                 Excel.Sheet["Sheet1"].DuplicateSheet(name: "Sheet1控え");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1控え"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "控えの A2: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "控えの A2: [" + Convert.ToString(a1) + "]");
                 b2 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1控え"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "控えの B2: [" + Convert.ToString(b2) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "控えの B2: [" + Convert.ToString(b2) + "]");
             }
         }
     }

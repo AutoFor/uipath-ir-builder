@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/GetPosition_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/GetPosition_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["rect"] = rect });
             rect = (System.Drawing.Rectangle)__xaml1["rect"];
-            Log(message: "幅が高さより大きい: " + (rect.Width > rect.Height).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "幅が高さより大きい: " + (rect.Width > rect.Height).ToString());
         }
     }
 }

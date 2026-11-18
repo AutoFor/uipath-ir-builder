@@ -28,11 +28,11 @@ namespace CatalogProbeNet8
                 Excel.SaveExcelFileAs(filePath: "output\\SaveExcelFileAsX_Full.copy.xlsb", replaceExisting: true, saveAsType: UiPath.Excel.ExcelSaveAsType.BinaryWorkbook);
             }
             ex = system.PathExists(path: "output\\SaveExcelFileAsX_Full.copy.xlsb", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: "xlsb がある: " + ex.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "xlsb がある: " + ex.ToString());
             using (var Excel = excel.UseExcelFile(options: new UseOptions { Path = "output\\SaveExcelFileAsX_Full.copy.xlsb", SaveChanges = true, CreateIfNotExist = true, ReadOnly = true, ResizeWindow = UiPath.Excel.Model.ResizeWindowOptions.None }))
             {
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["E1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "xlsb の E1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "xlsb の E1: [" + Convert.ToString(a1) + "]");
             }
         }
     }

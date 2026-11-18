@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         {
             UiPath.Core.QueueItem item = default;
             item = system.WaitQueueItem(queueName: "IRQueue");
-            Log(message: "待ち終わった: " + item.Reference, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "待ち終わった: " + item.Reference);
         }
     }
 }

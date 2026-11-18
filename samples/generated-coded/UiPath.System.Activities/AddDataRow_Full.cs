@@ -38,9 +38,9 @@ namespace CatalogProbeNet8
             newRow["Age"] = 25;
             // DataRow で行を足す
             system.AddDataRow(ref dt, newRow);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("name=" + dt.Rows[1]["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("age=" + dt.Rows[1]["Age"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("name=" + dt.Rows[1]["Name"].ToString()));
+            Log(message: Convert.ToString("age=" + dt.Rows[1]["Age"].ToString()));
         }
     }
 }

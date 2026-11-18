@@ -104,5 +104,6 @@ node tools/ir/objrepo.ts move     --project <P> <アプリ/画面/要素> <ア�
 
 - UI ライブラリ（ライブラリのプロジェクトのリポジトリ、パッケージの依存）
 - 1 つのアプリに 2 つ以上のバージョン（`REPO_VERSIONS`）
-- Coded の `Descriptors.<アプリ>.<画面>.<要素>`（Coded では `$ref` を中身＋`Reference` に展開した TargetAnchorableModel を書く）
+- 入れ子の要素（要素の下の要素）の import / build（import すると build が入れ子の要素を消そうとする）
+- Coded の `Descriptors.<アプリ>.<画面>.<要素>` は、`Reference` から書けるようになった（`$ref` ではなく `ObjectRepository.cs` を読む。[coded-output.md](coded-output.md)）
 - `TargetApp.SapInfo`（`SAPElementInfo`）は 26.10.6 のカタログにだけある（26.10.3 の DLL にはこの型が無い）

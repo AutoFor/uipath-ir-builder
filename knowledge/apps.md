@@ -209,6 +209,8 @@ App で決めた「RPA を動かす日」を、ふつうの RPA のプロセス�
 
 - 決めごと：その日の行が無い → 動かさない。祝日 → 動かさない。それ以外は「RPA を動かす」の値
 - IR の型 `DataService.Entities.<表>` は XAML で `de:<表>`。生成器が `DataService.DataService.Entities` の参照と `DataService.Entities` の import を足す
+- 名前空間は `project.json` の `entitiesStores[].namespace`（`--project` のとき読む）。クロスプラットフォームのプロジェクトではプロジェクト名（例 `MoneyForwardCrossPlatform`）で、IR の型は `MoneyForwardCrossPlatform.<表>`、アセンブリは `DataService.<名前空間>`
+- Coded：引数に表の型を持つ Coded のワークフローは、`uip rpa pack` が「同じ型なのに変換できない（Unable to create activity builder）」で落ちる（moneyforward_cs、2026-11-18。Amex の表でも同じ）。Data Fabric のアクティビティには Coded API も無いので、表の型を引数に持つワークフローは XAML のままにする
 - プロジェクトに要るもの：依存 `UiPath.DataService.Activities`、`project.json` の `entitiesStores`、`.entities/EntitiesStore.json`（`rpa-app-entities.ts` の出力をそのまま置ける）。型の DLL は build のときに作られた
 - 確かめ用のテンプレート `C:\Users\Public\uipath-ir-probe-df`（ふつうのテンプレートに上の 3 つを足したもの）。`verify.mjs` はテンプレートの `.entities` も写す
 - 表の値：必須でない真偽の列は `r.RunRpa.Equals(True)` で比べる（空でも落ちない）。日付の列は `CDate(r.WorkDate).Date`

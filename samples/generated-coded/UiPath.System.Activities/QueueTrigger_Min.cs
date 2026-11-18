@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // QueueTrigger はCoded API が無い（Coded API なし（トリガーは ISystemService に無い））ので XAML 経由（coded/_activities/QueueTrigger_89d7e5.xaml）
             RunWorkflow("coded/_activities/QueueTrigger_89d7e5.xaml", null);
-            Log(message: "キューで開始した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "キューで開始した");
         }
     }
 }

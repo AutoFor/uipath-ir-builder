@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             {
                 nm = ExcelWorkbookScope.GetSheets(false).ElementAt(0);
             }
-            Log(message: "sheet0=" + nm, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "sheet0=" + nm);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/WaitUiElementAppear_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["found"] = found, ["text"] = text });
             found = (UiPath.Core.UiElement)__xaml1["found"];
             text = (String)__xaml1["text"];
-            Log(message: "見つけた: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "見つけた: " + text);
         }
     }
 }

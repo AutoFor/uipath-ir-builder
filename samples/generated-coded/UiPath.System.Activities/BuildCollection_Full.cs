@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             String two = "two";
             // 3つで作る
             built = new List<String> { "one" }; built.AddRange(new String[] { two, "three" });
-            Log(message: Convert.ToString(String.Join(",", built)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", built)));
         }
     }
 }

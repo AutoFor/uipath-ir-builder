@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             {
                 Excel.SaveAsPdf(filePath: "output\\SaveAsPdfX_Min.pdf", replaceExisting: true, startPage: null, endPage: null, saveQuality: UiPath.Excel.PdfSaveQuality.StandardQuality);
             }
-            Log(message: Convert.ToString("PDF: " + System.IO.File.Exists(@"output\SaveAsPdfX_Min.pdf").ToString() + " " + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf"), 0, 4) + " " + (System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf").Length > 0).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("PDF: " + System.IO.File.Exists(@"output\SaveAsPdfX_Min.pdf").ToString() + " " + System.Text.Encoding.ASCII.GetString(System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf"), 0, 4) + " " + (System.IO.File.ReadAllBytes(@"output\SaveAsPdfX_Min.pdf").Length > 0).ToString()));
         }
     }
 }

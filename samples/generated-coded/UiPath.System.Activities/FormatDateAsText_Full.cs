@@ -22,8 +22,8 @@ namespace CatalogProbeNet8
             r1 = system.FormatDateAsText(source: d, format: "yyyy年M月d日", localizationCode: new System.Globalization.CultureInfo("ja-JP"));
             // 英語の書式
             r2 = system.FormatDateAsText(source: d, format: "dddd, MMMM d, yyyy", localizationCode: new System.Globalization.CultureInfo("en-US"));
-            Log(message: r1, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: r2, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r1);
+            Log(message: r2);
         }
     }
 }

@@ -1,0 +1,41 @@
+{
+  "activity": "NExtractDataGeneric",
+  "package": "UiPath.UIAutomation.Activities",
+  "coded": [
+    {
+      "call": "{app}.ExtractData",
+      "usings": [
+        "UiPath.UIAutomationNext.API.Models",
+        "UiPath.UIAutomationNext.Enums"
+      ],
+      "returns": "ExtractedData",
+      "args": {
+        "target": "{Target}",
+        "extractDataOptions": {
+          "new": "ExtractDataOptions",
+          "always": true,
+          "set": {
+            "ExtractMetadata": "{ExtractMetadata}",
+            "TableSettings": "{ExtractDataSettings}",
+            "InteractionMode": "{InteractionMode|enum}",
+            "LimitExtractionTo": "{LimitExtractionTo|enum}",
+            "NumberOfItems": "{MaximumResults}",
+            "Timeout": "{Timeout}",
+            "HealingAgentBehavior": "{HealingAgentBehavior|enum}"
+          }
+        }
+      }
+    }
+  ],
+  "ignore": [
+    "ScopeIdentifier",
+    "Version",
+    "AppendResults",
+    "DelayBetweenPages",
+    "NextLink",
+    "ExtractSimilar",
+    "ForceRefreshView",
+    "RequiresInitialization"
+  ],
+  "notes": "「表データを抽出」の今の版（型引数つき。T は DataTable か、Studio が作る型付きの表。IR では DataTable として取り込む）。UiTargetApp.ExtractData(target, ExtractDataOptions) は DataTable を返す（UiPath.UIAutomationNext.API.dll 26.10.6 のメタデータで確かめた）。AppendResults・ExtractSimilar・ForceRefreshView は Coded に無い。NextLink / DelayBetweenPages は NextPageOptions に直す表がまだ無い（NExtractData と同じ）"
+}

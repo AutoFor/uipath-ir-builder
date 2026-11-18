@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // ExcelApplicationScope は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/ExcelCopySheet_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelCopySheet_Min_1.xaml", new Dictionary<string, object> { ["v"] = v });
             v = (Object)__xaml1["v"];
-            Log(message: "コピー先 A2: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "コピー先 A2: " + Convert.ToString(v));
         }
     }
 }

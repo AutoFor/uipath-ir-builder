@@ -31,9 +31,9 @@ namespace CatalogProbeNet8
                 __collect1.SortColumns.Add(new SortXColumnModel("Name", UiPath.Excel.OrderType.Ascending));
                 Excel.Sheet["Sheet1"].Range["A1:C4"].Sort(descriptor: __collect1, hasHeaders: true);
                 a2 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A2"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A2: [" + Convert.ToString(a2) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A2: [" + Convert.ToString(a2) + "]");
                 a4 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A4"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "A4: [" + Convert.ToString(a4) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "A4: [" + Convert.ToString(a4) + "]");
             }
         }
     }

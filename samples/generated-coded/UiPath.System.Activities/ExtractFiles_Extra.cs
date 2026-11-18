@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // ExtractFiles はこの形の Coded API が無い（Coded API なし（ConflictResolution: ExtractUnzipFiles に引数が無い））ので XAML 経由（coded/_activities/ExtractFiles_fcf37b.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/ExtractFiles_fcf37b.xaml", new Dictionary<string, object> { ["in_DestinationFolder"] = "output\\ExtractFiles_Extra", ["in_FileToExtract"] = "output\\ExtractFiles_Extra.zip" });
             destInfo = (System.IO.DirectoryInfo)__xaml1["out_DestinationFolderInfo"];
-            Log(message: Convert.ToString(System.IO.File.Exists(System.IO.Path.Combine(destInfo.FullName, "ExtractFiles_Extra.a.txt")).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.File.Exists(System.IO.Path.Combine(destInfo.FullName, "ExtractFiles_Extra.a.txt")).ToString()));
         }
     }
 }

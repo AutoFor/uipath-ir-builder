@@ -25,8 +25,8 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/ExcelCopyPasteRange_Full_1.xaml", new Dictionary<string, object> { ["v"] = v, ["w"] = w });
             v = (String)__xaml1["v"];
             w = (Object)__xaml1["w"];
-            Log(message: "Sheet2!D3 の式: " + v, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "Sheet2!D3: " + Convert.ToString(w), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "Sheet2!D3 の式: " + v);
+            Log(message: "Sheet2!D3: " + Convert.ToString(w));
         }
     }
 }

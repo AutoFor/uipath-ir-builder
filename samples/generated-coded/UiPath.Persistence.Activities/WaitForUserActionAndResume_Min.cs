@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // WaitForUserActionAndResume はCoded API が無い（Coded API なし（1.13.0 の DLL に Coded のサービスが無い。抽出器で services 0 件））ので XAML 経由（coded/_activities/WaitForUserActionAndResume.xaml）
             var __xaml2 = RunWorkflow("coded/_activities/WaitForUserActionAndResume.xaml", new Dictionary<string, object> { ["in_TaskInput"] = task });
             action = (System.String)__xaml2["out_TaskAction"];
-            Log(message: "結果: " + action, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + action);
         }
     }
 }

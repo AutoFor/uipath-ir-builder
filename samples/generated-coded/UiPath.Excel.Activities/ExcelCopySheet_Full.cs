@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             {
                 v = (Object)Convert.ChangeType(ExcelWorkbookScope.ReadCell(sheetName: "控え", cell: "A2", preserveFormat: false), typeof(Object));
             }
-            Log(message: "コピー先 A2: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "コピー先 A2: " + Convert.ToString(v));
         }
     }
 }

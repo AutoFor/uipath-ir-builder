@@ -21,9 +21,9 @@ namespace CatalogProbeNet8
                 {
                     continue;
                 }
-                Log(message: "要素: " + it, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "要素: " + it);
             }
-            Log(message: "ループの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ループの後");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
             // BringFormToFrontActivity は対応表が無いので XAML 経由（coded/_activities/BringFormToFrontActivity_913b5e.xaml）
             var __xaml1 = RunWorkflow("coded/_activities/BringFormToFrontActivity_913b5e.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "前へ" });
             res = (UiPath.Studio.Forms.Runtime.HideFormResult[])__xaml1["out_Result"];
-            Log(message: "前に出した: OK=" + res[0].OK.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "前に出した: OK=" + res[0].OK.ToString());
             // CloseFormActivity は対応表が無いので XAML 経由（coded/_activities/CloseFormActivity_295689.xaml）
             RunWorkflow("coded/_activities/CloseFormActivity_295689.xaml", new Dictionary<string, object> { ["in_InstanceName"] = "前へ" });
         }

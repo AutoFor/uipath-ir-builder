@@ -22,7 +22,8 @@ export type Workflow = {
 
 export type ArgumentDecl = { name: string; dir: "In" | "Out" | "InOut"; type: string };
 
-export type VariableDecl = { name: string; type: string; default?: string };
+// default：VB の式。C# の式のプロジェクトから取り込んだ既定値は { cs }（VB に直せないので vb は無いこともある）
+export type VariableDecl = { name: string; type: string; default?: string | CsExpr };
 
 // 値の書き方:
 //   "row(0).ToString"   … VB の式。[...] は生成器が付ける
@@ -31,7 +32,10 @@ export type VariableDecl = { name: string; type: string; default?: string };
 //   "Info"              … enum のプロパティなら、メンバー名はそのままリテラルになる
 //   { vb: "...", cs: "..." } … VB と C# を別々に書く式。XAML には vb、Coded には cs を使う。
 //                          VB の式を C# に機械的に直せないとき（If(...)、ラムダなど）に使う
-export type Value = string | number | boolean | { lit: string } | { vb: string; cs: string };
+//   { cs: "..." }        … C# だけの式。式の言語が C# の XAML から取り込んだもの（import-xaml.ts）。
+//                          C# の XAML と Coded には使えるが、VB の XAML には書けない（生成器が VB_EXPR にする）
+export type CsExpr = { vb?: string; cs: string };
+export type Value = string | number | boolean | { lit: string } | CsExpr;
 
 export type Node = {
   act: string; // ClassName（例 "LogMessage"）。曖昧なときは完全名（例 "System.Activities.Statements.ForEach"）
@@ -51,7 +55,31 @@ export type Node = {
   assigns?: AssignOp[]; // MultipleAssign の代入（上から順に実行）
   lists?: Record<string, ListItem[]>; // 一覧のプロパティ。List<String> / IEnumerable<String>（NSelectItem.Items など）は式を持てないので { lit } の配列、List<DayOfWeek> はメンバー名の配列。InArgument の一覧（AppendItemToCollection.Items、FilterDataTable.SelectColumns など）は式の配列、オブジェクト型の List（FilterDataTable.Filters、JoinDataTables.Arguments など）はプロパティの辞書の配列
   objs?: Record<string, ObjValue>; // 要素で書くオブジェクトのプロパティ（UI のターゲット Target / TargetApp など）。書き方は tools/ir/uia.ts
+  // 図（ノードどうしが指し合うもの）。ノードに id を付け、矢印は行き先の id で書く。XAML では id が x:Name、矢印が x:Reference になる（tools/ir/graph.ts）
+  flowchart?: FlowchartDecl; // Flowchart の StartNode と Nodes
+  stateMachine?: StateMachineDecl; // StateMachine の InitialState と States
+  branches?: BranchDecl[]; // Pick の Branches（PickBranch）
 };
+
+// Flowchart。start は最初のノードの id
+export type FlowchartDecl = { start: string; nodes: FlowNode[] };
+// FlowStep：アクティビティのノードに id と next（次のノードの id。無ければ終わり）を足したもの
+export type FlowStepDecl = Node & { id: string; next?: string };
+// FlowDecision：decision は真偽の式。true / false は行き先の id（無ければ終わり）
+export type FlowDecisionDecl = { id: string; decision: Value; name?: string; true?: string; false?: string };
+// FlowSwitch<T>：switch は式、typeArg は式の型（既定 String）。cases のキーは値の文字列表記、値は行き先の id。default は既定の行き先
+export type FlowSwitchDecl = { id: string; switch: Value; typeArg?: string; name?: string; cases?: Record<string, string>; default?: string };
+export type FlowNode = FlowStepDecl | FlowDecisionDecl | FlowSwitchDecl;
+
+// StateMachine。initial は最初の状態の id
+export type StateMachineDecl = { initial: string; states: StateDecl[] };
+// 状態。name は DisplayName（無ければ id）。final は終わりの状態（遷移と exit を持てない）
+export type StateDecl = { id: string; name?: string; final?: boolean; variables?: VariableDecl[]; entry?: Node[]; exit?: Node[]; transitions?: TransitionDecl[] };
+// 遷移。to は行き先の状態の id。trigger が終わり、condition（真偽の式）が真なら action を実行して to に移る
+export type TransitionDecl = { to: string; name?: string; trigger?: Node[]; condition?: Value; action?: Node[] };
+
+// Pick の分岐。最初に trigger が終わった分岐の action だけが実行され、ほかの trigger は取り消される
+export type BranchDecl = { name?: string; variables?: VariableDecl[]; trigger: Node[]; action?: Node[] };
 
 // オブジェクトの中身。キーはそのオブジェクトの型のプロパティ名（カタログ *.objects.json）、値は Value か、入れ子のオブジェクト、
 // その配列（TargetAnchorable.Anchors など）

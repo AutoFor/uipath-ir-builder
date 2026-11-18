@@ -36,7 +36,7 @@ namespace CatalogProbeNet8
                     {
                         return false;
                     }
-                    Log(message: "処理: " + CurrentRow["Name"].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: "処理: " + CurrentRow["Name"].ToString());
                     return true;
                 });
             }

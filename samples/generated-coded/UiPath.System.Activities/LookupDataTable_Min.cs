@@ -37,7 +37,7 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Carol", 35});
             dt.Rows.Add(new object[] {"Bob", 25});
             v = system.LookupDataTable(dataTable: dt, lookupValue: "Bob", lookupColumnName: "Name", targetColumnName: "Age", rowIndex: out _);
-            Log(message: Convert.ToString("cell=" + v.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("cell=" + v.ToString()));
         }
     }
 }

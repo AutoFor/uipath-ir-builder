@@ -31,8 +31,8 @@ namespace CatalogProbeNet8
                 at = Excel.Sheet["Sheet1"].Range["A1:B4"].FindReplaceValue(valueToFind: "花子", operation: UiPath.Excel.FindReplaceOptions.ReplaceAll, replaceWith: "花ちゃん", lookIn: UiPath.Excel.LookInOptions.Values, matchCase: true, matchEntireCellContents: true);
                 v1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A3"].ReadCellValue(getFormattedText: true), typeof(Object));
             }
-            Log(message: "置き換えた場所: " + at, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "A3=" + Convert.ToString(v1), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "置き換えた場所: " + at);
+            Log(message: "A3=" + Convert.ToString(v1));
         }
     }
 }

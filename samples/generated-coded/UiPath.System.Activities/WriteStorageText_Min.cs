@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.WriteStorageText(path: "ir/hello.txt", text: "こんにちは", storageBucketName: "ir-bucket");
-            Log(message: "書き込んだ", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "書き込んだ");
         }
     }
 }

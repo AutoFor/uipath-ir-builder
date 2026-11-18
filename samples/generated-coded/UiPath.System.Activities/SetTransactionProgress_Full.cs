@@ -20,7 +20,7 @@ namespace CatalogProbeNet8
             item = system.GetQueueItem(queueType: "IRQueue");
             // 進捗を設定
             system.SetTransactionProgress(transactionItem: item, progress: "50%", timeoutMS: 30000);
-            Log(message: "進捗を設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "進捗を設定した");
         }
     }
 }

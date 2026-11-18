@@ -23,7 +23,7 @@ namespace CatalogProbeNet8
                 // 25 を探す
                 pos = Excel.Sheet["Sheet1"].Range["B2:B4"].MatchFunction(valueToMatch: 25, matchFunctionType: UiPath.Excel.MatchType.ExactlyEqual);
             }
-            Log(message: "位置: " + pos.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "位置: " + pos.ToString());
         }
     }
 }

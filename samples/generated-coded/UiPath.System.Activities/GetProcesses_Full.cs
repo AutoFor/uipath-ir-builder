@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             System.Collections.ObjectModel.Collection<System.Diagnostics.Process> procs = default;
             // プロセス一覧
             procs = new System.Collections.ObjectModel.Collection<System.Diagnostics.Process>(System.Diagnostics.Process.GetProcesses());
-            Log(message: Convert.ToString("self=" + procs.Any(p => p.Id == System.Diagnostics.Process.GetCurrentProcess().Id).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("self=" + procs.Any(p => p.Id == System.Diagnostics.Process.GetCurrentProcess().Id).ToString()));
         }
     }
 }

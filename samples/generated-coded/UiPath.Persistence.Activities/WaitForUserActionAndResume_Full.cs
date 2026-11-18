@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
             action = (System.String)__xaml2["out_TaskAction"];
             task = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml2["out_TaskOutput"];
             task = (UiPath.Persistence.Activities.UserAction.UserActionData)__xaml2["io_WaitItemDataObject"];
-            Log(message: "結果: " + action, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + action);
         }
     }
 }

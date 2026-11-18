@@ -19,10 +19,10 @@ namespace CatalogProbeNet8
             System.Environment.SetEnvironmentVariable(name, "abc");
             // 設定した値を読む
             val = System.Environment.GetEnvironmentVariable(name);
-            Log(message: "found=" + val, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "found=" + val);
             // 無い変数を読む
             val = System.Environment.GetEnvironmentVariable("IRB_ENV_NOT_SET");
-            Log(message: "missing=" + String.IsNullOrEmpty(val).ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "missing=" + String.IsNullOrEmpty(val).ToString());
         }
     }
 }

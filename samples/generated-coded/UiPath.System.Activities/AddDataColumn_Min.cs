@@ -31,8 +31,8 @@ namespace CatalogProbeNet8
                 __col.MaxLength = -1;
                 __col.DefaultValue = DBNull.Value;
             }
-            Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("column1=" + dt.Columns[1].ColumnName + ":" + dt.Columns[1].DataType.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("columns=" + dt.Columns.Count));
+            Log(message: Convert.ToString("column1=" + dt.Columns[1].ColumnName + ":" + dt.Columns[1].DataType.Name));
         }
     }
 }

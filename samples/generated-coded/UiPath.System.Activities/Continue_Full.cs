@@ -25,9 +25,9 @@ namespace CatalogProbeNet8
                     // 偶数は飛ばす
                     continue;
                 }
-                Log(message: "奇数: " + i.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "奇数: " + i.ToString());
             }
-            Log(message: "ループの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ループの後");
         }
     }
 }

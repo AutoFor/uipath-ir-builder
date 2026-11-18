@@ -1,0 +1,7 @@
+{
+  "Result": "Success",
+  "Code": "ToolResult",
+  "Data": {
+    "message": "<Activity x:Class=\"NClickTrigger\" xmlns=\"http://schemas.microsoft.com/netfx/2009/xaml/activities\" xmlns:uix=\"http://schemas.uipath.com/workflow/activities/uix\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n  <uix:NClickTrigger Enabled=\"True\" SchedulingMode=\"Sequential\" TriggerId=\"5ceeb293-8524-4cff-a5f9-4917a1a14a6e\" />\r\n</Activity>"
+  }
+}

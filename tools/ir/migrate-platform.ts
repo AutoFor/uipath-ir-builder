@@ -26,12 +26,13 @@ import { dirname, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate, workflowFile } from "./validate.ts";
 import { generateChecked, refsForPlatform } from "./generate.ts";
-import { importAndCheck, irFileFor, parseXml, placeImported, type El } from "./import-xaml.ts";
+import { importAndCheck, irFileFor, isCsXaml, parseXml, placeImported, type El } from "./import-xaml.ts";
 import { expandRefs } from "./objrepo.ts";
 import { resolve, type Activity, type Catalog } from "./catalog.ts";
 import { loadSelected, projectLanguage, projectPlatform, projectRootImports, readProject, VersionError, type Platform, type RootImports } from "./versions.ts";
 import type { Issue, Node, Workflow } from "./types.ts";
 import { expandTestCase } from "./testcase.ts";
+import { graphNodes } from "./graph.ts";
 const isSidecar = (f: string) => /\.(verify|expected|args)\.json$/i.test(f); // gen.ts と同じ（gen.ts は読み込むと動き出すので写す）
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -50,13 +51,15 @@ export type MigrateResult = {
 
 // IR のノードをすべてたどる（場所つき）
 function walkNodes(wf: Workflow, f: (n: Node, at: string) => void) {
-  const walk = (list: Node[] | undefined, path: string) => (list ?? []).forEach((n, i) => {
-    const at = `${path}[${i}]`;
+  const visitOne = (n: Node, at: string) => walk([n], at, true);
+  const walk = (list: Node[] | undefined, path: string, exact = false): void => (list ?? []).forEach((n, i) => {
+    const at = exact ? path : `${path}[${i}]`;
     f(n, at);
     walk(n.body, `${at}.body`); walk(n.then, `${at}.then`); walk(n.else, `${at}.else`);
     for (const [k, v] of Object.entries(n.slots ?? {})) walk(v, `${at}.slots.${k}`);
     for (const [k, v] of Object.entries(n.cases ?? {})) walk(v, `${at}.cases.${k}`);
     (n.catches ?? []).forEach((c, j) => walk(c.body, `${at}.catches[${j}].body`));
+    for (const g of graphNodes(n)) visitOne(g.node, `${at}.${g.path}`);
   });
   walk(wf.body, "body");
 }
@@ -193,7 +196,8 @@ export function migratePlatform(project: string, to: Platform, opts: { dryRun?: 
     for (const x of toImport) {
       const xml = readFileSync(x, "utf8");
       const rel = relative(project, x).replace(/\\/g, "/");
-      const r = importAndCheck(xml, srcAgain);
+      // C# の式の XAML は取り込めても IR にしない（作り直すと Studio の書いた形から変わる。そのまま移す方が元を保てる）
+      const r = isCsXaml(xml) ? { wf: undefined, errors: [{ path: "Activity", code: "CSHARP_XAML", message: "C# の式の XAML" }], validation: [] } : importAndCheck(xml, srcAgain);
       if (!r.wf || r.errors.length || r.validation.length) {
         const why = [...r.errors, ...r.validation].slice(0, 2).map((i) => `${i.code} ${i.path}`).join(" / ") || "取り込めない";
         const miss = missingInTarget(xml, src, dst, to);

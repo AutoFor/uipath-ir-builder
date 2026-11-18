@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             String user = default;
             System.Security.SecureString pass = default;
             (user, pass) = system.GetCredential(assetName: "IRCredential");
-            Log(message: "ユーザー: " + user, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ユーザー: " + user);
         }
     }
 }

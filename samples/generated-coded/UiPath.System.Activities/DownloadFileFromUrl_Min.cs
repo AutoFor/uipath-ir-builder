@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             ILocalResource res = default;
             res = system.DownloadFileFromURLAsync("https://example.com/", fileName: null, conflictResolution: UiPath.Activities.System.FileOperations.FileConflictBehavior.Rename, timeout: 600, userAgentHeaderValue: null).GetAwaiter().GetResult();
-            Log(message: Convert.ToString(System.IO.File.Exists(res.LocalPath).ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.File.Exists(res.LocalPath).ToString()));
         }
     }
 }

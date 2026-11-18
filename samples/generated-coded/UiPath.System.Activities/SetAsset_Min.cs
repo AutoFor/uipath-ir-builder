@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             system.SetAsset(value: "v1", assetName: "IRAsset");
-            Log(message: "アセットを設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "アセットを設定した");
         }
     }
 }

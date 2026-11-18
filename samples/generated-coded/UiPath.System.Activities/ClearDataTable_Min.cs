@@ -35,10 +35,10 @@ namespace CatalogProbeNet8
             dt.Rows.Add(new object[] {"Bob", 25});
             dt.Rows.Add(new object[] {"Carol", 35});
             dt.Rows.Add(new object[] {"Bob", 25});
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
             system.ClearDataTable(ref dt);
-            Log(message: Convert.ToString("rows=" + dt.Rows.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("columns=" + dt.Columns.Count), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("rows=" + dt.Rows.Count));
+            Log(message: Convert.ToString("columns=" + dt.Columns.Count));
         }
     }
 }

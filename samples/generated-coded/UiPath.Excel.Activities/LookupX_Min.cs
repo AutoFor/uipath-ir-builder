@@ -28,7 +28,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Cell["B3"].WriteCell(value: "さくらんぼ");
                 v = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Range["A1:B3"].LookupRange(label: "banana"), typeof(Object));
             }
-            Log(message: "値: " + Convert.ToString(v), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "値: " + Convert.ToString(v));
         }
     }
 }

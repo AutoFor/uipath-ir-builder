@@ -8,6 +8,11 @@
 //     --invoke-dir <dir>   InvokeWorkflowFile の "X.xaml" を "<dir>/X.cs" に書き換える（Coded 同士で呼ぶ）
 //     --print              生成した C# を標準出力に出す
 //     --project <dir>      その UiPath プロジェクトの project.json の dependencies の版のカタログを使う。名前空間の既定もそのプロジェクトから取る。
+//                          そのプロジェクトの .local/.codedworkflows/ObjectRepository.cs があれば、リポジトリにあるターゲット（Reference）は Descriptors.<アプリ>.<画面>.<要素> で書く
+//     --no-descriptors     リポジトリにあるターゲットも、これまでどおり new TargetAnchorableModel { ... } で書く
+//     --compact            オプションを1行にまとめて書く（既定は1行に1つ、行末に // Studio の日本語の名前。catalog/<パッケージ>/<版>.ja.json がある版だけ）
+//     --settings <Release|Debug>  プロジェクト設定（.settings/<プロファイル>）の既定値を、IR で未設定の props に補う。既定は Release（Orchestrator のジョブ）。--no-settings で補わない
+//     --no-trace-log       操作（クリック・入力・待機など）の直前に入れる Log(…, Trace) を入れない（既定は、読みやすい形のとき入れる。// 手順名 の代わり）
 //                          カタログに無い版、services の無い古いカタログ（対応表のあるパッケージ）はエラー
 //     --no-via-xaml        対応表の無いアクティビティを XAML 経由にしない（NO_MAPPING のエラーにする）
 //
@@ -19,11 +24,13 @@
 //   XAML と違い、project.json の fileInfoCollection には載せない（載せると Studio がそのクラスを別に扱い、uip rpa run が
 //   「型 … が名前空間 … に存在しません」で落ちた。knowledge/testing.md の「テストケース」）
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate } from "./validate.ts";
 import { expandRefs } from "./objrepo.ts";
+import { descriptorsFile, readDescriptors } from "./coded-descriptors.ts";
+import { projectDefaults, readSettings } from "./project-settings.ts";
 import { generateCoded, type ViaXamlFile } from "./generate-coded.ts";
 import { generateChecked, type ExpressionLanguage } from "./generate.ts";
 import { loadMappings } from "./mapping.ts";
@@ -42,20 +49,25 @@ const invokeDir = val("--invoke-dir");
 const checkOnly = args.includes("--check");
 const print = args.includes("--print");
 const noViaXaml = args.includes("--no-via-xaml");
-const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project"]);
+const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project", "--settings"]);
+const descriptors = project && !args.includes("--no-descriptors") ? readDescriptors(project) : undefined;
+if (project && !args.includes("--no-descriptors") && !descriptors) console.error(`注意: ${descriptorsFile(project)} が無い。ターゲットは new TargetAnchorableModel で書く（Studio でビルドすると作られる）`);
 const files = args.filter((a, i) => !a.startsWith("--") && !valued.has(args[i - 1]) && !/\.(verify|expected|args)\.json$/i.test(a));
 if (!files.length || (!outDir && !checkOnly)) {
   console.error("使い方: node tools/ir/gen-coded.ts <ir.json>... (--out <dir> | --check) [--namespace <名前>] [--invoke-dir <dir>] [--print] [--project <dir>]");
   process.exit(2);
 }
 
-const { cat, ctx, noApi, language, rootImports } = runSelection(() => {
+const { cat, ctx, noApi, language, rootImports, labels } = runSelection(() => {
   const { cat, warnings, selection } = loadSelected(root, project, { coded: true });
   const imp = project ? projectRootImports(project) : { imports: undefined, notes: [] as string[] };
   for (const w of [...warnings, ...imp.notes]) console.error(`注意: ${w}`);
   // XAML 経由の XAML も、gen.ts の --project と同じく project.json の式の言語にする
   const language: ExpressionLanguage = project ? projectLanguage(project) : "VisualBasic";
-  return { cat, ctx: loadContext(project), noApi: noCodedApiPackages(root, selection.files), language, rootImports: imp.imports };
+  // Studio の日本語の名前（catalog/<パッケージ>/<版>.ja.json。tools/catalog-extractor/extract-ja.ps1 で作る）
+  const labels: Record<string, string> = {};
+  for (const f of selection.files) { const j = join(root, f.replace(/(\.portable)?\.json$/, ".ja.json")); if (existsSync(j)) Object.assign(labels, JSON.parse(readFileSync(j, "utf8"))); }
+  return { cat, ctx: loadContext(project), noApi: noCodedApiPackages(root, selection.files), language, rootImports: imp.imports, labels };
 });
 // XAML 経由で呼ぶ XAML の置き場所（プロジェクトからの相対パス）。--out がプロジェクトの中ならその相対パス、
 // でなければ --invoke-dir（verify.mjs は coded）、どちらも無ければ --out をプロジェクトのフォルダとみなす。その下の _xaml/
@@ -82,7 +94,7 @@ for (const f of files) {
   let warns: { path: string; code: string; message: string }[] = [];
   const subs: { file: ViaXamlFile; xaml: string }[] = [];
   if (!issues.length) {
-    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck } });
+    const r = generateCoded(wf, cat, maps, { namespace: ns, invokePath: invokeDir ? (p) => p.replace(/^(.*?)([^\\/]+)\.xaml$/i, `${invokeDir}/$2.cs`) : undefined, viaXaml: noViaXaml ? undefined : { dir: viaDir, noApi, apiCheck }, descriptors, projectDefaults: project && !args.includes("--no-settings") ? projectDefaults(cat, readSettings(project, val("--settings") === "Debug" ? "Debug" : "Release")) : undefined, labels: args.includes("--compact") || !Object.keys(labels).length ? undefined : labels, traceLog: !args.includes("--compact") && !args.includes("--no-trace-log") && Object.keys(labels).length > 0 });
     issues.push(...r.issues);
     code = r.code;
     // Coded のテストケースにはデータ駆動のテストをつなげない（data は使わず、注意だけ出す）

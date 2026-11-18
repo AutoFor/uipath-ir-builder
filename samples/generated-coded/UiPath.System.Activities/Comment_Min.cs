@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             // ここはコメント
-            Log(message: "コメントの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "コメントの後");
         }
     }
 }

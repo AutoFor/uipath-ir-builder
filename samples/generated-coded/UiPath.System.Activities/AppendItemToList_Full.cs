@@ -18,8 +18,8 @@ namespace CatalogProbeNet8
             Int32 idx = default;
             // 末尾に足す
             names.Add("b"); idx = names.Count - 1;
-            Log(message: "index=" + idx.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(String.Join(",", names)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "index=" + idx.ToString());
+            Log(message: Convert.ToString(String.Join(",", names)));
         }
     }
 }

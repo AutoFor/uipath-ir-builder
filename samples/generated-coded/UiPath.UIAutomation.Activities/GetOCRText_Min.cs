@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             // OpenBrowser はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/GetOCRText_Min_1.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/GetOCRText_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["text"] = text });
             text = (String)__xaml1["text"];
-            Log(message: "結果: " + text.Trim(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + text.Trim());
         }
     }
 }

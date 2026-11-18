@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             // 30秒の上限つき
             var __result1 = RunWorkflow("coded/InvokeWorkflowFile_Callee.cs", new Dictionary<string, object> { ["in_Name"] = "花子", ["in_Count"] = 3 }, timeout: TimeSpan.FromSeconds(30));
             msg = (String)__result1["Output"];
-            Log(message: "戻り値: " + msg, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "戻り値: " + msg);
         }
     }
 }

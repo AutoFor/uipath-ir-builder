@@ -24,8 +24,8 @@ namespace CatalogProbeNet8
                 // シート名の一覧を取る
                 sheets = ExcelWorkbookScope.GetSheets(false).ToList();
             }
-            Log(message: "count=" + sheets.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "names=" + String.Join(",", sheets), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "count=" + sheets.Count.ToString());
+            Log(message: "names=" + String.Join(",", sheets));
         }
     }
 }

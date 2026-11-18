@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // あとで差し替える
             // Placeholder
-            Log(message: "プレースホルダーの後", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "プレースホルダーの後");
         }
     }
 }

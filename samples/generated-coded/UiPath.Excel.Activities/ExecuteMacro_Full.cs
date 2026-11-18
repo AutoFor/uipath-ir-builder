@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 var __xaml1 = RunWorkflow("coded/_activities/ExecuteMacro_ba0365.xaml", new Dictionary<string, object> { ["in_ContinueOnError"] = true, ["in_MacroName"] = "Module1.ExcelD_Add", ["in_MacroParameters"] = new Object[] { 2, 3 } });
                 res = (System.Object)__xaml1["out_MacroOutput"];
             }
-            Log(message: "macro: " + Convert.ToString(res), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "macro: " + Convert.ToString(res));
         }
     }
 }

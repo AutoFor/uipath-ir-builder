@@ -22,7 +22,7 @@ namespace CatalogProbeNet8
             {
                 c = ExcelWorkbookScope.GetCellColor(sheetName: "Sheet1", cell: "A1");
             }
-            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "RGB=" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString());
         }
     }
 }

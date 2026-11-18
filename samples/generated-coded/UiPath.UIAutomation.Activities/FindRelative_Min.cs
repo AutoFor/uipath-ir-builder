@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/FindRelative_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["rel"] = rel, ["text"] = text });
             rel = (UiPath.Core.UiElement)__xaml1["rel"];
             text = (String)__xaml1["text"];
-            Log(message: "相対: " + text, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "相対: " + text);
         }
     }
 }

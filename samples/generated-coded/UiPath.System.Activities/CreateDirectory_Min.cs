@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
             Boolean ex = default;
             system.CreateFolder(path: "output\\CreateDirectory_Min");
             ex = system.PathExists(path: "output\\CreateDirectory_Min", pathType: UiPath.Core.Activities.PathType.Folder);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

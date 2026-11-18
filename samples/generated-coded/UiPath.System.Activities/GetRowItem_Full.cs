@@ -46,9 +46,9 @@ namespace CatalogProbeNet8
             v2 = (Object)row[1];
             // DataColumn で取る
             v3 = (Object)row[dt.Columns["Age"]];
-            Log(message: Convert.ToString("byName=" + v1.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byIndex=" + v2.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("byColumn=" + v3.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("byName=" + v1.ToString()));
+            Log(message: Convert.ToString("byIndex=" + v2.ToString()));
+            Log(message: Convert.ToString("byColumn=" + v3.ToString()));
         }
     }
 }

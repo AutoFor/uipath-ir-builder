@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 {
                     __index1++;
                     int CurrentIndex = __index1;
-                    Log(message: Convert.ToString(CurrentSheet.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
+                    Log(message: Convert.ToString(CurrentSheet.Name));
                     return false;
                     return true;
                 });

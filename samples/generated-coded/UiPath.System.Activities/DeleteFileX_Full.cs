@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             // ファイルを消す
             system.DeleteFileOrFolder(resourceFile: LocalResource.FromPath("output\\DeleteFileX_Full.txt"));
             ex = system.PathExists(path: "output\\DeleteFileX_Full.txt", pathType: UiPath.Core.Activities.PathType.File);
-            Log(message: Convert.ToString(ex.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(ex.ToString()));
         }
     }
 }

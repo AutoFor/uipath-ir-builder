@@ -20,8 +20,8 @@ namespace CatalogProbeNet8
             ok = testing.VerifyExpression("abc".Length == 3, "{Expression} の検証: {Result}", true, "長さは3", false, false);
             // 成り立たない式（続ける）
             ng = testing.VerifyExpression(1 > 2, null, true, "1は2より大きい", false, false);
-            Log(message: Convert.ToString("ok=" + ok), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("ng=" + ng), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("ok=" + ok));
+            Log(message: Convert.ToString("ng=" + ng));
         }
     }
 }

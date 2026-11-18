@@ -30,8 +30,8 @@ namespace CatalogProbeNet8
             var __xaml1 = RunWorkflow("coded/_xaml/GetLastDownloadedFile_Full_1.xaml", new Dictionary<string, object> { ["f"] = f, ["res"] = res });
             f = (FileInfo)__xaml1["f"];
             res = (ILocalResource)__xaml1["res"];
-            Log(message: Convert.ToString(f.Name), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(f.Name));
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(res.LocalPath)));
         }
     }
 }

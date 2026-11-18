@@ -19,13 +19,13 @@ namespace CatalogProbeNet8
             List<String> all = new List<String>() { "p", "q" };
             // 位置で消す
             ((IList<String>)items).RemoveAt(0);
-            Log(message: Convert.ToString(String.Join(",", items)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", items)));
             // 最初の一致を消す
             dups.Remove("x");
-            Log(message: Convert.ToString(String.Join(",", dups)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(String.Join(",", dups)));
             // 全部消す
             if (true) all = new List<String>();
-            Log(message: "count=" + all.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "count=" + all.Count.ToString());
         }
     }
 }

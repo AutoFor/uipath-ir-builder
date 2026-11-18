@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String r = default;
             r = system.Replace(input: "a1b22c333", pattern: "\\d+", replacement: "#", regexOption: System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Compiled);
-            Log(message: r, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: r);
         }
     }
 }

@@ -29,9 +29,9 @@ namespace CatalogProbeNet8
                 ExcelWorkbookScope.WriteRange(sheetName: "Sheet1", startingCell: "C3", table: dt, addHeaders: true);
                 back = ExcelWorkbookScope.ReadRange(sheetName: "Sheet1", range: "C3:D6", addHeaders: true, preserveFormat: false);
             }
-            Log(message: "書いた行数: " + back.Rows.Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "見出し: " + back.Columns[0].ColumnName + "," + back.Columns[1].ColumnName, level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "最後の行: " + back.Rows[2][0].ToString() + " " + back.Rows[2][1].ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "書いた行数: " + back.Rows.Count.ToString());
+            Log(message: "見出し: " + back.Columns[0].ColumnName + "," + back.Columns[1].ColumnName);
+            Log(message: "最後の行: " + back.Rows[2][0].ToString() + " " + back.Rows[2][1].ToString());
         }
     }
 }

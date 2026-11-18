@@ -36,7 +36,7 @@ namespace CatalogProbeNet8
             system.CreateFolder(path: "output\\CopyFolderX_Min.dst");
             system.CopyFolder(from: "output\\CopyFolderX_Min.src", to: "output\\CopyFolderX_Min.dst", overwrite: true, includeSubfolder: true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\CopyFolderX_Min.dst\\CopyFolderX_Min.src\\a.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

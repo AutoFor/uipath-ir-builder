@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             // BrowserScope はCoded API が無い（Coded API なし（Classic の UI 操作。Coded の uiAutomation が扱うのは Modern のターゲット（TargetAnchorableModel）だけ））ので XAML 経由（coded/_xaml/BrowserScope_Min_2.xaml）
             var __xaml1 = RunWorkflow("coded/_xaml/BrowserScope_Min_2.xaml", new Dictionary<string, object> { ["pageTitle"] = pageTitle, ["result"] = result });
             result = (String)__xaml1["result"];
-            Log(message: "結果: " + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "結果: " + result);
         }
     }
 }

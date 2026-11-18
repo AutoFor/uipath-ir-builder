@@ -26,7 +26,7 @@ namespace CatalogProbeNet8
             var __xaml3 = RunWorkflow("coded/_xaml/NInjectJsScript_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["jsOut"] = jsOut, ["result"] = result });
             jsOut = (String)__xaml3["jsOut"];
             result = (String)__xaml3["result"];
-            Log(message: "js out=" + jsOut + ", result=" + result, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "js out=" + jsOut + ", result=" + result);
         }
     }
 }

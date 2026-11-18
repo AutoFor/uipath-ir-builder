@@ -2,7 +2,8 @@
 
 import type { Catalog, Activity } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue, DAYS_OF_WEEK } from "./catalog.ts";
-import type { Workflow, Node, Issue, Value, VariableDecl } from "./types.ts";
+import type { Workflow, Node, Issue, Value, VariableDecl, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl } from "./types.ts";
+import { flowKind, flowLinks, stepNode, isGraphId } from "./graph.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
 import { checkExcel } from "./excel.ts";
@@ -18,8 +19,9 @@ export const workflowFile = (wf: Pick<Workflow, "workflow" | "file">) => (wf.fil
 export function validate(wf: Workflow, cat: Catalog): Issue[] {
   const issues: Issue[] = [];
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
+  const graphIds = new Set<string>(); // 図の id（x:Name）。ワークフローの中で1つ
 
-  if (!/^[A-Za-z_]\w*$/.test(wf.workflow)) add("workflow", "BAD_NAME", `ワークフロー名 "${wf.workflow}" は識別子にする`);
+  if (!IDENT.test(wf.workflow)) add("workflow", "BAD_NAME", `ワークフロー名 "${wf.workflow}" は識別子にする`);
   if (wf.file !== undefined && !isWorkflowFile(wf.file)) add("file", "BAD_FILE", `file "${wf.file}" は、プロジェクトからの相対パスの .xaml にする（例 "Sub/Foo.xaml"。".." や絶対パスは書けない）`);
 
   const scope: Scope = new Map();
@@ -61,7 +63,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       given.add(k);
       const w = writable(a, p);
       if (!w.ok) { add(at, "UNSUPPORTED_PROP", `"${k}": ${w.reason}`); continue; }
-      if (w.how === "lists" || w.how === "dicts") { add(at, "UNSUPPORTED_PROP", `"${k}" は props ではなく ${w.how} に書く`); continue; }
+      if (w.how === "lists" || w.how === "dicts" || /^(flowchart|stateMachine|branches)(.|$)/.test(w.how)) { add(at, "UNSUPPORTED_PROP", `"${k}" は props ではなく ${w.how} に書く`); continue; }
       if (p.type === "System.Type") {
         if (typeof v !== "string") add(at, "BAD_TYPE_VALUE", `"${k}" は型名（"String" など）で書く`);
         else checkType(v, at, add);
@@ -199,10 +201,13 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       else given.add("AssignOperations");
       n.assigns.forEach((x, i) => {
         checkLValue(x.to, `${path}.assigns[${i}].to`, scope);
-        if (scope.has(x.to.match(/^[A-Za-z_]\w*/)?.[0] ?? "") && !scope.has(x.to))
+        if (scope.has(x.to.match(IDENT_HEAD)?.[0] ?? "") && !scope.has(x.to))
           add(`${path}.assigns[${i}].to`, "TYPE_UNKNOWN", `代入先の型が決まらない。変数名をそのまま書く`);
       });
     }
+
+    // 図（Flowchart・StateMachine・Pick。graph.ts）
+    if (n.flowchart || n.stateMachine || n.branches) for (const k of checkGraph(n, a, path, scope)) given.add(k);
 
     // OverloadGroup（WriteTextFile の File / FileName など）は、どれか1つのグループがそろっていればよい
     const required = a.props.filter((p) => p.required);
@@ -227,17 +232,131 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     }
   }
 
+  // 図の検査。書いたプロパティ名（given に足す）を返す。
+  // id は x:Name になるので、ワークフローの中で重ならないこと（ids）。矢印の行き先があること、start / initial から全部たどれること
+  function checkGraph(n: Node, a: Activity, path: string, scope: Scope): string[] {
+    const has = (p: string) => a.props.some((q) => q.name === p);
+    const given: string[] = [];
+    const checkIds = (list: { id: unknown }[], at: (i: number) => string) => {
+      const seen = new Set<string>();
+      list.forEach((x, i) => {
+        if (!isGraphId(x.id)) { add(`${at(i)}.id`, "GRAPH_BAD_ID", `id ${JSON.stringify(x.id)} は文字か _ で始まり、文字・数字・_ だけにする（XAML の x:Name になる）`); return; }
+        if (seen.has(x.id) || graphIds.has(x.id)) add(`${at(i)}.id`, "GRAPH_DUPLICATE_ID", `id "${x.id}" が重複している（ワークフローの中で1つにする）`);
+        seen.add(x.id);
+      });
+      for (const id of seen) graphIds.add(id);
+      return seen;
+    };
+    const reach = (start: string, links: (id: string) => string[]) => {
+      const seen = new Set<string>([start]);
+      const q = [start];
+      while (q.length) for (const to of links(q.shift()!)) if (!seen.has(to)) { seen.add(to); q.push(to); }
+      return seen;
+    };
+    const visitAll = (nodes: Node[], at: string, sc: Scope) => nodes.forEach((c, i) => visit(c, `${at}[${i}]`, sc));
+    // 図の中のオブジェクトに書けるキー（書き間違い・無いプロパティを弾く）
+    const keys = (o: object, allowed: string[], at: string) => { for (const k of Object.keys(o)) if (!allowed.includes(k)) add(`${at}.${k}`, "GRAPH_UNKNOWN_KEY", `"${k}" は書けない（書けるのは ${allowed.join(", ")}）`); };
+    const withVars = (vars: VariableDecl[] | undefined, at: string) => { const sc = new Map(scope); if (vars) declare(vars, at, sc, add); return sc; };
+
+    if (n.flowchart) {
+      const at = `${path}.flowchart`;
+      const fc = n.flowchart;
+      if (!has("Nodes") || !has("StartNode")) add(at, "BAD_SLOT", `flowchart は Flowchart だけ`);
+      given.push("Nodes", "StartNode");
+      if (!Array.isArray(fc.nodes) || !fc.nodes.length) { add(`${at}.nodes`, "GRAPH_EMPTY", "nodes に1つ以上のノードを書く"); return given; }
+      const ids = checkIds(fc.nodes, (i) => `${at}.nodes[${i}]`);
+      const byId = new Map(fc.nodes.map((f) => [f.id, f]));
+      if (!ids.has(fc.start)) add(`${at}.start`, "GRAPH_NO_START", `start "${fc.start ?? ""}" のノードが無い`);
+      fc.nodes.forEach((f, i) => {
+        const nat = `${at}.nodes[${i}]`;
+        const k = flowKind(f);
+        if (!k) { add(nat, "GRAPH_BAD_NODE", "ノードは act（FlowStep）・decision（FlowDecision）・switch（FlowSwitch）のどれか1つを書く"); return; }
+        for (const l of flowLinks(f)) if (!ids.has(l.to)) add(`${nat}.${l.label}`, "GRAPH_BAD_REF", `行き先 "${l.to}" のノードが無い`);
+        if (k === "step") {
+          const extra = ["decision", "switch", "true", "false", "cases", "default"].filter((x) => x in f);
+          if (extra.length) add(nat, "GRAPH_BAD_NODE", `FlowStep（act）に ${extra.join(", ")} は書けない`);
+          visit(stepNode(f as FlowStepDecl), nat, new Map(scope));
+        } else if (k === "decision") {
+          keys(f, ["id", "decision", "name", "true", "false"], nat);
+          if ("next" in f) add(`${nat}.next`, "GRAPH_BAD_NODE", "FlowDecision は next ではなく true / false で書く");
+          if (!isValueItem((f as FlowDecisionDecl).decision)) add(`${nat}.decision`, "GRAPH_BAD_NODE", "decision は真偽の式で書く");
+        } else {
+          const s = f as FlowSwitchDecl;
+          keys(f, ["id", "switch", "typeArg", "name", "cases", "default"], nat);
+          if ("next" in f) add(`${nat}.next`, "GRAPH_BAD_NODE", "FlowSwitch は next ではなく cases / default で書く");
+          if (!isValueItem(s.switch)) add(`${nat}.switch`, "GRAPH_BAD_NODE", "switch は式で書く");
+          if (s.typeArg !== undefined) checkType(s.typeArg, `${nat}.typeArg`, add);
+        }
+      });
+      if (ids.has(fc.start)) {
+        const r = reach(fc.start, (id) => (byId.has(id) ? flowLinks(byId.get(id)!).map((l) => l.to) : []));
+        fc.nodes.forEach((f, i) => { if (isGraphId(f.id) && !r.has(f.id)) add(`${at}.nodes[${i}]`, "GRAPH_UNREACHABLE", `ノード "${f.id}" に start からたどり着けない`); });
+      }
+    }
+
+    if (n.stateMachine) {
+      const at = `${path}.stateMachine`;
+      const sm = n.stateMachine;
+      if (!has("States") || !has("InitialState")) add(at, "BAD_SLOT", `stateMachine は StateMachine だけ`);
+      given.push("States", "InitialState");
+      if (!Array.isArray(sm.states) || !sm.states.length) { add(`${at}.states`, "GRAPH_EMPTY", "states に1つ以上の状態を書く"); return given; }
+      const ids = checkIds(sm.states, (i) => `${at}.states[${i}]`);
+      if (!ids.has(sm.initial)) add(`${at}.initial`, "GRAPH_NO_START", `initial "${sm.initial ?? ""}" の状態が無い`);
+      if (!sm.states.some((s) => s.final)) add(`${at}.states`, "SM_NO_FINAL", "終わりの状態（final: true）が1つも無い");
+      sm.states.forEach((s, i) => {
+        const sat = `${at}.states[${i}]`;
+        const sc = withVars(s.variables, `${sat}.variables`);
+        keys(s, ["id", "name", "final", "variables", "entry", "exit", "transitions"], sat);
+        if (s.final && s.transitions?.length) add(`${sat}.transitions`, "SM_FINAL_TRANSITION", "終わりの状態は遷移を持てない");
+        if (s.final && s.exit?.length) add(`${sat}.exit`, "SM_FINAL_TRANSITION", "終わりの状態は exit を持てない");
+        if (!s.final && !s.transitions?.length) add(sat, "SM_NO_TRANSITION", `状態 "${s.id}" に遷移が無い（終わりの状態なら final: true）`);
+        if (s.entry) visitAll(s.entry, `${sat}.entry`, new Map(sc));
+        if (s.exit) visitAll(s.exit, `${sat}.exit`, new Map(sc));
+        s.transitions?.forEach((t, j) => {
+          const tat = `${sat}.transitions[${j}]`;
+          keys(t, ["to", "name", "trigger", "condition", "action"], tat);
+          if (!ids.has(t.to)) add(`${tat}.to`, "GRAPH_BAD_REF", `行き先 "${t.to}" の状態が無い`);
+          if (t.condition !== undefined && !isValueItem(t.condition)) add(`${tat}.condition`, "GRAPH_BAD_NODE", "condition は真偽の式で書く");
+          if (t.trigger) visitAll(t.trigger, `${tat}.trigger`, new Map(sc));
+          if (t.action) visitAll(t.action, `${tat}.action`, new Map(sc));
+        });
+      });
+      if (ids.has(sm.initial)) {
+        const r = reach(sm.initial, (id) => (sm.states.find((s) => s.id === id)?.transitions ?? []).map((t) => t.to));
+        sm.states.forEach((s, i) => { if (isGraphId(s.id) && !r.has(s.id)) add(`${at}.states[${i}]`, "GRAPH_UNREACHABLE", `状態 "${s.id}" に initial からたどり着けない`); });
+      }
+    }
+
+    if (n.branches) {
+      const at = `${path}.branches`;
+      if (!has("Branches")) add(at, "BAD_SLOT", `branches は Pick だけ`);
+      given.push("Branches");
+      if (!Array.isArray(n.branches) || !n.branches.length) { add(at, "GRAPH_EMPTY", "branches に1つ以上の分岐を書く"); return given; }
+      n.branches.forEach((b, i) => {
+        const bat = `${at}[${i}]`;
+        const sc = withVars(b.variables, `${bat}.variables`);
+        keys(b, ["name", "variables", "trigger", "action"], bat);
+        if (!b.trigger?.length) add(`${bat}.trigger`, "PICK_NO_TRIGGER", "分岐には trigger が要る");
+        else visitAll(b.trigger, `${bat}.trigger`, new Map(sc));
+        if (b.action) visitAll(b.action, `${bat}.action`, new Map(sc));
+      });
+    }
+    return given;
+  }
+
   // 代入先は宣言済みの名前で始まること（a.b(0) のような式は先頭の名前だけ見る）
   function checkLValue(v: Value, at: string, scope: Scope) {
-    if (typeof v !== "string") { add(at, "OUT_NOT_LVALUE", "出力先は変数名（式）で書く"); return; }
-    const head = v.match(/^[A-Za-z_]\w*/)?.[0];
-    if (!head || !scope.has(head)) add(at, "UNDECLARED_NAME", `出力先 "${v}" が宣言されていない`);
+    // { vb, cs } / { cs }（C# の XAML から取り込んだ dt.Rows(0).Item などの出力先）も、先頭の名前を見る
+    const text = typeof v === "string" ? v : typeof v === "object" && "cs" in v ? v.vb ?? v.cs : undefined;
+    if (text === undefined) { add(at, "OUT_NOT_LVALUE", "出力先は変数名（式）で書く"); return; }
+    const head = text.match(IDENT_HEAD)?.[0];
+    if (!head || !scope.has(head)) add(at, "UNDECLARED_NAME", `出力先 "${text}" が宣言されていない`);
   }
 }
 
 function declare(vars: VariableDecl[], path: string, scope: Scope, add: (p: string, c: string, m: string) => void) {
   vars.forEach((v, i) => {
-    if (!/^[A-Za-z_]\w*$/.test(v.name)) add(`${path}[${i}]`, "BAD_NAME", `"${v.name}" は識別子にする`);
+    if (!IDENT.test(v.name)) add(`${path}[${i}]`, "BAD_NAME", `"${v.name}" は識別子にする`);
     checkType(v.type, `${path}[${i}]`, add);
     scope.set(v.name, v.type);
   });
@@ -269,9 +388,13 @@ export function argumentType(n: Node, a: Activity, scope: Map<string, string>): 
 }
 
 // 値（式・{ lit }・{ vb, cs }・数値・真偽値）か。lists の要素がオブジェクト（プロパティの辞書）かの見分けに使う
+// 識別子（VB と C# のどちらでも書ける名前）。日本語などの Unicode の文字も使える（Studio の変数名、ワークフロー名）
+export const IDENT = /^[\p{L}_][\p{L}\p{N}_]*$/u;
+export const IDENT_HEAD = /^[\p{L}_][\p{L}\p{N}_]*/u;
+
 export function isValueItem(v: unknown): v is Value {
   if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return true;
   if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
   const k = Object.keys(v).sort().join();
-  return k === "lit" || k === "cs,vb";
+  return k === "lit" || k === "cs,vb" || k === "cs";
 }

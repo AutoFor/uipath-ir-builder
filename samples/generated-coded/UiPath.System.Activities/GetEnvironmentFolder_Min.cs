@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             String folder = default;
             folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-            Log(message: Convert.ToString(System.IO.Path.GetFileName(folder)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(System.IO.Path.GetFileName(folder)));
         }
     }
 }

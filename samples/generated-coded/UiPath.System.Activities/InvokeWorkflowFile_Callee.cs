@@ -15,7 +15,7 @@ namespace CatalogProbeNet8
         public String Execute(String in_Name, Int32 in_Count)
         {
             String out_Message = default;
-            Log(message: "callee: " + in_Name + " x" + in_Count.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "callee: " + in_Name + " x" + in_Count.ToString());
             out_Message = "こんにちは、" + in_Name;
             return out_Message;
         }

@@ -16,7 +16,7 @@ namespace CatalogProbeNet8
         {
             // 資格情報を設定
             system.SetCredential(userName: "user1", password: "pw", credentialName: "IRCredential", folderPath: "Shared", timeoutMS: 30000);
-            Log(message: "資格情報を設定した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "資格情報を設定した");
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CatalogProbeNet8
             items = system.GetQueueItems(queueName: "IRQueue");
             // キューの項目を削除
             system.DeleteQueueItems(queueItems: items, timeoutMS: 30000);
-            Log(message: "削除した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "削除した");
         }
     }
 }

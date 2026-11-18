@@ -27,7 +27,7 @@ namespace CatalogProbeNet8
             var __xaml3 = RunWorkflow("coded/_xaml/VerifyControlAttribute_Min_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["ok"] = ok, ["txt"] = txt });
             ok = (Boolean)__xaml3["ok"];
             txt = (String)__xaml3["txt"];
-            Log(message: Convert.ToString("結果: " + ok.ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("結果: " + ok.ToString()));
         }
     }
 }

@@ -22,6 +22,7 @@ import { objectTypes, resolve } from "./catalog.ts";
 import { importXaml, parseXml, type El } from "./import-xaml.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 import { isValue, objDefaults } from "./uia.ts";
+import { graphChildren, graphNodes } from "./graph.ts";
 
 export const UIX = "http://schemas.uipath.com/workflow/activities/uix";
 const XNS = "http://schemas.microsoft.com/winfx/2006/xaml";
@@ -99,7 +100,7 @@ export const screenSearchHash = (t: ObjValue) => netHash(litOf(t.Selector) || li
 
 const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const escText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const attrText = (v: Value) => (typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
+const attrText = (v: Value) => (typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb ?? v.cs);
 const itemType = (t: string) => {
   const m = t.match(/^System\.Collections\.Generic\.(?:IEnumerable|List|IList|ICollection)<(.+)>$/);
   return m ? (m[1] === "UiPath.UIAutomationNext.Contracts.ITarget" ? "UiPath.UIAutomationNext.Target" : m[1]) : undefined;
@@ -260,14 +261,14 @@ export function readObjects(project: string, cat: Catalog): RepoState {
         const at = `${am.Name}/${sm.Name}`;
         const p = ss.content ? parseContent(ss.content, "screen", cat, at, issues) : undefined;
         if (!p) continue;
-        const screen: RepoScreen = { name: sm.Name ?? "", id: sm.Id, ...(p.keyed.InteractionMode ? { interactionMode: p.keyed.InteractionMode.trim() } : {}), target: p.target, elements: [] };
+        const screen: RepoScreen = { name: sm.Name ?? "", id: sm.Id, ...(p.keyed.InteractionMode ? { interactionMode: p.keyed.InteractionMode.trim() } : {}), target: stripLink(p.target), elements: [] }; // 中身に Studio が書いた Reference / ContentHash は外す
         for (const eDir of subdirs(sDir)) {
           const em = readMeta(eDir);
           if (!em || em.Type !== "Element") continue;
           const es = add(eDir, em, "ObjectRepositoryTargetData");
           const pe = es.content ? parseContent(es.content, "element", cat, `${at}/${em.Name}`, issues) : undefined;
           if (!pe) continue;
-          screen.elements!.push({ name: em.Name ?? "", id: em.Id, ...(em.TaxonomyType ? { taxonomy: em.TaxonomyType } : {}), ...(pe.keyed.ActivityType ? { activityType: pe.keyed.ActivityType.trim() } : {}), target: pe.target });
+          screen.elements!.push({ name: em.Name ?? "", id: em.Id, ...(em.TaxonomyType ? { taxonomy: em.TaxonomyType } : {}), ...(pe.keyed.ActivityType ? { activityType: pe.keyed.ActivityType.trim() } : {}), target: stripLink(pe.target) });
         }
         if (!screen.elements!.length) delete screen.elements;
         app.screens!.push(screen);
@@ -369,7 +370,7 @@ function literalOnly(v: ObjValue, t: ObjType | undefined, at: string, add: (p: s
     if (k === "Reference" || k === "ContentHash") { add(`${at}.${k}`, "REPO_SHAPE", `${k} はリポジトリが付ける。書かない`); continue; }
     if (Array.isArray(x)) { const it = objectTypes.get(itemType(p.type) ?? ""); x.forEach((e, i) => typeof e === "object" && !isValue(e) && literalOnly(e as ObjValue, it, `${at}.${k}[${i}]`, add)); continue; }
     if (!isValue(x)) { literalOnly(x as ObjValue, objectTypes.get(p.type), `${at}.${k}`, add); continue; }
-    if (typeof x === "object" && "vb" in x) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
+    if (typeof x === "object" && ("vb" in x || "cs" in x)) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
     if (typeof x === "string" && p.kind !== "prop" && !p.enum) add(`${at}.${k}`, "REPO_EXPR", `"${k}" に式 "${x}" は書けない。文字列なら { "lit": ... } で書く`);
   }
 }
@@ -440,7 +441,7 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
   const data = (w: Want, kind: "element" | "screen", content: (img?: { name: string; id: string }) => string, target: ObjValue, keyed: Record<string, string>, hash: number) => {
     const old = state.nodes.get(w.id);
     const prev = old && old.type === w.type ? parsedOld(w.id, kind) : undefined;
-    const sameContent = !!prev?.target && sameJson(withDefaults(prev.target, kind === "element" ? TA : TAPP), withDefaults(target, kind === "element" ? TA : TAPP)) && sameJson(prev.keyed ?? {}, keyed);
+    const sameContent = !!prev?.target && sameJson(withDefaults(stripLink(prev.target), kind === "element" ? TA : TAPP), withDefaults(target, kind === "element" ? TA : TAPP)) && sameJson(prev.keyed ?? {}, keyed);
     const d = kind === "element" ? ".data/ObjectRepositoryTargetData/" : ".data/ObjectRepositoryScreenData/";
     if (sameContent && old) {
       // 中身が同じなら、ContentHash も画像もそのまま（Studio で作った XAML と食い違わないように）
@@ -615,9 +616,9 @@ export function resolveRefs(wf: Workflow, state: RepoState, cat: Catalog): { wf:
   return { wf: copy, issues };
 }
 
-export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) => void, path = "body") {
+export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) => void, path = "body", exact = false) {
   (list ?? []).forEach((n, i) => {
-    const at = `${path}[${i}]`;
+    const at = exact ? path : `${path}[${i}]`;
     f(n, at);
     walkNodes(n.body, f, `${at}.body`);
     walkNodes(n.then, f, `${at}.then`);
@@ -625,6 +626,7 @@ export function walkNodes(list: Node[] | undefined, f: (n: Node, path: string) =
     for (const [k, v] of Object.entries(n.slots ?? {})) walkNodes(v, f, `${at}.slots.${k}`);
     for (const [k, v] of Object.entries(n.cases ?? {})) walkNodes(v, f, `${at}.cases.${k}`);
     (n.catches ?? []).forEach((c, j) => walkNodes(c.body, f, `${at}.catches[${j}].body`));
+    for (const g of graphNodes(n)) walkNodes([g.node], f, `${at}.${g.path}`, true);
   });
 }
 
@@ -674,6 +676,7 @@ export function registerTargets(wf: Workflow, repo: Repository, cat: Catalog, op
       for (const [k, v] of Object.entries(n.slots ?? {})) visit(v, `${at}.slots.${k}`, inner);
       for (const [k, v] of Object.entries(n.cases ?? {})) visit(v, `${at}.cases.${k}`, inner);
       (n.catches ?? []).forEach((c, j) => visit(c.body, `${at}.catches[${j}].body`, inner));
+      for (const g of graphChildren(n)) visit(g.nodes, `${at}.${g.path}`, inner);
     });
   };
 

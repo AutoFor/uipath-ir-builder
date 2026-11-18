@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["A1:B4"].FormatRange(format: new UiPath.Excel.Activities.Business.GeneralFormat {  }, alignment: null, font: null);
                 v1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["B2"].ReadCellValue(getFormattedText: true), typeof(Object));
             }
-            Log(message: "B2=" + Convert.ToString(v1), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "B2=" + Convert.ToString(v1));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace CatalogProbeNet8
             // 文字コードを指定して追記
             system.AppendLine(text: "い", file: res, useDefaultEncoding: false, encoding: "utf-8");
             txt = system.ReadTextFile(file: res, encoding: "utf-8");
-            Log(message: Convert.ToString(txt.Replace(Environment.NewLine, "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString(txt.Replace(Environment.NewLine, "|")));
         }
     }
 }

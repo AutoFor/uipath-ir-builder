@@ -30,7 +30,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["A1:B4"].Autofit(columns: true, rows: false);
                 v1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet1"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
             }
-            Log(message: "A1=" + Convert.ToString(v1), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "A1=" + Convert.ToString(v1));
         }
     }
 }

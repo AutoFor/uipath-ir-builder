@@ -39,7 +39,7 @@ namespace CatalogProbeNet8
             foreach (DataRow CurrentRow in dt.Rows)
             {
                 __row1++;
-                Log(message: Convert.ToString(CurrentRow["Name"].ToString()), level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: Convert.ToString(CurrentRow["Name"].ToString()));
             }
         }
     }

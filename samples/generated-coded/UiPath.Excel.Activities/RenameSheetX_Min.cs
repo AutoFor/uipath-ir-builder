@@ -24,10 +24,10 @@ namespace CatalogProbeNet8
             {
                 Excel.Sheet["Sheet2"].RenameSheet(name: "シート二");
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["シート二"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "シート二の A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "シート二の A1: [" + Convert.ToString(a1) + "]");
                 // 元の名前のシートを読む（無いと空のシートが作られる）
                 a1 = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["A1"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "Sheet2 の A1: [" + Convert.ToString(a1) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "Sheet2 の A1: [" + Convert.ToString(a1) + "]");
             }
         }
     }

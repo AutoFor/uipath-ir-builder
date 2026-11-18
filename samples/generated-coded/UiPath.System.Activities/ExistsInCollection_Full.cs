@@ -21,10 +21,10 @@ namespace CatalogProbeNet8
             Int32 pos2 = default;
             // b を探す
             pos = items.ToList().IndexOf("b"); found = pos >= 0;
-            Log(message: "found=" + found.ToString() + ", index=" + pos.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "found=" + found.ToString() + ", index=" + pos.ToString());
             // z を探す
             pos2 = items.ToList().IndexOf("z"); found2 = pos2 >= 0;
-            Log(message: "found=" + found2.ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "found=" + found2.ToString());
         }
     }
 }

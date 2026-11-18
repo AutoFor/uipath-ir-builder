@@ -17,7 +17,7 @@ namespace CatalogProbeNet8
         {
             IEnumerable<UiPath.Core.Activities.Storage.StorageFileInfo> files = default;
             files = system.ListStorageFiles(directory: "/", storageBucketName: "ir-bucket", folderPath: null, recursive: true, filter: null, timeoutMS: 30000);
-            Log(message: "ファイル数: " + files.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "ファイル数: " + files.Count().ToString());
         }
     }
 }

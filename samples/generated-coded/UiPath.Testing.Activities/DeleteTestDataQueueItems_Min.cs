@@ -18,7 +18,7 @@ namespace CatalogProbeNet8
             items = testing.GetTestDataQueueItems(queueName: "IRTestDataQueue");
             // テストデータを削除
             testing.DeleteTestDataQueueItems(testDataQueueItems: items);
-            Log(message: "削除した", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "削除した");
         }
     }
 }

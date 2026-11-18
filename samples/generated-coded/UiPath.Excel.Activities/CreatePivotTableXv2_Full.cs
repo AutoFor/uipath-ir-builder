@@ -31,7 +31,7 @@ namespace CatalogProbeNet8
                 __collect1.Values.Add(new ValuePivotTableFieldDescription { Name = "Double", Function = UiPath.Excel.PivotTableFunction.Sum });
                 Excel.Sheet["Sheet1"].Range["A1:C4"].CreatePivotTable(destinationTableName: "Pivot1", destination: Excel.Sheet["Sheet2"].Range["C3"], descriptor: __collect1);
                 t = (Object)Convert.ChangeType(Excel.Sheet["Sheet2"].Cell["D7"].ReadCellValue(getFormattedText: true), typeof(Object));
-                Log(message: "年齢の最大: [" + Convert.ToString(t) + "]", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "年齢の最大: [" + Convert.ToString(t) + "]");
             }
         }
     }

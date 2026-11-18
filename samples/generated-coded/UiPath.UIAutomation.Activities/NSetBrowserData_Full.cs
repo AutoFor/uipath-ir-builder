@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // UIA Test Form を開く
             // NApplicationCard は中に Coded API の無いアクティビティがあり、それだけをスコープの外に出せないので XAML 経由（coded/_xaml/NSetBrowserData_Full_1.xaml）
             RunWorkflow("coded/_xaml/NSetBrowserData_Full_1.xaml", new Dictionary<string, object> { ["htmlPath"] = htmlPath, ["browser"] = browser, ["sessionData"] = sessionData });
-            Log(message: "set done", level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "set done");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CatalogProbeNet8
                 Excel.Sheet["Sheet1"].Range["B1:B4"].ExportExcelToSCV(fileName: "output\\ExportExcelToCsvX_Min.csv");
             }
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\ExportExcelToCsvX_Min.csv"));
-            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("CSV: " + txt.Replace("\r", "").Replace("\n", "|")));
         }
     }
 }

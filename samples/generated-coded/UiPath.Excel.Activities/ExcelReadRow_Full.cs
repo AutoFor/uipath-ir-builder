@@ -23,8 +23,8 @@ namespace CatalogProbeNet8
                 // 3 行目を B から読む
                 row = ExcelWorkbookScope.ReadRow(sheetName: "Sheet1", startingCell: "B3", preserveFormat: true);
             }
-            Log(message: "件数: " + row.Count().ToString(), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: "行: " + String.Join(",", row), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "件数: " + row.Count().ToString());
+            Log(message: "行: " + String.Join(",", row));
         }
     }
 }

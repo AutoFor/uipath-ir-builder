@@ -29,7 +29,7 @@ namespace CatalogProbeNet8
             task = (UiPath.Persistence.Activities.FormTask.FormTaskData)__xaml2["out_TaskOutput"];
             if (action == "Approve")
             {
-                Log(message: "承認: " + comment, level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "承認: " + comment);
             }
             else
             {

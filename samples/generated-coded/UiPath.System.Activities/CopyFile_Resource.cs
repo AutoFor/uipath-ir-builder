@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
             // リソースでコピー
             system.CopyFile(path: ((UiPath.Platform.ResourceHandling.ILocalResource)src).LocalPath, destination: ((UiPath.Platform.ResourceHandling.ILocalResource)dst).LocalPath, overwrite: true);
             txt = system.ReadTextFile(file: LocalResource.FromPath("output\\CopyFile_Resource.dst.txt"));
-            Log(message: txt, level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: txt);
         }
     }
 }

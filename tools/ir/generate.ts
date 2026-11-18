@@ -2,7 +2,8 @@
 
 import type { Catalog, Activity, Prop } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
-import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue } from "./types.ts";
+import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue, CsExpr, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl } from "./types.ts";
+import { flowKind, flowLinks, stepNode, layoutGraph, hasGraph } from "./graph.ts";
 import { toXamlType, EXPRESSION_IMPORTS } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
 import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
@@ -98,6 +99,8 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   const ids = new Map<string, number>();
   const lines: string[] = [];
   let extra = 0;
+  // C# だけの式（{ cs }。C# の XAML から取り込んだもの）は VB の XAML に書けない
+  if (!cs) for (const at of csOnlyPaths(wf)) issues.push({ path: at, code: "VB_EXPR", message: `C# だけの式は VB の XAML に書けない。{ "vb": "...", "cs": "..." } で VB の式も書く` });
 
   const prefixFor = (uri: string) => {
     let p = knownPrefixes[uri];
@@ -110,7 +113,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     if ("error" in r) throw new Error(r.error); // validate 済みなら来ない
     for (const [p, u] of Object.entries(r.xmlns)) xmlns.set(p, u);
     // Data Fabric の表の型は Studio が entitiesStores から作るアセンブリにある。式から使えるよう参照と import を足す
-    if (r.xmlns.de) { refs.add("DataService.DataService.Entities"); imports.add("DataService.Entities"); }
+    { const m = r.xmlns.de ? /^clr-namespace:([\w.]+);assembly=([\w.]+)$/.exec(r.xmlns.de) : null; if (m) { refs.add(m[2]); imports.add(m[1]); } }
     // 式から引けるよう名前空間とアセンブリを足す型（types-xaml.ts の EXPRESSION_IMPORTS。無ければ build が BC30002 で落ちる）
     for (const u of Object.values(r.xmlns)) {
       const m = EXPRESSION_IMPORTS.has(u) ? /^clr-namespace:([\w.]+);assembly=([\w.]+)$/.exec(u) : null;
@@ -140,7 +143,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   };
   // 引数の要素（<InArgument> など）の中身。VB は [式]、C# は <mca:CSharpValue> / <mca:CSharpReference>（t は XAML の型表記）
   const argBody = (v: Value, t: string, ref: boolean, scope: Map<string, string>, at: string): string => {
-    if (!cs) return esc(`[${ref ? String(v) : exprText(v)}]`);
+    if (!cs) return esc(`[${ref && typeof v !== "object" ? String(v) : exprText(v)}]`);
     xmlns.set("mca", MCA);
     const k = ref ? "CSharpReference" : "CSharpValue";
     return `<mca:${k} x:TypeArguments="${t}">${esc(csText(v, scope, at))}</mca:${k}>`;
@@ -161,14 +164,17 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   const at = (n: Node, path: string) => { if (!paths.has(n)) paths.set(n, path); return n; };
   const sub = (base: string, k: string) => (base ? `${base}.${k}` : k);
 
-  // ルートは Sequence 1つにまとめる（ワークフローの変数はそこに付ける）
+  // ルートは Sequence 1つにまとめる（ワークフローの変数はそこに付ける）。
+  // 図（Flowchart・StateMachine・Pick）が1つだけで、ワークフローの変数が無ければ、Studio と同じくその図をルートにする
+  const graphRoot = wf.body.length === 1 && !wf.variables?.length && hasGraph(wf.body[0]);
   const root: Node =
-    wf.body.length === 1 && wf.body[0].act === "Sequence"
+    graphRoot ? wf.body[0]
+    : wf.body.length === 1 && wf.body[0].act === "Sequence"
       ? { ...wf.body[0], variables: [...(wf.variables ?? []), ...(wf.body[0].variables ?? [])] }
       : { act: "Sequence", name: wf.workflow, variables: wf.variables, body: wf.body };
 
   const scope = new Map((wf.arguments ?? []).map((a) => [a.name, a.type] as [string, string]));
-  emitNode(at(prepareUia(root, cat), wf.body.length === 1 && wf.body[0].act === "Sequence" ? "body[0]" : ""), 1, scope);
+  emitNode(at(prepareUia(root, cat), graphRoot || (wf.body.length === 1 && wf.body[0].act === "Sequence") ? "body[0]" : ""), 1, scope);
   const body = lines.splice(0);
 
   // ルート要素
@@ -262,7 +268,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     for (const [k, v] of Object.entries(n.cases ?? {})) mark(v, `cases.${k}`);
 
     const hasContent =
-      elems.length || csElems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length;
+      elems.length || csElems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length || n.flowchart || n.stateMachine || n.branches?.length;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -446,7 +452,156 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     }
     // Switch.Cases はコンテンツプロパティなので、x:Key 付きで子をそのまま並べる
     for (const [k, nodes] of Object.entries(n.cases ?? {})) emitNode(single(nodes, k), depth + 1, new Map(scope), k);
+    if (n.flowchart) flowchart(n, tag, depth + 1, scope, here);
+    if (n.stateMachine) stateMachine(n, tag, depth + 1, scope, here);
+    if (n.branches) pick(n, depth + 1, scope, here);
     emit(depth, `</${tag}>`);
+  }
+
+  // ---- 図（graph.ts）----
+  // ノードは id を x:Name にして、コンテンツ（Nodes / States）に IR の順で平らに並べる。矢印は <x:Reference>id</x:Reference>（後ろを指してもよい）。
+  // 位置（ViewState）は IR から決める。矢印の経路（ConnectorLocation）は書かず、Studio に引かせる
+
+  // ViewState の辞書。items は [キー, 型, 値]（型は av:Point / av:Size）
+  function viewState(depth: number, items: [string, string, string][]) {
+    xmlns.set("scg", "clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib");
+    xmlns.set("av", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+    emit(depth, `<sap:WorkflowViewStateService.ViewState>`);
+    emit(depth + 1, `<scg:Dictionary x:TypeArguments="x:String, x:Object">`);
+    for (const [k, t, v] of items) emit(depth + 2, `<${t} x:Key="${k}">${v}</${t}>`);
+    emit(depth + 1, `</scg:Dictionary>`);
+    emit(depth, `</sap:WorkflowViewStateService.ViewState>`);
+  }
+  function ref(depth: number, prop: string, id: string) {
+    emit(depth, `<${prop}>`);
+    emit(depth + 1, `<x:Reference>${esc(id)}</x:Reference>`);
+    emit(depth, `</${prop}>`);
+  }
+  // 図の中の式（条件など）。VB は属性 [式]（attrs に足す）、C# は要素の行を返す
+  function exprProp(v: Value, t: string, attrs: [string, string][], owner: string, prop: string, scope: Map<string, string>, at: string): string | undefined {
+    if (!cs) { attrs.push([prop, `[${exprText(v)}]`]); return undefined; }
+    return `<${owner}.${prop}>${argBody(v, typeText(t), false, scope, at)}</${owner}.${prop}>`;
+  }
+  function attrLine(attrs: [string, string][]) { return attrs.map(([k, v]) => ` ${k}="${esc(v)}"`).join(""); }
+  // 子が1つだけ入る場所（State.Entry、Transition.Trigger、PickBranch.Action など）
+  function childSlot(depth: number, prop: string, nodes: Node[] | undefined, path: string, sc: Map<string, string>) {
+    if (!nodes?.length) return;
+    nodes.forEach((c, j) => at(c, `${path}[${j}]`));
+    emit(depth, `<${prop}>`);
+    emitNode(single(nodes, prop.slice(prop.indexOf(".") + 1)), depth + 1, new Map(sc));
+    emit(depth, `</${prop}>`);
+  }
+  function graphVariables(depth: number, owner: string, vars: VariableDecl[] | undefined, sc: Map<string, string>, path: string) {
+    if (!vars?.length) return;
+    emit(depth, `<${owner}.Variables>`);
+    vars.forEach((v, j) => variable(v, depth + 1, sc, `${path}[${j}]`));
+    emit(depth, `</${owner}.Variables>`);
+  }
+
+  function flowchart(n: Node, tag: string, depth: number, scope: Map<string, string>, here: string) {
+    const fc = n.flowchart!;
+    const byId = new Map(fc.nodes.map((f) => [f.id, f]));
+    const lay = layoutGraph(fc.nodes.map((f) => f.id), fc.start, (id) => (byId.has(id) ? flowLinks(byId.get(id)!).map((l) => l.to) : []));
+    // ノードの中心 x = 300 + 260 * 列、上端 y = 110 + 110 * 行。開始の印（60x75）は (270, 2.5)
+    viewState(depth, [["ShapeLocation", "av:Point", "270,2.5"], ["ShapeSize", "av:Size", "60,75"]]);
+    ref(depth, `${tag}.StartNode`, fc.start);
+    fc.nodes.forEach((f, i) => {
+      const fat = sub(here, `flowchart.nodes[${i}]`);
+      const k = flowKind(f);
+      const [w, h] = k === "step" ? [200, 52] : [70, 70];
+      const p = lay.get(f.id)!;
+      const vs: [string, string, string][] = [["ShapeLocation", "av:Point", `${300 + 260 * p.col - w / 2},${110 + 110 * p.level}`], ["ShapeSize", "av:Size", `${w},${h}`]];
+      if (k === "step") {
+        const s = f as FlowStepDecl;
+        emit(depth, `<FlowStep x:Name="${esc(s.id)}" sap2010:WorkflowViewState.IdRef="${idRef("FlowStep")}">`);
+        viewState(depth + 1, vs);
+        emitNode(at(stepNode(s), fat), depth + 1, new Map(scope));
+        if (s.next !== undefined) ref(depth + 1, "FlowStep.Next", s.next);
+        emit(depth, `</FlowStep>`);
+      } else if (k === "decision") {
+        const d = f as FlowDecisionDecl;
+        const attrs: [string, string][] = [["x:Name", d.id]];
+        const el = exprProp(d.decision, "Boolean", attrs, "FlowDecision", "Condition", scope, `${fat}.decision`);
+        if (d.name) attrs.push(["DisplayName", d.name]);
+        attrs.push(["sap2010:WorkflowViewState.IdRef", idRef("FlowDecision")]);
+        emit(depth, `<FlowDecision${attrLine(attrs)}>`);
+        viewState(depth + 1, vs);
+        if (el) emit(depth + 1, el);
+        if (d.true !== undefined) ref(depth + 1, "FlowDecision.True", d.true);
+        if (d.false !== undefined) ref(depth + 1, "FlowDecision.False", d.false);
+        emit(depth, `</FlowDecision>`);
+      } else {
+        const s = f as FlowSwitchDecl;
+        const t = s.typeArg ?? "String";
+        const attrs: [string, string][] = [["x:TypeArguments", typeText(t)], ["x:Name", s.id]];
+        if (s.name) attrs.push(["DisplayName", s.name]);
+        const el = exprProp(s.switch, t, attrs, "FlowSwitch", "Expression", scope, `${fat}.switch`);
+        attrs.push(["sap2010:WorkflowViewState.IdRef", idRef("FlowSwitch`1")]);
+        emit(depth, `<FlowSwitch${attrLine(attrs)}>`);
+        viewState(depth + 1, vs);
+        if (el) emit(depth + 1, el);
+        if (s.default !== undefined) ref(depth + 1, "FlowSwitch.Default", s.default);
+        // Cases はコンテンツプロパティ（IDictionary<T, FlowNode>）。キーは x:Key
+        for (const [key, to] of Object.entries(s.cases ?? {})) emit(depth + 1, `<x:Reference x:Key="${esc(key)}">${esc(to)}</x:Reference>`);
+        emit(depth, `</FlowSwitch>`);
+      }
+    });
+  }
+
+  function stateMachine(n: Node, tag: string, depth: number, scope: Map<string, string>, here: string) {
+    const sm = n.stateMachine!;
+    const lay = layoutGraph(sm.states.map((s) => s.id), sm.initial, (id) => (sm.states.find((s) => s.id === id)?.transitions ?? []).map((t) => t.to));
+    // 状態（114x61）の左上 x = 100 + 220 * 列、y = 120 + 160 * 行。開始の印は (270, 2.5)
+    viewState(depth, [["ShapeLocation", "av:Point", "270,2.5"]]);
+    ref(depth, `${tag}.InitialState`, sm.initial);
+    sm.states.forEach((s, i) => {
+      const sat = sub(here, `stateMachine.states[${i}]`);
+      const inner = new Map(scope);
+      for (const v of s.variables ?? []) inner.set(v.name, v.type);
+      const p = lay.get(s.id)!;
+      const attrs: [string, string][] = [["x:Name", s.id], ["DisplayName", s.name ?? s.id]];
+      if (s.final) attrs.push(["IsFinal", "True"]);
+      attrs.push(["sap2010:WorkflowViewState.IdRef", idRef("State")]);
+      emit(depth, `<State${attrLine(attrs)}>`);
+      viewState(depth + 1, [["ShapeLocation", "av:Point", `${100 + 220 * p.col},${120 + 160 * p.level}`], ["ShapeSize", "av:Size", "114,61"]]);
+      graphVariables(depth + 1, "State", s.variables, inner, `${sat}.variables`);
+      childSlot(depth + 1, "State.Entry", s.entry, `${sat}.entry`, inner);
+      childSlot(depth + 1, "State.Exit", s.exit, `${sat}.exit`, inner);
+      if (s.transitions?.length) {
+        emit(depth + 1, `<State.Transitions>`);
+        s.transitions.forEach((t, j) => {
+          const tat = `${sat}.transitions[${j}]`;
+          const ta: [string, string][] = [];
+          const el = t.condition !== undefined ? exprProp(t.condition, "Boolean", ta, "Transition", "Condition", inner, `${tat}.condition`) : undefined;
+          if (t.name) ta.push(["DisplayName", t.name]);
+          ta.push(["sap2010:WorkflowViewState.IdRef", idRef("Transition")]);
+          emit(depth + 2, `<Transition${attrLine(ta)}>`);
+          childSlot(depth + 3, "Transition.Trigger", t.trigger, `${tat}.trigger`, inner);
+          ref(depth + 3, "Transition.To", t.to);
+          if (el) emit(depth + 3, el);
+          childSlot(depth + 3, "Transition.Action", t.action, `${tat}.action`, inner);
+          emit(depth + 2, `</Transition>`);
+        });
+        emit(depth + 1, `</State.Transitions>`);
+      }
+      emit(depth, `</State>`);
+    });
+  }
+
+  function pick(n: Node, depth: number, scope: Map<string, string>, here: string) {
+    n.branches!.forEach((b, i) => {
+      const bat = sub(here, `branches[${i}]`);
+      const inner = new Map(scope);
+      for (const v of b.variables ?? []) inner.set(v.name, v.type);
+      const attrs: [string, string][] = [];
+      if (b.name) attrs.push(["DisplayName", b.name]);
+      attrs.push(["sap2010:WorkflowViewState.IdRef", idRef("PickBranch")]);
+      emit(depth, `<PickBranch${attrLine(attrs)}>`);
+      graphVariables(depth + 1, "PickBranch", b.variables, inner, `${bat}.variables`);
+      childSlot(depth + 1, "PickBranch.Trigger", b.trigger, `${bat}.trigger`, inner);
+      childSlot(depth + 1, "PickBranch.Action", b.action, `${bat}.action`, inner);
+      emit(depth, `</PickBranch>`);
+    });
   }
 
   // ActivityAction / ActivityAction<T> / ActivityAction<T1, T2> を書く
@@ -480,7 +635,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
       emit(depth, `</Variable>`);
       return;
     }
-    const d = v.default !== undefined ? ` Default="${esc(`[${v.default}]`)}"` : "";
+    const d = v.default !== undefined ? ` Default="${esc(`[${typeof v.default === "object" ? vbOf(v.default) : v.default}]`)}"` : "";
     emit(depth, `<Variable x:TypeArguments="${t}"${d} Name="${esc(v.name)}" />`);
   }
 
@@ -507,7 +662,7 @@ function attrValue(v: Value, p: Prop): string {
 function literalAttr(v: Value, p: Prop): string | undefined {
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "True" : "False";
-  if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : v.vb);
+  if (p.kind === "prop") return markupEscape(typeof v === "string" ? v : "lit" in v ? v.lit : vbOf(v));
   if (typeof v === "string" && p.enum?.includes(v)) return v;
   // フラグの enum（"Keyboard, Mouse"）も属性にそのまま書く
   if (typeof v === "string" && v.includes(",") && p.enum && v.split(",").every((x) => p.enum!.includes(x.trim()))) return v;
@@ -517,6 +672,18 @@ function literalAttr(v: Value, p: Prop): string | undefined {
   return undefined;
 }
 
+// { vb, cs } の VB の式。{ cs } だけのときは VB_EXPR を出したうえで cs をそのまま置く（XAML は作れるが build で落ちる）
+function vbOf(v: CsExpr): string { return v.vb ?? v.cs; }
+
+// IR の中の C# だけの式（{ cs }）の場所
+export function csOnlyPaths(x: unknown, at = ""): string[] {
+  if (Array.isArray(x)) return x.flatMap((y, i) => csOnlyPaths(y, `${at}[${i}]`));
+  if (!x || typeof x !== "object") return [];
+  const keys = Object.keys(x);
+  if (keys.length === 1 && keys[0] === "cs" && typeof (x as { cs: unknown }).cs === "string") return [at];
+  return keys.flatMap((k) => csOnlyPaths((x as Record<string, unknown>)[k], at ? `${at}.${k}` : k));
+}
+
 // C# の文字列リテラル
 function csLit(s: string): string {
   return '"' + s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/\t/g, "\\t") + '"';
@@ -524,7 +691,7 @@ function csLit(s: string): string {
 
 // VB の式にする。{ lit } は文字列リテラル
 function exprText(v: Value): string {
-  if (typeof v === "object") return "lit" in v ? `"${v.lit.replace(/"/g, '""')}"` : v.vb;
+  if (typeof v === "object") return "lit" in v ? `"${v.lit.replace(/"/g, '""')}"` : vbOf(v);
   if (typeof v === "boolean") return v ? "True" : "False";
   return String(v);
 }

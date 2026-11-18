@@ -17,8 +17,8 @@ namespace CatalogProbeNet8
             Decimal n = default;
             // 1〜5、小数 2 桁
             n = testing.RandomNumber(min: 1, max: 5, decimals: 2);
-            Log(message: Convert.ToString("inRange=" + (n >= 1 && n <= 5)), level: UiPath.CodedWorkflows.LogLevel.Info);
-            Log(message: Convert.ToString("decimals<=2=" + (decimal.Round(n, 2) == n)), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: Convert.ToString("inRange=" + (n >= 1 && n <= 5)));
+            Log(message: Convert.ToString("decimals<=2=" + (decimal.Round(n, 2) == n)));
         }
     }
 }

@@ -83,7 +83,7 @@ C# の XAML の式（CSharpValue）は**式ツリー**にコンパイルされ�
 
 確かめた例（2026-11-04、`out/verify/cs-convert-run/`）：VB の XAML `samples/generated/{Main,Greet,Controls,PropForms}.xaml` を変換し、C# のテンプレートで run して、4つとも期待ログ（`samples/ir/*.expected.log`）どおり。`verify.mjs` は `*.xaml` をそのまま作業用プロジェクトに写して試せるようにした。
 
-変換できないもの：`samples/generated/VbExpressions.xaml`（名前付き引数で CS_EXPR）、C# の XAML（`CSHARP_EXPR`）、取り込めない XAML（Flowchart など）。
+変換できないもの：`samples/generated/VbExpressions.xaml`（名前付き引数で CS_EXPR）、C# の XAML（`CSHARP_EXPR`）、取り込めない XAML。
 
 ### C# → VB をやらない理由と、要るもの
 

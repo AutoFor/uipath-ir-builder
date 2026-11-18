@@ -15,13 +15,13 @@ namespace CatalogProbeNet8
         public void Execute()
         {
             {
-                Log(message: "branch1", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "branch1");
             }
             {
-                Log(message: "branch2", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "branch2");
             }
             {
-                Log(message: "branch3", level: UiPath.CodedWorkflows.LogLevel.Info);
+                Log(message: "branch3");
             }
         }
     }

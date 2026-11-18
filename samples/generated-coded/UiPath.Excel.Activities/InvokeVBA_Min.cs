@@ -24,7 +24,7 @@ namespace CatalogProbeNet8
                 var __xaml1 = RunWorkflow("coded/_activities/InvokeVBA.xaml", new Dictionary<string, object> { ["in_CodeFilePath"] = "data\\excel\\ExcelD_Vba.txt", ["in_EntryMethodName"] = "Main" });
                 res = (System.Object)__xaml1["out_OutputValue"];
             }
-            Log(message: "vba: " + Convert.ToString(res), level: UiPath.CodedWorkflows.LogLevel.Info);
+            Log(message: "vba: " + Convert.ToString(res));
         }
     }
 }
