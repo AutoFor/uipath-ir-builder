@@ -29,6 +29,13 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     checkType(a.type, `arguments[${i}]`, add);
     if (scope.has(a.name)) add(`arguments[${i}]`, "DUPLICATE_NAME", `"${a.name}" が重複している`);
     scope.set(a.name, a.type);
+    if (a.default !== undefined) {
+      const d = a.default as unknown;
+      const okLit = (typeof d === "object" && d !== null && typeof (d as { lit?: unknown }).lit === "string" && a.type === "String")
+        || (typeof d === "boolean" && a.type === "Boolean") || (typeof d === "number" && /^(Int32|Int64|Double|Decimal)$/.test(a.type));
+      if (a.dir !== "In") add(`arguments[${i}].default`, "BAD_ARG_DEFAULT", `既定値は In の引数にだけ書ける（${a.name} は ${a.dir}）`);
+      else if (!okLit) add(`arguments[${i}].default`, "BAD_ARG_DEFAULT", `${a.name}（${a.type}）の既定値は、String なら { "lit": "..." }、Boolean なら true / false、数値なら数で書く`);
+    }
   }
   declare(wf.variables ?? [], "variables", scope, add);
   wf.body.forEach((n, i) => visit(n, `body[${i}]`, new Map(scope)));

@@ -146,6 +146,16 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const emit = (depth: number, s: string) => { for (const l of s.split(NL)) lines.push("    ".repeat(depth) + l); };
 
   const ins = (wf.arguments ?? []).filter((a) => a.dir === "In");
+  // 引数の既定値は Execute の省略可能な引数（C# では、既定値のある引数のあとに、既定値の無い引数を置けない）
+  const csDefault = (a: (typeof ins)[number]) => {
+    const d = a.default;
+    if (d === undefined) return "";
+    return " = " + (typeof d === "object" ? JSON.stringify(d.lit) : typeof d === "boolean" ? String(d) : a.type === "Decimal" ? `${d}m` : String(d));
+  };
+  ins.forEach((a, i) => {
+    if (a.default === undefined && ins.slice(0, i).some((b) => b.default !== undefined))
+      add(`arguments.${a.name}`, "CODED_ARG_DEFAULT_ORDER", `${a.name} は既定値が無いのに、既定値のある引数のあとにある（C# では書けない）。既定値を足すか、引数の順番を変える`);
+  });
   const outs = (wf.arguments ?? []).filter((a) => a.dir === "Out");
   (wf.arguments ?? []).filter((a) => a.dir === "InOut").forEach((a) =>
     add(`arguments.${a.name}`, "CODED_INOUT", `InOut 引数 "${a.name}" は Coded では書けない（In と Out に分ける）`));
@@ -183,7 +193,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     `    public class ${wf.workflow} : CodedWorkflow`,
     "    {",
     isTestCase(wf) ? "        [TestCase]" : "        [Workflow]",
-    `        public ${ret} Execute(${ins.map((a) => `${csType(a.type)} ${a.name}`).join(", ")})`,
+    `        public ${ret} Execute(${ins.map((a) => `${csType(a.type)} ${a.name}${csDefault(a)}`).join(", ")})`,
     "        {",
     ...body,
     "        }",

@@ -392,12 +392,14 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
 
   const wf: Workflow = { workflow: "", body: [] };
   const scope = new Map<string, string>();
+  const argDefaults: { name: string; value: string; attr: string }[] = []; // this:<ワークフロー>.<引数>="値"（引数の既定値）。x:Members を読んでから付ける
   for (const a of root.attrs) {
     if (a.uri === XMLNS) continue;
     if (a.uri === X && a.local === "Class") { wf.workflow = a.value; continue; }
     if (a.uri === MC) continue;
     if (/ExpressionActivityEditor$/.test(a.local) && a.value === "C#") { c.drop("Activity", "その他", a.name, a.value); continue; } // 式の言語。生成器が --project の言語で足し直す
     if (ignorableAttr(a, root) || a.local === "VisualBasic.Settings") { if (a.value !== "{x:Null}") c.drop("Activity", dropKind(a.name), a.name, a.value); continue; }
+    if (a.uri === "clr-namespace:" && a.local.includes(".")) { argDefaults.push({ name: a.local.slice(a.local.lastIndexOf(".") + 1), value: a.value, attr: a.name }); continue; }
     if (a.local.startsWith(`${wf.workflow || "Main"}.`) || a.local.includes(".")) { c.warn("Activity", "ARGUMENT_DEFAULT", `引数の既定値など ${a.name}=${JSON.stringify(a.value)} は IR に書けないので捨てた`); continue; }
     c.warn("Activity", "UNKNOWN_ROOT_ATTR", `ルートの属性 ${a.name} を捨てた`);
   }
@@ -407,6 +409,15 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
   for (const k of root.kids) {
     if (k.uri === X && k.local === "Members") {
       wf.arguments = k.kids.flatMap((m) => argument(m));
+      for (const d of argDefaults) {
+        const arg = wf.arguments.find((x) => x.name === d.name);
+        const v = !arg || arg.dir !== "In" ? undefined
+          : arg.type === "String" ? { lit: d.value }
+          : arg.type === "Boolean" && /^(true|false)$/i.test(d.value) ? /^true$/i.test(d.value)
+          : /^(Int32|Int64|Double|Decimal)$/.test(arg.type) && /^-?\d+(\.\d+)?$/.test(d.value) ? Number(d.value) : undefined;
+        if (v === undefined) c.warn("Activity", "ARGUMENT_DEFAULT", `引数の既定値 ${d.attr}=${JSON.stringify(d.value)} は IR に書けないので捨てた`);
+        else arg!.default = v;
+      }
       if (!wf.arguments.length) delete wf.arguments;
       continue;
     }
