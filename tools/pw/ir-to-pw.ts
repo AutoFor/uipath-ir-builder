@@ -149,14 +149,17 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
       case "NCheckState": {
         const l = locator(n, path);
         if (!l) { emit(d, `// 変換できない: ${n.name ?? n.act}`); return; }
-        const state = p.Mode === "WaitVanish" ? "hidden" : "visible";
+        const state = p.Mode === "WaitDisappear" ? "hidden" : "visible";
         const ms = timeoutMs(p.Timeout, `${path}.props.Timeout`, "待つ時間");
         const to = typeof p.Exists === "string" ? names.get(p.Exists.toLowerCase()) : undefined;
-        emit(d, `${to ? `${to} = ` : ""}await waitState(${l}, "${state}", ${ms});`);
-        if (!n.then?.length && !n.else?.length) { /* 分岐なし */ }
+        // 出た・出ないの子は slots.IfExists / IfNotExists（XAML の Check State の 2 つの枠）
+        const yes = n.slots?.IfExists ?? [], no = n.slots?.IfNotExists ?? [];
+        if (!yes.length && !no.length) emit(d, `${to ? `${to} = ` : ""}await waitState(${l}, "${state}", ${ms});`);
         else {
-          emit(d, `if (${to ?? "true"}) {`); block(n.then, d + 1, `${path}.then`);
-          if (n.else?.length) { emit(d, "} else {"); block(n.else, d + 1, `${path}.else`); }
+          const v = to ?? "__exists";
+          emit(d, `${to ? "" : "const "}${v} = await waitState(${l}, "${state}", ${ms});`);
+          emit(d, `if (${v}) {`); block(yes, d + 1, `${path}.slots.IfExists`);
+          if (no.length) { emit(d, "} else {"); block(no, d + 1, `${path}.slots.IfNotExists`); }
           emit(d, "}");
         }
         rest(n, path, ["Mode", "Timeout", "Exists", "ScopeIdentifier"]);

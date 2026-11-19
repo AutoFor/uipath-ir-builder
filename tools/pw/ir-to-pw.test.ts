@@ -132,3 +132,11 @@ test("往復：Chrome で記録 → IR → Playwright を生成して動かす�
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("Check State の「出た」「出ない」の枠（slots.IfExists / IfNotExists）を if / else にする", () => {
+  const w: Workflow = { workflow: "S", body: [{ act: "NCheckState", objs: { Target: T("<webctrl id='x' />") }, props: { Mode: "WaitDisappear", Timeout: "3" },
+    slots: { IfExists: [{ act: "LogMessage", props: { Level: "Info", Message: { lit: "消えた" } } }], IfNotExists: [{ act: "LogMessage", props: { Level: "Warn", Message: { lit: "残った" } } }] } }] };
+  const r = irToPlaywright(w, undefined, opt);
+  assert.deepEqual(r.unconverted, []);
+  assert.match(r.code, /const __exists = await waitState\(page\.locator\("\[id=\\"x\\"\]"\)\.first\(\), "hidden", 3000\);\n\s+if \(__exists\) \{\n\s+log\("Info", "消えた"\);\n\s+\} else \{\n\s+log\("Warn", "残った"\);/);
+});
