@@ -33,7 +33,8 @@ export type Snapshot = {
 };
 export type Step = {
   i: number;
-  action: "goto" | "click" | "fill" | "text" | "wait" | "unsupported";
+  action: "goto" | "click" | "fill" | "text" | "wait" | "clickIf" | "unsupported";
+  appeared?: boolean; // clickIf：出たかどうか（出なければ element が無い）
   screen?: string;
   name?: string;
   page?: { url: string; title: string; lang: string };
@@ -118,6 +119,7 @@ const TAXONOMY: Record<string, [string, string]> = {
   fill: ["Input", "TypeInto"],
   text: ["Text", "GetText"],
   wait: ["Text", "CheckState"],
+  clickIf: ["Button", "Click"],
 };
 const ELEMENT_TYPE: Record<string, string> = { BUTTON: "Button", INPUT: "InputBox", TEXTAREA: "InputBox", A: "HyperLink", SELECT: "DropDown" };
 
@@ -164,7 +166,11 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     }
     if (s.action === "goto") return;
     const snaps = recs.map((r) => r.steps[i].element!).filter(Boolean);
-    if (snaps.length !== recs.length) throw new Error(`手順 ${i}（${s.name}）に要素の記録が無い`);
+    if (s.action === "clickIf") {
+      // 出たときだけ押すもの（Cookie のバナーなど）。出なかった言語の記録には要素が無い
+      if (!snaps.length) { unconverted.push({ step: i, what: s.name ?? "", why: "どの記録でも出なかったので、要素の属性が分からない" }); return; }
+      if (snaps.length !== recs.length) warnings.push(`手順 ${i}（${s.name}）は ${recs.filter((r) => r.steps[i].element).map((r) => r.locale).join("・")} の記録でしか出なかった。セレクターはその記録だけから決めた`);
+    } else if (snaps.length !== recs.length) throw new Error(`手順 ${i}（${s.name}）に要素の記録が無い`);
     for (const sn of snaps) {
       if (sn.inFrame) unconverted.push({ step: i, what: s.name ?? "", why: "iframe の中の要素（フレームのセレクターを足す必要がある。まだ作っていない）" });
       if (sn.inShadow) warnings.push(`手順 ${i}（${s.name}）は Shadow DOM の中。UiPath で探せるかは確かめていない`);
@@ -267,6 +273,15 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
         if (!vars.some((x) => x.name === v)) vars.push({ name: v, type: "Boolean" });
         cur.push({ act: "NCheckState", name: `${s.name} を待つ`, objs: { Target: ref(sc, s.name!) }, props: { Mode: "WaitAppear", Timeout: String(Math.round((s.timeoutMs ?? 30000) / 1000)), Exists: v } });
         cur.push({ act: "If", props: { Condition: `Not ${v}` }, then: [{ act: "Throw", props: { Exception: `New Exception("${s.name} が出ない")` } }] });
+        break;
+      }
+      case "clickIf": {
+        // 出たときだけ押す：Check State（出るまで待つ。出なくても止めない）＋ If ＋ Click
+        if (!screens.get(sc)?.elements.has(s.name!)) break; // どの記録でも出なかった（一覧に出してある）
+        const v = `found${i}`;
+        if (!vars.some((x) => x.name === v)) vars.push({ name: v, type: "Boolean" });
+        cur.push({ act: "NCheckState", name: `${s.name} が出たか`, objs: { Target: ref(sc, s.name!) }, props: { Mode: "WaitAppear", Timeout: String(Math.round((s.timeoutMs ?? 5000) / 1000)), Exists: v } });
+        cur.push({ act: "If", props: { Condition: v }, then: [{ act: "NClick", name: `${s.name} を押す`, objs: { Target: ref(sc, s.name!) } }] });
         break;
       }
     }

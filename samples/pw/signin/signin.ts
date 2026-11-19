@@ -12,8 +12,8 @@ try {
   const S = "サインイン";
   await rec.goto(S, "https://cloud.uipath.com/", { urlArg: "in_Url" });
   await rec.waitVisible(S, "メールで続ける", page.locator("[data-cy=authorize-with-email]"));
-  // Cookie のバナーは、出る・出ないがブラウザーのプロファイルで変わる。記録では閉じず、変換できないものとして残す
-  rec.unsupported("Cookie のバナー", "OneTrust のバナーは、出るかどうかがブラウザーの状態で変わる。UiPath では、出たときだけ閉じる手順（Check App State）を人が足す");
+  // Cookie のバナー（OneTrust）は、出る・出ないがブラウザーの状態で変わり、出るとボタンの上に重なる。出たときだけ × で閉じる（同意はしない）
+  await rec.clickIfVisible(S, "Cookie のバナーを閉じる", page.locator("#onetrust-banner-sdk .banner-close-button"), 8000);
   await rec.click(S, "メールで続ける", page.locator("[data-cy=authorize-with-email]"));
   await rec.fill(S, "メール欄", page.locator("[data-cy=login-email-input]"), "user@example.com", { valueArg: "in_Email" });
   await rec.text(S, "サインアップへのリンク", page.locator("[data-cy=login-goto-signup]"), "out_SignUp");

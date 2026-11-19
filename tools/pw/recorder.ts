@@ -124,6 +124,17 @@ export class UiRecorder {
     step.timeoutMs = timeoutMs;
   }
 
+  // 出たときだけ押す（Cookie のバナーを閉じるなど）。UiPath では Check State（出なくても止めない）＋ If ＋ Click
+  async clickIfVisible(screen: string, name: string, target: Locator, timeoutMs = 5000): Promise<boolean> {
+    let appeared = true;
+    try { await target.first().waitFor({ state: "visible", timeout: timeoutMs }); } catch (e) { if ((e as Error).name !== "TimeoutError") throw e; appeared = false; }
+    const step = await this.newStep("clickIf", screen, name, appeared ? target : undefined);
+    step.timeoutMs = timeoutMs;
+    step.appeared = appeared;
+    if (appeared) await target.first().click();
+    return appeared;
+  }
+
   // Playwright にしか無い操作を使ったことを残す（変換できないものの一覧に出る）
   unsupported(what: string, detail: string) {
     this.steps.push({ i: this.steps.length, action: "unsupported", what, detail });

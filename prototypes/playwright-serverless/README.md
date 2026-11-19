@@ -1,6 +1,7 @@
 # 試作：Coded ＋ Playwright（C#）をプロセスとして動かす（AUT-1214）
 
 > 2026-11-19：AUT-1219 で Playwright は TypeScript で書くと決めた。C# 版 Playwright はこれからは使わない。この試作は記録として残す。
+
 画面でしかできない Cloud の操作を、オブジェクトリポジトリではなく DOM ＋ Playwright で作れるかを見るための試作。Test Manager のテストではなく、Orchestrator のプロセス（ジョブ）として動かす。2026-11-19 に確かめた。
 
 - プロジェクト：Portable（クロスプラットフォーム）、C#、net8.0、依存は `UiPath.System.Activities 26.10.0` と `Microsoft.Playwright 1.65.0`
