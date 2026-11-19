@@ -158,6 +158,25 @@ node tools/verify/tm-run.mjs --test-set IRCU:2 --test-case IRCU:1 --expect "請�
   --name pwixp-run --template C:/Users/Public/uipath-cloud-ui/PwIxp --use-project --no-coded C:/Users/Public/uipath-cloud-ui/PwIxp/Main.xaml
 ```
 
+テストセットをまとめて流すときは、`--suite` を使う（1 つの実行に、テストケースごとの記録を書く）。
+
+```bash
+node tools/verify/tm-run.mjs --suite samples/pw/ircu.suite.json
+node tools/verify/tm-run.mjs --suite samples/pw/ircu.suite.json --only IRCU:1
+```
+
+`samples/pw/ircu.suite.json` に、テストケースのキー・期待するログの行・queue-run の引数を並べる。今の題材は次のとおり。どれも読むだけで、Playwright で記録 → XAML と Coded に変換 → ロボットで通した。
+
+| テストケース | 画面 | 台本 | 確かめること |
+| --- | --- | --- | --- |
+| IRCU:1 | IXP のプロジェクトの一覧（`/DefaultTenant/reinfer_`） | `samples/pw/ixp` | `ixp_trial_invoices` が出る |
+| IRCU:3 | Agents のテンプレートの一覧（`agents_/templates`） | `samples/pw/agents` | `Language Detection Agent` のカードが出る |
+| IRCU:4 | Studio Web の Cloud Workspace（`studio_/projects`） | `samples/pw/studioweb` | `IrAppCheckSolution` の行が出る |
+
+2026-11-19 に、`--suite` で 3 件とも Passed になった（1 つの実行に 3 件の記録）。
+
+流れは次のとおり。
+
 1. `uip tm testsets run --execution-type manual` で手動の実行を作る（ロボットのジョブは動かない）
 2. `uip tm testcaselog start` で、テストケースの記録を始める
 3. `queue-run.mjs` で流す

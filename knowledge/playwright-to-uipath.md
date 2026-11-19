@@ -179,7 +179,7 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
 
 - Playwright にしか無い操作（`page.route`、`page.evaluate` など）。スクリプトで `rec.unsupported(...)` を呼んで残す
 - 別のオリジンの iframe の中の要素（iframe の属性を読めない）、iframe を 1 つに決める属性が無いもの
-- Shadow DOM の中の要素は、警告だけ（UiPath で探せるかは確かめていない）
+- Shadow DOM の中の要素。UiPath の webctrl のセレクターでは見つからなかった（2026-11-19、Agents のテンプレートの一覧の表 `grid-container`）。shadow DOM の外の要素で確かめる
 - CSS のパスにしか決まらない要素
 - `clickIfVisible` で、どの言語でも出なかった要素（属性が分からない）。片方の言語でしか出なければ、その記録だけでセレクターを決める（警告）
 
