@@ -28,6 +28,9 @@ test("check：よくある誤りを見つける", () => {
   assert.deepEqual(msgs({ ...base, auth: { type: "apiKey" } }), ["auth"], "header か query のどちらか");
   assert.deepEqual(msgs({ ...base, auth: { type: "apiKey", header: "X-Key", validate: "v1/me" } }), ["auth.validate"]);
   assert.deepEqual(msgs({ ...base, activities: [] }), ["activities"]);
+  assert.deepEqual(msgs({ ...base, version: "1.0" }), ["version"]);
+  assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "POST", path: "/a", hooks: { preRequest: "return 1;" } }] }), ["activities[0].hooks.preRequest"], "done で返す");
+  assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "POST", path: "/a", hooks: { onError: "done();" } as never }] }), ["activities[0].hooks.onError"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "Items", method: "GET", path: "items" }] }), ["activities[0].name", "activities[0].path"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "GET", path: "/a" }, { name: "a", method: "POST", path: "/a" }] }), ["activities[1].name"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "GET", path: "/a", request: [{ name: "x" }] }] }), ["activities[0].request"]);
@@ -47,11 +50,13 @@ test("fieldsOf：request / response をメソッドの下に、required もメ�
   ]);
 });
 
-test("plan：init → auth set → activity create → validate。apiKey は customApiKey、Bearer は prefix", () => {
+test("plan：init → auth set → activity create → hook create → validate。apiKey は customApiKey、Bearer は prefix", () => {
   const { commands, issues } = plan(sample("line-messaging.json"), { organization: "acme" });
   assert.deepEqual(issues, []);
-  assert.deepEqual(commands.map((c) => c.args.slice(3, 5).join(" ")), ["init --name", "auth set", "activity create", "validate --connector-dir"]);
-  const [init, auth, act] = commands;
+  assert.deepEqual(commands.map((c) => c.args.slice(3, 6).join(" ")), ["init --name LINE Messaging API", "auth set --connector-dir", "activity create --connector-dir", "activity hook create", "validate --connector-dir {root}"]);
+  const [init, auth, act, hook] = commands;
+  assert.deepEqual(hook.args.slice(6), ["--connector-dir", "{root}", "--resource-name", "push_message", "--method", "POST", "--hook-type", "preRequest", "--custom-code-file", "hook-push_message-preRequest.js"]);
+  assert.match(hook.files!["hook-push_message-preRequest.js"], /done\(\{ request_vendor_body: \{ to: b\.to, messages: \[\{ type: 'text', text: b\.text \}\] \} \}\);\n$/);
   assert.ok(init.args.includes("--organization") && init.args.includes("acme"));
   assert.deepEqual(auth.args.slice(5), ["--connector-dir", "{root}", "--auth-type", "customApiKey", "--api-key-param-name", "Authorization", "--api-key-prefix", "Bearer ", "--key-config-display-name", "チャネルアクセストークン", "--validation-vendor-path", "/v2/bot/info", "--validation-method", "GET"].slice(0));
   assert.ok(act.args.includes("--fields-file") && act.files?.["fields-push_message.json"]);
@@ -83,7 +88,11 @@ test("run：見本を CLI でローカルに作り、validate が通る（テナ
     assert.ok(e.parameters.some((p: { vendorName: string; name: string }) => p.vendorName === "Authorization" && p.name === "Bearer ${configuration.custom.api.key}"));
     assert.deepEqual(e.resources.map((x: { method: string; vendorPath: string }) => `${x.method} ${x.vendorPath}`).sort(), ["GET /v2/bot/info", "POST /v2/bot/message/push"]);
     const sr = JSON.parse(readFileSync(join(el, "standard-resources", "push_message.json"), "utf8"));
-    assert.equal(sr.fields["messages[*].text"].method.POST.required, true);
+    assert.equal(sr.fields["text"].method.POST.required, true);
+    // フック：resource-<name>-<method>-<type>.js に置かれ、element.json の resources[].hooks に登録される
+    const push = e.resources.find((x: { method: string; path: string }) => x.method === "POST" && x.path === "/push_message");
+    assert.deepEqual(push.hooks.map((h: { type: string; ref: string }) => `${h.type} ${h.ref}`), ["preRequest resource-push_message-POST-preRequest.js"]);
+    assert.match(readFileSync(join(el, "hooks", "resource-push_message-POST-preRequest.js"), "utf8"), /request_vendor_body/);
     assert.equal(sr.fields["sentMessages[*].id"].method.POST.response, true);
     assert.equal(sr.fields["to"].displayName, "送り先");
   } finally {

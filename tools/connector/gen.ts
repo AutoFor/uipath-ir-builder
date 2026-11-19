@@ -5,6 +5,9 @@
 //   - 認証の種類（apiKey は customApiKey。Bearer は prefix "Bearer " で、トークンは暗号化される PASSWORD の欄になる）
 //   - フィールドの per-method の形（request / response、required はメソッドの下）
 //   - 引数は配列で node から CLI に渡す（シェルを通さないので Git Bash のパスの書き換えが起きない）
+//   - フック（preRequest / postRequest の JS）は activity hook create で置く。配列の本文を Studio の平らな欄から組み立てるのに使う
+//     （Studio のデザイナーは、親の欄 "x[*]" の無い "x[*].y" を捨てる。knowledge/connector-builder.md）
+// Studio の XAML（Insert Record など）は tools/connector/xaml.ts
 // knowledge/connector-builder.md
 //
 // 使い方:
@@ -37,6 +40,8 @@ export type ActivityIr = {
   path: string; // ベース URL からのパス（/ で始める）
   request?: FieldIr[];
   response?: FieldIr[];
+  // JS のフック。文字列か行の配列。return ではなく done({...}) で返す（使える変数は uip is connectors builder activity hook create --help）
+  hooks?: { preRequest?: string | string[]; postRequest?: string | string[] };
 };
 
 export type AuthIr =
@@ -48,6 +53,8 @@ export type AuthIr =
 export type ConnectorIr = {
   connector: string; // 表示名。キーは design-{組織}-{名前を小文字にして記号を除いたもの}
   description?: string;
+  // 公開する版（publish --version）。公開し直すときは前より上げる（同じ版は「must be higher than the existing version」で落ちる）。省くと 1.0.0
+  version?: string;
   categories?: string[];
   baseUrl: string;
   headers?: Record<string, string>; // すべての呼び出しに付ける固定のヘッダー
@@ -67,6 +74,7 @@ export function check(ir: ConnectorIr): Issue[] {
   const bad = (path: string, message: string) => out.push({ path, message });
   if (!ir.connector?.trim()) bad("connector", "コネクタの名前が要る");
   if (!/^https:\/\/[^/\s]+/.test(ir.baseUrl ?? "")) bad("baseUrl", "https:// で始まる URL にする");
+  if (ir.version !== undefined && !/^\d+\.\d+\.\d+$/.test(ir.version)) bad("version", "1.0.1 のような x.y.z にする");
   if (/\/$/.test(ir.baseUrl ?? "")) bad("baseUrl", "最後の / は付けない（パスは activities[].path に / から書く）");
   for (const c of ir.categories ?? []) if (!CATEGORIES.some((x) => x.toLowerCase() === c.toLowerCase())) bad("categories", `「${c}」は使えない。使えるのは ${CATEGORIES.join(", ")}`);
   const a = ir.auth;
@@ -93,10 +101,16 @@ export function check(ir: ConnectorIr): Issue[] {
         if (side === "response" && f.required) bad(`${p}.response[${j}].required`, "required は request だけ");
       });
     }
+    for (const [k, v] of Object.entries(act.hooks ?? {})) {
+      if (k !== "preRequest" && k !== "postRequest") bad(`${p}.hooks.${k}`, "preRequest か postRequest");
+      else if (!/\bdone\s*\(/.test(hookCode(v))) bad(`${p}.hooks.${k}`, "done(...) を呼ぶ（return ではなく done で返す）");
+    }
     if (act.method === "GET" && act.request?.length) bad(`${p}.request`, "GET に本文は無い（クエリの引数はまだ扱っていない）");
   });
   return out;
 }
+
+export const hookCode = (v: string | string[] | undefined) => (Array.isArray(v) ? v.join("\n") : v ?? "");
 
 /** アクティビティのフィールドを CLI の --fields-file の形にする（同じ名前の request と response は1つにまとめる） */
 export function fieldsOf(act: ActivityIr): Record<string, unknown>[] {
@@ -162,6 +176,13 @@ export function plan(ir: ConnectorIr, opt: { organization?: string } = {}): { co
         ...(fields.length ? ["--fields-file", file] : [])],
       ...(fields.length ? { files: { [file]: JSON.stringify(fields, null, 2) + "\n" } } : {}),
     });
+    for (const [type, code] of Object.entries(act.hooks ?? {})) {
+      const js = `hook-${act.name}-${type}.js`;
+      commands.push({
+        args: [...B, "activity", "hook", "create", ...at, "--resource-name", act.name, "--method", act.method, "--hook-type", type, "--custom-code-file", js],
+        files: { [js]: hookCode(code) + "\n" },
+      });
+    }
   }
   commands.push({ args: [...B, "validate", ...at] });
   return { commands, issues: [] };
@@ -192,7 +213,7 @@ export function run(ir: ConnectorIr, work: string, opt: { organization?: string;
     log.push({ args: real, result: j.Result ?? `exit ${r.status}`, data: j.Data });
     return { ok: r.status === 0 && j.Result === "Success", j, raw: text || r.stderr };
   };
-  for (const c of [...commands, ...(opt.import ? [{ args: ["is", "connectors", "import", "--connector-dir", "{root}"] }] : []), ...(opt.publish ? [{ args: ["is", "connectors", "publish", "--connector-dir", "{root}", "--wait"] }] : [])]) {
+  for (const c of [...commands, ...(opt.import ? [{ args: ["is", "connectors", "import", "--connector-dir", "{root}"] }] : []), ...(opt.publish ? [{ args: ["is", "connectors", "publish", "--connector-dir", "{root}", "--wait", ...(ir.version ? ["--version", ir.version] : [])] }] : [])]) {
     for (const [name, content] of Object.entries(c.files ?? {})) writeFileSync(join(work, name), content);
     const r = call(c.args);
     if (!r.ok) return { ok: false, root, key, log, error: `${c.args.slice(0, 4).join(" ")}: ${r.j.Message ?? r.raw.slice(0, 2000)}` };

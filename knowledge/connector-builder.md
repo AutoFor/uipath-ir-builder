@@ -66,6 +66,7 @@ node tools/connector/gen.ts <ir.json> --out <空のフォルダ> --import [--pub
 {
   "connector": "LINE Messaging API",
   "description": "LINE 公式アカウントからプッシュメッセージを送る",
+  "version": "1.0.1",
   "categories": ["Messaging"],
   "baseUrl": "https://api.line.me",
   "auth": {
@@ -83,12 +84,17 @@ node tools/connector/gen.ts <ir.json> --out <空のフォルダ> --import [--pub
       "path": "/v2/bot/message/push",
       "request": [
         { "name": "to", "label": "送り先", "required": true, "primary": true },
-        { "name": "messages[*].type", "label": "種類", "sample": "text" },
-        { "name": "messages[*].text", "label": "本文", "required": true, "primary": true }
+        { "name": "text", "label": "本文", "required": true, "primary": true }
       ],
       "response": [
         { "name": "sentMessages[*].id", "label": "送ったメッセージの ID" }
-      ]
+      ],
+      "hooks": {
+        "preRequest": [
+          "const b = request_body_map || {};",
+          "done({ request_vendor_body: { to: b.to, messages: [{ type: 'text', text: b.text }] } });"
+        ]
+      }
     }
   ]
 }
@@ -97,7 +103,10 @@ node tools/connector/gen.ts <ir.json> --out <空のフォルダ> --import [--pub
 - `auth.type`：`apiKey`（customApiKey。Bearer もこれ）・`oauth2`・`basic`・`none` から始める。
 - フィールドは `request` / `response` に分けて書き、生成器が per-method の `method` に直す（`required` もメソッドの下へ。同じ名前は1つにまとめる）。`primary: true` は画面で最初から出す項目。
 - `auth.validate` は接続を作るときに GET で呼ぶ読み取りだけの API（`provisionAuthValidation` のリソースになる）。
-- まだ扱っていないもの：GET のクエリの引数、ページング、パスの引数（`/items/{id}`）、トリガー、フック。
+- `version`：公開する版（`publish --version` に渡す）。**公開し直すときは前より上げる**。同じ版だと publish のジョブが「Invalid version: 1.0.0 provided. The version must be higher than the existing version」で FAILURE になる（理由は `uip is connectors publish-status <publishId>` で見える）。`init` に版の選択肢は無い。
+- `hooks`：アクティビティの JS のフック（`preRequest` / `postRequest`。文字列か行の配列）。生成器は `activity hook create --resource-name <name> --method <M> --hook-type <型> --custom-code-file` で置く。ファイルは `app/element/hooks/resource-<name>-<M>-<型>.js`、`element.json` の `resources[].hooks` に `contextParams`（本文で使った変数）付きで登録される。返すのは `return` ではなく `done({...})`（check がこれを調べる）。使える変数は `uip is connectors builder activity hook create --help` の HOOK BODY CONTEXT。
+- **配列の本文は平らな欄＋フックにする**（下の「Studio に配列の欄が出ない」）。LINE は `to`・`text` の2つの欄にし、preRequest で `request_body_map`（Studio から来た本文）を `request_vendor_body`（LINE に送る本文）の `messages: [{type:'text', text}]` に組み立てる。
+- まだ扱っていないもの：GET のクエリの引数、ページング、パスの引数（`/items/{id}`）、トリガー。
 
 ## テナントに上げて呼ぶ（確かめた。2026-11-19）
 
@@ -117,12 +126,67 @@ uip is resources run create custom-autofor-linemessagingapi push_message --conne
 ## Studio・Coded から呼ぶ（調べた。2026-11-19、使い捨てのクロスプラットフォームのプロジェクト）
 
 - `uip rpa packages install`（`UiPath.IntegrationService.Activities` 1.36.0）を入れると、`uip rpa activities find --query "<コネクタ名>"` で動的なアクティビティが出る：`UiPath.IntegrationService.Activities.Runtime.Activities.ConnectorActivity`、`isDynamicActivity: true`、`configuration` は `{"connectorKey":"custom-…","activityType":"Generic","operation":"Create"}`（Insert Record）と `"List"`（List Records）。`activityTypeId` は GUID（コネクタ・操作ごと）。
-- `uip rpa activities get-default-xaml --activity-type-id <GUID> --connection-id <接続>` は、`<isactr:ConnectorActivity ConnectionId=… UiPathActivityTypeId=… Configuration="{x:Null}">` と空の `FieldObjects` だけを返す。**オブジェクト（push_message）とフィールドは入らない**（`--object-name` は「No dynamic-activities service is registered」で落ちる。パッケージを入れる前は TypeLoadException）。オブジェクトとフィールドは Studio のデザイナーで選んだときに `Configuration` に入る形らしい。**実物は Studio で一度作って見る必要がある**。
+- `uip rpa activities get-default-xaml --activity-type-id <GUID> --connection-id <接続>` は、`<isactr:ConnectorActivity ConnectionId=… UiPathActivityTypeId=… Configuration="{x:Null}">` と空の `FieldObjects` だけを返す。**オブジェクト（push_message）とフィールドは入らない**（`--object-name` は「No dynamic-activities service is registered」で落ちる。パッケージを入れる前は TypeLoadException）。オブジェクトとフィールドは Studio のデザイナーで選んだときに `Configuration` に入る。形は下の「Studio の XAML（Insert Record）」。
 - **Coded**：プロジェクトの `connections`（`ConnectionsManager`）に、自作コネクタのメンバーは無い（`connections.LINE_Messaging_API` などは CS1061）。`ConnectionsManager` はどのパッケージの DLL にも無く、Studio が作るもの。GSuite・Office365 のように、Coded の API を持つパッケージ（`CodedWorkflowsConnectionsAttribute`）のコネクタだけが出るらしい。**自作コネクタは Coded から直接は呼べない**（呼ぶならその部分だけ XAML。[coded-via-xaml.md](coded-via-xaml.md)）。
+
+## Studio の XAML（Insert Record）（確かめた。2026-11-19、Studio 26.10・UiPath.IntegrationService.Activities 1.36.0）
+
+Studio（C#・Portable のプロジェクト）で「LINE Messaging API」→「Insert Record」を置き、接続（Common の LINE）とオブジェクト push_message を選んで保存した XAML：
+
+```xml
+<isactr:ConnectorActivity Configuration="H4sIAAAA…" ConnectionId="<接続の Id>" DisplayName="Insert Record"
+    sap2010:WorkflowViewState.IdRef="ConnectorActivity_2" UiPathActivityTypeId="e2c7639a-829c-322b-bd62-a896f4b6f881">
+  <isactr:ConnectorActivity.FieldObjects>
+    <isactr:FieldObject Name="_to" Type="FieldArgument">
+      <isactr:FieldObject.Value><InArgument x:TypeArguments="x:String">…</InArgument></isactr:FieldObject.Value>
+    </isactr:FieldObject>
+    <isactr:FieldObject Name="out_sentMessages_array_sub_id" Type="FieldArgument" />
+  </isactr:ConnectorActivity.FieldObjects>
+</isactr:ConnectorActivity>
+```
+
+- **Configuration**：JSON を gzip して base64 にしたもの（`H4sI` で始まる）。中身は `FieldsContainer`（`InputFields`・`OutputFields`。名前・表示名・説明・型・`Design.Position`・`Required`・`FieldLocation`）、`InstanceParameters`（`ConnectorKey: custom-autofor-linemessagingapi`、`ActivityType: Generic`、`Operation: Create`）、`CachedLookupValues.ObjectName`、`ConnectorName`・`ConnectorVersion`、`ObjectName: push_message`、`HttpMethod: POST`、`Path: /push_message`（Integration Service の内部のパス。LINE のパスではない）、`Language: ja`、`PackageVersion: 1.36.0` など。**すべて IR とコネクタの版から組み立てられる**（生成器の結果は、Studio が保存したものと JSON として一致した。`xaml.test.ts`）。
+- **欄の値**：`FieldObjects` の `<isactr:FieldObject Name="<識別子>" Type="FieldArgument">` に `InArgument` で入れる（C# の式は `<mca:CSharpValue>`）。項目があるときは `FieldObject` を直に並べる（空のときだけ `<sco:Collection x:TypeArguments="isactr:FieldObject" />`）。
+- **識別子**：ランタイムの `NamingHelper.GetValidDesignPropertyName`。`.` → `_sub_`、`[*]` → `_array`、出力は先頭に `out_`。C# か VB で識別子にできない名前は先頭に `_` を付ける（`to` は VB の予約語なので `_to`、`text` はそのまま）。
+- **接続**：`ConnectionId` に Id を直に書く。`bindings_v2.json` は作られず、`.project` も変わらない（`PackageBindingsMetadata.json` の ConnectorActivity は `FromInstanceProperty: BindingsJson` だけ）。保存で増えたのは `entry-points.json` と `.tmh/config.json`。
+- **UiPathActivityTypeId**：コネクタと操作ごとの GUID（Insert Record は `e2c7639a-…`、List Records は `0a72ea47-…`）。IR からは作れないので `uip rpa activities find --query "<コネクタ名>"` で引いて渡す。コネクタを 1.0.1 で公開し直しても同じ GUID で動いた。
+- List Records（オブジェクトは System）を置くと `Path: /auth_validation`・`HttpMethod: GET` の Configuration になる（`auth.validate` のリソース）。
+
+### Studio に配列の欄が出ない
+
+最初の LINE のコネクタ（欄 `to`・`messages[*].type`・`messages[*].text`）では、Studio の Insert Record に `to` しか出ず、Configuration の `InputFields` にも `to` しか入らなかった（本文が無いので LINE は送れない）。`uip is resources describe` には3つとも出る。
+
+DLL（`UiPath.IntegrationService.Activities.dll` 1.36.0。`ilspycmd` で逆コンパイル）を読むと、デザイナーの `FieldsService` は：
+
+- `IsSupportedField`：`x[*].y` は、親の欄 `x[*]` が欄の一覧にあるときだけ残す。
+- `ComputeInputFieldsAsync`：`x[*]` の子をまとめて、`x[*]` の JIT 型（接続ごとに作る型。名前にハッシュが入る）のリストの欄を1つ作る。親の欄が無いと、子を消したうえで飛ばす。
+
+親の欄 `messages[*]` を足す手もあるが、Studio では JIT 型のリストを渡す形になり、XAML に型名が入るので生成しにくい。**平らな欄（`to`・`text`）にして preRequest のフックで配列に組み立てる**ことにした（コネクタ 1.0.1）。
+
+### 生成器（`tools/connector/xaml.ts`）
+
+```bash
+uip rpa activities find --query "LINE Messaging"      # Insert Record の activityTypeId を引く（プロジェクトに IS のパッケージが要る）
+node tools/connector/xaml.ts samples/connector/line-messaging.json --activity push_message \
+  --connection <接続の Id> --type-id <Insert Record の GUID> [--organization autofor] \
+  --set to=@in_To --set 'text=本文' --arg in_To --out Main.xaml
+```
+
+- `--set 欄=値`：`@` で始めると C# の式、そうでなければ文字列そのまま。`--arg` は Main の String の入力引数。
+- 出すのは Insert Record（POST）を1つ持つ C# の Main。imports と AssemblyReference は Studio が保存したもの（`UiPath.IntegrationService.Activities.Runtime` など）。
+- 検査：必須の欄に値が無い・知らない欄・配列の欄（`[*]`。Studio が捨てる）・GUID の形。
+- 出力の欄（`out_…`）は値の無い FieldObject だけ置く（変数に受けるのはまだ扱っていない）。
+
+### 実行（確かめた）
+
+`.work/LineConnectorTest`（uipath-ir-builder の下。`.git/info/exclude` でコミットしない）の Main.xaml を生成器で作り、`uip rpa pack --package-id IrTest_LineConnector` → `uip or packages upload` → `uip or processes create --folder-path 1_Test` → `uip or jobs start <Key> --folder-path 1_Test --runtime-type Serverless --input-arguments '{"in_To":"U…"}' --wait-for-completion`。
+
+- ジョブは Successful（7 秒）で、LINE にメッセージが届いた（preRequest のフックが `messages` を組み立てている）。**サーバーレスのロボットから、別のフォルダ（Common）の接続で呼べた**。
+- pack（コンパイル）で、生成した ConnectorActivity の XAML が読めることも分かる。
 
 ## まだ確かめていないこと
 
-- Studio のデザイナーで Insert Record（オブジェクト push_message・フィールド）を作ったときの XAML の実物（`Configuration` の形）と、`bindings_v2.json`（接続のバインド）
-- サーバーレス（Linux）のロボットから呼ぶ
+- 出力の欄（`sentMessages[*].id`）を変数に受ける XAML の形
+- 接続をフォルダごとに差し替える（バインド）。今は ConnectionId を直に書くので、本番は接続の Id を変えて作り直す
 - 単独のアクティビティ（curated）として出す方法
-- 公開したコネクタを消す・版を上げる（`element-metadata.json` の latestVersion を上げて publish）
+- 公開したコネクタを消す

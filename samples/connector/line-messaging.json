@@ -1,6 +1,7 @@
 {
   "connector": "LINE Messaging API",
   "description": "LINE 公式アカウントからプッシュメッセージを送る（RPA の通知用）",
+  "version": "1.0.1",
   "categories": ["Messaging"],
   "baseUrl": "https://api.line.me",
   "auth": {
@@ -18,12 +19,18 @@
       "path": "/v2/bot/message/push",
       "request": [
         { "name": "to", "label": "送り先", "description": "ユーザー ID（U から始まる）またはグループ ID", "required": true, "primary": true },
-        { "name": "messages[*].type", "label": "種類", "sample": "text", "enum": ["text"] },
-        { "name": "messages[*].text", "label": "本文", "required": true, "primary": true }
+        { "name": "text", "label": "本文", "description": "送る文（テキストのメッセージ1つにして送る）", "required": true, "primary": true }
       ],
       "response": [
         { "name": "sentMessages[*].id", "label": "送ったメッセージの ID" }
-      ]
+      ],
+      "hooks": {
+        "preRequest": [
+          "// Studio の欄は平ら（to・text）。LINE の本文 { to, messages: [{ type: 'text', text }] } に組み立てる",
+          "const b = request_body_map || {};",
+          "done({ request_vendor_body: { to: b.to, messages: [{ type: 'text', text: b.text }] } });"
+        ]
+      }
     }
   ]
 }
