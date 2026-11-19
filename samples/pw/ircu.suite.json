@@ -1,0 +1,22 @@
+{
+  "$comment": "Test Manager の IRCU（Cloud の画面の見張り）のテストセット。node tools/verify/tm-run.mjs --suite samples/pw/ircu.suite.json で、DESKTOP の窓口で流して結果を書く（AUT-1214）。どれも読むだけ",
+  "testSet": "IRCU:2",
+  "profile": "trial",
+  "cases": [
+    {
+      "testCase": "IRCU:1",
+      "expect": ["請求書のプロジェクト: ixp_trial_invoices"],
+      "queue": ["--name", "pwixp-run", "--template", "C:/Users/Public/uipath-cloud-ui/PwIxp", "--use-project", "--no-coded", "C:/Users/Public/uipath-cloud-ui/PwIxp/Main.xaml"]
+    },
+    {
+      "testCase": "IRCU:3",
+      "expect": ["言語判定のテンプレート: Language Detection Agent"],
+      "queue": ["--name", "pwagents-run", "--template", "C:/Users/Public/uipath-cloud-ui/PwAgents", "--use-project", "--no-coded", "C:/Users/Public/uipath-cloud-ui/PwAgents/Main.xaml"]
+    },
+    {
+      "testCase": "IRCU:4",
+      "expect": ["IrAppCheck のソリューション:", "IrAppCheckSolution"],
+      "queue": ["--name", "pwstudioweb-run", "--template", "C:/Users/Public/uipath-cloud-ui/PwStudioWeb", "--use-project", "--no-coded", "C:/Users/Public/uipath-cloud-ui/PwStudioWeb/Main.xaml"]
+    }
+  ]
+}

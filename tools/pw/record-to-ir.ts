@@ -229,7 +229,8 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       if (snaps.length !== recs.length) warnings.push(`手順 ${i}（${s.name}）は ${recs.filter((r) => r.steps[i].element).map((r) => r.locale).join("・")} の記録でしか出なかった。セレクターはその記録だけから決めた`);
     } else if (snaps.length !== recs.length) throw new Error(`手順 ${i}（${s.name}）に要素の記録が無い`);
     for (const sn of snaps) {
-      if (sn.inShadow) warnings.push(`手順 ${i}（${s.name}）は Shadow DOM の中。UiPath で探せるかは確かめていない`);
+      // Shadow DOM の中の要素は、UiPath の普通の webctrl のセレクターでは見つからなかった（2026-11-19、Agents のテンプレートの一覧。AUT-1214）
+      if (sn.inShadow) unconverted.push({ step: i, what: s.name ?? "", why: "Shadow DOM の中の要素（UiPath の webctrl のセレクターでは見つからなかった）。shadow DOM の外の要素で確かめる" });
       if ((sn.locatorCount ?? 1) > 1) warnings.push(`手順 ${i}（${s.name}）の locator は ${sn.locatorCount} 個に当たった（記録は先頭の要素）`);
     }
     const key = s.name ?? `要素${i}`;
