@@ -149,6 +149,27 @@ IR に `"testCase"` を書くと、テストケースとして作る。見本は
 
 - Studio の画面で Coded のテストケースを作ったとき、fileInfoCollection に載るか。載るなら、Studio からは run ではなくテストとして流す前提なのかもしれない。
 
+## 窓口で流した結果を Test Manager に書く（2026-11-19、AUT-1214）
+
+DESKTOP のロボットは autofor のテナントにつながっていて、Sorahane Trial には Testing の枠のあるマシンが無い。そこで、ロボットのつなぎ先は変えず、流すのは窓口（`queue-run.mjs`）にして、結果だけを Test Manager の手動の実行として書く。
+
+```bash
+node tools/verify/tm-run.mjs --test-set IRCU:2 --test-case IRCU:1 --expect "請求書のプロジェクト: ixp_trial_invoices" -- \
+  --name pwixp-run --template C:/Users/Public/uipath-cloud-ui/PwIxp --use-project --no-coded C:/Users/Public/uipath-cloud-ui/PwIxp/Main.xaml
+```
+
+1. `uip tm testsets run --execution-type manual` で手動の実行を作る（ロボットのジョブは動かない）
+2. `uip tm testcaselog start` で、テストケースの記録を始める
+3. `queue-run.mjs` で流す
+4. 合否を決める：queue-run が OK で、`--expect` の行がすべてロボットのログ（`out/verify/<名前>/report.json` の `run.logs`）にあれば Passed。それ以外は Failed ＋ `has-error`
+5. `uip tm testcaselog finish` で書き、`result.txt`（合否の理由とロボットのログ）と `report.md` を、テストケースの記録に添付する
+
+- `uip tm` は Cloud の API なので SSH から動かしてよい。`uip rpa` は使わない
+- Test Manager のプロジェクトは `IRCU`（Cloud の画面の見張り（IR））。テストケース `IRCU:1`（IXP の一覧）、テストセット `IRCU:2`。どれも手動のテストケース（automation のリンクなし）
+- 確かめたこと：通った回（Passed）と、わざと期待を違えた回（Failed、has-error true）の両方が、結果の履歴（`uip tm testcases list-result-history`）に残った。添付は `uip tm attachment download --execution-id … --result-path …` で取れた
+- `testcaselog finish` は `--executed-by` が要る。渡した値は使われず、サインインしているアカウントが「実行した人」になった
+- `--step-logs` は、テストケースの手動の手順（`testStepId`）と手順の記録の Id が要る。手順を作っていないので使わず、詳しいことは添付に書く
+
 ## Playwright のテストを Test Manager に載せる（文書。AUT-1205 の 35）
 
 - 流れ：`uip tm project create` → `set-default-folder` → `uip tm pack --project-path . --type playwright …` → `uip or packages upload` → `uip tm testsets run`（Playwright の project は `--playwright-projects`）。
