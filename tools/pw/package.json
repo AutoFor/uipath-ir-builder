@@ -1,0 +1,9 @@
+{
+  "name": "uipath-ir-builder-pw",
+  "private": true,
+  "description": "Playwright（TypeScript）の記録用（AUT-1219）。ここにだけ入れる（tools/ir は依存なしのまま）。ブラウザーはロボットと同じ Chrome（channel: chrome）を使うので、playwright-core だけ",
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "1.65.0"
+  }
+}

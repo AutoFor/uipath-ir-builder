@@ -1,17 +1,18 @@
 # Playwright の操作を UiPath の XAML と Coded にする（AUT-1219）
 
-Playwright（C#）で画面を操作しながら、操作した要素の属性を記録する。記録から IR とオブジェクトリポジトリ（`<P>/ir/repository.json`）を作り、あとはいつもの生成器（`gen.ts`・`gen-coded.ts`）で XAML と Coded を作る。逆向き（UiPath → Playwright）はまだ作っていない。
+Playwright（TypeScript）で画面を操作しながら、操作した要素の属性を記録する。記録から IR とオブジェクトリポジトリ（`<P>/ir/repository.json`）を作り、あとはいつもの生成器（`gen.ts`・`gen-coded.ts`）で XAML と Coded を作る。逆向き（UiPath → Playwright）はこのあと作る。C# 版 Playwright（Microsoft.Playwright）は使わない（`prototypes/playwright-serverless/` は記録として残す）。
 
 ## 流れ
 
-1. Playwright のスクリプトに `tools/pw/UiRecorder.cs` を足し、操作を `rec.GotoAsync` / `ClickAsync` / `FillAsync` / `TextAsync` / `WaitVisibleAsync` で書く。見本は `samples/pw/signin/`（UiPath のサインイン画面。パスワードは入れず、送らない）
+1. スクリプトで `tools/pw/recorder.ts` の `launch` と `UiRecorder` を import し、操作を `rec.goto` / `click` / `fill` / `text` / `waitVisible` で書く（Playwright にしか無い操作は `rec.unsupported`）。見本は `samples/pw/signin/signin.ts`（UiPath のサインイン画面。パスワードは入れず、送らない）
+   - `playwright-core` は `tools/pw` にだけ入れる（`cd tools/pw && npm install`）。ブラウザーはロボットと同じ Chrome（`channel: "chrome"`）で、Playwright 用のものは落とさない
 2. 日本語と英語で 1 回ずつ流す（`BrowserNewContextOptions.Locale`）
    ```bash
-   cd samples/pw/signin && dotnet run -- ja-JP rec/signin.ja.json && dotnet run -- en-US rec/signin.en.json
+   node samples/pw/signin/signin.ts ja-JP && node samples/pw/signin/signin.ts en-US
    ```
 3. IR とリポジトリにする（変換できなかったものは `<P>/ir/<名前>.conversion.md` に出る）
    ```bash
-   node tools/pw/record-to-ir.ts --project <P> --workflow Main --app "UiPath サインイン" --browser Chrome rec/signin.ja.json rec/signin.en.json
+   node tools/pw/record-to-ir.ts --project <P> --workflow Main --app "UiPath サインイン" --browser Chrome samples/pw/signin/rec/signin.ja.json samples/pw/signin/rec/signin.en.json
    node tools/ir/objrepo.ts build --project <P>
    node tools/ir/gen.ts <P>/ir/Main.json --project <P> --out <P>
    ```
@@ -51,3 +52,4 @@ Playwright（C#）で画面を操作しながら、操作した要素の属性�
 ## 生成器の直し（このとき）
 
 - Coded の `TargetAnchorableModel` / `TargetAppModel` で、リポジトリから足した `Reference` が引用符なしの式になっていた。属性に書く文字列は C# の文字列にした。`Guid` は Studio の `ObjectRepository.cs` も書かないので、Coded では書かない（`tools/ir/uia.ts`）
+- 記録の道具を C# から TypeScript に書き直した（2026-11-19）。同じ画面の記録から、C# 版と同じ IR・`repository.json`・変換の一覧になることを確かめた。`tools/pw/recorder.test.ts` は手元の Chrome で小さなページを 2 言語で記録する（Chrome が無ければ飛ばす）

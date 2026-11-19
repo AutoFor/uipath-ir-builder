@@ -1,4 +1,4 @@
-// Playwright（C#）の記録（tools/pw/UiRecorder.cs が書く JSON）から、IR と <P>/ir/repository.json を作る（AUT-1219）。
+// Playwright（TypeScript）の記録（tools/pw/recorder.ts が書く JSON）から、IR と <P>/ir/repository.json を作る（AUT-1219）。
 //
 //   node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge]
 //        [--interaction-mode <NInteractionMode>] <record.ja.json> [<record.en.json>]
@@ -40,6 +40,7 @@ export type Step = {
   element?: Snapshot;
   url?: string;
   urlArg?: string;
+  urlAfter?: string;
   value?: string;
   valueArg?: string;
   outVar?: string;
@@ -48,7 +49,7 @@ export type Step = {
   what?: string;
   detail?: string;
 };
-export type Recording = { version: number; locale: string; browser?: string; steps: Step[] };
+export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; recordedAt?: string; steps: Step[] };
 
 export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean };
 export type Unconverted = { step: number; what: string; why: string };
