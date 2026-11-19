@@ -83,3 +83,20 @@ test("workflow：C# の Main（入力引数・imports に Integration Service）
   assert.match(x, /<x:String>UiPath.IntegrationService.Activities.Runtime.Activities<\/x:String>/);
   assert.equal(decode(x).length, 1);
 });
+
+test("insertRecord：改行などのある文字列は C# の文字列の式で書く（XAML の要素の中の文字は空白がまとめられ、改行が消えるため）", async () => {
+  const { csString, needsCsLiteral } = await import("./xaml.ts");
+  assert.equal(needsCsLiteral("1行目\n2行目"), true);
+  assert.equal(needsCsLiteral("a\tb"), true);
+  assert.equal(needsCsLiteral(" 前に空白"), true);
+  assert.equal(needsCsLiteral("後ろに空白 "), true);
+  assert.equal(needsCsLiteral("間に  2つ"), true);
+  assert.equal(needsCsLiteral("ふつうの 文"), false);
+  // 入力は本物の改行・引用符・\・タブ。出力は C# のエスケープ（String.raw はバックスラッシュをそのまま）
+  assert.equal(csString('改行\r\nと "引用" と \\ とタブ\t'), String.raw`"改行\r\nと \"引用\" と \\ とタブ\t"`);
+
+  const x = insertRecord(line, { ...opt, values: { to: { lit: "Uxxx" }, text: { lit: "1行目\n2行目 & <3>" } } });
+  assert.match(x, /<InArgument x:TypeArguments="x:String">Uxxx<\/InArgument>/, "改行の無い文字列はそのまま");
+  assert.ok(x.includes(String.raw`<mca:CSharpValue x:TypeArguments="x:String">&quot;1行目\n2行目 &amp; &lt;3&gt;&quot;</mca:CSharpValue>`), "改行は \\n、\" & < は XAML のエスケープ");
+  assert.doesNotMatch(x, /1行目\n2行目/, "要素の中に改行をそのまま書かない");
+});

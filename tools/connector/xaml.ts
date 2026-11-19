@@ -119,6 +119,13 @@ export function checkInsertRecord(ir: ConnectorIr, opt: InsertRecordOpt): Issue[
   return out;
 }
 
+/** XAML の要素の中に文字のまま書くと変わってしまう文字列か（改行・タブ・前後の空白・連続した空白は、XAML の空白のまとめで消える・1つになる） */
+export const needsCsLiteral = (s: string) => /[\r\n\t]/.test(s) || /^\s|\s$/.test(s) || / {2,}/.test(s);
+
+/** 文字列を C# の文字列リテラルにする（"…"。\ " 改行・タブなどは \ でエスケープ） */
+export const csString = (s: string) =>
+  `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/\t/g, "\\t").replace(/[\u0000-\u001f]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`)}"`;
+
 const xType = (t: FieldIr["type"]) => ({ number: "x:Double", integer: "x:Int64", boolean: "x:Boolean", date: "s:DateTime" } as Record<string, string>)[t ?? "string"] ?? "x:String";
 
 /** Insert Record の <isactr:ConnectorActivity> 要素 */
@@ -134,9 +141,11 @@ export function insertRecord(ir: ConnectorIr, opt: InsertRecordOpt, indent = "  
     const v = opt.values[f.name];
     if (!v) continue;
     const t = xType(f.type);
-    const body = "lit" in v
-      ? `<InArgument x:TypeArguments="${t}">${esc(v.lit)}</InArgument>`
-      : `<InArgument x:TypeArguments="${t}">\n${i4}  <mca:CSharpValue x:TypeArguments="${t}">${esc(v.cs)}</mca:CSharpValue>\n${i4}</InArgument>`;
+    // 文字列の値に改行・タブ・前後や連続の空白があるときは、C# の文字列の式にする（要素の中の文字は XAML が空白をまとめるので、改行が空白になってしまう）
+    const cs = "lit" in v ? (t === "x:String" && needsCsLiteral(v.lit) ? csString(v.lit) : undefined) : v.cs;
+    const body = cs === undefined
+      ? `<InArgument x:TypeArguments="${t}">${esc((v as { lit: string }).lit)}</InArgument>`
+      : `<InArgument x:TypeArguments="${t}">\n${i4}  <mca:CSharpValue x:TypeArguments="${t}">${esc(cs)}</mca:CSharpValue>\n${i4}</InArgument>`;
     objs.push(`${i2}<isactr:FieldObject Name="${fieldId(f.name)}" Type="FieldArgument">\n${i3}<isactr:FieldObject.Value>\n${i4}${body}\n${i3}</isactr:FieldObject.Value>\n${i2}</isactr:FieldObject>`);
   }
   for (const f of act.response ?? []) objs.push(`${i2}<isactr:FieldObject Name="${fieldId(f.name, true)}" Type="FieldArgument" />`);
