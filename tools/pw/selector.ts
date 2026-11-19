@@ -53,74 +53,120 @@ function cssAttr(k: string, v: string): string | undefined {
   return `[${k}${s && e ? "*=" : e ? "^=" : "$="}${cssStr(inner)}]`;
 }
 
-export function selectorToLocator(sel: string, root = "page"): LocatorResult {
-  const nodes = parseSelector(sel);
-  if (typeof nodes === "string") return { why: nodes };
-  const notes: string[] = [];
-  const parts: string[] = [];
-  let first = true;
-  for (const n of nodes) {
-    if (n.tag === "html") {
-      if (first && parts.length === 0) continue; // 画面（ブラウザー）のセレクターがフルセレクターの先頭にあるとき
-      return { why: "<html> がセレクターの途中にある" };
+// webctrl の 1 行を読む。css：CSS で書ける部分。text：innertext・aaname の正規表現。label：aria-label の正規表現。nth：idx
+type Row = { css: string; text?: string; label?: string; nth?: number; frame: boolean };
+function readRow(n: SelNode): Row | { why: string } {
+  if (n.tag !== "webctrl") return { why: `<${n.tag}> は Web の要素ではない（デスクトップのアプリの操作は Playwright に無い）` };
+  const matching = new Map(n.attrs.filter(([k]) => k.startsWith("matching:")).map(([k, v]) => [k.slice(9), v]));
+  for (const [k, how] of matching) if (how === "fuzzy") return { why: `${k} のあいまい一致（matching:${k}='fuzzy'）は Playwright に無い` };
+  let css = "", tag = "", cssSel = "", ancestor = "";
+  const row: Row = { css: "", frame: false };
+  for (const [k, v] of n.attrs) {
+    if (k.startsWith("matching:") || k.startsWith("fuzzylevel:") || k.startsWith("check:")) continue;
+    const regex = matching.get(k) === "regex";
+    if (regex && k === "aria-label") { row.label = v; continue; }
+    if (regex && k !== "aaname" && k !== "innertext") return { why: `${k} の正規表現（matching:${k}='regex'）は CSS で書けない` };
+    if (k === "tag") { tag = v.toLowerCase(); continue; }
+    if (k === "css-selector") { cssSel = v; continue; }
+    if (k === "parentid") { const a = cssAttr("id", v); if (!a) return { why: `parentid='${v}' のワイルドカードは CSS で書けない` }; ancestor = `${a} `; continue; }
+    if (k === "idx") { const x = Number(v); if (!Number.isInteger(x) || x < 1) return { why: `idx='${v}' は直せない` }; row.nth = x - 1; continue; }
+    if (k === "aaname" || k === "innertext") { row.text = regex ? v : wildRe(v); continue; }
+    const name = k === "aria-role" ? "role" : k;
+    if (CSS_ATTRS.has(name) || name.startsWith("data-") || name.startsWith("aria-")) {
+      const a = cssAttr(name, v);
+      if (!a) return { why: `${k}='${v}' のワイルドカードは CSS で書けない` };
+      css += a;
+      continue;
     }
-    if (n.tag !== "webctrl") return { why: `<${n.tag}> は Web の要素ではない（デスクトップのアプリの操作は Playwright に無い）` };
-    const matching = new Map(n.attrs.filter(([k]) => k.startsWith("matching:")).map(([k, v]) => [k.slice(9), v]));
-    for (const [k, how] of matching) if (how === "fuzzy") return { why: `${k} のあいまい一致（matching:${k}='fuzzy'）は Playwright に無い` };
-    let css = "";
-    let tag = "";
-    let cssSel = "";
-    let ancestor = "";
-    const tail: string[] = [];
-    for (const [k, v] of n.attrs) {
-      if (k.startsWith("matching:") || k.startsWith("fuzzylevel:")) continue;
-      const regex = matching.get(k) === "regex";
-      if (regex && k === "aria-label") { tail.push(`.and(${root}.getByLabel(new RegExp(${JSON.stringify(v)})))`); continue; }
-      if (regex && k !== "aaname" && k !== "innertext") return { why: `${k} の正規表現（matching:${k}='regex'）は CSS で書けない` };
-      if (k === "tag") { tag = v.toLowerCase(); continue; }
-      if (k === "css-selector") { cssSel = v; continue; }
-      if (k === "parentid") { const a = cssAttr("id", v); if (!a) return { why: `parentid='${v}' のワイルドカードは CSS で書けない` }; ancestor = `${a} `; continue; }
-      if (k === "idx") { const i = Number(v); if (!Number.isInteger(i) || i < 1) return { why: `idx='${v}' は直せない` }; tail.push(`.nth(${i - 1})`); continue; }
-      if (k === "aaname" || k === "innertext") {
-        const re = regex ? v : wildRe(v);
-        tail.push(`.filter({ hasText: new RegExp(${JSON.stringify(re)}) })`);
-        continue;
-      }
-      const name = k === "aria-role" ? "role" : k;
-      if (CSS_ATTRS.has(name) || name.startsWith("data-") || name.startsWith("aria-")) {
-        const a = cssAttr(name, v);
-        if (!a) return { why: `${k}='${v}' のワイルドカードは CSS で書けない` };
-        css += a;
-        continue;
-      }
-      return { why: `webctrl の属性 ${k} は直せない` };
-    }
-    const full = ancestor + (cssSel ? `:is(${cssSel})${css}` : (tag || (css ? "" : "*")) + css);
-    parts.push(`.locator(${JSON.stringify(full)})${tail.join("")}`);
-    first = false;
+    return { why: `webctrl の属性 ${k} は直せない` };
   }
-  if (!parts.length) return { why: "webctrl が無い" };
-  // UiPath は当たった要素の先頭を使う。Playwright の strict（2 つ以上でエラー）にしないように first にする
-  return { ts: `${root}${parts.join("")}.first()`, notes };
+  row.frame = tag === "iframe" || tag === "frame";
+  row.css = ancestor + (cssSel ? `:is(${cssSel})${css}` : (tag || (css ? "" : "*")) + css);
+  return row;
 }
 
-// UiPath のターゲット（TargetAnchorable の objs の中身）から locator の式を作る。notes は意味が変わるもの（アンカーを捨てた、など）
+// 1 行を、CSS だけで書く（:near() の中など）。表示文字は Playwright の :text-matches()。aria-label の正規表現・idx は書けない
+function rowCss(r: Row): string | { why: string } {
+  if (r.label !== undefined) return { why: "aria-label の正規表現は CSS だけでは書けない" };
+  if (r.nth !== undefined) return { why: "idx は CSS だけでは書けない" };
+  return r.css + (r.text !== undefined ? `:text-matches(${JSON.stringify(r.text)})` : "");
+}
+
+function rowsOf(sel: string): Row[] | { why: string } {
+  const nodes = parseSelector(sel);
+  if (typeof nodes === "string") return { why: nodes };
+  const rows: Row[] = [];
+  for (const [i, n] of nodes.entries()) {
+    if (n.tag === "html") {
+      if (i === 0) continue; // 画面（ブラウザー）のセレクターがフルセレクターの先頭にあるとき
+      return { why: "<html> がセレクターの途中にある" };
+    }
+    const r = readRow(n);
+    if ("why" in r) return r;
+    rows.push(r);
+  }
+  if (!rows.length) return { why: "webctrl が無い" };
+  if (rows[rows.length - 1].frame) return { why: "最後の行が iframe（iframe の中の要素の行が無い）" };
+  return rows;
+}
+
+// 行をつないで locator の式にする。iframe の行は frameLocator（DESKTOP の UiPath も、この行で iframe の中を探せた）。
+// near：最後の行に :near(アンカー) を足す（UiPath の FuzzySelector＋PositioningType=Closest と同じく、アンカーにいちばん近いもの）
+function chain(rows: Row[], root: string, near?: string): string {
+  const parts = rows.map((r, i) => {
+    if (r.frame) return `.frameLocator(${JSON.stringify(r.css)})`;
+    const last = i === rows.length - 1;
+    let p = `.locator(${JSON.stringify(r.css + (last && near ? `:near(${near})` : ""))})`;
+    if (r.text !== undefined) p += `.filter({ hasText: new RegExp(${JSON.stringify(r.text)}) })`;
+    if (r.label !== undefined) p += `.and(${root}.getByLabel(new RegExp(${JSON.stringify(r.label)})))`;
+    if (r.nth !== undefined) p += `.nth(${r.nth})`;
+    return p;
+  });
+  // UiPath は当たった要素の先頭を使う。Playwright の strict（2 つ以上でエラー）にしないように first にする（:near では、いちばん近いもの）
+  return `${root}${parts.join("")}.first()`;
+}
+
+export function selectorToLocator(sel: string, root = "page"): LocatorResult {
+  const rows = rowsOf(sel);
+  if ("why" in rows) return rows;
+  return { ts: chain(rows, root), notes: [] };
+}
+
+// アンカーの 1 行（iframe の行があれば、本体と同じ iframe のもの）を、:near() の中に書く CSS にする
+function anchorCss(sel: string, targetRows: Row[]): string | { why: string } {
+  const rows = rowsOf(sel);
+  if ("why" in rows) return rows;
+  const frames = rows.filter((r) => r.frame), tf = targetRows.filter((r) => r.frame);
+  if (frames.length !== tf.length || frames.some((r, i) => r.css !== tf[i].css)) return { why: "アンカーが本体と別の iframe にある" };
+  const own = rows.filter((r) => !r.frame);
+  if (own.length !== 1) return { why: "アンカーのセレクターが複数行（:near() の中に書けない）" };
+  return rowCss(own[0]);
+}
+
+// UiPath のターゲット（TargetAnchorable の objs の中身）から locator の式を作る。notes は意味が変わるもの
+//   アンカー：UiPath は FuzzySelector で探すときだけアンカーを使う（Selector では使わない）。PositioningType=Closest は :near(アンカー) と同じ意味。
+//   DesignTimeRectangle で位置を合わせる形（Default）は、近さで探す :near で近づける（意味が変わりうるので notes に出す）
 export function targetToLocator(t: Record<string, unknown>, root = "page"): LocatorResult {
   const litOf = (v: unknown): string | undefined => (typeof v === "object" && v && "lit" in v ? (v as { lit: string }).lit : undefined);
   const steps = String(t.SearchSteps ?? "Selector");
   const notes: string[] = [];
-  if (/Image|CV|Semantic/i.test(steps) && !/(^|,\s*)Selector/.test(steps)) return { why: `画像・CV・意味で探すターゲット（SearchSteps=${steps}）は Playwright に無い` };
-  if (Array.isArray(t.Anchors) && t.Anchors.length) notes.push("アンカーは使わない（セレクターだけで探す）");
-  let selVal = t.FullSelectorArgument ?? t.PartialSelector;
-  if (!/(^|,\s*)Selector/.test(steps) && /Fuzzy/.test(steps)) {
-    selVal = t.FuzzySelectorArgument;
-    notes.push("あいまい一致のセレクター（FuzzySelector）を、厳密な一致で探す");
-  }
+  if (/Image|CV|Semantic/i.test(steps) && !/(^|,s*)Selector/.test(steps)) return { why: `画像・CV・意味で探すターゲット（SearchSteps=${steps}）は Playwright に無い` };
+  const strict = /(^|,s*)Selector/.test(steps);
+  const fuzzy = !strict && /Fuzzy/.test(steps);
+  const selVal = fuzzy ? t.FuzzySelectorArgument : (t.FullSelectorArgument ?? t.PartialSelector);
   const sel = litOf(selVal);
   if (sel === undefined) return { why: "セレクターがリテラルではない（式で組み立てるセレクターは直せない）" };
-  const r = selectorToLocator(sel, root);
-  if ("why" in r) return { why: `${r.why}（${sel}）` };
-  return { ts: r.ts, notes: [...notes, ...r.notes] };
+  const rows = rowsOf(sel);
+  if ("why" in rows) return { why: `${rows.why}（${sel}）` };
+  const anchors = Array.isArray(t.Anchors) ? (t.Anchors as Record<string, unknown>[]) : [];
+  if (!anchors.length || strict) return { ts: chain(rows, root), notes }; // Selector の探し方では、UiPath もアンカーを使わない
+  if (anchors.length > 1) return { ts: chain(rows, root), notes: ["アンカーが 2 つ以上ある。Playwright には 1 つ目だけを :near() で書く"] };
+  const asel = litOf(anchors[0].FuzzySelectorArgument ?? anchors[0].FullSelectorArgument);
+  if (asel === undefined) return { why: "アンカーのセレクターがリテラルではない" };
+  const near = anchorCss(asel, rows);
+  if (typeof near !== "string") return { why: `アンカー（${asel}）：${near.why}` };
+  if (t.PositioningType !== "Closest") notes.push("アンカーの位置（DesignTimeRectangle）ではなく、近さ（:near）で探す");
+  return { ts: chain(rows, root, near), notes };
 }
 
 // 開くときの URL の UiPath のワイルドカード（*）を、Playwright の URL の glob（**）にする

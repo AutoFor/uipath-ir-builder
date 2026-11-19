@@ -56,7 +56,11 @@
 3. `aria-label` → 属性 `aria-label`。言語で違えば `aria-label='^(日本語|English)$' matching:aria-label='regex'`（`aaname` ではない。下の表）
 4. 表示の文字 → `innertext`。言語で違えば 3 と同じ正規表現
 5. タグだけで 1 つに決まるならタグ
-6. どれもだめなら `css-selector`。壊れやすいので、変換できないものの一覧にも出す
+6. 親から絞り込む（複数行）：言語によらない属性（data-testid など・id）で 1 つに決まる祖先と、その中で 1 つに決まるタグか表示文字 → `<webctrl tag='DIV' data-testid='card-b' /><webctrl tag='BUTTON' />`
+7. 近くのラベル（アンカー）：前の兄弟（親の 2 つ上まで）の短い文字で、ページで 1 つに決まるもの。本体はタグ（とクラス）→ 下の「アンカー・複数行のセレクター・iframe」
+8. どれもだめなら `css-selector`。壊れやすいので、変換できないものの一覧にも出す
+
+- iframe の中の要素は、先頭に iframe の行（`<webctrl tag='IFRAME' id='inner' />`）を足す。id・name・title・data-testid・src の順に、1 つに決まるもの
 
 - 値の `&` `'` は XML 用に、正規表現の記号は `\` で逃がす
 - 画面のセレクターは、転送のあとのページの `url='<オリジン>/*'` にする。開く URL（`Url`）は、スクリプトが開いた URL にする（転送のあとの URL には、毎回変わる値が入る）
@@ -151,6 +155,9 @@ node <P>/pw/Main.pw.ts <引数の JSON> [--locale en-US] [--headed]         # �
 | `parentid` | 祖先の `[id=...]` |
 | `idx` | `.nth()` |
 | webctrl が 2 つ以上 | `.locator()` をつなぐ |
+| `tag='IFRAME'`（`FRAME`）の行 | `.frameLocator(css)` |
+| アンカー（FuzzySelector で探すとき） | 最後の行に `:near(アンカーの CSS)`。表示文字は `:text-matches("…")` |
+| アンカー（Selector で探すとき） | 使わない（UiPath も使わないので、同じ意味） |
 
 - 当たった要素の先頭を使う（UiPath と同じ。Playwright の strict にしない）ため、`.first()` を付ける
 - ワイルドカード `*` は、前・後ろ・両方なら `^=` `$=` `*=` にする。`aaname`・`innertext` は正規表現にする
@@ -171,7 +178,7 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
 `conversion.md` の一覧に出し、ワークフローには Warn のログを残す。
 
 - Playwright にしか無い操作（`page.route`、`page.evaluate` など）。スクリプトで `rec.unsupported(...)` を呼んで残す
-- iframe の中の要素（フレームのセレクターを、まだ作っていない）
+- 別のオリジンの iframe の中の要素（iframe の属性を読めない）、iframe を 1 つに決める属性が無いもの
 - Shadow DOM の中の要素は、警告だけ（UiPath で探せるかは確かめていない）
 - CSS のパスにしか決まらない要素
 - `clickIfVisible` で、どの言語でも出なかった要素（属性が分からない）。片方の言語でしか出なければ、その記録だけでセレクターを決める（警告）
@@ -183,8 +190,9 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
 - **UiPath にしか無いもの**
   - デスクトップのアプリ（`wnd`・`ctrl`・`uia`）
   - 画像・CV・意味で探すターゲット
-  - あいまい一致（`matching:x='fuzzy'`、FuzzySelector だけのターゲット。後者は厳密な一致にして、一覧に出す）
-  - アンカー（捨てて、セレクターだけで探す。一覧に出す）
+  - あいまい一致の属性（`matching:x='fuzzy'`）。FuzzySelector で探すターゲットでも、属性にあいまい一致が無ければ、そのまま厳密な一致で書ける
+  - アンカーのうち、`:near()` に書けないもの：アンカーが複数行・本体と別の iframe・`aria-label` の正規表現・`idx` を持つもの、アンカーが 2 つ以上（1 つ目だけ使い、一覧に出す）
+  - アンカーの位置（`DesignTimeRectangle`、PositioningType Default）は、近さ（`:near`）で近づける。意味が変わりうるので一覧に出す
 - **セレクター**
   - 式で組み立てるセレクター
   - `aaname`・`innertext`・`aria-label` 以外の正規表現
@@ -217,6 +225,45 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   - `PwSignIn3`（XAML）と `PwSignInCoded3`（Coded、Descriptors）が通った。どちらも「サインアップへのリンク: Sign up」
   - 利用者のプロファイルで開いた `PwSignIn2` は、Go To URL やメール欄で「UI 要素が見つかりません」で落ちた。サインイン済みのプロファイルで、画面が記録と変わったため（シークレットで通ったことからの推定）
 - 読み取りの文字（Get Text）の違いを直した。下の「読み取りの文字」
+
+## アンカー・複数行のセレクター・iframe（AUT-1221）
+
+題材は `samples/pw/form/layout.html`（＋ `frame.html`）。ラベルの右の入力欄（属性が同じ入力欄 2 つ）、カードの中のボタン（同じボタン 2 つ）、iframe の中の要素を含む。言語は `navigator.language`、`?lang=en` で上書きできる（ロボットの Chrome は OS の言語のままで、`TargetApp.Arguments` の `--lang` も効かなかった）。台本は `samples/pw/form/layout.ts`、要素は `layout-objects.ts`。
+
+### Studio の形と、ロボットでの動き（2026-11-19、DESKTOP）
+
+- Studio はアンカーを `TargetAnchorable.Anchors`（`List<ITarget>`）の `uix:Target` で書く（アンカー自身のセレクターと `SearchSteps`）。向きのプロパティは無く、本体は `SearchSteps="FuzzySelector"` と `DesignTimeRectangle` を持つ（Studio で作った `オブジェクトリポジトリ確認/Main.xaml`）
+
+| 書き方（`samples/pw/form/layout.html`、IR は `C:\Users\Public\uipath-cloud-ui\LayoutCases\`） | 結果 |
+| --- | --- |
+| `<webctrl data-testid='card-b' /><webctrl tag='BUTTON' />` | ○ |
+| `<webctrl tag='IFRAME' id='inner' /><webctrl data-testid='frame-input' />` | ○（iframe の行が無くても、`tag='IFRAME'` だけでも通った） |
+| アンカー＋ `SearchSteps=Selector`（四角あり・なし、`PositioningType=Closest` も） | アンカーは使われない（先頭の入力欄に入った） |
+| アンカー＋ `FuzzySelector`＋ `DesignTimeRectangle` | ○ |
+| アンカー＋ `FuzzySelector`＋ `PositioningType=Closest`（四角なし） | ○（ラベルにいちばん近い入力欄。アンカー自身は `Selector` でよい） |
+| `FuzzySelector`、アンカーなし（2 つに当たる） | エラー「類似の一致が複数見つかりました」 |
+
+### 対応の表
+
+| | Playwright → UiPath（記録から） | UiPath → Playwright | 往復 |
+| --- | --- | --- | --- |
+| 複数行 | 祖先の言語によらない属性 ＋ その中で 1 つのタグか表示文字 → 2 行 | `.locator(A).locator(B)` | ○ |
+| iframe | 先頭に `<webctrl tag='IFRAME' id='…' />` | `.frameLocator(css)` | ○ |
+| アンカー | 近くのラベル → 本体は `FuzzySelectorArgument`（タグとクラス）＋ `SearchSteps=FuzzySelector` ＋ `PositioningType=Closest` ＋ `Anchors: [{ FullSelectorArgument: ラベル（2 言語の正規表現）, SearchSteps: Selector }]` | `T:near(A).first()`（`:near` は近い順。`.first()` がいちばん近いもの） | ○ |
+| アンカー（Selector で探す・DesignTimeRectangle の位置） | 作らない | Selector：使わない（UiPath も使わない）／位置：`:near` で近づけ、一覧に出す | — |
+| 手で書いた `:right-of()`・`.filter({ has })`・`getByLabel`・`frameLocator` | 台本の locator は記録で当たった要素を指すだけ。セレクターは記録した属性から上の形で作る | — | — |
+
+- アンカーと親は `repository.json` に入り、`.objects`（`objrepo.ts build`）と `pw/objects`（`pw-objects.ts build`）の両方に出る。コードにはセレクターを書かない
+- Coded は、アンカーを `TargetAnchorableModel` で書けない（`CODED_UNSUPPORTED`）。Descriptors（オブジェクトリポジトリ）で書けば動く。`ObjectRepository.cs` は、仮の `Main.cs`（Log だけ）を窓口で 1 回流して作る
+
+### 確かめたこと
+
+- PwLayout（XAML）と PwLayoutCoded（Coded、Descriptors）がロボットで通った。ja（既定）と en（`?lang=en`）とも、Playwright の記録と同じ結果になった
+  - 「氏名=IR 太郎 / メール=ir@example.com」「選択: プランB」「プランA」「受け取り: F1」
+  - 英語では「Name=… / Email=…」「Chosen: Plan B」「Plan A」「Got: F1」
+- PwLayout の XAML → `import-xaml.ts` → `ir-to-pw.ts` の Playwright も、2 言語で同じ結果。スクリプトに `page.locator` は無い
+- UiPath → Playwright → UiPath：XAML から作った objects で記録し直すと、10 要素のターゲットが元の `repository.json` と同じになった（違いは、`objrepo.ts build` が足すアンカーの `Guid` だけ）
+- テスト（`tools/pw/ir-to-pw.test.ts`）：アンカー・カード・iframe（`srcdoc`）の小さなページで、記録 → 変換 → 2 言語で実行 → 生成した objects で記録し直して同じターゲット
 
 ## 読み取りの文字（Get Text と Get Attribute の innertext）
 

@@ -147,3 +147,51 @@ test("読み取り（text）は Get Attribute の innertext（Playwright の inn
   assert.match(flat, /"Attribute":{"lit":"innertext"},"Result":"out_Result"/);
   assert.doesNotMatch(flat, /NGetText/);
 });
+
+test("複数行：言語によらない属性の親と、その中で 1 つのタグ（か表示文字）", () => {
+  const card = (k: string, inner: number, innerText: number) => ({ tag: "DIV", key: "data-testid", "data-testid": k, keyCount: 1, innerTag: inner, innerText });
+  const s = snap({ text: "選ぶ", counts: { "#text": 2, "#tag": 2 }, ancestors: [card("card-b", 1, 1)] });
+  assert.equal(chooseSelector([s]).selector, "<webctrl tag='DIV' data-testid='card-b' /><webctrl tag='BUTTON' />");
+  const ja = snap({ text: "選ぶ", counts: { "#text": 2, "#tag": 4 }, ancestors: [card("card-b", 2, 1)] });
+  const en = snap({ text: "Choose", counts: { "#text": 2, "#tag": 4 }, ancestors: [card("card-b", 2, 1)] });
+  const c = chooseSelector([ja, en]);
+  assert.equal(c.selector, "<webctrl tag='DIV' data-testid='card-b' /><webctrl tag='BUTTON' innertext='^(選ぶ|Choose)$' matching:innertext='regex' />");
+  assert.deepEqual(c.perSnap, ["<webctrl tag='DIV' data-testid='card-b' /><webctrl tag='BUTTON' innertext='選ぶ' />", "<webctrl tag='DIV' data-testid='card-b' /><webctrl tag='BUTTON' innertext='Choose' />"]);
+  // 親が 1 つに決まらない（同じ data-testid が 2 つ）なら使わない
+  assert.notEqual(chooseSelector([snap({ text: "x", counts: { "#text": 2, "#tag": 2 }, ancestors: [{ ...card("c", 1, 1), keyCount: 2 }] })]).basis, "親（data-testid）＋タグ");
+});
+
+test("アンカー：近くのラベル（2 言語の正規表現）。本体はタグとクラス", () => {
+  const ja = snap({ tag: "INPUT", attrs: { class: "field" }, counts: { class: 2, "#tag": 2 }, anchor: { tag: "LABEL", text: "メール", textCount: 1 } });
+  const en = snap({ tag: "INPUT", attrs: { class: "field" }, counts: { class: 2, "#tag": 2 }, anchor: { tag: "LABEL", text: "Email", textCount: 1 } });
+  const c = chooseSelector([ja, en]);
+  assert.equal(c.selector, "<webctrl tag='INPUT' class='field' />");
+  assert.equal(c.anchor, "<webctrl tag='LABEL' innertext='^(メール|Email)$' matching:innertext='regex' />");
+  assert.equal(c.basis, "近くのラベル（アンカー、2 言語）");
+});
+
+test("iframe の中の要素は、先頭に iframe の行を足す。別のオリジン（iframe を読めない）は一覧に出す", () => {
+  const f = { tag: "IFRAME", attrs: { id: "inner", src: "frame.html" }, counts: { id: 1, src: 1 } };
+  const s = snap({ tag: "INPUT", attrs: { "data-testid": "frame-input" }, counts: { "data-testid": 1 }, inFrame: true, frame: f });
+  const c = chooseSelector([s]);
+  assert.equal(c.selector, "<webctrl tag='IFRAME' id='inner' /><webctrl tag='INPUT' data-testid='frame-input' />");
+  assert.equal(c.basis, "iframe（id）＋data-testid");
+  assert.match(chooseSelector([snap({ inFrame: true, attrs: { "data-testid": "x" }, counts: { "data-testid": 1 } })]).frameError!, /別のオリジン/);
+});
+
+test("アンカーのある要素は、リポジトリで FuzzySelector＋Closest＋Anchors にする", () => {
+  const r = (locale: string, label: string): Recording => ({
+    version: 1, locale,
+    steps: [
+      { i: 0, action: "goto", screen: "S", url: "https://example.test/", page: { url: "https://example.test/", title: "t", lang: locale } },
+      { i: 1, action: "fill", screen: "S", name: "メール欄", value: "a", element: snap({ tag: "INPUT", attrs: { class: "field" }, counts: { class: 2, "#tag": 2 }, anchor: { tag: "LABEL", text: label, textCount: 1 } }) },
+    ],
+  });
+  const res = convert([r("ja-JP", "メール"), r("en-US", "Email")], { workflow: "W", app: "A", browser: "Chrome" });
+  const t = (res.app as { screens: { elements: { name: string; target: Record<string, unknown> }[] }[] }).screens[0].elements.find((e) => e.name === "メール欄")!.target;
+  assert.deepEqual({ ...t, ScopeSelectorArgument: undefined, ElementType: undefined }, {
+    FuzzySelectorArgument: { lit: "<webctrl tag='INPUT' class='field' />" }, SearchSteps: "FuzzySelector", PositioningType: "Closest",
+    Anchors: [{ FullSelectorArgument: { lit: "<webctrl tag='LABEL' innertext='^(メール|Email)$' matching:innertext='regex' />" }, SearchSteps: "Selector" }],
+    ScopeSelectorArgument: undefined, ElementType: undefined,
+  });
+});

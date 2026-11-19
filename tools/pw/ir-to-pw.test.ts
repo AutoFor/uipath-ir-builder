@@ -132,7 +132,7 @@ test("変換できないものは一覧に出し、スクリプトにコメン�
   };
   const r = irToPlaywright(bad, { apps: [] } as Repository);
   const whys = r.unconverted.map((u) => `${u.what}: ${u.why}`).join("\n");
-  for (const re of [/メモ帳: .*Web の要素ではない/, /画像: .*画像・CV/, /アンカー付き: アンカーは使わない/, /式のセレクター: .*リテラルではない/, /NHover は Playwright に直す表が無い/, /DateTime/, /無い要素/]) assert.match(whys, re);
+  for (const re of [/メモ帳: .*Web の要素ではない/, /画像: .*画像・CV/, /式のセレクター: .*リテラルではない/, /NHover は Playwright に直す表が無い/, /DateTime/, /無い要素/]) assert.match(whys, re);
   assert.match(r.code, /\/\/ 変換できない: NHover/);
   assert.match(r.code, /page\.locator\("button\[id=\\"ok\\"\]"\)\.first\(\)\.click\(\)/); // アンカーを捨ててセレクターで押す
 });
@@ -220,6 +220,76 @@ test("往復：objects で名前を付けて記録 → IR と repository.json �
     assert.deepEqual(results, { "ja-JP": "結果: ir", "en-US": "Result: ir" });
   } finally {
     // node_modules は tools/pw へのつなぎ（ジャンクション）。中を消さないように、先につなぎだけを外す
+    const nm = join(dir, "P", "pw", "node_modules");
+    if (existsSync(nm)) unlinkSync(nm);
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// アンカー（ラベルの右の入力欄）・カードの中のボタン・iframe の小さなページ（AUT-1221）
+const layoutPage = `<!doctype html><html><body><script>
+const ja = navigator.language.startsWith("ja");
+const t = (j, e) => (ja ? j : e);
+document.body.innerHTML = '<div><label>' + t("氏名", "Name") + '</label><input class="field"></div>'
+  + '<div><label>' + t("メール", "Email") + '</label><input class="field"></div>'
+  + '<div data-testid="card-a"><h2>A</h2><button>' + t("選ぶ", "Choose") + '</button></div>'
+  + '<div data-testid="card-b"><h2>B</h2><button>' + t("選ぶ", "Choose") + '</button></div>'
+  + '<div data-testid="status"></div>'
+  + '<iframe id="inner" srcdoc="<input data-testid=frame-input>"></iframe>';
+for (const c of document.querySelectorAll("[data-testid^=card]")) c.querySelector("button").onclick = () => (document.querySelector("[data-testid=status]").textContent = c.querySelector("h2").textContent + ":" + document.querySelectorAll("input")[1].value);
+</script></body></html>`;
+
+test("往復（アンカー・複数行・iframe）：記録 → repository.json → pw/objects と Playwright → 2 言語で同じ結果。生成した objects で記録し直しても同じターゲット", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "ir-to-pw-layout-"));
+  try {
+    const file = join(dir, "layout.html");
+    writeFileSync(file, layoutPage);
+    const url = pathToFileURL(file).href;
+    const hand = defineObjects({ "L": { "P": { url, elements: {
+      "メール欄": (p) => p.locator("input:right-of(label:text-matches('^(メール|Email)$'))").first(),
+      "Bを選ぶ": (p) => p.getByTestId("card-b").locator("button"),
+      "状態": (p) => p.getByTestId("status"),
+      "フレームの入力欄": (p) => p.frameLocator("#inner").getByTestId("frame-input"),
+    } } } });
+    const record = async (objects: (page: never, locale: string) => Record<string, Record<string, Record<string, never>>>) => {
+      const recs = [];
+      for (const locale of ["ja-JP", "en-US"]) {
+        const env = await launch(locale);
+        try {
+          const P = objects(env.page as never, locale).L.P as unknown as Record<string, never>;
+          const rec = new UiRecorder(env.page, locale);
+          await rec.goto(P as never, { urlArg: "in_Url" });
+          await rec.fill(P.メール欄, "m@x", { valueArg: "in_Mail" });
+          await rec.fill(P.フレームの入力欄, "f", { valueArg: "in_F" });
+          await rec.click(P.Bを選ぶ);
+          await rec.text(P.状態, "out_Status");
+          recs.push(rec.recording());
+        } finally { await env.browser.close(); }
+      }
+      return convert(recs, { workflow: "Layout", app: "x", browser: "Chrome" });
+    };
+    try { (await launch("ja-JP")).browser.close(); } catch (e) { t.skip(`Chrome を起動できない: ${(e as Error).message.split("\n")[0]}`); return; }
+    const res = await record(hand as never);
+    const basis = Object.fromEntries(res.choices.map((c) => [c.name, c.choice.basis]));
+    assert.deepEqual(basis, { "メール欄": "近くのラベル（アンカー、2 言語）", "フレームの入力欄": "iframe（id）＋data-testid", "Bを選ぶ": "親（data-testid）＋タグ", "状態": "data-testid" });
+    const P = join(dir, "P");
+    mkdirSync(join(P, "ir"), { recursive: true });
+    writeFileSync(join(P, "ir", "repository.json"), JSON.stringify({ apps: [res.app] }));
+    buildPwObjects(P);
+    const pw = irToPlaywright(res.ir as unknown as Workflow, { apps: [res.app as never] });
+    assert.deepEqual(pw.unconverted, []);
+    writeFileSync(join(P, "pw", "Layout.pw.ts"), pw.code);
+    const mod = await import(pathToFileURL(join(P, "pw", "Layout.pw.ts")).href);
+    for (const [locale, want] of [["ja-JP", "B:m@x"], ["en-US", "B:m@x"]]) {
+      const env = await launch(locale);
+      try { assert.deepEqual(await mod.Layout(env.page, { in_Url: url, in_Mail: "m@x", in_F: "f" }, locale), { out_Status: want }); } finally { await env.browser.close(); }
+    }
+    // UiPath → Playwright → UiPath：生成した objects で記録し直すと、同じターゲットになる
+    const gen = await import(pathToFileURL(join(P, "pw", "objects", "index.ts")).href);
+    const again = await record(gen.default);
+    const targets = (r: typeof res) => JSON.stringify((r.app as { screens: { elements: unknown[] }[] }).screens[0].elements);
+    assert.equal(targets(again), targets(res));
+  } finally {
     const nm = join(dir, "P", "pw", "node_modules");
     if (existsSync(nm)) unlinkSync(nm);
     rmSync(dir, { recursive: true, force: true });

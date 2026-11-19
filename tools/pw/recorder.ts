@@ -49,17 +49,47 @@ export function snapshotInPage(el: Element): Snapshot {
     }
     return p.join(" > ");
   };
-  const ancestors: Record<string, string>[] = [];
-  let a = el.parentElement;
-  for (let i = 0; a && i < 4; i++, a = a.parentElement) {
-    const x: Record<string, string> = { tag: a.tagName };
-    for (const n of ["id", "data-testid", "data-cy", "data-e2e", "data-test", "role", "aria-label"]) { const v = a.getAttribute(n); if (v) x[n] = v; }
-    ancestors.push(x);
-  }
   const root = el.getRootNode() as Document | ShadowRoot;
   const q = (sel: string) => { try { return root.querySelectorAll(sel).length; } catch { return -1; } };
   const tag = el.tagName.toLowerCase();
   const quote = (v: string) => '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
+  // 祖先（親から 4 つ）。言語によらない属性（key）があれば、ページの中の数と、その中で同じタグ・同じ文字の要素の数も取る（複数行のセレクター）
+  const ancestors: Record<string, string | number>[] = [];
+  let a = el.parentElement;
+  for (let i = 0; a && i < 4; i++, a = a.parentElement) {
+    const x: Record<string, string | number> = { tag: a.tagName };
+    for (const n of ["id", "data-testid", "data-cy", "data-e2e", "data-test", "data-qa", "role", "aria-label"]) { const v = a.getAttribute(n); if (v) x[n] = v; }
+    const key = ["data-testid", "data-cy", "data-e2e", "data-test", "data-qa", "id"].find((n) => a!.getAttribute(n));
+    if (key) {
+      x.key = key;
+      x.keyCount = q("[" + key + "=" + quote(a.getAttribute(key)!) + "]");
+      x.innerTag = a.querySelectorAll(tag).length;
+      x.innerText = text ? Array.from(a.querySelectorAll(tag)).filter((y) => textOf(y) === text).length : -1;
+    }
+    ancestors.push(x);
+  }
+  // 近くのラベル（アンカーの候補）：自分と親（2 つ上まで）の前の兄弟で、短い文字を持ち、入力欄やボタンを含まないもの
+  let anchor: Record<string, unknown> | undefined;
+  for (let cur: Element | null = el, up = 0; cur && up < 3 && !anchor; up++, cur = cur.parentElement) {
+    for (let sib = cur.previousElementSibling; sib; sib = sib.previousElementSibling) {
+      const t = textOf(sib);
+      if (!t || t.length > 40 || sib.querySelector("input, textarea, select, button")) continue;
+      const at = sib.tagName.toLowerCase();
+      anchor = { tag: sib.tagName, text: t, textCount: Array.from(root.querySelectorAll(at)).filter((y) => textOf(y) === t).length };
+      break;
+    }
+  }
+  // iframe の中なら、その iframe（親の文書の中の要素）の属性と、親の文書の中の数
+  let frame: Record<string, unknown> | undefined;
+  try {
+    const fe = window.frameElement;
+    if (fe) {
+      const fa: Record<string, string> = {}, fc: Record<string, number> = {};
+      for (const n of ["id", "name", "title", "data-testid", "src"]) { const v = fe.getAttribute(n); if (v) fa[n] = v; }
+      for (const [k, v] of Object.entries(fa)) fc[k] = fe.ownerDocument.querySelectorAll(fe.tagName.toLowerCase() + "[" + k + "=" + quote(v) + "]").length;
+      frame = { tag: fe.tagName, attrs: fa, counts: fc };
+    }
+  } catch { /* 別のオリジンの iframe（frameElement を読めない） */ }
   const counts: Record<string, number> = {};
   for (const [k, v] of Object.entries(attrs)) {
     if (k === "style" || k === "class" || v.length > 200) continue;
@@ -71,7 +101,7 @@ export function snapshotInPage(el: Element): Snapshot {
   return {
     tag: el.tagName, attrs, text, value: "value" in el ? String((el as HTMLInputElement).value ?? "") : null,
     role: el.getAttribute("role"), css: cssPath(el), ancestors, counts,
-    inShadow: root instanceof ShadowRoot, inFrame: window !== window.top,
+    inShadow: root instanceof ShadowRoot, inFrame: window !== window.top, anchor, frame,
     // 中の入力欄の値（参考）。UiPath の Get Text は、見えない入力欄（display:none でも）の値まで文字に入れる（Playwright の innerText は入れない）
     formValues: Array.from(el.querySelectorAll("input, textarea, select")).map((x) => (x as HTMLInputElement).value).filter((v) => v !== ""),
   };

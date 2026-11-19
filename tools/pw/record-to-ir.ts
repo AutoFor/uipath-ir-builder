@@ -27,10 +27,12 @@ export type Snapshot = {
   value: string | null;
   role: string | null;
   css: string;
-  ancestors: Record<string, string>[];
+  ancestors: Record<string, string | number>[]; // key・keyCount・innerTag・innerText は複数行のセレクター用（recorder.ts）
   counts: Record<string, number>;
   inShadow: boolean;
   inFrame: boolean;
+  anchor?: { tag: string; text: string; textCount: number }; // 近くのラベル（アンカーの候補）
+  frame?: { tag: string; attrs: Record<string, string>; counts: Record<string, number> }; // 入っている iframe（同じオリジンのとき）
   formValues?: string[]; // 中の入力欄の値（UiPath の Get Text はこれも文字に入れる。記録では Get Attribute の innertext で読むので、参考に残すだけ）
   locatorCount?: number;
 };
@@ -58,7 +60,8 @@ export type Step = {
 export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; incognito?: boolean; recordedAt?: string; steps: Step[] };
 
 // perSnap：言語で値が違うとき、記録ごと（snaps の順）の、その言語だけのセレクター（pw/objects でロケールごとに使う）
-export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean; perSnap?: string[] };
+// anchor：アンカーのセレクター（あれば、本体は FuzzySelector＋PositioningType=Closest で探す）。frameError：iframe の行を作れなかった理由
+export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean; perSnap?: string[]; anchor?: string; frameError?: string };
 export type Unconverted = { step: number; what: string; why: string };
 // incognito：false でなければ、記録が新しいコンテキスト（incognito: true）のとき、カードを IsIncognito=True（シークレット ウィンドウ）にする
 export type ConvertOptions = { workflow: string; app: string; browser: "Chrome" | "Edge"; interactionMode?: string; incognito?: boolean };
@@ -92,7 +95,19 @@ function textAttr(attr: "aria-label" | "innertext", vals: string[]): { part: str
   };
 }
 
+// iframe の中の要素なら、先頭に iframe の行（<webctrl tag='IFRAME' id='…' />）を足す。DESKTOP のロボットで、この形で iframe の中を探せた（AUT-1221）
 export function chooseSelector(snaps: Snapshot[]): Choice {
+  const c = chooseInDocument(snaps);
+  if (!snaps.some((s) => s.inFrame)) return c;
+  const frames = snaps.map((s) => s.frame);
+  if (!frames.every(Boolean)) return { ...c, frameError: "別のオリジンの iframe の中の要素（iframe の属性を読めない）" };
+  const key = ["id", "name", "title", "data-testid", "src"].find((k) => frames.every((f) => f!.attrs[k] && f!.counts[k] === 1) && same(frames.map((f) => f!.attrs[k])));
+  if (!key) return { ...c, frameError: "iframe を 1 つに決める属性（id・name・title・data-testid・src）が無い" };
+  const row = `<webctrl tag='${frames[0]!.tag.toUpperCase()}' ${key}='${q(frames[0]!.attrs[key])}' />`;
+  return { ...c, selector: row + c.selector, perSnap: c.perSnap?.map((p) => row + p), anchor: c.anchor && row + c.anchor, basis: `iframe（${key}）＋${c.basis}` };
+}
+
+function chooseInDocument(snaps: Snapshot[]): Choice {
   const tag = snaps[0].tag.toUpperCase();
   const has = (k: string) => snaps.every((s) => s.attrs[k] !== undefined && s.attrs[k] !== "");
   const vals = (k: string) => snaps.map((s) => s.attrs[k]);
@@ -120,7 +135,30 @@ export function chooseSelector(snaps: Snapshot[]): Choice {
   // タグだけで 1 つ（BODY、H1 など）
   if (snaps.every((s) => s.counts?.["#tag"] === 1))
     return { selector: `<webctrl tag='${tag}' />`, basis: "タグだけで 1 つ", languageIndependent: true, fragile: false };
-  // 5. CSS のパス
+  // 6. 親から絞り込む（複数行のセレクター）：言語によらない属性で 1 つに決まる祖先と、その中で 1 つに決まるタグ（か表示文字）
+  for (let i = 0; i < 4; i++) {
+    const as = snaps.map((s) => s.ancestors?.[i]);
+    if (!as.every((a) => a && a.key && a.keyCount === 1 && a.key === as[0]!.key)) continue;
+    const key = String(as[0]!.key);
+    const pv = as.map((a) => String(a![key]));
+    if (!same(pv) || (key === "id" && generatedId(pv[0]))) continue;
+    const parent = `<webctrl tag='${String(as[0]!.tag).toUpperCase()}' ${key}='${q(pv[0])}' />`;
+    if (as.every((a) => a!.innerTag === 1))
+      return { selector: `${parent}<webctrl tag='${tag}' />`, basis: `親（${key}）＋タグ`, languageIndependent: true, fragile: false };
+    if (snaps.every((s, k) => s.text && as[k]!.innerText === 1)) {
+      const t = textAttr("innertext", snaps.map((s) => s.text));
+      return { selector: `${parent}<webctrl tag='${tag}' ${t.part} />`, basis: `親（${key}）＋表示文字`, languageIndependent: false, fragile: false, perSnap: t.perSnap?.map((p) => `${parent}<webctrl tag='${tag}' ${p} />`) };
+    }
+  }
+  // 7. 近くのラベル（アンカー）：本体はタグ（とクラス）で探し、いくつか当たったら、ラベルにいちばん近いものを使う
+  //    UiPath は FuzzySelector＋PositioningType=Closest のときだけアンカーを使う（Selector では使わない。AUT-1221 で確かめた）
+  if (snaps.every((s) => s.anchor && s.anchor.textCount === 1) && same(snaps.map((s) => s.anchor!.tag))) {
+    const at = textAttr("innertext", snaps.map((s) => s.anchor!.text));
+    const atag = snaps[0].anchor!.tag.toUpperCase();
+    const cls = has("class") && same(vals("class")) ? ` class='${q(vals("class")[0])}'` : "";
+    return { selector: `<webctrl tag='${tag}'${cls} />`, anchor: `<webctrl tag='${atag}' ${at.part} />`, basis: same(snaps.map((s) => s.anchor!.text)) ? "近くのラベル（アンカー）" : "近くのラベル（アンカー、2 言語）", languageIndependent: false, fragile: false };
+  }
+  // 8. CSS のパス
   const css = snaps[0].css;
   return { selector: `<webctrl css-selector='${q(css)}' tag='${tag}' />`, basis: "CSS のパス", languageIndependent: same(snaps.map((s) => s.css)), fragile: true };
 }
@@ -190,7 +228,6 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       if (snaps.length !== recs.length) warnings.push(`手順 ${i}（${s.name}）は ${recs.filter((r) => r.steps[i].element).map((r) => r.locale).join("・")} の記録でしか出なかった。セレクターはその記録だけから決めた`);
     } else if (snaps.length !== recs.length) throw new Error(`手順 ${i}（${s.name}）に要素の記録が無い`);
     for (const sn of snaps) {
-      if (sn.inFrame) unconverted.push({ step: i, what: s.name ?? "", why: "iframe の中の要素（フレームのセレクターを足す必要がある。まだ作っていない）" });
       if (sn.inShadow) warnings.push(`手順 ${i}（${s.name}）は Shadow DOM の中。UiPath で探せるかは確かめていない`);
       if ((sn.locatorCount ?? 1) > 1) warnings.push(`手順 ${i}（${s.name}）の locator は ${sn.locatorCount} 個に当たった（記録は先頭の要素）`);
     }
@@ -217,7 +254,11 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       choices.push({ screen: sc.name, name, choice: e.choice, locales });
       if (e.choice.fragile) unconverted.push({ step: -1, what: `${sc.name}/${name}`, why: `言語によらない属性も、1 つに決まる属性も無い。CSS のパス（${e.snaps[0].css}）で探す。画面が変わると壊れやすい` });
       const [taxonomy, activityType] = TAXONOMY[e.action] ?? ["Text", "Click"];
-      const target: Record<string, unknown> = { FullSelectorArgument: { lit: e.choice.selector }, ScopeSelectorArgument: scope, SearchSteps: "Selector" };
+      if (e.choice.frameError) unconverted.push({ step: -1, what: `${sc.name}/${name}`, why: e.choice.frameError });
+      // アンカーがあれば、Studio と同じく FuzzySelector で探し、いくつか当たったらアンカーにいちばん近いもの（PositioningType=Closest）を使う
+      const target: Record<string, unknown> = e.choice.anchor
+        ? { FuzzySelectorArgument: { lit: e.choice.selector }, ScopeSelectorArgument: scope, SearchSteps: "FuzzySelector", PositioningType: "Closest", Anchors: [{ FullSelectorArgument: { lit: e.choice.anchor }, SearchSteps: "Selector" }] }
+        : { FullSelectorArgument: { lit: e.choice.selector }, ScopeSelectorArgument: scope, SearchSteps: "Selector" };
       const et = ELEMENT_TYPE[e.snaps[0].tag.toUpperCase()];
       if (et) target.ElementType = et;
       const el: Record<string, unknown> = { name, taxonomy, activityType, target };
@@ -329,7 +370,8 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
 export function report(res: ConvertResult, recs: Recording[]): string {
   const lines = [`# ${String(res.ir.workflow)}：Playwright の記録からの変換`, "", `記録：${recs.map((r) => `${r.locale}（手順 ${r.steps.length}）`).join("、")}`, ""];
   lines.push("## 要素ごとのセレクター", "", "| 画面 | 要素 | セレクター | 決め手 | 言語によらない |", "| --- | --- | --- | --- | --- |");
-  for (const c of res.choices) lines.push(`| ${c.screen} | ${c.name} | \`${c.choice.selector.replace(/\|/g, "\\|")}\` | ${c.choice.basis} | ${c.choice.languageIndependent ? "○" : "—"} |`);
+  const cell = (x: string) => `\`${x.replace(/\|/g, "\\|")}\``;
+  for (const c of res.choices) lines.push(`| ${c.screen} | ${c.name} | ${cell(c.choice.selector)}${c.choice.anchor ? `（アンカー ${cell(c.choice.anchor)}）` : ""} | ${c.choice.basis} | ${c.choice.languageIndependent ? "○" : "—"} |`);
   lines.push("", "## 変換できなかったもの", "");
   if (!res.unconverted.length) lines.push("なし");
   for (const u of res.unconverted) lines.push(`- ${u.step >= 0 ? `手順 ${u.step}：` : ""}${u.what}：${u.why}`);
@@ -377,7 +419,7 @@ function main(argv: string[]) {
   writeFileSync(repoFile, JSON.stringify(repo, null, 2) + "\n");
   writeFileSync(join(irDir, `${workflow}.conversion.md`), report(res, recs));
   console.log(`OK ${join(irDir, `${workflow}.json`)}、repository.json（アプリ「${res.app.name}」）`);
-  for (const c of res.choices) console.log(`  ${c.screen}/${c.name}: ${c.choice.selector}（${c.choice.basis}）`);
+  for (const c of res.choices) console.log(`  ${c.screen}/${c.name}: ${c.choice.selector}${c.choice.anchor ? ` アンカー ${c.choice.anchor}` : ""}（${c.choice.basis}）`);
   if (res.unconverted.length) console.log(`変換できなかったもの ${res.unconverted.length} 件 → ${workflow}.conversion.md`);
   for (const w of res.warnings) console.log(`注意: ${w}`);
 }

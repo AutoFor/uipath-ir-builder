@@ -1,0 +1,9 @@
+<!doctype html>
+<!-- layout.html の iframe の中身 -->
+<html><head><meta charset="utf-8"><title>IR Frame</title></head><body>
+<script>
+const ja = (new URLSearchParams(location.search).get("lang") || navigator.language).startsWith("ja");
+document.body.innerHTML = `<input data-testid="frame-input"> <button data-testid="frame-ok">${ja ? "送る" : "Send"}</button> <span data-testid="frame-result"></span>`;
+document.querySelector("[data-testid=frame-ok]").onclick = () =>
+  (document.querySelector("[data-testid=frame-result]").textContent = (ja ? "受け取り: " : "Got: ") + document.querySelector("input").value);
+</script></body></html>
