@@ -252,7 +252,7 @@ uip solution packages delete <名前> <版> --personal-workspace --yes
 
 - **IXP（文書の抽出）は Standard のトライアルの組織で、Flow から呼べた**（2026-11-13、組織 sorahaneworks、`uip login --profile trial` で別にログイン）。要ったこと:
   1. 組織を作っただけではテナントに IXP が無い（`Service: du not found`）。`uip admin tenants services add --service du` と `--service reinfer` を足す（`uip admin tenants services list` で入っているものが見える）
-  2. そのあと API が 401 になる。ブラウザでテナントの IXP の画面（`/<org>/<tenant>/reinfer_/ixp`）を一度開くと通る（利用者の登録が起きる）
+  2. そのあと API が 401 になる。ブラウザでテナントの IXP の画面を一度開くと通る（利用者の登録が起きる）。入口は `/<org>/<tenant>/reinfer_`（ポータルの左のメニューの IXP と同じ。IXP の中のサインイン `reinfer_/login/oauth2` を通って `reinfer_/projects-and-datasets/genex/projects` の一覧に行く）。`/reinfer_/ixp` は今の入口ではなく、開いても白いまま（2026-11-19）
   3. `uip ixp projects create` → `uip ixp deployments create <プロジェクト> --version 0 --folder-key <Shared の Key>`（最初のモデルは version 0）。これで `uip maestro flow registry search "uipath.ixp"` に出る
   4. SDK の `ixpExtract({ project: <registry の NodeType>, modelName: <DeploymentName>, name: <DeploymentTitle>, folderName, fileRef })`。結果は `$vars.<id>.output.ExtractionResult.ResultsDocument.Fields[]` で、最上位はフィールド グループ（`FieldType: "FieldGroup"`、`FieldName` は `Invoice` や `Invoice > Line Items`）。項目はその `Values[]`（1 件 = 1 回の出現、明細なら 1 行）の `Components[]` に `{ FieldName, Values: [{ Value }] }` で入る。日付は `2026-10-05`、金額は `8100.00 JPY` の形
   見本は `samples/maestro/deploy/IxpExtract.flow.ts`（請求書番号・合計・明細 2 行が取れた）。`tools/maestro/debug.mjs` に `--profile` を足した
