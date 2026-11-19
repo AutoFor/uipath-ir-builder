@@ -41,6 +41,8 @@
 
 画面（記録の screen）が変わると、`NApplicationCard`（つなぐ）を入れ子にする。
 
+`urlArg` / `valueArg` で引数にした値は、最初の記録の値を引数の既定値（`arguments[].default`）にする。XAML ではルートの `this:Main.in_Url="..."`、Coded では `Execute(String in_Url = "...")` になり、Studio で引数を渡さずにそのままデバッグできる。ir-to-pw.ts のスクリプトも、渡されなかった引数は既定値を使う
+
 ### セレクターの選び方（`chooseSelector`）
 
 上から順に、全部の言語の記録で同じ値になり、ページの中で 1 つに決まるものを使う。

@@ -221,7 +221,9 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
   const body: string[] = [];
   const hold = lines.splice(0);
   for (const a of outs.filter((x) => x.dir === "Out")) emit(1, `let ${a.name}: ${tsType(a.type)} = ${DEFAULTS[tsType(a.type)] ?? "undefined as unknown"};`);
-  for (const a of ins) emit(1, `let ${a.name}: ${tsType(a.type)} = args.${a.name} as ${tsType(a.type)};`);
+  // 渡されなかった引数は、IR の既定値（XAML・Coded の既定値と同じ）
+  const tsDefault = (a: (typeof ins)[number]) => (a.default === undefined ? "" : ` ?? ${typeof a.default === "object" ? JSON.stringify(a.default.lit) : String(a.default)}`);
+  for (const a of ins) emit(1, `let ${a.name}: ${tsType(a.type)} = (args.${a.name}${tsDefault(a)}) as ${tsType(a.type)};`);
   if (wf.variables?.length) declare(wf.variables, 1);
   block(wf.body, 1, "body");
   emit(1, `return { ${outs.map((a) => a.name).join(", ")} };`);

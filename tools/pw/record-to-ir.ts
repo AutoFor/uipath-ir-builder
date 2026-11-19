@@ -214,8 +214,10 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
   // ワークフロー：最初の画面のカードの中に、手順を順に置く。画面が変わったら、その画面のカード（開かない・閉じない）に入れる
   const args: Record<string, unknown>[] = [];
   const vars: Record<string, unknown>[] = [];
-  const addArg = (name: string, dir: "In" | "Out") => {
-    if (!args.some((a) => a.name === name)) args.push({ name, dir, type: "String" });
+  const addArg = (name: string, dir: "In" | "Out", def?: string) => {
+    if (args.some((a) => a.name === name)) return;
+    // In の引数の既定値は、最初の記録で使った値（Studio で、引数を渡さずにそのままデバッグできるように）
+    args.push(def !== undefined && dir === "In" ? { name, dir, type: "String", default: { lit: def } } : { name, dir, type: "String" });
   };
   const addVar = (name: string) => {
     if (name.startsWith("out_")) return addArg(name, "Out");
@@ -234,7 +236,7 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
   let curScreen = firstScreen;
   const strExpr = (lit: string | undefined, arg: string | undefined) => {
     if (arg) {
-      addArg(arg, "In");
+      addArg(arg, "In", lit);
       return arg;
     }
     return { lit: lit ?? "" };

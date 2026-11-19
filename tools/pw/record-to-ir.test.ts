@@ -81,8 +81,8 @@ test("2 つの言語の記録から、IR とリポジトリを作る", () => {
   assert.equal(send.target.FullSelectorArgument.lit, "<webctrl tag='BUTTON' aaname='^(送信|Send)$' matching:aaname='regex' />");
   // 引数と、画面ごとのカード
   assert.deepEqual(res.ir.arguments, [
-    { name: "in_Url", dir: "In", type: "String" },
-    { name: "in_Name", dir: "In", type: "String" },
+    { name: "in_Url", dir: "In", type: "String", default: { lit: "https://example.test/form" } }, // 既定値は最初の記録の値
+    { name: "in_Name", dir: "In", type: "String", default: { lit: "太郎" } },
     { name: "out_Result", dir: "Out", type: "String" },
   ]);
   const outer = (res.ir.body as { act: string; body: { act: string; objs?: { TargetApp?: unknown } }[] }[])[0];

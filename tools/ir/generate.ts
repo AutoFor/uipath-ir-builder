@@ -195,6 +195,14 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
   const out: string[] = [];
   // C# は Studio と同じく ExpressionActivityEditor="C#" を付け、VisualBasic.Settings は書かない
   out.push(`<Activity mc:Ignorable="sap sap2010" x:Class="${esc(wf.workflow)}" ${cs ? 'sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#"' : 'mva:VisualBasic.Settings="{x:Null}"'}`);
+  // 引数の既定値は、Studio と同じくルートの this:<ワークフロー>.<引数>="値"（xmlns:this="clr-namespace:"）
+  const defaults = (wf.arguments ?? []).filter((a) => a.default !== undefined);
+  for (const a of defaults) {
+    const d = a.default!;
+    const v = typeof d === "object" ? d.lit : typeof d === "boolean" ? (d ? "True" : "False") : String(d);
+    out.push(`this:${esc(wf.workflow)}.${esc(a.name)}="${esc(v)}"`);
+  }
+  if (defaults.length) allNs.splice(allNs.length - 1, 0, ["this", "clr-namespace:"]);
   for (const [p, u] of allNs) out.push(`xmlns${p ? ":" + p : ""}="${u}"${p === "x" ? ">" : ""}`);
   if (members.length) out.push("  <x:Members>", ...members, "  </x:Members>");
   out.push("  <TextExpression.NamespacesForImplementation>", '    <sco:Collection x:TypeArguments="x:String">');
