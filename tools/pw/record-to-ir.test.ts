@@ -100,3 +100,12 @@ test("記録の手順が食い違えば止める", () => {
   b.steps[2].name = "別の名前";
   assert.throws(() => convert([a, b], { workflow: "Form", app: "x", browser: "Chrome" }), /手順 2/);
 });
+
+test("開く URL は、転送の前の URL（セレクターの url は転送のあとのページ）", () => {
+  const r = rec("ja-JP", "完了", "送信");
+  r.steps[0].page = { url: "https://login.example.test/auth?nonce=xyz", title: "t", lang: "ja" };
+  const res = convert([r], { workflow: "Form", app: "x", browser: "Chrome" });
+  const sc = (res.app as { screens: { target: { Url: { lit: string }; Selector: { lit: string } } }[] }).screens[0];
+  assert.equal(sc.target.Url.lit, "https://example.test/form");
+  assert.equal(sc.target.Selector.lit, "<html app='chrome.exe' url='https://login.example.test/*' />");
+});

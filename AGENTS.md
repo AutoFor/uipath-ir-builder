@@ -56,6 +56,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 - Python のエージェント（Coded Agent。LangGraph など）を作るときは [knowledge/python-agents.md](knowledge/python-agents.md)。生成器は使わず、見本 `samples/pyagent/quote-agent/` を写して `main.py` を直し、`uip codedagent init` → `run` → `eval` で確かめる
 - Maestro（Flow・BPMN・Case、Maestro Automate）を作るときは [knowledge/maestro.md](knowledge/maestro.md)。IR ではなく公式 SDK のソース（`*.flow.ts` など）を書き、`node tools/maestro/verify.mjs [--automate] --out <dir> <ソース>` で確かめ、`node tools/maestro/debug.mjs <.flow | .bpmn | caseplan.json> [--automate]` でテナントでデバッグ実行する。デプロイの手順と落とし穴は knowledge/maestro.md の 10 章。公式の skill（`uipath-maestro-flow` など）は CLI の使い方の参照として読み、作るのはこの SDK のソースと `verify.mjs` にする
 - UI 操作の画面・要素をオブジェクトリポジトリ（`.objects/`）に置くときは [knowledge/object-repository.md](knowledge/object-repository.md)。正本は `<P>/ir/repository.json`、ワークフローの IR からは `{ "$ref": "アプリ/画面/要素" }` で指す。`.objects` は `node tools/ir/objrepo.ts build --project <P>` で作る（手で直さない）。Studio の XAML にある、リポジトリに入っていないセレクターは `import-xaml.ts` で IR にしてから `objrepo.ts register` で登録する
+- Playwright（C#）の操作から UiPath の XAML と Coded を作るときは [knowledge/playwright-to-uipath.md](knowledge/playwright-to-uipath.md)。`tools/pw/UiRecorder.cs` で日本語と英語の記録を取り、`node tools/pw/record-to-ir.ts --project <P> --workflow <名前> <記録.ja.json> <記録.en.json>` で IR と `repository.json` にする。変換できないものは `<P>/ir/<名前>.conversion.md` に出る
 
 ### 3. IR を書く
 

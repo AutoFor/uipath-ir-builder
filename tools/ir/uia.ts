@@ -324,7 +324,7 @@ export const codedModels: Record<string, ModelMap> = {
       NativeTextArgument: "NativeText", NativeTextOccurrenceArgument: "NativeTextOccurrence", IsNativeTextCaseSensitive: "IsNativeTextCaseSensitive",
       CvType: "CvType", CvTextArgument: "CvText", CvTextOccurrenceArgument: "CvTextOccurrence", CvTextAccuracyArgument: "CvTextAccuracy",
       SemanticSelectorArgument: "SemanticSelector", SemanticSelectorFindMethod: "SemanticSelectorFindMethod", SemanticElementType: "SemanticElementType",
-      ElementType: "ElementType", FriendlyName: "FriendlyName", Guid: "Guid", Reference: "Reference", TargetType: "TargetType",
+      ElementType: "ElementType", FriendlyName: "FriendlyName", Guid: null, Reference: "Reference", TargetType: "TargetType",
       PointOffset: "PointOffset", RegionOffset: "RegionOffset",
       Version: null, DesignTimeRectangle: null, DesignTimeScaleFactor: null, InformativeScreenshot: null, ContentHash: null, BrowserURL: null, IsResponsive: null,
       // CV（Computer Vision）のターゲット。CVScreenId は設計時に取った画面の ID で、TargetAnchorableModel に無い（DesignTimeRectangle と同じ扱い）
@@ -411,6 +411,8 @@ function model(t: ObjType, v: ObjValue, at: string, ctx: CodedCtx): string {
     let cs: string;
     if (sub) cs = model(sub, x as ObjValue, kat, ctx);
     else if (p.enum && typeof x === "string") cs = x.split(",").map((s) => `${p.type}.${s.trim()}`).join(" | ");
+    // 属性に書く文字列（Reference など。式ではなく値そのもの）は、C# の文字列にする
+    else if (p.kind === "prop" && p.type === "System.String" && typeof x === "string") cs = JSON.stringify(x);
     else cs = ctx.expr(x as Value, kat);
     sets.push(`${to} = ${cs}`);
   }

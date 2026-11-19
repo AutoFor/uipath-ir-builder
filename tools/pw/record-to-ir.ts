@@ -143,7 +143,7 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
   const browserApp = opt.browser === "Edge" ? "msedge.exe" : "chrome.exe";
 
   // 画面（記録の screen の名前ごと）と要素
-  type Scr = { name: string; urls: string[]; elements: Map<string, { snaps: Snapshot[]; action: string; choice?: Choice }> };
+  type Scr = { name: string; urls: string[]; openUrl?: string; elements: Map<string, { snaps: Snapshot[]; action: string; choice?: Choice }> };
   const screens = new Map<string, Scr>();
   const scr = (name: string) => {
     if (!screens.has(name)) screens.set(name, { name, urls: [], elements: new Map() });
@@ -158,7 +158,8 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     for (const r of recs) {
       const st = r.steps[i];
       if (st.page?.url) sc.urls.push(st.page.url);
-      if (st.action === "goto" && st.url) sc.urls.push(st.url);
+      // 開く URL は、スクリプトが開いた URL（転送のあとの URL には、毎回変わる値が入ることがある）。セレクターの url は転送のあとのページから作る
+      if (st.action === "goto" && st.url) sc.openUrl ??= st.url;
     }
     if (s.action === "goto") return;
     const snaps = recs.map((r) => r.steps[i].element!).filter(Boolean);
@@ -195,7 +196,7 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     }
     const screen: Record<string, unknown> = {
       name: sc.name,
-      target: { BrowserType: opt.browser, Selector: { lit: `<html app='${browserApp}' url='${q(urlPattern(sc.urls))}' />` }, Url: { lit: sc.urls[0] }, IsExactTitleEnabled: false },
+      target: { BrowserType: opt.browser, Selector: { lit: `<html app='${browserApp}' url='${q(urlPattern(sc.urls))}' />` }, Url: { lit: sc.openUrl ?? sc.urls[0] }, IsExactTitleEnabled: false },
       elements,
     };
     if (opt.interactionMode) screen.interactionMode = opt.interactionMode;
