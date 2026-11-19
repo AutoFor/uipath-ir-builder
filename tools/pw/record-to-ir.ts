@@ -1,7 +1,8 @@
 // Playwright（TypeScript）の記録（tools/pw/recorder.ts が書く JSON）から、IR と <P>/ir/repository.json を作る（AUT-1219）。
 //
 //   node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge]
-//        [--interaction-mode <NInteractionMode>] <record.ja.json> [<record.en.json>]
+//        [--interaction-mode <NInteractionMode>] [--no-incognito] <record.ja.json> [<record.en.json>]
+//   --no-incognito  カードをシークレット ウィンドウ（IsIncognito）にしない（既定は、記録と同じく Cookie・サインインの残らないウィンドウ）
 //
 // - 記録は 1 つ（1 つの言語）か 2 つ（日本語と英語）。2 つなら手順の順番で突き合わせる（操作と名前が同じであること）
 // - 書くもの：<P>/ir/<名前>.json（ワークフローの IR。ターゲットは $ref）、<P>/ir/repository.json（同じ名前のアプリを置き換える）、
@@ -51,11 +52,12 @@ export type Step = {
   what?: string;
   detail?: string;
 };
-export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; recordedAt?: string; steps: Step[] };
+export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; incognito?: boolean; recordedAt?: string; steps: Step[] };
 
 export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean };
 export type Unconverted = { step: number; what: string; why: string };
-export type ConvertOptions = { workflow: string; app: string; browser: "Chrome" | "Edge"; interactionMode?: string };
+// incognito：false でなければ、記録が新しいコンテキスト（incognito: true）のとき、カードを IsIncognito=True（シークレット ウィンドウ）にする
+export type ConvertOptions = { workflow: string; app: string; browser: "Chrome" | "Edge"; interactionMode?: string; incognito?: boolean };
 export type ConvertResult = {
   ir: Record<string, unknown>;
   app: Record<string, unknown>;
@@ -233,7 +235,12 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     act: "NApplicationCard",
     name: `${firstScreen} を開く`,
     objs: { TargetApp: { $ref: [app, firstScreen] } },
-    props: { OpenMode: "Always", CloseMode: "Always", ...(opt.interactionMode ? { InteractionMode: opt.interactionMode } : {}) },
+    props: {
+      OpenMode: "Always", CloseMode: "Always",
+      ...(opt.interactionMode ? { InteractionMode: opt.interactionMode } : {}),
+      // 記録は Cookie・サインインの残らないコンテキストで取ったので、UiPath でもシークレット ウィンドウで開く（利用者のプロファイルの状態で画面が変わらないように）
+      ...(opt.incognito !== false && recs.every((r) => r.incognito) ? { IsIncognito: true } : {}),
+    },
     body: [] as unknown[],
   };
   let cur = outer.body as unknown[];
@@ -319,6 +326,7 @@ function main(argv: string[]) {
   let app = "";
   let browser: "Chrome" | "Edge" = "Chrome";
   let interactionMode: string | undefined;
+  let incognito = true;
   const files: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -327,15 +335,16 @@ function main(argv: string[]) {
     else if (a === "--app") app = argv[++i];
     else if (a === "--browser") browser = argv[++i] as "Chrome" | "Edge";
     else if (a === "--interaction-mode") interactionMode = argv[++i];
+    else if (a === "--no-incognito") incognito = false;
     else if (a.startsWith("--")) throw new Error(`知らないオプション: ${a}`);
     else files.push(a);
   }
   if (!project || !workflow || !files.length) {
-    console.error("使い方: node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge] [--interaction-mode <モード>] <記録.json>...");
+    console.error("使い方: node tools/pw/record-to-ir.ts --project <P> --workflow <名前> [--app <アプリ名>] [--browser Chrome|Edge] [--interaction-mode <モード>] [--no-incognito] <記録.json>...");
     process.exit(2);
   }
   const recs = files.map((f) => JSON.parse(readFileSync(f, "utf8").replace(/^\uFEFF/, "")) as Recording);
-  const res = convert(recs, { workflow, app: app || `${browser}（${workflow}）`, browser, interactionMode });
+  const res = convert(recs, { workflow, app: app || `${browser}（${workflow}）`, browser, interactionMode, incognito });
   const irDir = join(project, "ir");
   mkdirSync(irDir, { recursive: true });
   writeFileSync(join(irDir, `${workflow}.json`), JSON.stringify(res.ir, null, 2) + "\n");

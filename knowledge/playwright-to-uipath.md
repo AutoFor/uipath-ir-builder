@@ -180,11 +180,10 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   1. Playwright で 2 言語を記録し、XAML（`PwForm`）と Coded（`PwFormCoded`、Descriptors）を作った。窓口（queue-run）でロボットが動かし、どちらも「結果: 受け付けました: IR 太郎」「見出し: 申し込み」になった
   2. その XAML → `import-xaml.ts` → `ir-to-pw.ts` → 手元の Chrome で、ja-JP・en-US とも記録と同じ結果になった
   - 使ったセレクター：`data-testid`、`aria-label` の 2 言語の正規表現（送信・閉じる）、`innertext` の 2 言語の正規表現（見出し）。出たときだけ閉じるお知らせ（`clickIfVisible`）も通った
-- サインイン画面は、ロボットでは通っていない
-  - Go To URL（リポジトリの Reference あり）で「UI 要素が見つかりません」になった
-  - Reference を外すと先に進むが、メール欄が見つからない
-  - ロボットの Chrome は利用者のプロファイルなので、記録した新しいプロファイルと画面が違う（覚えたアカウントの画面になる）と推定している（未確認）
-  - サインインの状態で画面が変わる外のサイトは、固定の題材にしない
+- サインイン画面は、シークレット ウィンドウ（`IsIncognito`）にするとロボットで通った（2026-11-19）
+  - `PwSignIn3`（XAML）と `PwSignInCoded3`（Coded、Descriptors）が通った。どちらも「サインアップへのリンク: Sign up」
+  - 利用者のプロファイルで開いた `PwSignIn2` は、Go To URL やメール欄で「UI 要素が見つかりません」で落ちた。サインイン済みのプロファイルで、画面が記録と変わったため（シークレットで通ったことからの推定）
+- Get Text の違い：「言語の選択」は、UiPath では「Englishen」、Playwright では「English」になった。要素の中の見えない `<input value="en">` の値も、UiPath では入る（Playwright の `innerText` は見える文字だけ）。読み取った文字を比べるときは、この違いに気をつける
 
 ## ロボットで動かすときの注意
 
@@ -196,6 +195,11 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   1. 窓口の run が作った作業用プロジェクト（`<テンプレート>-<作業名>\.local\.codedworkflows\`）から写す
   2. `gen-coded.ts` をもう一度流す
 - Delay の Duration は式（`TimeSpan.FromSeconds(5)`）で書く。`"00:00:05"` は VB のコンパイルで落ちる
+- シークレット ウィンドウ（`NApplicationCard` の `IsIncognito`、Studio では「シークレット/プライベート ウィンドウ」）
+  - 記録は、Playwright の新しいコンテキスト（Cookie・サインインが残らない）で取る。そのため record-to-ir.ts は、カードを `IsIncognito: true` にする（`--no-incognito` で付けない）
+  - ロボットの Chrome が利用者のプロファイル（サインイン済み）だと、画面が記録と変わるため
+  - UiPath の Chrome 拡張に「シークレット モードでの実行を許可する」が要る。無いと「Failed to start browser in incognito mode. The UiPath extension is not allowed to run in incognito/private windows.」で落ちる（2026-11-19、DESKTOP）
+  - ir-to-pw.ts の Playwright は、いつも新しいコンテキストなので同じ意味になる。`IsIncognito` が無い XAML（利用者のプロファイルで開く）でも新しいコンテキストで開くので、そこは意味が変わる
 
 ## サーバーレス
 

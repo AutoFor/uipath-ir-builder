@@ -101,12 +101,14 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         const pattern = sel?.match(/url='([^']*)'/)?.[1];
         const mode = String(p.OpenMode ?? "IfNotOpen");
         emit(d, `// ${n.name ?? "画面"}`);
+        // IsIncognito（シークレット ウィンドウ）：launch のコンテキストはいつも新しい（Cookie・サインインが残らない）ので、同じ意味になる
+        if (p.IsIncognito === true || p.IsIncognito === "True") emit(d, "// シークレット ウィンドウ（IsIncognito）：launch の新しいコンテキストで開く");
         if (app?.BrowserType && !/Chrome|Edge|Chromium/i.test(String(app.BrowserType))) bad(path, n.name ?? n.act, `ブラウザー ${app.BrowserType} は Chrome で動かす`);
         if (mode === "Always" && url) emit(d, `await page.goto(${JSON.stringify(url)});`);
         else if (mode === "IfNotOpen" && url) emit(d, `if (page.url() === "about:blank") await page.goto(${JSON.stringify(url)});`);
         if (pattern) emit(d, `await page.waitForURL(${JSON.stringify(urlGlob(pattern))});`);
         else if (app) bad(path, n.name ?? n.act, "画面のセレクターに url が無い（ブラウザーの画面ではないかもしれない）");
-        rest(n, path, ["OpenMode", "CloseMode", "AttachMode", "InteractionMode", "ScopeGuid", "WindowResize"]);
+        rest(n, path, ["OpenMode", "CloseMode", "AttachMode", "InteractionMode", "ScopeGuid", "WindowResize", "IsIncognito"]);
         block(n.body, d, `${path}.body`);
         return;
       }

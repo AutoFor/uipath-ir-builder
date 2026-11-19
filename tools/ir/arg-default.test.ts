@@ -58,3 +58,13 @@ test("検証：In 以外の既定値、型に合わない既定値はエラー",
   assert.deepEqual(codes([{ name: "in_N", dir: "In", type: "Int32", default: { lit: "3" } }]), ["BAD_ARG_DEFAULT"]);
   assert.deepEqual(codes([{ name: "in_B", dir: "In", type: "String", default: true }]), ["BAD_ARG_DEFAULT"]);
 });
+
+test("NApplicationCard の IsIncognito（シークレット ウィンドウ）は XAML と Coded に出る", () => {
+  const w: Workflow = { workflow: "Main", body: [{ act: "NApplicationCard", objs: { TargetApp: { BrowserType: "Chrome", Selector: { lit: "<html app='chrome.exe' />" }, Url: { lit: "https://example.com/" } } },
+    props: { OpenMode: "Always", IsIncognito: true }, body: [{ act: "LogMessage", props: { Level: "Info", Message: { lit: "x" } } }] }] };
+  assert.deepEqual(validate(w, cat), []);
+  assert.match(generate(w, cat), /IsIncognito="True"/);
+  const r = generateCoded(w, cat, maps, { namespace: "N" });
+  assert.deepEqual(r.issues, []);
+  assert.match(r.code, /IsIncognito = true/);
+});

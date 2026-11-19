@@ -109,3 +109,12 @@ test("開く URL は、転送の前の URL（セレクターの url は転送の
   assert.equal(sc.target.Url.lit, "https://example.test/form");
   assert.equal(sc.target.Selector.lit, "<html app='chrome.exe' url='https://login.example.test/*' />");
 });
+
+test("新しいコンテキストの記録（incognito）なら、カードをシークレット ウィンドウ（IsIncognito）にする", () => {
+  const recs = [rec("ja-JP", "完了", "送信"), rec("en-US", "Done", "Send")].map((r) => ({ ...r, incognito: true }));
+  const card = (o?: boolean) => (convert(recs, { workflow: "Form", app: "x", browser: "Chrome", incognito: o }).ir.body as { props: Record<string, unknown> }[])[0].props;
+  assert.equal(card().IsIncognito, true);
+  assert.equal(card(false).IsIncognito, undefined);
+  // 記録に incognito が無い（古い記録）ときは付けない
+  assert.equal((convert([rec("ja-JP", "完了", "送信")], { workflow: "Form", app: "x", browser: "Chrome" }).ir.body as { props: Record<string, unknown> }[])[0].props.IsIncognito, undefined);
+});
