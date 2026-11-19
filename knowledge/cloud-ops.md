@@ -57,7 +57,7 @@ Orchestrator や Automation Cloud（Test Manager、Integration Service、Agents�
 | Action Center | ○ タスクの割り当て・完了（`uip tasks`） | Document Validation Task の Validation Station での Submit。人が画面で押して確かめたいとき |
 | Agents | ○ 作る・`debug`・`review`・デプロイ・実行時の評価（`uip agent`・`uip eval`） | memory space を作る。作るときの評価を流す（`eval run start` が落ちる）。ソリューションの中のアプリ・MCP サーバーを使うデバッグ、会話型のデバッグ（Studio Web の Debug） |
 | Studio Web | ○ ソリューションの upload・download（`uip solution`） | RPA アプリの編集・デバッグ（Assistant の要る Chrome のマシンで） |
-| IXP | ○ プロジェクト・ラベル・発行・デプロイ（`uip ixp`） | テナントで初めて使うとき、IXP の画面を一度開く（開くまで API が 401） |
+| IXP | ○ プロジェクト・ラベル・発行・デプロイ（`uip ixp`） | テナントで初めて使うとき、IXP の画面を一度開く（開くまで API が 401）。入口は `/<org>/<tenant>/reinfer_`（→ `reinfer_/projects-and-datasets/genex/projects`）。`/reinfer_/ixp` は白いまま（2026-11-19） |
 | Maestro | ○ 検証・デバッグ・デプロイ（`uip maestro`、`tools/maestro/*.mjs`） | キャンバスを目で見るとき |
 | テナント・組織 | ○ サービスの一覧、ライセンス（`uip admin`・`uip or licenses`） | — |
 | ログイン | `uip login --profile <名前>` | サインイン・パスワード・確認コードは人が入れる |

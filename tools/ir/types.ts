@@ -20,7 +20,9 @@ export type Workflow = {
   then?: Node[];
 };
 
-export type ArgumentDecl = { name: string; dir: "In" | "Out" | "InOut"; type: string };
+// default：In の引数の既定値（Studio の引数パネルの「既定値」。引数を渡さずに動かしたとき、デバッグのときに使う）。
+// リテラルだけ書ける：文字列は { lit }、数値・真偽値はそのまま。XAML ではルートの this:<ワークフロー>.<引数>="値"、Coded では Execute の省略可能な引数になる
+export type ArgumentDecl = { name: string; dir: "In" | "Out" | "InOut"; type: string; default?: { lit: string } | number | boolean };
 
 // default：VB の式。C# の式のプロジェクトから取り込んだ既定値は { cs }（VB に直せないので vb は無いこともある）
 export type VariableDecl = { name: string; type: string; default?: string | CsExpr };

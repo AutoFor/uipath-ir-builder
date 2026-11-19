@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- AUT-1219 の題材：言語（navigator.language）で表示が変わる小さなフォーム。node tools/pw/serve.mjs samples/pw で http://127.0.0.1:8765/form/form.html -->
+<html><head><meta charset="utf-8"><title>IR Form</title></head><body>
+<script>
+const ja = navigator.language.startsWith("ja");
+document.documentElement.lang = ja ? "ja" : "en";
+document.title = "IR Form";
+document.body.innerHTML = `
+  <h1>${ja ? "申し込み" : "Application"}</h1>
+  <label>${ja ? "名前" : "Name"} <input data-testid="name-input" name="fullname"></label>
+  <button aria-label="${ja ? "送信する" : "Submit form"}">${ja ? "送信" : "Submit"}</button>
+  <div id="result"></div>
+  <div id="banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#eee;padding:8px">
+    ${ja ? "お知らせ" : "Notice"} <button class="banner-close" aria-label="${ja ? "閉じる" : "Close"}">x</button>
+  </div>`;
+setTimeout(() => { document.getElementById("banner").style.display = "block"; }, 500);
+document.querySelector(".banner-close").onclick = () => document.getElementById("banner").remove();
+document.querySelector("button[aria-label]").onclick = () => setTimeout(() => {
+  const v = document.querySelector("input").value;
+  document.getElementById("result").innerHTML = `<span data-testid="result">${ja ? "受け付けました: " : "Received: "}${v}</span>`;
+}, 300);
+</script></body></html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- AUT-1221 の題材：アンカー（ラベルの右の入力欄）・複数行のセレクター（カードの中のボタン）・iframe。言語（navigator.language）で表示が変わる
+     node tools/pw/serve.mjs samples/pw で http://127.0.0.1:8765/form/layout.html -->
+<html><head><meta charset="utf-8"><title>IR Layout</title>
+<style>
+  body { font-family: sans-serif; margin: 16px; }
+  .row { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+  .row label { width: 120px; }
+  .field { width: 240px; }
+  .cards { display: flex; gap: 16px; margin: 16px 0; }
+  .card { border: 1px solid #999; padding: 8px 16px; width: 200px; }
+  iframe { width: 420px; height: 120px; border: 1px solid #999; }
+</style></head><body>
+<script>
+// 言語は navigator.language。?lang=en / ?lang=ja で上書きできる（ロボットの Chrome は OS の言語のまま変えられないため）
+const lang = new URLSearchParams(location.search).get("lang") || navigator.language;
+const ja = lang.startsWith("ja");
+const t = (j, e) => (ja ? j : e);
+document.documentElement.lang = ja ? "ja" : "en";
+document.body.insertAdjacentHTML("beforeend", `
+  <h1>${t("レイアウト", "Layout")}</h1>
+  <div class="row"><label>${t("氏名", "Name")}</label><input class="field" data-k="fullname"></div>
+  <div class="row"><label>${t("メール", "Email")}</label><input class="field" data-k="email"></div>
+  <button data-testid="check">${t("確認", "Check")}</button>
+  <div class="cards">
+    <div class="card" data-testid="card-a"><h2>${t("プランA", "Plan A")}</h2><button class="act">${t("選ぶ", "Choose")}</button></div>
+    <div class="card" data-testid="card-b"><h2>${t("プランB", "Plan B")}</h2><button class="act">${t("選ぶ", "Choose")}</button></div>
+  </div>
+  <div data-testid="status"></div>
+  <iframe id="inner" title="inner" src="frame.html?lang=${ja ? "ja" : "en"}"></iframe>`);
+const status = (s) => (document.querySelector("[data-testid=status]").textContent = s);
+document.querySelector("[data-testid=check]").onclick = () =>
+  status(`${t("氏名", "Name")}=${document.querySelector("[data-k=fullname]").value} / ${t("メール", "Email")}=${document.querySelector("[data-k=email]").value}`);
+for (const c of document.querySelectorAll(".card")) c.querySelector("button").onclick = () => status(`${t("選択", "Chosen")}: ${c.querySelector("h2").textContent}`);
+</script></body></html>

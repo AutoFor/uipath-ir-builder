@@ -39,6 +39,9 @@ export type RepoElement = {
   taxonomy?: string; // .metadata の TaxonomyType（入力欄なら "Input"）
   activityType?: string; // 取り込んだアクティビティ（"Click" など。.content の ActivityType）
   target: ObjValue; // TargetAnchorable（objs.Target と同じ書き方。値はリテラルだけ）
+  // ロケールごとのセレクター（"ja-JP": "<webctrl … aria-label='送信する' />"）。Playwright の pw/objects だけが使う（tools/pw/pw-objects.ts）。
+  // UiPath（.objects）には入れない。target は両方の言語に当たる正規表現のまま
+  locales?: Record<string, string>;
 };
 export type RepoScreen = {
   name: string;
