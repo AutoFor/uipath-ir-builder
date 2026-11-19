@@ -139,3 +139,11 @@ test("言語で値が違う要素は、ロケールごとのセレクター（lo
   assert.deepEqual(els.find((e) => e.name === "送る")!.locales, { "ja-JP": "<webctrl tag='BUTTON' aria-label='送信' />", "en-US": "<webctrl tag='BUTTON' aria-label='Send' />" });
   assert.equal(els.find((e) => e.name === "名前")!.locales, undefined); // 言語によらない（id）
 });
+
+test("読み取り（text）は Get Attribute の innertext（Playwright の innerText と同じ文字。Get Text は見えない入力欄の値まで入れる）", () => {
+  const res = convert([rec("ja-JP", "完了", "送信")], { workflow: "Form", app: "x", browser: "Chrome" });
+  const flat = JSON.stringify(res.ir);
+  assert.match(flat, /"act":"NGetAttributeGeneric","typeArg":"String","name":"結果 を読む"/);
+  assert.match(flat, /"Attribute":{"lit":"innertext"},"Result":"out_Result"/);
+  assert.doesNotMatch(flat, /NGetText/);
+});

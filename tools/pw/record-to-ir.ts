@@ -31,6 +31,7 @@ export type Snapshot = {
   counts: Record<string, number>;
   inShadow: boolean;
   inFrame: boolean;
+  formValues?: string[]; // 中の入力欄の値（UiPath の Get Text はこれも文字に入れる。記録では Get Attribute の innertext で読むので、参考に残すだけ）
   locatorCount?: number;
 };
 export type Step = {
@@ -127,7 +128,7 @@ export function chooseSelector(snaps: Snapshot[]): Choice {
 const TAXONOMY: Record<string, [string, string]> = {
   click: ["Button", "Click"],
   fill: ["Input", "TypeInto"],
-  text: ["Text", "GetText"],
+  text: ["Text", "GetAttribute"],
   wait: ["Text", "CheckState"],
   clickIf: ["Button", "Click"],
 };
@@ -294,7 +295,9 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       case "text": {
         const v = s.outVar ?? `text${i}`;
         addVar(v);
-        cur.push({ act: "NGetText", name: `${s.name} を読む`, objs: { Target: ref(sc, s.name!) }, props: { TextString: v } });
+        // Get Text（NGetText）ではなく、Get Attribute の innertext で読む。Playwright の innerText と同じ文字になる。
+        // Get Text は、要素の中や上に重なった見えない入力欄の値まで入れる（「English」が「Englishen」）。ScrapingMethod・ScrapingOptions のどれでも外せなかった（2026-11-19、DESKTOP）
+        cur.push({ act: "NGetAttributeGeneric", typeArg: "String", name: `${s.name} を読む`, objs: { Target: ref(sc, s.name!) }, props: { Attribute: { lit: "innertext" }, Result: v } });
         cur.push({ act: "LogMessage", props: { Level: "Info", Message: `"${s.name}: " & ${v}` } });
         break;
       }

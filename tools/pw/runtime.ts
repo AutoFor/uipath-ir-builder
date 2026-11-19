@@ -17,6 +17,15 @@ export async function getText(target: Locator): Promise<string> {
   return (await target.innerText()).trim();
 }
 
+// Get Attribute：UiPath の属性の名前で読む。innertext・visibleinnertext は Playwright の innerText（DESKTOP で、UiPath と同じ文字になった）。
+// textContent は UiPath では空だった（DOM の属性ではないため）ので、ほかの属性と同じく getAttribute で読む（同じく空になる）
+export async function getAttribute(target: Locator, name: string): Promise<string> {
+  const n = name.toLowerCase();
+  if (n === "innertext" || n === "visibleinnertext") return (await target.innerText()).trim();
+  if (n === "value") return await target.inputValue();
+  return (await target.getAttribute(name)) ?? "";
+}
+
 // Check State：時間内に出た（消えた）ら true、出なければ false（UiPath と同じく、時間切れは例外にしない）
 export async function waitState(target: Locator, state: "visible" | "hidden", timeoutMs: number): Promise<boolean> {
   try {

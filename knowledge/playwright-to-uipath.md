@@ -39,7 +39,7 @@
 | `goto` | `NApplicationCard`（開く）＋ `NGoToUrl` |
 | `click` | `NClick` |
 | `fill` | `NTypeInto` |
-| `text` | `NGetText` ＋ `LogMessage` |
+| `text` | `NGetAttributeGeneric<String>`（Attribute `innertext`）＋ `LogMessage`。Get Text（`NGetText`）は使わない（下の「読み取りの文字」） |
 | `waitVisible` | `NCheckState`（WaitAppear）＋ `If Not` → `Throw` |
 | `clickIfVisible` | `NCheckState`（WaitAppear、出なくても止めない）＋ `If` → `NClick` |
 
@@ -133,7 +133,8 @@ node <P>/pw/Main.pw.ts <引数の JSON> [--locale en-US] [--headed]         # �
 | `NGoToUrl` | `page.goto` |
 | `NClick` | `click`（右・中ボタン、ダブルクリック） |
 | `NTypeInto` | `fill`。EmptyFieldMode None は `pressSequentially` |
-| `NGetText` | `getText` |
+| `NGetText` | `getText`（入力欄は値、それ以外は `innerText`。UiPath の Get Text とは違うことがある。下の「読み取りの文字」） |
+| `NGetAttribute`・`NGetAttributeGeneric` | `getAttribute(要素, 属性)`。`innertext`・`visibleinnertext` は `innerText`、`value` は入力欄の値、それ以外は DOM の属性 |
 | `NCheckState` | `waitState` |
 | `LogMessage`・`If`・`Throw`・`Assign`・`Delay`・`Sequence` | そのまま |
 
@@ -215,7 +216,28 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
 - サインイン画面は、シークレット ウィンドウ（`IsIncognito`）にするとロボットで通った（2026-11-19）
   - `PwSignIn3`（XAML）と `PwSignInCoded3`（Coded、Descriptors）が通った。どちらも「サインアップへのリンク: Sign up」
   - 利用者のプロファイルで開いた `PwSignIn2` は、Go To URL やメール欄で「UI 要素が見つかりません」で落ちた。サインイン済みのプロファイルで、画面が記録と変わったため（シークレットで通ったことからの推定）
-- Get Text の違い：「言語の選択」は、UiPath では「Englishen」、Playwright では「English」になった。要素の中の見えない `<input value="en">` の値も、UiPath では入る（Playwright の `innerText` は見える文字だけ）。読み取った文字を比べるときは、この違いに気をつける
+- 読み取りの文字（Get Text）の違いを直した。下の「読み取りの文字」
+
+## 読み取りの文字（Get Text と Get Attribute の innertext）
+
+サインイン画面の「言語の選択」は、UiPath の Get Text では「Englishen」、Playwright の `innerText` では「English」になった。中に MUI の Select の見えない入力欄（`<input aria-hidden="true" value="en">`。opacity 0 で、上に重なる）があり、UiPath の Get Text はその値まで文字に入れる。
+
+DESKTOP のロボットで試した（2026-11-19）。ページは `samples/pw/form/gettext.html`、IR は `C:\Users\Public\uipath-cloud-ui\GetTextCases\GetTextTest.json`。
+
+| 読み方 | MUI の形（中に見えない入力欄） | 中に display:none の入力欄 | 文字だけ |
+| --- | --- | --- | --- |
+| Get Text：ScrapingMethod Default・TextAttribute・Fulltext、ScrapingOptions IgnoreHiddenText（どの組み合わせも） | Englishen | Japaneseja | Plain text |
+| Get Text：ScrapingMethod Native | （空） | （空） | （空） |
+| Get Attribute：`innertext`・`innerText`・`visibleinnertext` | **English** | **Japanese** | — |
+| Get Attribute：`aaname` | （空） | Japanese | — |
+| Get Attribute：`textContent` | （空） | （空） | — |
+
+- Get Text の設定では、Playwright の `innerText` と同じ文字にできなかった。OCR は画面の画像を読むので、試していない
+- サインイン画面では、文字を出している内側の要素（`id='languageOptions'`）を Get Text で読んでも「Englishen」だった。入力欄が上に重なっているため、と推定している
+- **そこで、記録の `text` は Get Attribute の `innertext` で読む**（record-to-ir.ts）
+  - PwSignIn3・PwSignInCoded3 で「English」になり、Playwright と同じになった
+  - PwForm・PwFormCoded も、結果は変わらなかった
+- 逆向き（ir-to-pw.ts）の Get Text（`NGetText`）は `innerText` で読む。中に入力欄がある要素では、UiPath と違う文字になりうる。UiPath 側を Get Attribute の `innertext` に直すと、そろう
 
 ## ロボットで動かすときの注意
 

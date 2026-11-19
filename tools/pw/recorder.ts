@@ -72,6 +72,8 @@ export function snapshotInPage(el: Element): Snapshot {
     tag: el.tagName, attrs, text, value: "value" in el ? String((el as HTMLInputElement).value ?? "") : null,
     role: el.getAttribute("role"), css: cssPath(el), ancestors, counts,
     inShadow: root instanceof ShadowRoot, inFrame: window !== window.top,
+    // 中の入力欄の値（参考）。UiPath の Get Text は、見えない入力欄（display:none でも）の値まで文字に入れる（Playwright の innerText は入れない）
+    formValues: Array.from(el.querySelectorAll("input, textarea, select")).map((x) => (x as HTMLInputElement).value).filter((v) => v !== ""),
   };
 }
 

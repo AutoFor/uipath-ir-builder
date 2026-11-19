@@ -58,7 +58,7 @@ test("IR の画面操作を Playwright にする。セレクターはじかに�
   const r = irToPlaywright(wf, repo);
   assert.deepEqual(r.unconverted, []);
   for (const line of [
-    'import { getText, launch, log, waitState } from "./lib/runtime.ts";',
+    'import { getAttribute, getText, launch, log, waitState } from "./lib/runtime.ts";',
     'import objects from "./objects/index.ts";',
     "const O = objects(page, locale);",
     "await page.goto(O.テスト_フォーム.フォーム.$url as string);",

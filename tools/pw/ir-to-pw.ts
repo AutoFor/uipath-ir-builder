@@ -164,6 +164,16 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         rest(n, path, ["TextString", "InteractionMode", "ScopeIdentifier"]);
         return;
       }
+      case "NGetAttribute":
+      case "NGetAttributeGeneric": {
+        const l = locator(n, path);
+        const to = typeof p.Result === "string" ? names.get(p.Result.toLowerCase()) : undefined;
+        const attr = expr(p.Attribute, `${path}.props.Attribute`, "属性の名前");
+        if (!l || !to || attr === undefined) { if (!to) bad(path, n.name ?? n.act, "結果の変数が無い"); emit(d, `// 変換できない: ${n.name ?? n.act}`); return; }
+        emit(d, `${to} = await getAttribute(${l}, ${attr});`);
+        rest(n, path, ["Attribute", "Result", "InteractionMode", "ScopeIdentifier"]);
+        return;
+      }
       case "NCheckState": {
         const l = locator(n, path);
         if (!l) { emit(d, `// 変換できない: ${n.name ?? n.act}`); return; }
@@ -264,7 +274,7 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
     `import { readFileSync } from "node:fs";`,
     `import { resolve } from "node:path";`,
     `import type { Page } from "playwright-core";`,
-    `import { getText, launch, log, waitState } from ${JSON.stringify(opt.libImport ?? "./lib/runtime.ts")};`,
+    `import { getAttribute, getText, launch, log, waitState } from ${JSON.stringify(opt.libImport ?? "./lib/runtime.ts")};`,
     ...(usesObjects ? [`import objects from ${JSON.stringify(opt.objectsImport ?? "./objects/index.ts")};`] : []),
     ``,
     `export async function ${safeName(wf.workflow)}(page: Page, args: ${inType} = {}, locale?: string): Promise<${outType}> {`,
