@@ -48,8 +48,12 @@ app1.TypeInto(Descriptors.….メールアドレス, typeIntoOptions: new TypeIn
   ```
 - ただし `Log(...)` は1行のまま書き、`// 名前` も付けない（短く読めるため。`generate-coded.ts` の `ONE_LINE_CALLS`）。`// …` を行の途中に書くと、その後ろの `);` までコメントになるので、1行の呼び出しには名前を付けない
 - 引数が2つ以上の呼び出しは、オプション（複数行）を含んでいても引数を1行に1つずつ書き、閉じかっこは行頭に置く（`uiAutomation.Open(` の画面と `targetAppOptions:` が横に並ばないように）
-- 1つの操作（クリック・入力・待機・状態の確認・ワークフローの呼び出しなど）の直前に `Log(message: "<手順名>", level: LogLevel.Trace);` を入れ、その手順の `// 手順名` は書かない（落ちたとき、最後に何をしようとしたかがログに残る）。名前の無い手順はアクティビティの種類名（`Delay` など）。まとまり・分岐・繰り返し・ログ・代入には入れない（`NOT_TRACED_ACTIVITIES`）。`--no-trace-log` で入れない
-  - Trace のログは、ロボットのログのレベルが Trace（Verbose）のときだけ残る。Orchestrator で見るには、プロセス（またはジョブ）のログのレベルを Trace にする
+- 1つの操作（クリック・入力・待機・状態の確認・ワークフローの呼び出しなど）の前後に Trace のログを入れ、その手順の `// 手順名` は書かない（`--no-trace-log` で入れない）
+  - 前: `[<ワークフロー> > <まとまり> > <まとまり>] <手順名> …始め`。後: `… …終わり（n.n秒）`（`Stopwatch` で測る）。`SLOW_SECONDS`（10秒）以上かかったら、終わりのログは Warn。落ちたときは「始め」だけがあり「終わり」が無い手順が、止まった所
+  - 画面を開く（`using (var appN = uiAutomation.Open(...))`）と状態の確認（`var __stateN = app.WaitState(...)` → `if`）は、「…終わり」を本体（分岐）の前に出す（本体の時間を含めない）
+  - 場所（`[...]`）は、囲んでいる名前のある手順（まとまり・分岐・スコープ）。Studio が付ける決まった名前（`実行`・`Target appears` など。`GENERIC_CRUMBS`）は入れない。内側の2つまで（`CRUMB_DEPTH`、それより外は `…`）。同じ場所に同じ名前が並ぶときは `（2回目）`
+  - 名前の無い手順はアクティビティの種類名（`Delay` など）。まとまり・分岐・繰り返し・ログ・代入には入れない（`NOT_TRACED_ACTIVITIES`）
+  - Trace のログは、ロボットのログのレベルが Trace のときだけ残る。サーバーレスでは、ジョブを動かすロボット アカウント（フォルダーの Automation User）の「アクセス ルールを編集 → ロボットの詳細オプション → ログ レベル」を Trace にする（CLI の `uip or users update` には無い）。`uip or users get <key> --all-fields` の `ExecutionSettings.TracingLevel` で確かめられる
 - ログ（`Log(...)`）の手順は `// 手順名` を書かない（メッセージが説明になる）
 - 手順と手順のあいだに空行を入れる（`// 手順名` ＋ 処理を1つのまとまりに見せる）。ブロックの先頭（`{` の直後）と、まとまり（Sequence など）の見出しのすぐ下には入れない
 - using がある名前空間の前置きは省く（`UiPath.UIAutomationNext.Enums.NAppCloseMode.Never` → `NAppCloseMode.Never`、`UiPath.CodedWorkflows.LogLevel.Error` → `LogLevel.Error`）。名前がぶつからないと分かっている名前空間だけ（`generate-coded.ts` の `SHORTEN_NAMESPACES`）。文字列の中は変えない

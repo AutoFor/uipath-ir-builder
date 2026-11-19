@@ -67,6 +67,13 @@ const NOT_TRACED_ACTIVITIES = new Set([
   "LogMessage", "Comment", "CommentOut", "Assign", "MultipleAssign", "AddToCollection", "InvokeCode",
 ]);
 
+// traceLog で、この秒数以上かかった操作の「…終わり」を Warn で出す
+const SLOW_SECONDS = 10;
+// traceLog の場所（[ワークフロー > まとまり > …]）に出す、内側のまとまりの数
+const CRUMB_DEPTH = 2;
+// traceLog の場所に入れない、Studio が付ける決まった名前（スコープの本体・分岐の枝など。場所の手がかりにならない）
+const GENERIC_CRUMBS = new Set(["実行", "Do", "Body", "Then", "Else", "Target appears", "Target does not appear", "要素が出現", "要素が出現しない", "Sequence", "シーケンス", "本体"]);
+
 // 読みやすい形でも、引数を1行に1つずつにしない呼び出し（短く読めるもの）
 const ONE_LINE_CALLS = new Set(["Log"]);
 
@@ -135,6 +142,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  // traceLog（node の説明を参照）
+  const crumbs: string[] = [];
+  const crumbSeen = new Map<string, number>();
+  let pendingEnd: string | undefined;
+  let swCount = 0;
   // Descriptors で開いた画面（内側ほど後ろ）と、いま組み立て中の呼び出しで渡した画面
   const screens: string[] = [];
   let openedScreen: string | undefined;
@@ -251,7 +263,40 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     (nodes ?? []).forEach((c, i) => node(c, depth, `${at}[${i}]`, new Map(sc)));
   }
 
+  // traceLog：手順の場所と、操作の終わりのログ
+  // - crumbs：いまの手順を囲む、名前のある手順（まとまり・分岐・スコープなど）。同じ場所に同じ名前が並ぶときは「（2回目）」を付ける
+  // - pendingEnd：いま出している操作の「…終わり（n秒）」のログ。ふつうは操作の直後に出す。
+  //   スコープ（using）と分岐（状態の確認）は、本体の前で出す（本体の時間を含めないため）
   function node(n: Node, depth: number, at: string, sc: Map<string, string>) {
+    const prev = pendingEnd;
+    pendingEnd = undefined;
+    const kids = !!(n.body?.length || n.then?.length || n.else?.length || Object.keys(n.slots ?? {}).length || Object.keys(n.cases ?? {}).length || n.catches?.length);
+    const here = opt.traceLog ? place() : "";
+    let pushed = false;
+    if (opt.traceLog && n.name && kids && !GENERIC_CRUMBS.has(n.name.trim())) {
+      const name = n.name.replace(/\r?\n/g, " ");
+      const key = `${crumbs.join(" > ")}|${name}`;
+      const k = (crumbSeen.get(key) ?? 0) + 1;
+      crumbSeen.set(key, k);
+      crumbs.push(k > 1 ? `${name}（${k}回目）` : name);
+      pushed = true;
+    }
+    nodeInner(n, depth, at, sc, here);
+    if (pushed) crumbs.pop();
+    takeEnd(depth);
+    pendingEnd = prev;
+  }
+  // 長くなりすぎないよう、ワークフロー名と内側の CRUMB_DEPTH 個だけ
+  function place() {
+    const inner = crumbs.length > CRUMB_DEPTH ? ["…", ...crumbs.slice(-CRUMB_DEPTH)] : crumbs;
+    return `[${[wf.workflow, ...inner].join(" > ")}]`;
+  }
+  function takeEnd(depth: number) {
+    if (pendingEnd) emit(depth, pendingEnd);
+    pendingEnd = undefined;
+  }
+
+  function nodeInner(n: Node, depth: number, at: string, sc: Map<string, string>, here: string) {
     const r = resolve(cat, n.act, n.typeArg !== undefined);
     if ("error" in r) { add(at, "UNKNOWN_ACT", r.error); return; }
     const a = r.activity;
@@ -265,7 +310,14 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     // そのときは同じ内容の // 手順名 は書かない。まとまり（Sequence）・分岐・繰り返し・ログ・代入などには入れない
     const traced = !!opt.traceLog && !NOT_TRACED_ACTIVITIES.has(a.className);
     // 名前の無い手順は、アクティビティの種類名（Delay など）を出す
-    if (traced) emit(depth, `Log(message: ${csLit((n.name ?? a.className).replace(/\r?\n/g, " "))}, level: UiPath.CodedWorkflows.LogLevel.Trace);`);
+    // 操作の前に「[場所] 手順名 …始め」、後に「…終わり（n秒）」。SLOW_SECONDS 秒以上かかったら Warn（どこで待たされたかが一目で分かる）
+    if (traced) {
+      const sw = `__sw${++swCount}`; // tmp とは別に数える（app1 などほかの変数名を変えないため）
+      const label = `${here} ${(n.name ?? a.className).replace(/\r?\n/g, " ")}`;
+      emit(depth, `var ${sw} = System.Diagnostics.Stopwatch.StartNew();`);
+      emit(depth, `Log(message: ${csLit(`${label} …始め`)}, level: UiPath.CodedWorkflows.LogLevel.Trace);`);
+      pendingEnd = `Log(message: ${csLit(`${label} …終わり（`)} + ${sw}.Elapsed.TotalSeconds.ToString("0.0") + "秒）", level: ${sw}.Elapsed.TotalSeconds >= ${SLOW_SECONDS} ? UiPath.CodedWorkflows.LogLevel.Warn : UiPath.CodedWorkflows.LogLevel.Trace);`;
+    }
     else if (n.name && !noComment) emit(depth, `// ${n.name.replace(/\r?\n/g, " ")}`);
     if (!builtin.has(a.clrType)) return mapped(n, a.className, a.package, depth, at, sc);
 
@@ -705,12 +757,13 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         const pushed = openedScreen !== undefined;
         if (pushed) screens.push(openedScreen!);
         openedScreen = undefined;
-        braces(d, () => block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)));
+        braces(d, () => { takeEnd(d + 1); block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)); });
         if (pushed) screens.pop();
         slotsUsed.add("body");
       } else if (v.branches) {
         const r = `__state${++tmp}`;
         emit(d, `var ${r} = ${call};`);
+        takeEnd(d);
         if (target) emit(d, `${target} = ${r};`);
         const t = v.branches.true, f = v.branches.false;
         emit(d, `if (${r})`);
