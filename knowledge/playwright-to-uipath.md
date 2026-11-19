@@ -7,26 +7,30 @@
 
 ## Playwright → UiPath
 
-1. スクリプトで `tools/pw/recorder.ts` の `launch` と `UiRecorder` を import し、操作を次のメソッドで書く
-   - `rec.goto` / `click` / `fill` / `text` / `waitVisible`
-   - `clickIfVisible`：出たときだけ押す（Cookie のバナーなど）
+1. 要素を、先に objects に定義する（下の「Playwright の objects」）。見本は `samples/pw/form/objects.ts`・`samples/pw/signin/objects.ts`
+2. 台本で `tools/pw/recorder.ts` の `launch` と `UiRecorder` を import し、要素を名前で指して操作する（`O.アプリ.画面.要素`）。使うメソッドは次のとおり
+   - `rec.goto(O.アプリ.画面, { urlArg })` / `click(要素)` / `fill(要素, 値, { valueArg })` / `text(要素, "out_…")` / `waitVisible(要素)`
+   - `clickIfVisible(要素, ミリ秒)`：出たときだけ押す（Cookie のバナーなど）
    - `unsupported`：Playwright にしか無い操作を残す
+   - じかに書く形（`rec.click("画面", "名前", page.locator(…))`）も使えるが、record-to-ir.ts が警告を出す
 
-   見本は `samples/pw/signin/signin.ts`（UiPath のサインイン画面）。パスワードは入れず、送信もしない。
-2. 日本語と英語で 1 回ずつ流す（`launch` のロケール）
+   見本は `samples/pw/form/form.ts`（手元で配る小さなフォーム）と `samples/pw/signin/signin.ts`（UiPath のサインイン画面。パスワードは入れず、送信もしない）。
+3. 日本語と英語で 1 回ずつ流す（`launch` のロケール）
    ```bash
-   node samples/pw/signin/signin.ts ja-JP && node samples/pw/signin/signin.ts en-US
+   node tools/pw/serve.mjs samples/pw        # form のときだけ。http://127.0.0.1:8765/form/form.html
+   node samples/pw/form/form.ts ja-JP && node samples/pw/form/form.ts en-US
    ```
-3. IR とリポジトリにする（変換できなかったものは `<P>/ir/<名前>.conversion.md` に出る）
+4. IR とリポジトリにする。アプリ・画面・要素の名前は、objects の名前のまま入る（変換できなかったものは `<P>/ir/<名前>.conversion.md` に出る）
    ```bash
-   node tools/pw/record-to-ir.ts --project <P> --workflow Main --app "UiPath サインイン" --browser Chrome samples/pw/signin/rec/signin.ja.json samples/pw/signin/rec/signin.en.json
-   node tools/ir/objrepo.ts build --project <P>
+   node tools/pw/record-to-ir.ts --project <P> --workflow Main --browser Chrome samples/pw/form/rec/form.ja.json samples/pw/form/rec/form.en.json
+   node tools/ir/objrepo.ts build --project <P>        # UiPath の .objects
+   node tools/pw/pw-objects.ts build --project <P>     # Playwright の <P>/pw/objects（同じ repository.json から）
    node tools/ir/gen.ts <P>/ir/Main.json --project <P> --out <P>
    ```
-4. Coded は別のプロジェクト（`main` が `Main.cs`）で作る。同じプロジェクトに `Main.xaml` と `Main.cs` を置くと、名前がぶつかる。Descriptors で書く手順は次のとおり
+5. Coded は別のプロジェクト（`main` が `Main.cs`）で作る。同じプロジェクトに `Main.xaml` と `Main.cs` を置くと、名前がぶつかる。Descriptors で書く手順は次のとおり
    1. `uip rpa validate` で `.local/.codedworkflows/ObjectRepository.cs` を作る
    2. もう一度 `gen-coded.ts` を流す
-5. 動かすのは DESKTOP の Unattended のロボット（`queue-run.mjs`）。サーバーレスでは動かさない（下の「サーバーレス」）
+6. 動かすのは DESKTOP の Unattended のロボット（`queue-run.mjs`）。サーバーレスでは動かさない（下の「サーバーレス」）
 
 ### 操作と UiPath のアクティビティ
 
@@ -79,15 +83,42 @@
 - aria-label は `aaname` ではなく、属性 `aria-label` で書く。`aaname` は表示の文字に当たる
 - `role` は使わない
 
+## Playwright の objects（`pw/objects`）
+
+UiPath のオブジェクトリポジトリ（`.objects`）と同じく、Playwright でもセレクターをコードの外に置き、コードからは名前で指す（2026-11-19 に利用者が決めた）。構造をそっくりにはせず、この点だけを似せる。
+
+- **正本は `<P>/ir/repository.json`**。ここから UiPath の `.objects`（`objrepo.ts build`）と、Playwright の `<P>/pw/objects/index.ts`（`pw-objects.ts build`）の両方を作る。どちらも手で直さない
+- **階層は UiPath と同じ**：アプリ → 画面 → 要素。コードからは `O.アプリ.画面.要素` で指す（それぞれ Playwright の Locator）。名前の空白などは `_` にする（Coded の Descriptors と同じ。`IR Form` → `IR_Form`）。画面は `$url`・`$urlPattern` を持つ
+  ```ts
+  import objects from "./objects/index.ts";
+  const O = objects(page, "ja-JP");
+  await page.goto(O.IR_Form.フォーム.$url as string);
+  await O.IR_Form.フォーム.名前.fill("太郎");
+  ```
+- **言語**：要素はロケールごとの locator を持てる（`{ "ja-JP": …, "en-US": …, "*": … }`）。`objects(page, locale)` のロケールで選ぶ（同じロケール → 同じ言語 → `*`）
+  - record-to-ir.ts は、言語で値が違う要素に `locales`（ロケールごとのセレクター）を足す。`target` は両方の言語に当たる正規表現のまま（UiPath はこちらを使う）
+  - XAML から来た要素（`locales` が無い）は、`*` の 1 つだけになる
+- **手で書く台本**（recorder を使うもの）：要素は先に `defineObjects`（`tools/pw/objects.ts`）で定義し、名前で指す。記録すると、その名前のまま repository.json に入る。そのあとは repository.json が正本
+- **ぶつかったとき**：セレクターをコードにじかに書いた手順は、record-to-ir.ts が警告を出す。リポジトリに無いターゲット（XAML にじかに書いたセレクター）は、ir-to-pw.ts がじかに書いて一覧に出す（`objrepo.ts register` で登録すると objects から引ける）
+- **`pw-objects.ts build` が `<P>/pw/` に作るもの**
+  - `objects/index.ts`：要素の定義
+  - `objects/index.md`：変換できない要素があるときの一覧
+  - `lib/runtime.ts`・`lib/objects.ts`：`tools/pw` の写し
+  - `package.json`
+  - `node_modules`：`tools/pw/node_modules` へのジャンクション。消すときは、つなぎだけを外す（中を消さない）
+
+  生成したスクリプトの import は `./lib/runtime.ts` と `./objects/index.ts` になる（前は `../../../../seiya/ghq/…` のような長いパスだった）
+
 ## UiPath → Playwright
 
 ```bash
 node tools/ir/import-xaml.ts <P>/Main.xaml --project <P> --out <dir>      # XAML から始めるとき
-node tools/pw/ir-to-pw.ts --project <P> <P>/ir/Main.json [--out <dir>]    # 既定は <P>/pw/Main.pw.ts と Main.pw.md
+node tools/pw/ir-to-pw.ts --project <P> <P>/ir/Main.json [--out <dir>]    # 既定は <P>/pw/Main.pw.ts と Main.pw.md。pw/objects と lib も作る
 node <P>/pw/Main.pw.ts <引数の JSON> [--locale en-US] [--headed]         # 手元の Chrome で動かす
 ```
 
-- できたスクリプトは、`export async function <ワークフロー>(page, args)` と、そのまま動かすための入口を持つ。`tools/pw/runtime.ts` の小道具を使う
+- セレクターは `O.アプリ.画面.要素` で引く。要素は `$ref` と、XAML から取り込んだ IR の `Reference`（リポジトリの要素の Id）で引き当てる
+- できたスクリプトは、`export async function <ワークフロー>(page, args, locale?)` と、そのまま動かすための入口を持つ。`lib/runtime.ts` の小道具を使う
   - `getText`：入力欄なら値、それ以外は表示の文字
   - `waitState`：時間切れなら false を返し、例外にしない
   - `log`
@@ -171,12 +202,13 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
 
 - `tools/pw/ir-to-pw.test.ts`
   - IR → XAML（`generate`）→ IR（`importXaml`）→ Playwright が、元の IR からの Playwright と同じ文字になる
+  - objects で名前を付けて Chrome で記録 → IR と repository.json → pw/objects と Playwright → 2 言語で動かすと記録と同じ結果。スクリプトに `page.locator` が無いこと
   - 手元の Chrome で小さなページを 2 言語で記録する → IR → Playwright を作って動かす → 記録と同じ結果になる
 - サインイン画面（`samples/pw/signin`）では、次を確かめた
   1. 記録 → IR → XAML・Coded（`uip rpa validate` が Success）
   2. その XAML → `import-xaml.ts` → `ir-to-pw.ts` → 手元の Chrome で、日本語・英語とも元の記録と同じ結果になった
   3. XAML から戻した IR の Playwright は、元の IR の Playwright と同じだった
-- 小さなフォーム（`samples/pw/form/form.html`）で、両方向を DESKTOP のロボットまで確かめた（2026-11-19）。ページは `node tools/pw/serve.mjs samples/pw` で、http://127.0.0.1:8765/form/form.html に配る
+- 小さなフォーム（`samples/pw/form/form.html`）で、両方向を DESKTOP のロボットまで確かめた（2026-11-19）。objects に分けたあと（台本は名前で指す、スクリプトは `O.…` で引く）も、ロボットの XAML・Coded と、XAML から戻した Playwright の結果は変わらなかった。XAML から戻した Playwright は、IR から作ったものと同じ文字になった。ページは `node tools/pw/serve.mjs samples/pw` で、http://127.0.0.1:8765/form/form.html に配る
   1. Playwright で 2 言語を記録し、XAML（`PwForm`）と Coded（`PwFormCoded`、Descriptors）を作った。窓口（queue-run）でロボットが動かし、どちらも「結果: 受け付けました: IR 太郎」「見出し: 申し込み」になった
   2. その XAML → `import-xaml.ts` → `ir-to-pw.ts` → 手元の Chrome で、ja-JP・en-US とも記録と同じ結果になった
   - 使ったセレクター：`data-testid`、`aria-label` の 2 言語の正規表現（送信・閉じる）、`innertext` の 2 言語の正規表現（見出し）。出たときだけ閉じるお知らせ（`clickIfVisible`）も通った

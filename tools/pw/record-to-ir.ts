@@ -37,8 +37,10 @@ export type Step = {
   i: number;
   action: "goto" | "click" | "fill" | "text" | "wait" | "clickIf" | "unsupported";
   appeared?: boolean; // clickIf：出たかどうか（出なければ element が無い）
+  app?: string; // objects のアプリの名前（recorder が要素から取る）
   screen?: string;
   name?: string;
+  direct?: boolean; // セレクターをコードにじかに書いた
   page?: { url: string; title: string; lang: string };
   element?: Snapshot;
   url?: string;
@@ -54,7 +56,8 @@ export type Step = {
 };
 export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; incognito?: boolean; recordedAt?: string; steps: Step[] };
 
-export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean };
+// perSnap：言語で値が違うとき、記録ごと（snaps の順）の、その言語だけのセレクター（pw/objects でロケールごとに使う）
+export type Choice = { selector: string; basis: string; languageIndependent: boolean; fragile: boolean; perSnap?: string[] };
 export type Unconverted = { step: number; what: string; why: string };
 // incognito：false でなければ、記録が新しいコンテキスト（incognito: true）のとき、カードを IsIncognito=True（シークレット ウィンドウ）にする
 export type ConvertOptions = { workflow: string; app: string; browser: "Chrome" | "Edge"; interactionMode?: string; incognito?: boolean };
@@ -78,10 +81,14 @@ const same = (xs: string[]) => xs.every((x) => x === xs[0]);
 const unique = (snaps: Snapshot[], key: string) => snaps.every((s) => s.counts?.[key] === 1);
 
 // 表示文字・aria-label を、言語で違えば正規表現にする
-function textAttr(attr: "aria-label" | "innertext", vals: string[]): { part: string; independent: boolean } {
+function textAttr(attr: "aria-label" | "innertext", vals: string[]): { part: string; independent: boolean; perSnap?: string[] } {
   const uniq = [...new Set(vals)];
   if (uniq.length === 1) return { part: `${attr}='${q(uniq[0])}'`, independent: false };
-  return { part: `${attr}='^(${uniq.map((v) => q(reEsc(v))).join("|")})$' matching:${attr}='regex'`, independent: false };
+  return {
+    part: `${attr}='^(${uniq.map((v) => q(reEsc(v))).join("|")})$' matching:${attr}='regex'`, independent: false,
+    // innertext は UiPath では全体の一致なので、そのままの値でよい
+    perSnap: vals.map((v) => `${attr}='${q(v)}'`),
+  };
 }
 
 export function chooseSelector(snaps: Snapshot[]): Choice {
@@ -102,12 +109,12 @@ export function chooseSelector(snaps: Snapshot[]): Choice {
   // 3. aria-label → 属性 aria-label（aaname ではない。aaname は表示の文字に当たり、aria-label の値では見つからなかった）
   if (has("aria-label") && unique(snaps, "aria-label")) {
     const t = textAttr("aria-label", vals("aria-label"));
-    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("aria-label")) ? "aria-label" : "aria-label（2 言語）", languageIndependent: false, fragile: false };
+    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("aria-label")) ? "aria-label" : "aria-label（2 言語）", languageIndependent: false, fragile: false, perSnap: t.perSnap?.map((p) => `<webctrl tag='${tag}' ${p} />`) };
   }
   // 4. 表示文字
   if (snaps.every((s) => s.text && s.counts?.["#text"] === 1)) {
     const t = textAttr("innertext", snaps.map((s) => s.text));
-    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(snaps.map((s) => s.text)) ? "表示文字" : "表示文字（2 言語）", languageIndependent: false, fragile: false };
+    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(snaps.map((s) => s.text)) ? "表示文字" : "表示文字（2 言語）", languageIndependent: false, fragile: false, perSnap: t.perSnap?.map((p) => `<webctrl tag='${tag}' ${p} />`) };
   }
   // タグだけで 1 つ（BODY、H1 など）
   if (snaps.every((s) => s.counts?.["#tag"] === 1))
@@ -145,11 +152,18 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
   const locales = recs.map((r) => r.locale);
   const unconverted: Unconverted[] = [];
   const warnings: string[] = [];
-  const app = opt.app;
+  // アプリの名前：objects の要素で記録したなら、その名前（--app より先）。じかに書いた手順は警告にする
+  const stepApps = [...new Set(base.map((s) => s.app).filter((x): x is string => !!x))];
+  if (stepApps.length > 1) throw new Error(`記録に、アプリが ${stepApps.length} つある（${stepApps.join("、")}）。1 つの記録は 1 つのアプリにする`);
+  const app = stepApps[0] ?? opt.app;
+  base.forEach((s, i) => {
+    if (recs.some((r) => r.steps[i].direct))
+      warnings.push(`手順 ${i}（${s.screen ?? ""}/${s.name ?? s.action}）は、セレクターをコードにじかに書いている。pw/objects に定義して、名前で指す（UiPath でリポジトリに登録するのと同じ）`);
+  });
   const browserApp = opt.browser === "Edge" ? "msedge.exe" : "chrome.exe";
 
   // 画面（記録の screen の名前ごと）と要素
-  type Scr = { name: string; urls: string[]; openUrl?: string; elements: Map<string, { snaps: Snapshot[]; action: string; choice?: Choice }> };
+  type Scr = { name: string; urls: string[]; openUrl?: string; elements: Map<string, { snaps: Snapshot[]; locales: string[]; action: string; choice?: Choice }> };
   const screens = new Map<string, Scr>();
   const scr = (name: string) => {
     if (!screens.has(name)) screens.set(name, { name, urls: [], elements: new Map() });
@@ -185,7 +199,7 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       if (prev.snaps[0].css !== snaps[0].css) warnings.push(`要素「${key}」が別の要素に当たっている（${prev.snaps[0].css} / ${snaps[0].css}）。先のものを使う`);
       return;
     }
-    sc.elements.set(key, { snaps, action: s.action });
+    sc.elements.set(key, { snaps, locales: recs.filter((r) => r.steps[i].element).map((r) => r.locale), action: s.action });
   });
 
   const choices: ConvertResult["choices"] = [];
@@ -205,7 +219,10 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       const target: Record<string, unknown> = { FullSelectorArgument: { lit: e.choice.selector }, ScopeSelectorArgument: scope, SearchSteps: "Selector" };
       const et = ELEMENT_TYPE[e.snaps[0].tag.toUpperCase()];
       if (et) target.ElementType = et;
-      elements.push({ name, taxonomy, activityType, target });
+      const el: Record<string, unknown> = { name, taxonomy, activityType, target };
+      // 言語で値が違うときは、ロケールごとのセレクターも持たせる（pw-objects.ts が Playwright の objects でロケールごとに使う。UiPath は target の正規表現を使う）
+      if (e.choice.perSnap) el.locales = Object.fromEntries(e.locales.map((l, k) => [l, e.choice!.perSnap![k]]));
+      elements.push(el);
     }
     const screen: Record<string, unknown> = {
       name: sc.name,

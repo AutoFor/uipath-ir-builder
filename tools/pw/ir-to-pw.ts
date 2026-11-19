@@ -2,31 +2,36 @@
 // XAML は import-xaml.ts で IR にしてから、これに渡す。XAML や Coded から直接は変換しない。
 //
 //   node tools/pw/ir-to-pw.ts --project <P> <P>/ir/Main.json [--out <dir>]
-//     --project  <P>/ir/repository.json（オブジェクトリポジトリ）で { "$ref" } を引く
+//     --project  <P>/ir/repository.json（オブジェクトリポジトリ）で { "$ref" } と Reference（XAML から取り込んだ IR）を引く
 //     --out      <dir>/<ワークフロー>.pw.ts と <ワークフロー>.pw.md（変換できなかったものの一覧）を書く。既定は <P>/pw
+//                あわせて pw-objects.ts で <dir>/objects/index.ts（repository.json から）と <dir>/lib/ を作る
 //   できたスクリプトは node <dir>/Main.pw.ts [引数の JSON ファイル] [--headed] [--locale ja-JP] で動く
+//
+// セレクターはスクリプトにじかに書かず、objects から O.アプリ.画面.要素 で引く（UiPath のオブジェクトリポジトリと同じ）。
+// リポジトリに無いターゲット（XAML にじかに書いたセレクター）だけは、じかに書いて一覧に出す（objrepo.ts register で登録すると objects から引ける）
 //
 // 対応するアクティビティ：Sequence、NApplicationCard（開く・つなぐ）、NGoToUrl、NClick、NTypeInto、NGetText、NCheckState、
 //   LogMessage、If、Throw、Assign、Delay。それ以外は、スクリプトにコメントを残し、一覧に出す（黙って捨てない）
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { findRef, type Repository } from "../ir/objrepo.ts";
+import { findRef, type Found, type Repository } from "../ir/objrepo.ts";
 import type { Node, ObjValue, Value, Workflow } from "../ir/types.ts";
 import { exprToTs } from "./expr.ts";
-import { selectorToLocator } from "./selector.ts";
+import { ident } from "./objects.ts";
+import { buildPwObjects, setupPwDir } from "./pw-objects.ts";
+import { targetToLocator, urlGlob } from "./selector.ts";
 
 export type PwUnconverted = { path: string; what: string; why: string };
 export type PwResult = { code: string; unconverted: PwUnconverted[] };
-export type PwOptions = { runtimeImport: string };
+// libImport / objectsImport：生成したスクリプトからの import（既定は pw-objects.ts が作る ./lib/runtime.ts と ./objects/index.ts）
+export type PwOptions = { libImport?: string; objectsImport?: string };
 
 const TS_TYPES: Record<string, string> = { String: "string", Boolean: "boolean", Int32: "number", Int64: "number", Double: "number", Decimal: "number" };
 const DEFAULTS: Record<string, string> = { string: '""', boolean: "false", number: "0" };
 
-// 開くときの URL の UiPath のワイルドカード（*）を、Playwright の URL の glob（**）にする
-const urlGlob = (u: string) => u.replace(/\*+/g, "**");
 
-export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: PwOptions): PwResult {
+export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: PwOptions = {}): PwResult {
   const unconverted: PwUnconverted[] = [];
   const lines: string[] = [];
   const names = new Map<string, string>();
@@ -41,33 +46,40 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
     return r.ts;
   };
 
-  // objs.Target / objs.TargetApp の中身（$ref はリポジトリから引く）
-  const objOf = (o: ObjValue | undefined, kind: "screen" | "element", path: string): ObjValue | undefined => {
-    if (!o) return undefined;
-    const ref = o.$ref as unknown as string | string[] | undefined;
-    if (ref === undefined) return o;
-    if (!repo) { bad(path, String(ref), "repository.json が無いので $ref を引けない（--project を付ける）"); return undefined; }
-    const f = findRef(repo, ref, kind);
-    if (typeof f === "string") { bad(path, String(ref), f); return undefined; }
-    return (kind === "screen" ? f.screen!.target : f.element!.target) as ObjValue;
+  // objs.Target / objs.TargetApp を、リポジトリの画面・要素に引き当てる（$ref か、XAML から取り込んだ Reference の Id）
+  let usesObjects = false;
+  const byId = (id: string, kind: "screen" | "element"): Found | undefined => {
+    for (const app of repo?.apps ?? []) for (const screen of app.screens ?? []) {
+      if (kind === "screen" && screen.id === id) return { app, screen };
+      for (const element of screen.elements ?? []) if (kind === "element" && element.id === id) return { app, screen, element };
+    }
+    return undefined;
   };
   const litOf = (v: unknown): string | undefined => (typeof v === "object" && v && "lit" in v ? (v as { lit: string }).lit : undefined);
+  const resolveObj = (o: ObjValue | undefined, kind: "screen" | "element", path: string): { target?: ObjValue; found?: Found } => {
+    if (!o) return {};
+    const ref = o.$ref as unknown as string | string[] | undefined;
+    if (ref !== undefined) {
+      if (!repo) { bad(path, String(ref), "repository.json が無いので $ref を引けない（--project を付ける）"); return {}; }
+      const f = findRef(repo, ref, kind);
+      if (typeof f === "string") { bad(path, String(ref), f); return {}; }
+      return { target: (kind === "screen" ? f.screen!.target : f.element!.target) as ObjValue, found: f };
+    }
+    const r = typeof o.Reference === "string" ? o.Reference : litOf(o.Reference);
+    const f = r ? byId(r.slice(r.indexOf("/") + 1), kind) : undefined;
+    if (f) return { target: (kind === "screen" ? f.screen!.target : f.element!.target) as ObjValue, found: f };
+    return { target: o };
+  };
+  const oPath = (f: Found) => ["O", ident(f.app.name), ident(f.screen!.name), ...(f.element ? [ident(f.element.name)] : [])].join(".");
 
   const locator = (n: Node, path: string): string | undefined => {
-    const t = objOf(n.objs?.Target, "element", `${path}.objs.Target`);
+    const { target: t, found } = resolveObj(n.objs?.Target, "element", `${path}.objs.Target`);
     if (!t) { if (!n.objs?.Target) bad(path, n.act, "Target が無い"); return undefined; }
-    const steps = String(t.SearchSteps ?? "Selector");
-    if (/Image|CV|Semantic/i.test(steps) && !/(^|,\s*)Selector/.test(steps)) { bad(path, n.name ?? n.act, `画像・CV・意味で探すターゲット（SearchSteps=${steps}）は Playwright に無い`); return undefined; }
-    if (Array.isArray(t.Anchors) && t.Anchors.length) bad(path, n.name ?? n.act, "アンカーは使わない（セレクターだけで探す）");
-    let selVal = t.FullSelectorArgument ?? t.PartialSelector;
-    if (!/(^|,\s*)Selector/.test(steps) && /Fuzzy/.test(steps)) {
-      selVal = t.FuzzySelectorArgument;
-      bad(path, n.name ?? n.act, "あいまい一致のセレクター（FuzzySelector）を、厳密な一致で探す");
-    }
-    const sel = litOf(selVal);
-    if (sel === undefined) { bad(path, n.name ?? n.act, "セレクターがリテラルではない（式で組み立てるセレクターは直せない）"); return undefined; }
-    const r = selectorToLocator(sel);
-    if ("why" in r) { bad(path, n.name ?? n.act, `${r.why}（${sel}）`); return undefined; }
+    const r = targetToLocator(t as Record<string, unknown>, "page");
+    if ("why" in r) { bad(path, n.name ?? n.act, r.why); return undefined; }
+    if (found) { usesObjects = true; return oPath(found); } // 意味が変わるもの（アンカーなど）は objects/index.md に出る
+    for (const note of r.notes) bad(path, n.name ?? n.act, note);
+    bad(path, n.name ?? n.act, "リポジトリに無いセレクターなので、スクリプトにじかに書いた（objrepo.ts register で登録すると objects から引ける）");
     return r.ts;
   };
 
@@ -95,18 +107,22 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         block(n.body, d, `${path}.body`);
         return;
       case "NApplicationCard": {
-        const app = objOf(n.objs?.TargetApp, "screen", `${path}.objs.TargetApp`);
+        const { target: app, found } = resolveObj(n.objs?.TargetApp, "screen", `${path}.objs.TargetApp`);
         const sel = litOf(app?.Selector);
-        const url = litOf(app?.Url);
-        const pattern = sel?.match(/url='([^']*)'/)?.[1];
+        const lurl = litOf(app?.Url);
+        const lpattern = sel?.match(/url='([^']*)'/)?.[1];
+        if (found && (lurl || lpattern)) usesObjects = true;
+        // 画面の url は objects から引く（リポジトリに無い画面だけ、じかに書く）
+        const url = lurl && (found ? `${oPath(found)}.$url as string` : JSON.stringify(lurl));
+        const pattern = lpattern && (found ? `${oPath(found)}.$urlPattern as string` : JSON.stringify(urlGlob(lpattern)));
         const mode = String(p.OpenMode ?? "IfNotOpen");
         emit(d, `// ${n.name ?? "画面"}`);
         // IsIncognito（シークレット ウィンドウ）：launch のコンテキストはいつも新しい（Cookie・サインインが残らない）ので、同じ意味になる
         if (p.IsIncognito === true || p.IsIncognito === "True") emit(d, "// シークレット ウィンドウ（IsIncognito）：launch の新しいコンテキストで開く");
         if (app?.BrowserType && !/Chrome|Edge|Chromium/i.test(String(app.BrowserType))) bad(path, n.name ?? n.act, `ブラウザー ${app.BrowserType} は Chrome で動かす`);
-        if (mode === "Always" && url) emit(d, `await page.goto(${JSON.stringify(url)});`);
-        else if (mode === "IfNotOpen" && url) emit(d, `if (page.url() === "about:blank") await page.goto(${JSON.stringify(url)});`);
-        if (pattern) emit(d, `await page.waitForURL(${JSON.stringify(urlGlob(pattern))});`);
+        if (mode === "Always" && url) emit(d, `await page.goto(${url});`);
+        else if (mode === "IfNotOpen" && url) emit(d, `if (page.url() === "about:blank") await page.goto(${url});`);
+        if (pattern) emit(d, `await page.waitForURL(${pattern});`);
         else if (app) bad(path, n.name ?? n.act, "画面のセレクターに url が無い（ブラウザーの画面ではないかもしれない）");
         rest(n, path, ["OpenMode", "CloseMode", "AttachMode", "InteractionMode", "ScopeGuid", "WindowResize", "IsIncognito"]);
         block(n.body, d, `${path}.body`);
@@ -233,7 +249,10 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
   const tsDefault = (a: (typeof ins)[number]) => (a.default === undefined ? "" : ` ?? ${typeof a.default === "object" ? JSON.stringify(a.default.lit) : String(a.default)}`);
   for (const a of ins) emit(1, `let ${a.name}: ${tsType(a.type)} = (args.${a.name}${tsDefault(a)}) as ${tsType(a.type)};`);
   if (wf.variables?.length) declare(wf.variables, 1);
+  const before = lines.length;
   block(wf.body, 1, "body");
+  // セレクターは objects から（ロケールで、言語ごとの値を選ぶ）
+  if (usesObjects) lines.splice(before, 0, "  const O = objects(page, locale);");
   emit(1, `return { ${outs.map((a) => a.name).join(", ")} };`);
   body.push(...hold, ...lines);
 
@@ -245,9 +264,10 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
     `import { readFileSync } from "node:fs";`,
     `import { resolve } from "node:path";`,
     `import type { Page } from "playwright-core";`,
-    `import { getText, launch, log, waitState } from ${JSON.stringify(opt.runtimeImport)};`,
+    `import { getText, launch, log, waitState } from ${JSON.stringify(opt.libImport ?? "./lib/runtime.ts")};`,
+    ...(usesObjects ? [`import objects from ${JSON.stringify(opt.objectsImport ?? "./objects/index.ts")};`] : []),
     ``,
-    `export async function ${safeName(wf.workflow)}(page: Page, args: ${inType} = {}): Promise<${outType}> {`,
+    `export async function ${safeName(wf.workflow)}(page: Page, args: ${inType} = {}, locale?: string): Promise<${outType}> {`,
     ...body,
     `}`,
     ``,
@@ -255,9 +275,10 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
     `  const argv = process.argv.slice(2);`,
     `  const file = argv.find((a) => !a.startsWith("--") && argv[argv.indexOf(a) - 1] !== "--locale");`,
     `  const li = argv.indexOf("--locale");`,
-    `  const { browser, page } = await launch(li >= 0 ? argv[li + 1] : "ja-JP", { headless: !argv.includes("--headed") });`,
+    `  const locale = li >= 0 ? argv[li + 1] : "ja-JP";`,
+    `  const { browser, page } = await launch(locale, { headless: !argv.includes("--headed") });`,
     `  try {`,
-    `    const out = await ${safeName(wf.workflow)}(page, file ? JSON.parse(readFileSync(file, "utf8")) : {});`,
+    `    const out = await ${safeName(wf.workflow)}(page, file ? JSON.parse(readFileSync(file, "utf8")) : {}, locale);`,
     `    console.log(JSON.stringify(out));`,
     `  } finally {`,
     `    await browser.close();`,
@@ -293,11 +314,13 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const repo = repoFile && existsSync(repoFile) ? (JSON.parse(readFileSync(repoFile, "utf8")) as Repository) : undefined;
   const out = resolve(outArg ?? join(project!, "pw"));
   mkdirSync(out, { recursive: true });
-  const runtime = relative(out, join(dirname(fileURLToPath(import.meta.url)), "runtime.ts")).replace(/\\/g, "/");
+  // objects/（repository.json から）と lib/ を作る。スクリプトの import は ./lib/… と ./objects/… になる
+  if (repo) { const r = buildPwObjects(project!, out); console.log(`OK ${r.file}`); }
+  else setupPwDir(out);
   let n = 0;
   for (const f of argv) {
     const wf = JSON.parse(readFileSync(f, "utf8")) as Workflow;
-    const res = irToPlaywright(wf, repo, { runtimeImport: runtime.startsWith(".") ? runtime : `./${runtime}` });
+    const res = irToPlaywright(wf, repo);
     const base = join(out, wf.workflow);
     writeFileSync(`${base}.pw.ts`, res.code);
     writeFileSync(`${base}.pw.md`, pwReport(wf, res));

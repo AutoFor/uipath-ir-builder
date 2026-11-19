@@ -118,3 +118,24 @@ test("新しいコンテキストの記録（incognito）なら、カードを�
   // 記録に incognito が無い（古い記録）ときは付けない
   assert.equal((convert([rec("ja-JP", "完了", "送信")], { workflow: "Form", app: "x", browser: "Chrome" }).ir.body as { props: Record<string, unknown> }[])[0].props.IsIncognito, undefined);
 });
+
+test("セレクターをコードにじかに書いた手順は警告にする。objects の名前で記録したものは警告しない", () => {
+  const a = rec("ja-JP", "完了", "送信");
+  a.steps[2].direct = true;
+  const res = convert([a], { workflow: "Form", app: "x", browser: "Chrome" });
+  assert.equal(res.warnings.filter((w) => /じかに書いている/.test(w)).length, 1);
+  assert.match(res.warnings.join("\n"), /手順 2（フォーム\/送る）/);
+});
+
+test("アプリの名前は、記録の要素（objects）から取る", () => {
+  const a = rec("ja-JP", "完了", "送信");
+  for (const s of a.steps) if (s.action !== "unsupported") s.app = "objects のアプリ";
+  assert.equal((convert([a], { workflow: "Form", app: "x", browser: "Chrome" }).app as { name: string }).name, "objects のアプリ");
+});
+
+test("言語で値が違う要素は、ロケールごとのセレクター（locales）も持つ", () => {
+  const res = convert([rec("ja-JP", "完了", "送信"), rec("en-US", "Done", "Send")], { workflow: "Form", app: "x", browser: "Chrome" });
+  const els = (res.app as { screens: { elements: { name: string; locales?: Record<string, string> }[] }[] }).screens[0].elements;
+  assert.deepEqual(els.find((e) => e.name === "送る")!.locales, { "ja-JP": "<webctrl tag='BUTTON' aria-label='送信' />", "en-US": "<webctrl tag='BUTTON' aria-label='Send' />" });
+  assert.equal(els.find((e) => e.name === "名前")!.locales, undefined); // 言語によらない（id）
+});

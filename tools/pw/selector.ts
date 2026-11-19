@@ -103,3 +103,25 @@ export function selectorToLocator(sel: string, root = "page"): LocatorResult {
   // UiPath は当たった要素の先頭を使う。Playwright の strict（2 つ以上でエラー）にしないように first にする
   return { ts: `${root}${parts.join("")}.first()`, notes };
 }
+
+// UiPath のターゲット（TargetAnchorable の objs の中身）から locator の式を作る。notes は意味が変わるもの（アンカーを捨てた、など）
+export function targetToLocator(t: Record<string, unknown>, root = "page"): LocatorResult {
+  const litOf = (v: unknown): string | undefined => (typeof v === "object" && v && "lit" in v ? (v as { lit: string }).lit : undefined);
+  const steps = String(t.SearchSteps ?? "Selector");
+  const notes: string[] = [];
+  if (/Image|CV|Semantic/i.test(steps) && !/(^|,\s*)Selector/.test(steps)) return { why: `画像・CV・意味で探すターゲット（SearchSteps=${steps}）は Playwright に無い` };
+  if (Array.isArray(t.Anchors) && t.Anchors.length) notes.push("アンカーは使わない（セレクターだけで探す）");
+  let selVal = t.FullSelectorArgument ?? t.PartialSelector;
+  if (!/(^|,\s*)Selector/.test(steps) && /Fuzzy/.test(steps)) {
+    selVal = t.FuzzySelectorArgument;
+    notes.push("あいまい一致のセレクター（FuzzySelector）を、厳密な一致で探す");
+  }
+  const sel = litOf(selVal);
+  if (sel === undefined) return { why: "セレクターがリテラルではない（式で組み立てるセレクターは直せない）" };
+  const r = selectorToLocator(sel, root);
+  if ("why" in r) return { why: `${r.why}（${sel}）` };
+  return { ts: r.ts, notes: [...notes, ...r.notes] };
+}
+
+// 開くときの URL の UiPath のワイルドカード（*）を、Playwright の URL の glob（**）にする
+export const urlGlob = (u: string) => u.replace(/\*+/g, "**");
