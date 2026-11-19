@@ -183,6 +183,33 @@ node tools/connector/xaml.ts samples/connector/line-messaging.json --activity pu
 
 - ジョブは Successful（7 秒）で、LINE にメッセージが届いた（preRequest のフックが `messages` を組み立てている）。**サーバーレスのロボットから、別のフォルダ（Common）の接続で呼べた**。
 - pack（コンパイル）で、生成した ConnectorActivity の XAML が読めることも分かる。
+- **グループにも送れる**：push の `to` にグループ ID（`C` で始まる）を渡すと、同じ XAML のままグループに届いた（2026-11-20）。送り先は入力引数にしておけば、人・グループを差し替えられる。
+
+## LINE の送り先の ID を調べる（2026-11-20）
+
+push の `to` は LINE の ID で、表示名や電話番号では送れない。
+
+- **自分（チャネルの管理者）**：LINE Developers のチャネル →「Basic settings」の一番下「Your user ID」（`U` で始まる 33 文字）。
+- **他の人・グループ**：画面には出ない。その人やグループで何か起きたとき（友だち追加・招待・発言）に LINE が送る **Webhook の `events[].source`** にだけ入る（`userId`・`groupId`・`roomId`）。受け口（Webhook URL）が要る。
+- **グループに入れる**：公式アカウントは既定でグループに入れず、招待しても「退会しました」になる。LINE Official Account Manager の「設定 → アカウント設定 → 機能の利用」で「グループ・複数人トークへの参加を許可する」（LINE Developers の「Allow bot to join group chats」の Edit から行ける）。
+
+### 受け口：Integration Service の HTTP Webhook は、この会社のテナントでは作れなかった
+
+- 公式の手順：Orchestrator のフォルダの「トリガー → イベント → 新しいトリガーを追加」でコネクタ「HTTP Webhook」を選び、その画面で接続を作ると URL が出る。中身はワークフローで「Get Trigger Event Output」に `UiPathEventObjectId` を渡して読む。URL は `uip is webhooks config uipath-http-webhook --connection-id <Id>` でも取れる（UiPath/skills の PR 4443）。JSON だけ、1 分にテナント 500 件・接続 100 件まで。
+- 試したこと（1_Test、名前「LINE Webhook」、認証 None、No challenge）：`uip is connections create uipath-http-webhook --no-wait` の AuthUrl、Orchestrator の「コネクションを追加」、Integration Service の HTTP Webhook のページ、イベントトリガーの画面。**4 回とも「successfully created」と出るのに、どの一覧にも出ない**。
+- `uip admin audit tenant events --search webhook` では 4 回とも `Create Connection`（1_Test、失敗も削除も無し）と記録されているのに、その ConnectionId で `uip is connections ping` すると「HTTP 404: was not found in any folder visible to this user」（CNS4001）。権限（`uip or roles user-permissions list <ユーザー> --folder-path 1_Test`）は Folder Administrator で Connections・Schedules の Create/View がそろっている。Automation Ops のポリシーで止めているなら、コネクタのページが開けず「disabled by an Automation Ops policy」と出るはずなので、それでもない。**UiPath 側の不具合とみて、サポートに出す材料（ConnectionId・時刻・TraceId）は監査ログで取れる**。
+- フォーラムに「Enterprise のテナントでは HTTP Webhook が出ない（Community では出る）」という未解決の質問がある。
+- ほかの受け口にならないもの：Connector Builder のトリガーは polling だけ。Orchestrator の API トリガーは Bearer トークンが要り、LINE の Webhook は付けられない。
+
+### 受け口：Google Apps Script（使えた）
+
+1. https://script.new で `doPost(e)` を書き、`e.postData.contents` の `events[].source` から ID だけを取る（本文は残さない）。スコープを使わなければ承認の画面は出ない。
+2. 「デプロイ → 新しいデプロイ → ウェブアプリ」、次のユーザーとして実行「自分」、アクセス「全員」。URL（`https://script.google.com/macros/s/…/exec`）を LINE の Webhook URL にし、「Use webhook」をオン。
+3. **匿名で呼ばれた Web アプリの `console.log` は「実行数」に出ない**（「Cloud のログ」も押せない）。ID は `CacheService.getScriptCache()` に置き、鍵を付けた `doGet` で読む形にした（版を上げるときは「デプロイを管理 → 編集 → 新バージョン」で URL が変わらない）。
+4. LINE の「Verify」は「302 Found」のエラーになるが、Apps Script はいつも 302 を返すためで、doPost は動いている（実際のイベントも届く）。
+5. 取れたら、LINE の「Use webhook」をオフにし、Apps Script のデプロイをアーカイブする（URL は 404 になる）。
+
+使ったスクリプトは `.work/line-webhook-gas/Code.gs`（コミットしない）。
 
 ## まだ確かめていないこと
 
