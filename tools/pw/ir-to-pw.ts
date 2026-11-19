@@ -48,6 +48,7 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
 
   // objs.Target / objs.TargetApp を、リポジトリの画面・要素に引き当てる（$ref か、XAML から取り込んだ Reference の Id）
   let usesObjects = false;
+  let userDataDir: string | undefined;
   const byId = (id: string, kind: "screen" | "element"): Found | undefined => {
     for (const app of repo?.apps ?? []) for (const screen of app.screens ?? []) {
       if (kind === "screen" && screen.id === id) return { app, screen };
@@ -124,7 +125,13 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         else if (mode === "IfNotOpen" && url) emit(d, `if (page.url() === "about:blank") await page.goto(${url});`);
         if (pattern) emit(d, `await page.waitForURL(${pattern});`);
         else if (app) bad(path, n.name ?? n.act, "画面のセレクターに url が無い（ブラウザーの画面ではないかもしれない）");
-        rest(n, path, ["OpenMode", "CloseMode", "AttachMode", "InteractionMode", "ScopeGuid", "WindowResize", "IsIncognito"]);
+        // プロファイル（UserDataFolderMode=CustomFolder）は、動かすときの launch に渡す（リテラルのときだけ）
+        if (p.UserDataFolderMode === "CustomFolder") {
+          const dir = litOf(p.UserDataFolderPath);
+          if (dir) userDataDir ??= dir;
+          else bad(path, n.name ?? n.act, "UserDataFolderPath が式なので、Playwright のプロファイルに渡せない（launch に userDataDir を渡す）");
+        }
+        rest(n, path, ["OpenMode", "CloseMode", "AttachMode", "InteractionMode", "ScopeGuid", "WindowResize", "IsIncognito", "UserDataFolderMode", "UserDataFolderPath"]);
         block(n.body, d, `${path}.body`);
         return;
       }
@@ -286,7 +293,7 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
     `  const file = argv.find((a) => !a.startsWith("--") && argv[argv.indexOf(a) - 1] !== "--locale");`,
     `  const li = argv.indexOf("--locale");`,
     `  const locale = li >= 0 ? argv[li + 1] : "ja-JP";`,
-    `  const { browser, page } = await launch(locale, { headless: !argv.includes("--headed") });`,
+    `  const { browser, page } = await launch(locale, { headless: !argv.includes("--headed")${userDataDir ? `, userDataDir: ${JSON.stringify(userDataDir)}` : ""} });`,
     `  try {`,
     `    const out = await ${safeName(wf.workflow)}(page, file ? JSON.parse(readFileSync(file, "utf8")) : {}, locale);`,
     `    console.log(JSON.stringify(out));`,

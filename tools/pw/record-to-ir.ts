@@ -57,7 +57,8 @@ export type Step = {
   what?: string;
   detail?: string;
 };
-export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; incognito?: boolean; recordedAt?: string; steps: Step[] };
+// userDataDir：サインイン済みのプロファイルで記録したとき、そのフォルダ（カードを UserDataFolderMode=CustomFolder にする）
+export type Recording = { version: number; locale: string; browser?: string; browserVersion?: string; incognito?: boolean; userDataDir?: string; recordedAt?: string; steps: Step[] };
 
 // perSnap：言語で値が違うとき、記録ごと（snaps の順）の、その言語だけのセレクター（pw/objects でロケールごとに使う）
 // anchor：アンカーのセレクター（あれば、本体は FuzzySelector＋PositioningType=Closest で探す）。frameError：iframe の行を作れなかった理由
@@ -299,6 +300,8 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       ...(opt.interactionMode ? { InteractionMode: opt.interactionMode } : {}),
       // 記録は Cookie・サインインの残らないコンテキストで取ったので、UiPath でもシークレット ウィンドウで開く（利用者のプロファイルの状態で画面が変わらないように）
       ...(opt.incognito !== false && recs.every((r) => r.incognito) ? { IsIncognito: true } : {}),
+      // サインイン済みのプロファイルで記録したなら、UiPath でも同じプロファイルで開く（ロボットが同じ利用者・同じ PC で動くとき）
+      ...(recs[0].userDataDir ? { UserDataFolderMode: "CustomFolder", UserDataFolderPath: { lit: recs[0].userDataDir } } : {}),
     },
     body: [] as unknown[],
   };

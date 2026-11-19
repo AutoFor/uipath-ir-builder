@@ -4,7 +4,13 @@ import { chromium, type Browser, type Locator, type Page } from "playwright-core
 
 // ロボットと同じ Chrome（channel: chrome）で開く。Playwright 用のブラウザーは落とさない。
 // コンテキストは毎回新しい（Cookie・サインインが残らない。UiPath の NApplicationCard の IsIncognito=True と同じ意味）
-export async function launch(locale: string, opt: { headless?: boolean; channel?: string } = {}): Promise<{ browser: Browser; page: Page }> {
+// userDataDir：サインイン済みのプロファイルで開く（UiPath の NApplicationCard の UserDataFolderMode=CustomFolder と同じ意味）。
+//   ほかの Chrome がそのプロファイルを開いているあいだは使えない。close() はコンテキストを閉じる
+export async function launch(locale: string, opt: { headless?: boolean; channel?: string; userDataDir?: string } = {}): Promise<{ browser: Pick<Browser, "close">; page: Page }> {
+  if (opt.userDataDir) {
+    const ctx = await chromium.launchPersistentContext(opt.userDataDir, { channel: opt.channel ?? "chrome", headless: opt.headless ?? true, locale });
+    return { browser: { close: () => ctx.close() }, page: ctx.pages()[0] ?? (await ctx.newPage()) };
+  }
   const browser = await chromium.launch({ channel: opt.channel ?? "chrome", headless: opt.headless ?? true });
   const ctx = await browser.newContext({ locale });
   return { browser, page: await ctx.newPage() };

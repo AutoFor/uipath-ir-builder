@@ -125,9 +125,12 @@ export class UiRecorder {
   readonly steps: Step[] = [];
   private readonly page: Page;
   private readonly locale: string;
-  constructor(page: Page, locale: string) {
+  private readonly userDataDir?: string;
+  // userDataDir：launch(locale, { userDataDir }) で開いたサインイン済みのプロファイル。UiPath でも同じプロファイル（UserDataFolderMode=CustomFolder）で開く
+  constructor(page: Page, locale: string, opt: { userDataDir?: string } = {}) {
     this.page = page;
     this.locale = locale;
+    this.userDataDir = opt.userDataDir;
   }
 
   // goto(O.アプリ.画面, { urlArg }) で画面の url を開く。goto("画面の名前", url, { urlArg }) とも書ける
@@ -201,8 +204,11 @@ export class UiRecorder {
 
   recording(): Recording {
     const browser = this.page.context().browser();
-    // incognito：Playwright の新しいコンテキストは、サインインなどが残らない（UiPath のシークレット ウィンドウと同じ意味）
-    return { version: 1, locale: this.locale, browser: browser?.browserType().name(), browserVersion: browser?.version(), incognito: true, recordedAt: new Date().toISOString(), steps: this.steps };
+    // incognito：Playwright の新しいコンテキストは、サインインなどが残らない（UiPath のシークレット ウィンドウと同じ意味）。
+    // プロファイル（userDataDir）で開いたときは incognito ではない
+    const r: Recording = { version: 1, locale: this.locale, browser: browser?.browserType().name() ?? "chromium", browserVersion: browser?.version(), incognito: !this.userDataDir, recordedAt: new Date().toISOString(), steps: this.steps };
+    if (this.userDataDir) r.userDataDir = this.userDataDir;
+    return r;
   }
 
   save(path: string) {
