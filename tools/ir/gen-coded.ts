@@ -142,4 +142,11 @@ for (const f of files) {
   console.log(`OK ${f} -> ${path}${subs.length ? `（XAML 経由 ${subs.length} 件: ${subs.map((s) => s.file.path).join(", ")}）` : ""}`);
   note();
 }
+// traceLog の生成したコードが使う Steps（ログの書き方をそろえる部品）を、出力先に置く（tools/ir/templates/Steps.cs）
+if (outDir && !checkOnly && !args.includes("--compact") && !args.includes("--no-trace-log") && Object.keys(labels).length > 0) {
+  mkdirSync(outDir, { recursive: true });
+  const tpl = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "templates", "Steps.cs"), "utf8").replace(/^﻿/, "");
+  writeFileSync(join(outDir, "Steps.cs"), tpl.replace(/__NAMESPACE__/g, ns), "utf8");
+  console.log(`OK Steps.cs -> ${join(outDir, "Steps.cs")}`);
+}
 process.exit(failed ? 1 : 0);
