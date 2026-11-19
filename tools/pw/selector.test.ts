@@ -12,10 +12,11 @@ test("属性は CSS の [属性=値]、タグは小文字", () => {
   assert.equal(ok("<webctrl aria-role='button' />"), 'page.locator("[role=\\"button\\"]").first()');
 });
 
-test("aaname は getByLabel、正規表現もそのまま", () => {
-  assert.equal(ok("<webctrl tag='BUTTON' aaname='^(閉じる|Close)$' matching:aaname='regex' />"),
+test("aria-label の正規表現は getByLabel、aaname は表示の文字（UiPath の aaname は表示の文字に当たる）", () => {
+  assert.equal(ok("<webctrl tag='BUTTON' aria-label='^(閉じる|Close)$' matching:aria-label='regex' />"),
     'page.locator("button").and(page.getByLabel(new RegExp("^(閉じる|Close)$"))).first()');
-  assert.equal(ok("<webctrl tag='BUTTON' aaname='Run' />"), 'page.locator("button").and(page.getByLabel("Run", { exact: true })).first()');
+  assert.equal(ok("<webctrl tag='BUTTON' aria-label='Run app' />"), 'page.locator("button[aria-label=\\"Run app\\"]").first()');
+  assert.equal(ok("<webctrl tag='BUTTON' aaname='Run' />"), 'page.locator("button").filter({ hasText: new RegExp("^Run$") }).first()');
 });
 
 test("innertext は全体に合う正規表現。ワイルドカードも直す。&amp; などは戻す", () => {

@@ -2,10 +2,11 @@
 //
 // 直せるもの（webctrl の属性）：
 //   tag → CSS のタグ / id・name・class・type・href・src・title・role・data-*・aria-*（aria-role は role）→ CSS の [属性="値"]
-//   aaname → getByLabel（aria-label・aria-labelledby・label の名前。表示の文字から決まる名前は見ない）
+//   aaname → filter({ hasText: /^値$/ })（UiPath の aaname は表示の文字に当たる。aria-label の値では見つからなかった。2026-11-19、DESKTOP で確かめた）
+//   aria-label → CSS の [aria-label="値"]。正規表現（matching:aria-label='regex'）なら getByLabel(new RegExp(...))
 //   innertext → filter({ hasText: /^値$/ })
 //   css-selector → そのまま CSS / parentid → 祖先の [id="値"] / idx → nth
-//   値の * と ? は UiPath のワイルドカード。CSS の属性では ^= $= *= で書ける形だけ。matching:<属性>='regex' は aaname と innertext だけ
+//   値の * と ? は UiPath のワイルドカード。CSS の属性では ^= $= *= で書ける形だけ。matching:<属性>='regex' は aaname・innertext・aria-label だけ
 //   webctrl が 2 つ以上なら、locator をつなぐ（2 つめ以降は 1 つめの中を探す）
 // 直せないもの：webctrl 以外（wnd・ctrl・uia など、デスクトップのアプリ）、上に無い属性（isleaf・tablerow・parentclass など）、
 //   あいまい一致（matching:<属性>='fuzzy'）
@@ -74,17 +75,13 @@ export function selectorToLocator(sel: string, root = "page"): LocatorResult {
     for (const [k, v] of n.attrs) {
       if (k.startsWith("matching:") || k.startsWith("fuzzylevel:")) continue;
       const regex = matching.get(k) === "regex";
+      if (regex && k === "aria-label") { tail.push(`.and(${root}.getByLabel(new RegExp(${JSON.stringify(v)})))`); continue; }
       if (regex && k !== "aaname" && k !== "innertext") return { why: `${k} の正規表現（matching:${k}='regex'）は CSS で書けない` };
       if (k === "tag") { tag = v.toLowerCase(); continue; }
       if (k === "css-selector") { cssSel = v; continue; }
       if (k === "parentid") { const a = cssAttr("id", v); if (!a) return { why: `parentid='${v}' のワイルドカードは CSS で書けない` }; ancestor = `${a} `; continue; }
       if (k === "idx") { const i = Number(v); if (!Number.isInteger(i) || i < 1) return { why: `idx='${v}' は直せない` }; tail.push(`.nth(${i - 1})`); continue; }
-      if (k === "aaname") {
-        const re = regex ? v : /[*?]/.test(v) ? wildRe(v) : undefined;
-        tail.push(re ? `.and(${root}.getByLabel(new RegExp(${JSON.stringify(re)})))` : `.and(${root}.getByLabel(${JSON.stringify(v)}, { exact: true }))`);
-        continue;
-      }
-      if (k === "innertext") {
+      if (k === "aaname" || k === "innertext") {
         const re = regex ? v : wildRe(v);
         tail.push(`.filter({ hasText: new RegExp(${JSON.stringify(re)}) })`);
         continue;

@@ -28,7 +28,7 @@ const wf: Workflow = {
     props: { OpenMode: "Always", CloseMode: "Always" },
     body: [
       { act: "NTypeInto", name: "名前", objs: { Target: T("<webctrl tag='INPUT' name='name' />") }, props: { Text: "in_Name" } },
-      { act: "NClick", name: "送る", objs: { Target: T("<webctrl tag='BUTTON' aaname='^(送信|Send)$' matching:aaname='regex' />") } },
+      { act: "NClick", name: "送る", objs: { Target: T("<webctrl tag='BUTTON' aria-label='^(送信|Send)$' matching:aria-label='regex' />") } },
       { act: "NCheckState", name: "結果を待つ", objs: { Target: T("<webctrl tag='DIV' data-testid='result' />") }, props: { Mode: "WaitAppear", Timeout: "10", Exists: "found" } },
       { act: "If", props: { Condition: "Not found" }, then: [{ act: "Throw", props: { Exception: 'New Exception("結果が出ない")' } }] },
       { act: "NGetText", name: "結果", objs: { Target: T("<webctrl tag='DIV' data-testid='result' />") }, props: { TextString: "out_Result" } },
@@ -139,4 +139,16 @@ test("Check State の「出た」「出ない」の枠（slots.IfExists / IfNotE
   const r = irToPlaywright(w, undefined, opt);
   assert.deepEqual(r.unconverted, []);
   assert.match(r.code, /const __exists = await waitState\(page\.locator\("\[id=\\"x\\"\]"\)\.first\(\), "hidden", 3000\);\n\s+if \(__exists\) \{\n\s+log\("Info", "消えた"\);\n\s+\} else \{\n\s+log\("Warn", "残った"\);/);
+});
+
+test("Delay：TimeSpan.FromSeconds などの式と hh:mm:ss", () => {
+  const w: Workflow = { workflow: "D", body: [
+    { act: "Delay", props: { Duration: "TimeSpan.FromSeconds(5)" } },
+    { act: "Delay", props: { Duration: { cs: "TimeSpan.FromMilliseconds(250)" } } },
+    { act: "Delay", props: { Duration: { lit: "00:01:30" } } },
+    { act: "Delay", props: { Duration: "TimeSpan.Parse(x)" } },
+  ] };
+  const r = irToPlaywright(w, undefined, opt);
+  assert.match(r.code, /waitForTimeout\(5000\);[\s\S]*waitForTimeout\(250\);[\s\S]*waitForTimeout\(90000\);/);
+  assert.equal(r.unconverted.length, 1);
 });

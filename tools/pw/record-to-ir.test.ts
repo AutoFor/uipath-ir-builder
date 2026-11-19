@@ -38,11 +38,11 @@ test("作られた id は使わない", () => {
   assert.equal(chooseSelector([s]).selector, "<webctrl tag='INPUT' name='q' />");
 });
 
-test("aria-label が言語で違えば、両方の値の正規表現にする", () => {
+test("aria-label は属性 aria-label。言語で違えば、両方の値の正規表現にする", () => {
   const ja = snap({ attrs: { "aria-label": "アプリを実行" }, counts: { "aria-label": 1 } });
   const en = snap({ attrs: { "aria-label": "Run app" }, counts: { "aria-label": 1 } });
   const c = chooseSelector([ja, en]);
-  assert.equal(c.selector, "<webctrl tag='BUTTON' aaname='^(アプリを実行|Run app)$' matching:aaname='regex' />");
+  assert.equal(c.selector, "<webctrl tag='BUTTON' aria-label='^(アプリを実行|Run app)$' matching:aria-label='regex' />");
   assert.equal(c.languageIndependent, false);
   assert.equal(c.basis, "aria-label（2 言語）");
 });
@@ -78,7 +78,7 @@ test("2 つの言語の記録から、IR とリポジトリを作る", () => {
   assert.deepEqual(app.screens.map((s) => s.name), ["フォーム", "結果"]);
   assert.equal(app.screens[0].target.Selector.lit, "<html app='chrome.exe' url='https://example.test/*' />");
   const send = app.screens[0].elements.find((e) => e.name === "送る")!;
-  assert.equal(send.target.FullSelectorArgument.lit, "<webctrl tag='BUTTON' aaname='^(送信|Send)$' matching:aaname='regex' />");
+  assert.equal(send.target.FullSelectorArgument.lit, "<webctrl tag='BUTTON' aria-label='^(送信|Send)$' matching:aria-label='regex' />");
   // 引数と、画面ごとのカード
   assert.deepEqual(res.ir.arguments, [
     { name: "in_Url", dir: "In", type: "String", default: { lit: "https://example.test/form" } }, // 既定値は最初の記録の値

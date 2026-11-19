@@ -49,14 +49,35 @@
 
 1. テスト用の属性：`data-testid`・`data-cy`・`data-e2e`・`data-test`・`data-qa` → `<webctrl tag='T' data-cy='v' />`
 2. `id`、`name`。ただし作られた id（`mat-input-3`・`:r1:`・数字の長いもの）は使わない
-3. `aria-label` → `aaname`。言語で違えば `aaname='^(日本語|English)$' matching:aaname='regex'`
+3. `aria-label` → 属性 `aria-label`。言語で違えば `aria-label='^(日本語|English)$' matching:aria-label='regex'`（`aaname` ではない。下の表）
 4. 表示の文字 → `innertext`。言語で違えば 3 と同じ正規表現
 5. タグだけで 1 つに決まるならタグ
 6. どれもだめなら `css-selector`。壊れやすいので、変換できないものの一覧にも出す
 
 - 値の `&` `'` は XML 用に、正規表現の記号は `\` で逃がす
 - 画面のセレクターは、転送のあとのページの `url='<オリジン>/*'` にする。開く URL（`Url`）は、スクリプトが開いた URL にする（転送のあとの URL には、毎回変わる値が入る）
-- UiPath のセレクターが `data-*` などの属性をそのまま読めるかは、まだ確かめていない（2026-11-19 時点。窓口が止まっていた）。DESKTOP の試し（`C:\Users\Public\uipath-cloud-ui\AttrCases`）で確かめる
+- 要素のターゲットには、画面のセレクターを `ScopeSelectorArgument` でも持たせる（samples の IR と同じ形。無くて困ると確かめたわけではない）
+
+#### UiPath のセレクターが読める属性
+
+2026-11-19 に、DESKTOP の Unattended のロボット（Chrome 157、UIAutomation 26.10）で確かめた。試しのページは `samples/pw/form/attr.html`、IR は `C:\Users\Public\uipath-cloud-ui\AttrCases\AttrTest.json`。Check State（3 秒）で、出たかどうかを見た。
+
+| セレクター | 結果 |
+| --- | --- |
+| `<webctrl data-testid='run-btn' />`、`tag='BUTTON' data-cy='run'`、`tag='SPAN' data-e2e='…'`、`tag='INPUT' data-testid='…'` | ○ |
+| `css-selector='[data-testid=run-btn]'`、`parentid='box'`、`class='mat-btn primary'` | ○ |
+| `aria-label='Run app'`、`aria-label='^(アプリを実行\|Run app)$' matching:aria-label='regex'` | ○ |
+| `innertext='(Run\|実行)' matching:innertext='regex'` | ○ |
+| `aaname='Run'`（ボタンの表示の文字）、`aaname='^(実行\|Run)$' matching:aaname='regex'` | ○ |
+| `aaname='Run app'`（aria-label の値）、その正規表現 | × |
+| `role='button'`（単独でも、aaname と組み合わせても）、`aria-role='button' aaname='Echo'` | × |
+| `data-testid='nope'`（無い値。否定の対照） | ×（正しい） |
+
+分かったことは次のとおり。
+
+- `data-*` は、そのまま使える
+- aria-label は `aaname` ではなく、属性 `aria-label` で書く。`aaname` は表示の文字に当たる
+- `role` は使わない
 
 ## UiPath → Playwright
 
@@ -91,7 +112,8 @@ node <P>/pw/Main.pw.ts <引数の JSON> [--locale en-US] [--headed]         # �
 | --- | --- |
 | `tag` | CSS のタグ（小文字） |
 | `id`・`name`・`class`・`type`・`href` など、`data-*`、`aria-*`（`aria-role` は `role`） | CSS の `[属性="値"]` |
-| `aaname` | `.and(page.getByLabel(...))` |
+| `aaname` | `.filter({ hasText: /^値$/ })`（UiPath の aaname は表示の文字に当たる） |
+| `aria-label` の正規表現 | `.and(page.getByLabel(new RegExp(...)))` |
 | `innertext` | `.filter({ hasText: /^値$/ })` |
 | `css-selector` | `:is(...)` |
 | `parentid` | 祖先の `[id=...]` |
@@ -133,7 +155,7 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   - アンカー（捨てて、セレクターだけで探す。一覧に出す）
 - **セレクター**
   - 式で組み立てるセレクター
-  - `aaname`・`innertext` 以外の正規表現
+  - `aaname`・`innertext`・`aria-label` 以外の正規表現
   - CSS で書けないワイルドカード
   - 表に無い属性（`tablerow`・`isleaf`・`parentclass` など）
 - **アクティビティ**
@@ -144,7 +166,6 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   - ラムダ、`If(...)`
   - C# の `$"..."`・`@"..."`
 - **型**：String・Boolean・数値以外の変数と引数（型を付けない）
-- `aaname` は `getByLabel` で探すので、`aria-label`・`aria-labelledby`・`label` から決まる名前にしか当たらない。表示の文字から決まる名前（ボタンの文字など）には当たらない
 
 ## 往復で確かめたこと（テスト）
 
@@ -155,6 +176,26 @@ VB の式・`{ lit }`・`{ cs }` を TypeScript にする。
   1. 記録 → IR → XAML・Coded（`uip rpa validate` が Success）
   2. その XAML → `import-xaml.ts` → `ir-to-pw.ts` → 手元の Chrome で、日本語・英語とも元の記録と同じ結果になった
   3. XAML から戻した IR の Playwright は、元の IR の Playwright と同じだった
+- 小さなフォーム（`samples/pw/form/form.html`）で、両方向を DESKTOP のロボットまで確かめた（2026-11-19）。ページは `node tools/pw/serve.mjs samples/pw` で、http://127.0.0.1:8765/form/form.html に配る
+  1. Playwright で 2 言語を記録し、XAML（`PwForm`）と Coded（`PwFormCoded`、Descriptors）を作った。窓口（queue-run）でロボットが動かし、どちらも「結果: 受け付けました: IR 太郎」「見出し: 申し込み」になった
+  2. その XAML → `import-xaml.ts` → `ir-to-pw.ts` → 手元の Chrome で、ja-JP・en-US とも記録と同じ結果になった
+  - 使ったセレクター：`data-testid`、`aria-label` の 2 言語の正規表現（送信・閉じる）、`innertext` の 2 言語の正規表現（見出し）。出たときだけ閉じるお知らせ（`clickIfVisible`）も通った
+- サインイン画面は、ロボットでは通っていない
+  - Go To URL（リポジトリの Reference あり）で「UI 要素が見つかりません」になった
+  - Reference を外すと先に進むが、メール欄が見つからない
+  - ロボットの Chrome は利用者のプロファイルなので、記録した新しいプロファイルと画面が違う（覚えたアカウントの画面になる）と推定している（未確認）
+  - サインインの状態で画面が変わる外のサイトは、固定の題材にしない
+
+## ロボットで動かすときの注意
+
+- 窓口（runner.mjs）は、利用者の RDP の画面のセッションで動かす
+  - SSH 側で `uip rpa` の validate・build・run を動かすと、セッション 0 に Helm・UserHost が残る
+  - するとロボットの実行がセッション 0（画面が無い）に回り、ブラウザーが開けない（`0x80040353` 新しいブラウザー ウィンドウが表示されませんでした）
+- Chrome の拡張には、ネイティブ メッセージング ホスト（`HKCU\Software\Google\Chrome\NativeMessagingHosts\com.uipath.chromenativemsg_v2`）も要る。Studio で拡張を入れ直しても、ここが書かれないことがあった
+- Coded の Descriptors に要る `ObjectRepository.cs` は、SSH で validate せずに作る
+  1. 窓口の run が作った作業用プロジェクト（`<テンプレート>-<作業名>\.local\.codedworkflows\`）から写す
+  2. `gen-coded.ts` をもう一度流す
+- Delay の Duration は式（`TimeSpan.FromSeconds(5)`）で書く。`"00:00:05"` は VB のコンパイルで落ちる
 
 ## サーバーレス
 

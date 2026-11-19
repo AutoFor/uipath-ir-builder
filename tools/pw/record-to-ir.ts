@@ -11,7 +11,8 @@
 // セレクターの選び方（言語によらない属性を先に使う。どの記録でも 1 つに決まるものだけ）：
 //   1. テスト用の属性（data-testid、data-cy、data-e2e、data-test、data-qa）
 //   2. id（作られた値に見えるものは使わない）、name
-//   3. aria-label → aaname。言語で値が違えば、両方の値の正規表現（matching:aaname='regex'）
+//   3. aria-label → 属性 aria-label。言語で値が違えば、両方の値の正規表現（matching:aria-label='regex'）。
+//      aaname は aria-label ではなく表示の文字に当たる（DESKTOP のロボットで確かめた。2026-11-19）
 //   4. 表示文字 → innertext。言語で違えば、両方の値の正規表現
 //   5. どれでも決まらなければ css-selector（記録のときの CSS のパス）。壊れやすいので一覧に出す
 
@@ -75,7 +76,7 @@ const same = (xs: string[]) => xs.every((x) => x === xs[0]);
 const unique = (snaps: Snapshot[], key: string) => snaps.every((s) => s.counts?.[key] === 1);
 
 // 表示文字・aria-label を、言語で違えば正規表現にする
-function textAttr(attr: "aaname" | "innertext", vals: string[]): { part: string; independent: boolean } {
+function textAttr(attr: "aria-label" | "innertext", vals: string[]): { part: string; independent: boolean } {
   const uniq = [...new Set(vals)];
   if (uniq.length === 1) return { part: `${attr}='${q(uniq[0])}'`, independent: false };
   return { part: `${attr}='^(${uniq.map((v) => q(reEsc(v))).join("|")})$' matching:${attr}='regex'`, independent: false };
@@ -96,9 +97,9 @@ export function chooseSelector(snaps: Snapshot[]): Choice {
   if (has("name") && same(vals("name")) && unique(snaps, "name"))
     return { selector: `<webctrl tag='${tag}' name='${q(vals("name")[0])}' />`, basis: "name", languageIndependent: true, fragile: false };
   // テスト用の属性があるが 1 つに決まらないとき、type などと組み合わせない（UiPath の一致の数は確かめられない）。次へ
-  // 3. aria-label → aaname
+  // 3. aria-label → 属性 aria-label（aaname ではない。aaname は表示の文字に当たり、aria-label の値では見つからなかった）
   if (has("aria-label") && unique(snaps, "aria-label")) {
-    const t = textAttr("aaname", vals("aria-label"));
+    const t = textAttr("aria-label", vals("aria-label"));
     return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("aria-label")) ? "aria-label" : "aria-label（2 言語）", languageIndependent: false, fragile: false };
   }
   // 4. 表示文字
@@ -187,8 +188,11 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
 
   const choices: ConvertResult["choices"] = [];
   const repoScreens = [...screens.values()].map((sc) => {
+    // 要素のターゲットにも、画面（ブラウザー）のセレクターを ScopeSelectorArgument で持たせる。
+    // 無いと、ロボットでは Go To URL の「ページ本体」が見つからなかった（2026-11-19、DESKTOP。リポジトリを使わず Scope を書いたものは通った）
+    const scope = { lit: `<html app='${browserApp}' url='${q(urlPattern(sc.urls))}' />` };
     const elements: Record<string, unknown>[] = [
-      { name: "ページ本体", taxonomy: "Text", activityType: "GoToUrl", target: { FullSelectorArgument: { lit: "<webctrl tag='BODY' />" }, SearchSteps: "Selector" } },
+      { name: "ページ本体", taxonomy: "Text", activityType: "GoToUrl", target: { FullSelectorArgument: { lit: "<webctrl tag='BODY' />" }, ScopeSelectorArgument: scope, SearchSteps: "Selector" } },
     ];
     for (const [name, e] of sc.elements) {
       if (name === "ページ本体") throw new Error(`要素の名前「ページ本体」は使えない（URL を開くための要素の名前）`);
@@ -196,14 +200,14 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       choices.push({ screen: sc.name, name, choice: e.choice, locales });
       if (e.choice.fragile) unconverted.push({ step: -1, what: `${sc.name}/${name}`, why: `言語によらない属性も、1 つに決まる属性も無い。CSS のパス（${e.snaps[0].css}）で探す。画面が変わると壊れやすい` });
       const [taxonomy, activityType] = TAXONOMY[e.action] ?? ["Text", "Click"];
-      const target: Record<string, unknown> = { FullSelectorArgument: { lit: e.choice.selector }, SearchSteps: "Selector" };
+      const target: Record<string, unknown> = { FullSelectorArgument: { lit: e.choice.selector }, ScopeSelectorArgument: scope, SearchSteps: "Selector" };
       const et = ELEMENT_TYPE[e.snaps[0].tag.toUpperCase()];
       if (et) target.ElementType = et;
       elements.push({ name, taxonomy, activityType, target });
     }
     const screen: Record<string, unknown> = {
       name: sc.name,
-      target: { BrowserType: opt.browser, Selector: { lit: `<html app='${browserApp}' url='${q(urlPattern(sc.urls))}' />` }, Url: { lit: sc.openUrl ?? sc.urls[0] }, IsExactTitleEnabled: false },
+      target: { BrowserType: opt.browser, Selector: scope, Url: { lit: sc.openUrl ?? sc.urls[0] }, IsExactTitleEnabled: false },
       elements,
     };
     if (opt.interactionMode) screen.interactionMode = opt.interactionMode;
@@ -229,7 +233,7 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     act: "NApplicationCard",
     name: `${firstScreen} を開く`,
     objs: { TargetApp: { $ref: [app, firstScreen] } },
-    props: { OpenMode: "Always", CloseMode: "Always" },
+    props: { OpenMode: "Always", CloseMode: "Always", ...(opt.interactionMode ? { InteractionMode: opt.interactionMode } : {}) },
     body: [] as unknown[],
   };
   let cur = outer.body as unknown[];

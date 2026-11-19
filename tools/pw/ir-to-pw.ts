@@ -192,9 +192,15 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         return;
       }
       case "Delay": {
-        const m = typeof p.Duration === "string" ? p.Duration.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/) : null;
-        if (!m) { bad(path, n.name ?? n.act, `待つ時間 ${String(p.Duration)} は直せない`); return; }
-        emit(d, `await page.waitForTimeout(${Math.round(((+m[1] * 60 + +m[2]) * 60 + +m[3]) * 1000)});`);
+        // Duration は TimeSpan の式（TimeSpan.FromSeconds(5) など）か、"hh:mm:ss" のリテラル
+        const dv = p.Duration as unknown;
+        const raw = typeof dv === "string" ? dv : dv && typeof dv === "object" ? String((dv as { lit?: string; cs?: string }).lit ?? (dv as { cs?: string }).cs ?? "") : "";
+        const hms = raw.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
+        const from = raw.match(/^(?:System\.)?TimeSpan\.From(Milliseconds|Seconds|Minutes)\((\d+(?:\.\d+)?)\)$/i);
+        const unit: Record<string, number> = { milliseconds: 1, seconds: 1000, minutes: 60000 };
+        const ms = hms ? ((+hms[1] * 60 + +hms[2]) * 60 + +hms[3]) * 1000 : from ? +from[2] * unit[from[1].toLowerCase()] : undefined;
+        if (ms === undefined) { bad(path, n.name ?? n.act, `待つ時間 ${raw || String(dv)} は直せない`); return; }
+        emit(d, `await page.waitForTimeout(${Math.round(ms)});`);
         return;
       }
       default:

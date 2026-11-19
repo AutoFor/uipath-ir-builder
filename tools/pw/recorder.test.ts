@@ -37,7 +37,7 @@ test("Chrome で操作を記録し、2 言語の記録から IR にする", asyn
     assert.equal(sel["検索欄"], "<webctrl tag='INPUT' name='q' />"); // 作られた id は使わない
     assert.equal(sel["実行"], "<webctrl tag='BUTTON' data-testid='run-btn' />");
     assert.equal(sel["結果"], "<webctrl tag='DIV' id='out' />");
-    assert.equal(sel["閉じる"], "<webctrl tag='BUTTON' aaname='^(閉じる|Close)$' matching:aaname='regex' />");
+    assert.equal(sel["閉じる"], "<webctrl tag='BUTTON' aria-label='^(閉じる|Close)$' matching:aria-label='regex' />");
     assert.equal(sel["あいさつ"], "<webctrl tag='SPAN' innertext='^(ようこそ|Welcome)$' matching:innertext='regex' />"); // 文字だけの要素は 2 言語の正規表現
     assert.equal(res.unconverted.length, 1);
   } finally {
