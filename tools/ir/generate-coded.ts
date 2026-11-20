@@ -56,6 +56,9 @@ export type CodedOptions = {
 
 const NL = String.fromCharCode(10);
 
+// IR の値が C# の式（{ cs: "…" }）か
+const isCsValue = (v: unknown) => !!v && typeof v === "object" && typeof (v as { cs?: unknown }).cs === "string";
+
 // 読みやすい形で前置きを省く名前空間（using があるときだけ）。中の型の名前が、ほかの using の名前空間とぶつからないもの
 // 読みやすい形で、手順名のコメントを書かないアクティビティ（中身を見れば分かるもの）
 const NO_COMMENT_ACTIVITIES = new Set(["LogMessage"]);
@@ -654,7 +657,16 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
           const r = n.objs[name] as Record<string, unknown>;
           const ref = typeof r?.Reference === "string" ? r.Reference : (r?.Reference as { lit?: string } | undefined)?.lit;
           const d = ref ? opt.descriptors.get(ref) : undefined;
-          if (d && (d.kind === "element" || d.kind === "screen")) {
+          // セレクターが C# の式（リポジトリの要素の変数を差し込むもの。例 string.Format("…aaname='{0}*'…", 支出元)）なら、Descriptors は使わない。
+          // Coded の Descriptors はリポジトリの変数を受け取れず、変数の名前がそのまま入る（aaname='支出元*' で見つからない）。
+          // TargetAnchorableModel { PartialSelector = <式> } で渡す（下の objToCs）
+          const dynamicSelector = d?.kind === "element" && isCsValue(r?.FullSelectorArgument);
+          // Reference を付けるとリポジトリの中身（変数が入っていないセレクター）が使われるおそれがあるので外す
+          if (dynamicSelector) {
+            const { Reference: _ref, ...rest } = r;
+            return objToCs(adef, name, rest as typeof n.objs[string], `${at}.objs.${name}`, { expr: (x, xat) => expr(x, xat, sc), add });
+          }
+          if (d && (d.kind === "element" || d.kind === "screen") && !dynamicSelector) {
             if (d.namespace) usings.add(`${d.namespace}.ObjectRepository`);
             if (d.kind === "screen") openedScreen = d.path;
             // 要素は、開いた画面の下のものでないと動かない（実行時に「Target name '…' is not part of the current screen.」）
