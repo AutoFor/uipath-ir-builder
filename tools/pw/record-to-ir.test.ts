@@ -87,7 +87,8 @@ test("2 つの言語の記録から、IR とリポジトリを作る", () => {
   ]);
   const outer = (res.ir.body as { act: string; body: { act: string; objs?: { TargetApp?: unknown } }[] }[])[0];
   assert.equal(outer.act, "NApplicationCard");
-  assert.deepEqual(outer.body.map((n) => n.act), ["NGoToUrl", "NTypeInto", "NClick", "NApplicationCard"]);
+  // URL を開いた直後の最初の操作の前に、その要素が出るのを待つ（Check State ＋ 出なければ Throw）
+  assert.deepEqual(outer.body.map((n) => n.act), ["NGoToUrl", "NCheckState", "If", "NTypeInto", "NClick", "NApplicationCard"]);
   // 変換できないものは一覧に出し、ワークフローにも警告のログを残す
   assert.equal(res.unconverted.length, 1);
   assert.match(res.unconverted[0].why, /Playwright にしか無い/);
@@ -194,4 +195,21 @@ test("アンカーのある要素は、リポジトリで FuzzySelector＋Closes
     Anchors: [{ FullSelectorArgument: { lit: "<webctrl tag='LABEL' innertext='^(メール|Email)$' matching:innertext='regex' />" }, SearchSteps: "Selector" }],
     ScopeSelectorArgument: undefined, ElementType: undefined,
   });
+});
+
+test("台本が目印を指定した要素は、1 つに決まっていても目印にいちばん近いもので探す", () => {
+  const s = (lang: string, lab: string) => snap({ attrs: { "aria-label": lab }, counts: { "aria-label": 1 }, anchorForced: true, anchor: { tag: "AP-TYPOGRAPHY", text: "ircu-x", textCount: 1 }, css: lang });
+  const c = chooseSelector([s("ja", "削除"), s("en", "Delete")]);
+  assert.equal(c.selector, "<webctrl tag='BUTTON' aria-label='^(削除|Delete)$' matching:aria-label='regex' />");
+  assert.equal(c.anchor, "<webctrl tag='AP-TYPOGRAPHY' innertext='ircu-x' />");
+  // 目印が 1 つに決まらなければ、いつもの決め方
+  const t = snap({ attrs: { "aria-label": "削除" }, counts: { "aria-label": 1 }, anchorForced: true, anchor: { tag: "SPAN", text: "x", textCount: 2 } });
+  assert.equal(chooseSelector([t]).anchor, undefined);
+});
+
+test("入力欄は、近くのラベルより先に placeholder（言語で違えば正規表現）で指す", () => {
+  const s = (ph: string, lab: string) => snap({ tag: "INPUT", attrs: { placeholder: ph, id: ":r1:" }, counts: { placeholder: 1, id: 1, "#tag": 3 }, anchor: { tag: "AP-TYPOGRAPHY", text: lab, textCount: 1 } });
+  const c = chooseSelector([s("名前を選択します。", "名前 *"), s("Choose a name", "Name *")]);
+  assert.equal(c.selector, "<webctrl tag='INPUT' placeholder='^(名前を選択します。|Choose a name)$' matching:placeholder='regex' />");
+  assert.equal(c.anchor, undefined);
 });

@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import { findRef, type Found, type Repository } from "../ir/objrepo.ts";
 import type { Node, ObjValue, Value, Workflow } from "../ir/types.ts";
 import { exprToTs } from "./expr.ts";
+import { splitTrailingKeys } from "./keys.ts";
 import { ident } from "./objects.ts";
 import { buildPwObjects, setupPwDir } from "./pw-objects.ts";
 import { targetToLocator, urlGlob } from "./selector.ts";
@@ -39,6 +40,18 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
   const bad = (path: string, what: string, why: string) => unconverted.push({ path, what, why });
   const emit = (d: number, s: string) => lines.push("  ".repeat(d) + s);
 
+  // Type Into の文字を、文字と後ろのキーに分ける。{ lit: "…[k(tab)]" } と、VB の式「X + "[k(tab)]…"」の 2 つの形
+  const textAndKeys = (v: Value | undefined): { text: Value | undefined; keys: string[] } => {
+    if (v && typeof v === "object" && "lit" in v && typeof v.lit === "string") {
+      const r = splitTrailingKeys(v.lit);
+      return { text: { ...v, lit: r.text }, keys: r.keys };
+    }
+    if (typeof v === "string") {
+      const m = /^(.*?)\s*\+\s*"(\[k\(\w+\)\](?:\[k\(\w+\)\]| )*)"\s*$/s.exec(v);
+      if (m) { const r = splitTrailingKeys(m[2]); if (r.keys.length && !r.text) return { text: m[1], keys: r.keys }; }
+    }
+    return { text: v, keys: [] };
+  };
   const expr = (v: Value | undefined, path: string, what: string): string | undefined => {
     if (v === undefined) return undefined;
     const r = exprToTs(v, names);
@@ -138,7 +151,10 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
       case "NGoToUrl": {
         const u = expr(p.Url, `${path}.props.Url`, "URL");
         if (u) emit(d, `await page.goto(${u});`);
-        rest(n, path, ["Url"]);
+        // DelayAfter（ミリ秒）は、開いたあとの待ち
+        const after = Number(typeof p.DelayAfter === "string" ? p.DelayAfter : NaN);
+        if (after > 0) emit(d, `await page.waitForTimeout(${after});`);
+        rest(n, path, ["Url", ...(after > 0 ? ["DelayAfter"] : [])]);
         return;
       }
       case "NClick": {
@@ -156,11 +172,16 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
       }
       case "NTypeInto": {
         const l = locator(n, path);
-        const t = expr(p.Text, `${path}.props.Text`, "入れる文字");
+        // 文字の後ろの [k(tab)] などは、入れたあとに keyboard.press で押す（tools/pw/keys.ts）
+        const { text, keys } = textAndKeys(p.Text);
+        const t = expr(text, `${path}.props.Text`, "入れる文字");
         if (!l || t === undefined) { emit(d, `// 変換できない: ${n.name ?? n.act}`); return; }
         if (p.EmptyFieldMode === "None") emit(d, `await ${l}.pressSequentially(${t});`);
         else emit(d, `await ${l}.fill(${t});`);
-        rest(n, path, ["Text", "EmptyFieldMode", "InteractionMode", "ScopeIdentifier"]);
+        // DelayBetweenKeys（UiPath の文字ごとの間）は、キーの前の待ちにする
+        const gap = Number(typeof p.DelayBetweenKeys === "string" ? p.DelayBetweenKeys : NaN);
+        for (const k of keys) { if (gap > 0) emit(d, `await page.waitForTimeout(${gap});`); emit(d, `await page.keyboard.press(${JSON.stringify(k)});`); }
+        rest(n, path, ["Text", "EmptyFieldMode", "InteractionMode", "ScopeIdentifier", ...(keys.length ? ["DelayBetweenKeys"] : [])]);
         return;
       }
       case "NGetText": {
@@ -187,13 +208,17 @@ export function irToPlaywright(wf: Workflow, repo: Repository | undefined, opt: 
         const state = p.Mode === "WaitDisappear" ? "hidden" : "visible";
         const ms = timeoutMs(p.Timeout, `${path}.props.Timeout`, "待つ時間");
         const to = typeof p.Exists === "string" ? names.get(p.Exists.toLowerCase()) : undefined;
-        // 出た・出ないの子は slots.IfExists / IfNotExists（XAML の Check State の 2 つの枠）
+        // Exists は「最後に要素がまだあるか」。WaitDisappear では、消えたら False（waitState の結果の逆）。2026-11-20、DESKTOP で確かめた
+        const exists = (met: string) => (state === "hidden" ? `!${met}` : met);
+        // 出た・出ないの子は slots.IfExists / IfNotExists（XAML の Check State の 2 つの枠）。枠の向きは待った結果（出た・消えた）のまま（ロボットではまだ確かめていない）
         const yes = n.slots?.IfExists ?? [], no = n.slots?.IfNotExists ?? [];
-        if (!yes.length && !no.length) emit(d, `${to ? `${to} = ` : ""}await waitState(${l}, "${state}", ${ms});`);
-        else {
-          const v = to ?? "__exists";
-          emit(d, `${to ? "" : "const "}${v} = await waitState(${l}, "${state}", ${ms});`);
-          emit(d, `if (${v}) {`); block(yes, d + 1, `${path}.slots.IfExists`);
+        if (!yes.length && !no.length) {
+          if (to) emit(d, `${to} = ${state === "hidden" ? `!(await waitState(${l}, "hidden", ${ms}))` : `await waitState(${l}, "visible", ${ms})`};`);
+          else emit(d, `await waitState(${l}, "${state}", ${ms});`);
+        } else {
+          emit(d, `const __exists = await waitState(${l}, "${state}", ${ms});`);
+          if (to) emit(d, `${to} = ${exists("__exists")};`);
+          emit(d, "if (__exists) {"); block(yes, d + 1, `${path}.slots.IfExists`);
           if (no.length) { emit(d, "} else {"); block(no, d + 1, `${path}.slots.IfNotExists`); }
           emit(d, "}");
         }

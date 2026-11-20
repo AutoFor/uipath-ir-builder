@@ -49,7 +49,7 @@ test("アンカー：FuzzySelector＋Closest は :near()。Selector の探し方
   const t = (o: Record<string, unknown>) => targetToLocator({ FuzzySelectorArgument: { lit: "<webctrl tag='INPUT' class='field' />" }, SearchSteps: "FuzzySelector", Anchors: [{ FullSelectorArgument: { lit: label }, SearchSteps: "Selector" }], ...o });
   const c = t({ PositioningType: "Closest" });
   assert.ok("ts" in c);
-  assert.equal(c.ts, 'page.locator("input[class=\\"field\\"]:near(label:text-matches(\\"^(メール|Email)$\\"))").first()');
+  assert.equal(c.ts, 'page.locator("input[class=\\"field\\"]:near(label:text-matches(\\"^(メール|Email)$\\"), 5000)").first()');
   assert.deepEqual(c.notes, []);
   const d = t({}); // DesignTimeRectangle の位置で合わせる形
   assert.ok("ts" in d && /位置/.test(d.notes.join()));
@@ -58,5 +58,10 @@ test("アンカー：FuzzySelector＋Closest は :near()。Selector の探し方
   const bad = targetToLocator({ FuzzySelectorArgument: { lit: "<webctrl tag='INPUT' />" }, SearchSteps: "FuzzySelector", PositioningType: "Closest", Anchors: [{ FullSelectorArgument: { lit: "<webctrl tag='LABEL' aria-label='^(a|b)$' matching:aria-label='regex' />" } }] });
   assert.ok("why" in bad && /aria-label の正規表現/.test(bad.why));
   const iframe = targetToLocator({ FuzzySelectorArgument: { lit: "<webctrl tag='IFRAME' id='f' /><webctrl tag='INPUT' />" }, SearchSteps: "FuzzySelector", PositioningType: "Closest", Anchors: [{ FullSelectorArgument: { lit: "<webctrl tag='IFRAME' id='f' /><webctrl tag='LABEL' innertext='名前' />" } }] });
-  assert.ok("ts" in iframe && iframe.ts === 'page.frameLocator("iframe[id=\\"f\\"]").locator("input:near(label:text-matches(\\"^名前$\\"))").first()');
+  assert.ok("ts" in iframe && iframe.ts === 'page.frameLocator("iframe[id=\\"f\\"]").locator("input:near(label:text-matches(\\"^名前$\\"), 5000)").first()');
+});
+
+test("placeholder の正規表現（2 言語）は getByPlaceholder で絞る", () => {
+  const r = selectorToLocator("<webctrl tag='INPUT' placeholder='^(名前を選択します。|Choose a name)$' matching:placeholder='regex' />");
+  assert.ok("ts" in r && r.ts === 'page.locator("input").and(page.getByPlaceholder(new RegExp("^(名前を選択します。|Choose a name)$"))).first()', JSON.stringify(r));
 });
