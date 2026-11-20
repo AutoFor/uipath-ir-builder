@@ -21,6 +21,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { Locator, Page } from "playwright-core";
+import { KEY_DELAY_MS } from "./keys.ts";
 import { metaOf, type Screen } from "./objects.ts";
 import type { Recording, Snapshot, Step } from "./record-to-ir.ts";
 
@@ -107,7 +108,8 @@ export function snapshotInPage(el: Element): Snapshot {
   };
 }
 
-type StepOpts = { urlArg?: string; valueArg?: string };
+// keys：fill のあとに押すキー（Playwright の名前。"Tab"・"Enter" など。tools/pw/keys.ts）
+type StepOpts = { urlArg?: string; valueArg?: string; keys?: string[] };
 // 操作の相手：objects の要素（名前つきの Locator）か、じかに書いたもの（画面の名前・要素の名前・Locator）
 type Target = { screen: string; name: string; app?: string; locator: Locator; direct: boolean };
 
@@ -146,8 +148,42 @@ export class UiRecorder {
     if (opt.urlArg) step.urlArg = opt.urlArg;
   }
 
-  async click(a: Locator | string, b?: string, c?: Locator) {
-    const { t } = targetOf(a, b, c, "click");
+  // click(要素, { near: 目印の要素 })：要素がいくつも当たるとき（一覧の行ごとのボタンなど）、目印にいちばん近いものを押す。
+  //   UiPath では FuzzySelector＋PositioningType=Closest＋アンカー（目印）、Playwright では :near(目印)。目印は表示の文字で 1 つに決まる要素にする
+  async click(a: Locator | string, b?: string | { near?: Locator }, c?: Locator) {
+    const near = typeof a !== "string" && b && typeof b === "object" ? b.near : undefined;
+    const { t } = targetOf(a, typeof b === "string" ? b : undefined, c, "click");
+    if (near) {
+      await near.waitFor({ state: "visible" });
+      await t.locator.first().waitFor({ state: "visible" });
+      // 目印の中心にいちばん近い要素（UiPath の Closest と同じく、近さで選ぶ）。
+      // 一覧が描き直されている間（保存の直後など）は位置が動くので、同じ結果が 2 回続くまで測り直す
+      const measure = async () => {
+        const box = (await near.boundingBox())!;
+        const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+        return t.locator.evaluateAll((els, [x, y]) => {
+          let best = -1, bd = Infinity;
+          const pos = els.map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y)].join(","); });
+          els.forEach((e, i) => { const r = e.getBoundingClientRect(); if (!r.width) return; const d = Math.hypot(r.x + r.width / 2 - x, r.y + r.height / 2 - y); if (d < bd) { bd = d; best = i; } });
+          return `${best}|${Math.round(x)},${Math.round(y)}|${pos.join(";")}`;
+        }, [cx, cy]);
+      };
+      let prev = "", cur = await measure();
+      for (let k = 0; k < 20 && cur !== prev; k++) { await this.page.waitForTimeout(500); prev = cur; cur = await measure(); }
+      const idx = Number(cur.split("|")[0]);
+      if (idx < 0) throw new Error(`click：${t.name} が見えていない`);
+      const one = { ...t, locator: t.locator.nth(idx) };
+      const step = await this.newStep("click", one, true);
+      step.element!.anchor = await near.evaluate((e) => {
+        const text = ((e as HTMLElement).innerText || "").trim();
+        const root = e.getRootNode() as Document | ShadowRoot;
+        return { tag: e.tagName, text, textCount: Array.from(root.querySelectorAll(e.tagName.toLowerCase())).filter((y) => ((y as HTMLElement).innerText || "").trim() === text).length };
+      });
+      step.element!.anchorForced = true;
+      await one.locator.click();
+      step.urlAfter = this.page.url();
+      return;
+    }
     await t.locator.waitFor({ state: "visible" });
     const step = await this.newStep("click", t, true);
     await t.locator.click();
@@ -161,7 +197,20 @@ export class UiRecorder {
     const step = await this.newStep("fill", t, true);
     step.value = value;
     if (opt.valueArg) step.valueArg = opt.valueArg;
-    await t.locator.fill(value);
+    // 入力欄を包む部品（AP-TEXT-FIELD など。中の input は shadow DOM）には fill が使えない。押してからキーで打つ。
+    // UiPath では、その部品を指して Type Into（欄を空にしない。EmptyFieldMode=None）。Playwright に戻すと pressSequentially
+    const editable = await t.locator.evaluate((e) => e instanceof HTMLInputElement || e instanceof HTMLTextAreaElement || e instanceof HTMLSelectElement || (e as HTMLElement).isContentEditable);
+    if (editable) await t.locator.fill(value);
+    else {
+      step.typed = true;
+      await t.locator.click();
+      await this.page.keyboard.type(value);
+    }
+    // 入れたあとに押すキー（UiPath では Type Into の文字の後ろの [k(tab)] など）
+    if (opt.keys?.length) {
+      step.keys = opt.keys;
+      for (const k of opt.keys) { await this.page.waitForTimeout(KEY_DELAY_MS); await this.page.keyboard.press(k); }
+    }
   }
 
   async text(a: Locator | string, ...r: unknown[]): Promise<string> {
@@ -182,6 +231,17 @@ export class UiRecorder {
     await t.locator.waitFor({ state: "visible", timeout: timeoutMs });
     const step = await this.newStep("wait", t, true);
     step.timeoutMs = timeoutMs;
+  }
+
+  // 消えるのを待つ（消したものが一覧から無くなるなど）。UiPath では Check State の WaitDisappear。
+  // 待ち始めたときに見えていれば属性を記録する。もう消えていれば記録しない（前の手順で同じ要素を記録しておく）
+  async waitHidden(a: Locator | string, ...r: unknown[]) {
+    const { t, rest } = targetOf(a, r[0], r[1], "waitHidden");
+    const [timeoutMs = 30000] = r.slice(rest - 1) as [number?];
+    const visible = await t.locator.first().isVisible();
+    const step = await this.newStep("waitGone", t, visible);
+    step.timeoutMs = timeoutMs;
+    await t.locator.first().waitFor({ state: "hidden", timeout: timeoutMs });
   }
 
   // 出たときだけ押す（Cookie のバナーを閉じるなど）。UiPath では Check State（出なくても止めない）＋ If ＋ Click

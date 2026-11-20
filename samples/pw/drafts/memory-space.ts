@@ -1,5 +1,5 @@
 // 下書き（まだ流していない。利用者の了承が出るまで流さない）：Agents のメモリスペースを作り、一覧に出るのを確かめ、消す（AUT-1214）。
-// 作るもの：メモリスペース 1 つ（名前 ir-watch-<日時>、フォルダ Shared）。同じ台本の最後で消す。
+// 作るもの：メモリスペース 1 つ（名前 ircu-memory-<日時>、フォルダ Shared）。同じ台本の最後で消す。
 // セレクターは仮。画面の DOM を見てから objects に書き直す
 import { join } from "node:path";
 import { defineObjects } from "../../../tools/pw/objects.ts";
@@ -22,7 +22,7 @@ const objects = defineObjects({
 });
 
 const locale = process.argv[2] ?? "ja-JP";
-const name = `ir-watch-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`;
+const name = `ircu-memory-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`;
 const userDataDir = join(process.env.LOCALAPPDATA ?? "", "UiPath", "IrCloudUiChrome");
 const { browser, page } = await launch(locale, { userDataDir, headless: false });
 try {

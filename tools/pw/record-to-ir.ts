@@ -19,6 +19,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { KEY_DELAY_MS, keysToUiPath } from "./keys.ts";
 
 export type Snapshot = {
   tag: string;
@@ -33,12 +34,13 @@ export type Snapshot = {
   inFrame: boolean;
   anchor?: { tag: string; text: string; textCount: number }; // 近くのラベル（アンカーの候補）
   frame?: { tag: string; attrs: Record<string, string>; counts: Record<string, number> }; // 入っている iframe（同じオリジンのとき）
+  anchorForced?: boolean; // 台本が目印を指定した（click(要素, { near })）。属性で 1 つに決まっても、目印にいちばん近いもので探す
   formValues?: string[]; // 中の入力欄の値（UiPath の Get Text はこれも文字に入れる。記録では Get Attribute の innertext で読むので、参考に残すだけ）
   locatorCount?: number;
 };
 export type Step = {
   i: number;
-  action: "goto" | "click" | "fill" | "text" | "wait" | "clickIf" | "unsupported";
+  action: "goto" | "click" | "fill" | "text" | "wait" | "waitGone" | "clickIf" | "unsupported";
   appeared?: boolean; // clickIf：出たかどうか（出なければ element が無い）
   app?: string; // objects のアプリの名前（recorder が要素から取る）
   screen?: string;
@@ -51,6 +53,8 @@ export type Step = {
   urlAfter?: string;
   value?: string;
   valueArg?: string;
+  typed?: boolean; // fill できない要素（入力欄を包む部品）に、押してからキーで打った。UiPath では EmptyFieldMode=None
+  keys?: string[]; // fill のあとに押したキー（Playwright の名前）。UiPath では Type Into の文字の後ろに [k(…)] で足す
   outVar?: string;
   result?: string;
   timeoutMs?: number;
@@ -74,6 +78,9 @@ export type ConvertResult = {
   warnings: string[];
 };
 
+// URL を開いたあとの待ち（ミリ秒。NGoToUrl の DelayAfter）
+const GOTO_DELAY_AFTER_MS = 5000;
+
 const TEST_ATTRS = ["data-testid", "data-cy", "data-e2e", "data-test", "data-qa"];
 
 // 作られた値に見える id（Angular Material の mat-input-3、React の :r1:、数字の多いもの、GUID）
@@ -86,7 +93,7 @@ const same = (xs: string[]) => xs.every((x) => x === xs[0]);
 const unique = (snaps: Snapshot[], key: string) => snaps.every((s) => s.counts?.[key] === 1);
 
 // 表示文字・aria-label を、言語で違えば正規表現にする
-function textAttr(attr: "aria-label" | "innertext", vals: string[]): { part: string; independent: boolean; perSnap?: string[] } {
+function textAttr(attr: "aria-label" | "innertext" | "placeholder", vals: string[]): { part: string; independent: boolean; perSnap?: string[] } {
   const uniq = [...new Set(vals)];
   if (uniq.length === 1) return { part: `${attr}='${q(uniq[0])}'`, independent: false };
   return {
@@ -112,6 +119,13 @@ function chooseInDocument(snaps: Snapshot[]): Choice {
   const tag = snaps[0].tag.toUpperCase();
   const has = (k: string) => snaps.every((s) => s.attrs[k] !== undefined && s.attrs[k] !== "");
   const vals = (k: string) => snaps.map((s) => s.attrs[k]);
+  // 0. 台本が目印を指定したとき（一覧の行ごとのボタンなど、同じ属性の要素がいくつもある）：本体はタグ（と aria-label）で探し、目印にいちばん近いものを使う。
+  //    記録したときに 1 つに決まっていても（検索で絞ったあとなど）、ロボットでは絞り込みの前に探すことがあるので、いつも目印で探す
+  if (snaps.every((s) => s.anchorForced && s.anchor && s.anchor.textCount === 1)) {
+    const at = textAttr("innertext", snaps.map((s) => s.anchor!.text));
+    const lab = has("aria-label") ? ` ${textAttr("aria-label", vals("aria-label")).part}` : "";
+    return { selector: `<webctrl tag='${tag}'${lab} />`, anchor: `<webctrl tag='${snaps[0].anchor!.tag.toUpperCase()}' ${at.part} />`, basis: "台本が指定した目印（アンカー）", languageIndependent: false, fragile: false };
+  }
   // 1. テスト用の属性
   for (const k of TEST_ATTRS) {
     if (has(k) && same(vals(k)) && unique(snaps, k))
@@ -127,6 +141,12 @@ function chooseInDocument(snaps: Snapshot[]): Choice {
   if (has("aria-label") && unique(snaps, "aria-label")) {
     const t = textAttr("aria-label", vals("aria-label"));
     return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("aria-label")) ? "aria-label" : "aria-label（2 言語）", languageIndependent: false, fragile: false, perSnap: t.perSnap?.map((p) => `<webctrl tag='${tag}' ${p} />`) };
+  }
+  // 3b. placeholder（入力欄の薄い文字）。言語で違えば 3 と同じ正規表現。ロボットで、placeholder と、その正規表現で見つかった（2026-11-20、Agents のメモリ空間）。
+  //     近くのラベル（7）より先に使う。2 言語の正規表現をアンカーに書くと、ロボットでは見つからなかった
+  if (has("placeholder") && unique(snaps, "placeholder")) {
+    const t = textAttr("placeholder", vals("placeholder"));
+    return { selector: `<webctrl tag='${tag}' ${t.part} />`, basis: same(vals("placeholder")) ? "placeholder" : "placeholder（2 言語）", languageIndependent: false, fragile: false, perSnap: t.perSnap?.map((p) => `<webctrl tag='${tag}' ${p} />`) };
   }
   // 4. 表示文字
   if (snaps.every((s) => s.text && s.counts?.["#text"] === 1)) {
@@ -169,6 +189,7 @@ const TAXONOMY: Record<string, [string, string]> = {
   fill: ["Input", "TypeInto"],
   text: ["Text", "GetAttribute"],
   wait: ["Text", "CheckState"],
+  waitGone: ["Text", "CheckState"],
   clickIf: ["Button", "Click"],
 };
 const ELEMENT_TYPE: Record<string, string> = { BUTTON: "Button", INPUT: "InputBox", TEXTAREA: "InputBox", A: "HyperLink", SELECT: "DropDown" };
@@ -223,6 +244,11 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     }
     if (s.action === "goto") return;
     const snaps = recs.map((r) => r.steps[i].element!).filter(Boolean);
+    // 消えるのを待つ要素は、待ち始めたときにもう消えていれば記録に属性が無い。同じ名前の要素を前の手順で記録していれば、それを使う
+    if (s.action === "waitGone" && snaps.length !== recs.length) {
+      if (!sc.elements.has(s.name ?? "")) throw new Error(`手順 ${i}（${s.name}）：消えるのを待つ要素の属性が無い。前の手順で同じ要素を記録する（waitVisible など）`);
+      return;
+    }
     if (s.action === "clickIf") {
       // 出たときだけ押すもの（Cookie のバナーなど）。出なかった言語の記録には要素が無い
       if (!snaps.length) { unconverted.push({ step: i, what: s.name ?? "", why: "どの記録でも出なかったので、要素の属性が分からない" }); return; }
@@ -315,6 +341,13 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
     }
     return { lit: lit ?? "" };
   };
+  // 入れたあとに押すキー：リテラルなら後ろに足し、引数なら「引数 + "[k(tab)]…"」の式にする
+  const withKeys = (v: string | { lit: string }, keys: string[] | undefined) => {
+    if (!keys?.length) return v;
+    const k = keysToUiPath(keys);
+    return typeof v === "string" ? `${v} + "${k}"` : { lit: v.lit + k };
+  };
+  let afterGoto = false;
   base.forEach((s, i) => {
     if (s.action === "unsupported") {
       cur.push({ act: "LogMessage", name: `変換できない手順 ${i}`, props: { Level: "Warn", Message: { lit: `変換できない手順 ${i}: ${s.what}（${s.detail ?? ""}）` } } });
@@ -327,15 +360,26 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
       cur = inner.body;
       curScreen = sc;
     }
+    // URL を開いた直後の最初の操作（押す・入れる・読む）の前に、その要素が出るのを待つ（最大 60 秒）。
+    // ロボットでは、開いた直後の Type Into が「UI 要素が見つかりませんでした」で落ち、8 秒待つと通った（2026-11-20、Agents のメモリ空間の作成の画面、英語）
+    if (afterGoto && s.name && (s.action === "click" || s.action === "fill" || s.action === "text")) {
+      const v = `ready${i}`;
+      if (!vars.some((x) => x.name === v)) vars.push({ name: v, type: "Boolean" });
+      cur.push({ act: "NCheckState", name: `${s.name} が出るのを待つ`, objs: { Target: ref(sc, s.name) }, props: { Mode: "WaitAppear", Timeout: "60", Exists: v } });
+      cur.push({ act: "If", props: { Condition: `Not ${v}` }, then: [{ act: "Throw", props: { Exception: `New Exception("${s.name} が出ない")` } }] });
+    }
+    afterGoto = s.action === "goto";
     switch (s.action) {
       case "goto":
-        cur.push({ act: "NGoToUrl", name: `${sc} の URL を開く`, objs: { Target: ref(sc, "ページ本体") }, props: { Url: strExpr(s.url, s.urlArg) } });
+        // 開いたあと 5 秒待つ（DelayAfter）。すぐに次の要素を探すと、60 秒待っても見つからないことがあった（開く前のページを探し続けたとみている）。
+        // 8 秒止まってから探すと見つかった（2026-11-20、Agents のメモリ空間の作成の画面、英語。ロボット）
+        cur.push({ act: "NGoToUrl", name: `${sc} の URL を開く`, objs: { Target: ref(sc, "ページ本体") }, props: { Url: strExpr(s.url, s.urlArg), DelayAfter: String(GOTO_DELAY_AFTER_MS) } });
         break;
       case "click":
         cur.push({ act: "NClick", name: `${s.name} を押す`, objs: { Target: ref(sc, s.name!) } });
         break;
       case "fill":
-        cur.push({ act: "NTypeInto", name: `${s.name} に入れる`, objs: { Target: ref(sc, s.name!) }, props: { Text: strExpr(s.value, s.valueArg) } });
+        cur.push({ act: "NTypeInto", name: `${s.name} に入れる`, objs: { Target: ref(sc, s.name!) }, props: { Text: withKeys(strExpr(s.value, s.valueArg), s.keys), ...(s.typed ? { EmptyFieldMode: "None" } : {}), ...(s.keys?.length ? { DelayBetweenKeys: String(KEY_DELAY_MS) } : {}) } });
         break;
       case "text": {
         const v = s.outVar ?? `text${i}`;
@@ -344,6 +388,14 @@ export function convert(recs: Recording[], opt: ConvertOptions): ConvertResult {
         // Get Text は、要素の中や上に重なった見えない入力欄の値まで入れる（「English」が「Englishen」）。ScrapingMethod・ScrapingOptions のどれでも外せなかった（2026-11-19、DESKTOP）
         cur.push({ act: "NGetAttributeGeneric", typeArg: "String", name: `${s.name} を読む`, objs: { Target: ref(sc, s.name!) }, props: { Attribute: { lit: "innertext" }, Result: v } });
         cur.push({ act: "LogMessage", props: { Level: "Info", Message: `"${s.name}: " & ${v}` } });
+        break;
+      }
+      case "waitGone": {
+        // Check State の Exists は、WaitDisappear でも「最後に要素がまだあるか」（消えなければ True）。2026-11-20、DESKTOP で確かめた
+        const v = `still${i}`;
+        if (!vars.some((x) => x.name === v)) vars.push({ name: v, type: "Boolean" });
+        cur.push({ act: "NCheckState", name: `${s.name} が消えるのを待つ`, objs: { Target: ref(sc, s.name!) }, props: { Mode: "WaitDisappear", Timeout: String(Math.round((s.timeoutMs ?? 30000) / 1000)), Exists: v } });
+        cur.push({ act: "If", props: { Condition: v }, then: [{ act: "Throw", props: { Exception: `New Exception("${s.name} が消えない")` } }] });
         break;
       }
       case "wait": {

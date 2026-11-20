@@ -10,6 +10,8 @@
 // suite（JSON）:
 //   { "testSet": "IRCU:2", "profile": "trial",
 //     "cases": [ { "testCase": "IRCU:1", "expect": ["請求書のプロジェクト: ixp_trial_invoices"], "queue": ["--name", "pwixp-run", "--template", "<P>", "--use-project", "--no-coded", "<P>/Main.xaml"] } ] }
+//   cleanup（省略できる）：流した結果によらず、そのあとに動かす後始末（node で動かすスクリプトと引数。パスはリポジトリの根元から）。
+//     作ったものを消すのに使う。終了コードが 0 でなければ、そのケースは Failed。出力は result.txt に入る。例 "cleanup": ["samples/pw/memory/cleanup.ts"]
 //
 // 流れ（どの段で落ちても、Test Manager に記録が残るようにする）:
 //   1. uip tm testsets run --execution-type manual で、手動の実行を作る（ロボットのジョブは動かない）
@@ -105,13 +107,20 @@ for (const c of suite.cases) {
     }
   }
   for (const e of c.expect ?? []) if (!logs.some((l) => l.includes(e))) problems.push(`ログに「${e}」が無い`);
+  // 後始末（流した結果によらず動かす）。作ったものを消すのに使う
+  const cleanupOut = [];
+  if (c.cleanup?.length) {
+    const cl = spawnSync(process.execPath, c.cleanup.map((a, i) => (i === 0 ? join(root, a) : a)), { cwd: root, encoding: "utf8", maxBuffer: 16 << 20, timeout: 600000 });
+    cleanupOut.push(...`${cl.stdout ?? ""}${cl.stderr ?? ""}`.trim().split("\n").filter(Boolean));
+    if (cl.status !== 0) problems.push(`後始末の終了コード ${cl.status}（${cleanupOut.at(-1) ?? ""}）`);
+  }
   const passed = problems.length === 0;
 
   // 3. 書いて、添付する
   tm("testcaselog", "finish", "--project-key", projectKey, "--execution-id", executionId, "--test-case-id", tcId,
     "--result", passed ? "Passed" : "Failed", "--has-error", passed ? "false" : "true", "--executed-by", EXECUTED_BY);
   const summary = join(tmp, `result-${c.testCase.replace(/\W/g, "_")}.txt`);
-  writeFileSync(summary, [`${c.testCase}: ${passed ? "Passed" : "Failed"}`, ...problems.map((p) => `- ${p}`), "", "ロボットのログ:", ...logs].join("\n") + "\n");
+  writeFileSync(summary, [`${c.testCase}: ${passed ? "Passed" : "Failed"}`, ...problems.map((p) => `- ${p}`), "", "ロボットのログ:", ...logs, ...(cleanupOut.length ? ["", "後始末:", ...cleanupOut] : [])].join("\n") + "\n");
   for (const f of [summary, join(reportDir, "report.md")].filter(existsSync)) {
     try { tm("attachment", "upload", "--object-id", log.Id, "--object-type", "testCaseLog", "--project-key", projectKey, "--file", f); }
     catch (e) { console.error(`注意：添付できなかった ${f}: ${e.message}`); }

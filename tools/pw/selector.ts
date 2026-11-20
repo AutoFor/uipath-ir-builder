@@ -6,7 +6,7 @@
 //   aria-label → CSS の [aria-label="値"]。正規表現（matching:aria-label='regex'）なら getByLabel(new RegExp(...))
 //   innertext → filter({ hasText: /^値$/ })
 //   css-selector → そのまま CSS / parentid → 祖先の [id="値"] / idx → nth
-//   値の * と ? は UiPath のワイルドカード。CSS の属性では ^= $= *= で書ける形だけ。matching:<属性>='regex' は aaname・innertext・aria-label だけ
+//   値の * と ? は UiPath のワイルドカード。CSS の属性では ^= $= *= で書ける形だけ。matching:<属性>='regex' は aaname・innertext・aria-label・placeholder だけ
 //   webctrl が 2 つ以上なら、locator をつなぐ（2 つめ以降は 1 つめの中を探す）
 // 直せないもの：webctrl 以外（wnd・ctrl・uia など、デスクトップのアプリ）、上に無い属性（isleaf・tablerow・parentclass など）、
 //   あいまい一致（matching:<属性>='fuzzy'）
@@ -54,7 +54,7 @@ function cssAttr(k: string, v: string): string | undefined {
 }
 
 // webctrl の 1 行を読む。css：CSS で書ける部分。text：innertext・aaname の正規表現。label：aria-label の正規表現。nth：idx
-type Row = { css: string; text?: string; label?: string; nth?: number; frame: boolean };
+type Row = { css: string; text?: string; label?: string; placeholder?: string; nth?: number; frame: boolean };
 function readRow(n: SelNode): Row | { why: string } {
   if (n.tag !== "webctrl") return { why: `<${n.tag}> は Web の要素ではない（デスクトップのアプリの操作は Playwright に無い）` };
   const matching = new Map(n.attrs.filter(([k]) => k.startsWith("matching:")).map(([k, v]) => [k.slice(9), v]));
@@ -65,6 +65,7 @@ function readRow(n: SelNode): Row | { why: string } {
     if (k.startsWith("matching:") || k.startsWith("fuzzylevel:") || k.startsWith("check:")) continue;
     const regex = matching.get(k) === "regex";
     if (regex && k === "aria-label") { row.label = v; continue; }
+    if (regex && k === "placeholder") { row.placeholder = v; continue; }
     if (regex && k !== "aaname" && k !== "innertext") return { why: `${k} の正規表現（matching:${k}='regex'）は CSS で書けない` };
     if (k === "tag") { tag = v.toLowerCase(); continue; }
     if (k === "css-selector") { cssSel = v; continue; }
@@ -88,6 +89,7 @@ function readRow(n: SelNode): Row | { why: string } {
 // 1 行を、CSS だけで書く（:near() の中など）。表示文字は Playwright の :text-matches()。aria-label の正規表現・idx は書けない
 function rowCss(r: Row): string | { why: string } {
   if (r.label !== undefined) return { why: "aria-label の正規表現は CSS だけでは書けない" };
+  if (r.placeholder !== undefined) return { why: "placeholder の正規表現は CSS だけでは書けない" };
   if (r.nth !== undefined) return { why: "idx は CSS だけでは書けない" };
   return r.css + (r.text !== undefined ? `:text-matches(${JSON.stringify(r.text)})` : "");
 }
@@ -112,13 +114,16 @@ function rowsOf(sel: string): Row[] | { why: string } {
 
 // 行をつないで locator の式にする。iframe の行は frameLocator（DESKTOP の UiPath も、この行で iframe の中を探せた）。
 // near：最後の行に :near(アンカー) を足す（UiPath の FuzzySelector＋PositioningType=Closest と同じく、アンカーにいちばん近いもの）
+const NEAR_MAX = 5000;
 function chain(rows: Row[], root: string, near?: string): string {
   const parts = rows.map((r, i) => {
     if (r.frame) return `.frameLocator(${JSON.stringify(r.css)})`;
     const last = i === rows.length - 1;
-    let p = `.locator(${JSON.stringify(r.css + (last && near ? `:near(${near})` : ""))})`;
+    // :near の距離の上限は既定で 50px。UiPath の Closest には上限が無いので、大きくする（一覧の行の右端のボタンと、左端の名前は 1000px ほど離れる）
+    let p = `.locator(${JSON.stringify(r.css + (last && near ? `:near(${near}, ${NEAR_MAX})` : ""))})`;
     if (r.text !== undefined) p += `.filter({ hasText: new RegExp(${JSON.stringify(r.text)}) })`;
     if (r.label !== undefined) p += `.and(${root}.getByLabel(new RegExp(${JSON.stringify(r.label)})))`;
+    if (r.placeholder !== undefined) p += `.and(${root}.getByPlaceholder(new RegExp(${JSON.stringify(r.placeholder)})))`;
     if (r.nth !== undefined) p += `.nth(${r.nth})`;
     return p;
   });

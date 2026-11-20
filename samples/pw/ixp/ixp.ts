@@ -8,7 +8,9 @@ import objects from "./objects.ts";
 const locale = process.argv[2] ?? "ja-JP";
 const output = process.argv[3] ?? `samples/pw/ixp/rec/ixp.${locale.slice(0, 2)}.json`;
 const userDataDir = join(process.env.LOCALAPPDATA ?? "", "UiPath", "IrCloudUiChrome");
-const { browser, page } = await launch(locale, { userDataDir });
+// Playwright が開くのは PW_USER_DATA_DIR（プロフィールの写し）があればそちら。記録（UiPath で開くプロフィール）は userDataDir のまま。
+// 同じプロフィールを Playwright で使った直後は、ロボットの Chrome が「ブラウザーを起動できませんでした」になった（2026-11-20）
+const { browser, page } = await launch(locale, { userDataDir: process.env.PW_USER_DATA_DIR ?? userDataDir });
 try {
   const C = objects(page, locale).UiPath_Cloud;
   const rec = new UiRecorder(page, locale, { userDataDir });
