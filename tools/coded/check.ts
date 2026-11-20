@@ -15,6 +15,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mask, splitArgs } from "./scan.ts";
+import { workflowOutputs } from "./workflow-outputs.ts";
 import { DEFAULT_SERVICE_FILES, VersionError, selectCatalogs } from "../ir/versions.ts";
 import type { Arg } from "./scan.ts";
 
@@ -215,8 +216,19 @@ export function checkSource(src: string, file: string, ctx: Context): FileResult
       const raw = /^@?"([^"]*)"/.exec(src.slice(s))?.[1];
       // 普通の文字列（@ の無いもの）の "Sub\\Foo.xaml" は Sub\Foo.xaml（サブフォルダの XAML）
       const lit = raw === undefined || m[1].startsWith("@") ? raw : raw.replace(/\\\\/g, "\\");
-      if (lit && !existsSync(join(ctx.projectDir, lit)) && !existsSync(join(dirname(file), lit)))
-        add(s, "warning", "WORKFLOW_NOT_FOUND", `RunWorkflow の "${lit}" がプロジェクトに無い`);
+      const target = lit ? [join(ctx.projectDir, lit), join(dirname(file), lit)].find((p) => existsSync(p)) : undefined;
+      if (lit && !target) { add(s, "warning", "WORKFLOW_NOT_FOUND", `RunWorkflow の "${lit}" がプロジェクトに無い`); continue; }
+      // 戻りの辞書を変数に入れて x["キー"] で読むとき、キーが呼ばれる側の出力にあるか（workflow-outputs.ts）。
+      // XAML を Coded に変えると、1つの出力のキーが引数の名前から "Output" に変わるので、古い名前のままの呼び出し元を見つける
+      const assigned = /\b([A-Za-z_]\w*)\s*=\s*$/.exec(code.slice(Math.max(0, m.index! - 200), m.index!));
+      const outs = target ? workflowOutputs(target) : undefined;
+      if (!assigned || !outs) continue;
+      const v = assigned[1];
+      for (const k of src.matchAll(new RegExp(`\\b${v}\\s*\\[\\s*"([^"]*)"\\s*\\]`, "g"))) {
+        if (code.slice(k.index!, k.index! + v.length) !== v) continue; // コメントの中
+        if (!outs.keys.includes(k[1]))
+          add(k.index!, "error", "RUN_WORKFLOW_KEY", `${v}["${k[1]}"]：${lit} の出力に "${k[1]}" は無い（出力は ${outs.keys.length ? outs.keys.map((x) => `"${x}"`).join("・") : "無し"}${outs.kind === "coded" && outs.keys[0] === "Output" ? "。Coded の戻り値が1つのときのキーは \"Output\"" : ""}）`);
+      }
     }
   }
 

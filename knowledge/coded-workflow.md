@@ -28,6 +28,7 @@ Studio は `.cs` ごとに `.local/install/<フォルダ>/<クラス>+<クラス
 - Out 引数：戻り値。1つなら `public string Execute(...)` で、引数名は `Output` になる。2つ以上なら名前付きタプル `public (string out_Message, int out_Length) Execute(...)` で、要素名が引数名になる
 - `ref` / `out` の引数は使えない（生成コードが `out` / `ref` を付けずに呼ぶので CS1620 でコンパイルが落ちる）。InOut は Coded では書けない（ただし Coded から XAML を `RunWorkflow` で呼ぶときの XAML の InOut は、戻りの辞書に返ってくる。knowledge/coded-via-xaml.md）
 - `RunWorkflow("coded/Greet.cs", 引数の辞書)` で別の Coded ワークフローを呼べる。戻り値の辞書のキーは上の引数名（Out が1つなら `"Output"`）。生成した `Main.cs` が `Greet.cs` を呼び、期待ログ（`samples/ir/Main.expected.log`）どおりに動くことを run で確かめた（2026-11-04）
+- 呼ばれる側を XAML から Coded に変えると、1つの出力のキーが**引数の名前から `"Output"` に変わる**（XAML の `OutArgument ExcrtactData` → Coded の `DataTable Execute()` は `"Output"`）。gen-coded.ts で作る呼び出し元は `--invoke-dir` で合わせるが、**手で書いた C# の呼び出し元**は古い名前のまま残り、実行して初めて `KeyNotFoundException` になる（moneyforward_cs の `MfFamily月次推移データEntity更新.cs`、2026-11-19）。`tools/coded/check.ts --project <dir>` の `RUN_WORKFLOW_KEY` が、`var r = RunWorkflow("x.cs"); r["キー"]` のキーを呼ばれる側の出力（`tools/coded/workflow-outputs.ts`：XAML は Out / InOut 引数、Coded は void → 無し・1つ → `"Output"`・名前付きタプル → 要素の名前）と突き合わせてエラーにする。XAML を Coded に置き換えたら、プロジェクトのすべての .cs にかける
 
 ## サービスの変数名と型
 
