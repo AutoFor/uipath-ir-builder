@@ -6,6 +6,7 @@
 
 - `<P>/.local/.codedworkflows/ObjectRepository.cs`（Studio のビルド・`uip rpa validate` / `run` で `.objects` から作られる）を読み、IR のターゲットの `Reference` がリポジトリにあれば、`new TargetAnchorableModel { ... }` ではなく `Descriptors.<アプリ>.<画面>.<要素>` で渡す（`tools/ir/coded-descriptors.ts`）
   - `uiAutomation.Open(Descriptors.<アプリ>.<画面>, targetAppOptions: ...)`、`app.Click(Descriptors.….<要素>, clickOptions: ...)`
+  - **例外：セレクターが C# の式の要素**（リポジトリの変数を差し込むもの。例 `string.Format("…<webctrl tag='OPTION' aaname='{0}*' />", 支出元)`）は、`Descriptors` にせず `new TargetAnchorableModel { SearchSteps = Selector, PartialSelector = <式> }` で渡す（`Reference` は付けない）。Coded の `Descriptors` はリポジトリの変数を受け取れず、変数の名前がそのまま入る（moneyforward_cs の MF入力で `aaname='支出元*'` を探して見つからず、本番の月1繰越が段階3で止まった。2026-11-20）
   - 引数名はメソッドで違う（`target` / `elementDescriptor` / `screenDescriptor`）ので、名前なしで先頭に置く
   - 実行時の中身はリポジトリのもの（IR の値ではない）。IR とリポジトリが食い違っていないか確かめてから切り替える（`uip rpa uia object-repository get-element-definition` で書き出して比べた）
   - `--no-descriptors` でこれまでどおり（中身をその場に書く）
