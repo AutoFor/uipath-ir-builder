@@ -12,7 +12,8 @@
 //     --no-descriptors     リポジトリにあるターゲットも、これまでどおり new TargetAnchorableModel { ... } で書く
 //     --compact            オプションを1行にまとめて書く（既定は1行に1つ、行末に // Studio の日本語の名前。catalog/<パッケージ>/<版>.ja.json がある版だけ）
 //     --settings <Release|Debug>  プロジェクト設定（.settings/<プロファイル>）の既定値を、IR で未設定の props に補う。既定は Release（Orchestrator のジョブ）。--no-settings で補わない
-//     --no-trace-log       操作（クリック・入力・待機など）の直前に入れる Log(…, Trace) を入れない（既定は、読みやすい形のとき入れる。// 手順名 の代わり）
+//     --no-trace-log       操作（クリック・入力・待機など）の前後に入れる Steps のログを入れない（既定は、読みやすい形のとき入れる。// 手順名 の代わり）
+//     --steps-dir <dir>    Steps.cs（ログの部品。tools/ir/templates/Steps.cs）を置くフォルダ（既定は --out。出力先を分けて何回か生成するとき、1か所にまとめる）
 //                          カタログに無い版、services の無い古いカタログ（対応表のあるパッケージ）はエラー
 //     --no-via-xaml        対応表の無いアクティビティを XAML 経由にしない（NO_MAPPING のエラーにする）
 //
@@ -49,7 +50,7 @@ const invokeDir = val("--invoke-dir");
 const checkOnly = args.includes("--check");
 const print = args.includes("--print");
 const noViaXaml = args.includes("--no-via-xaml");
-const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project", "--settings"]);
+const valued = new Set(["--out", "--namespace", "--invoke-dir", "--project", "--settings", "--steps-dir"]);
 const descriptors = project && !args.includes("--no-descriptors") ? readDescriptors(project) : undefined;
 if (project && !args.includes("--no-descriptors") && !descriptors) console.error(`注意: ${descriptorsFile(project)} が無い。ターゲットは new TargetAnchorableModel で書く（Studio でビルドすると作られる）`);
 const files = args.filter((a, i) => !a.startsWith("--") && !valued.has(args[i - 1]) && !/\.(verify|expected|args)\.json$/i.test(a));
@@ -141,5 +142,14 @@ for (const f of files) {
   }
   console.log(`OK ${f} -> ${path}${subs.length ? `（XAML 経由 ${subs.length} 件: ${subs.map((s) => s.file.path).join(", ")}）` : ""}`);
   note();
+}
+// traceLog の生成したコードが使う Steps（ログの書き方をそろえる部品）を、出力先に置く（tools/ir/templates/Steps.cs）
+if (outDir && !checkOnly && !args.includes("--compact") && !args.includes("--no-trace-log") && Object.keys(labels).length > 0) {
+  mkdirSync(outDir, { recursive: true });
+  const tpl = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "templates", "Steps.cs"), "utf8").replace(/^﻿/, "");
+  const stepsDir = val("--steps-dir") ?? outDir;
+  mkdirSync(stepsDir, { recursive: true });
+  writeFileSync(join(stepsDir, "Steps.cs"), tpl.replace(/__NAMESPACE__/g, ns), "utf8");
+  console.log(`OK Steps.cs -> ${join(stepsDir, "Steps.cs")}`);
 }
 process.exit(failed ? 1 : 0);

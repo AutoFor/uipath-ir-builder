@@ -109,3 +109,11 @@ node tools/catalog-diff.ts catalog/<パッケージ>/<版>.json catalog/<パッ�
 - **サブフォルダの XAML の取り込み**（2026-11-17）：VB の Windows のプロジェクトの `Sub/Greet.xaml`（IR なし）を移すと `ir/Sub/Greet.json`（`"file": "Sub/Greet.xaml"`）に取り込まれ、クロスプラットフォームで IR から XAML と C# を作って build・run が OK（`out/verify/migvb-run`）。Windows に戻すと元の XAML と同じ
 - verify.mjs で手書きの XAML をサブフォルダごと試すときは `--base <フォルダ>`（そこからの相対パスのまま写す）。IR に `file` があれば、そのサブフォルダに書く
 - まだ見ていないもの：VB でも取り込めない XAML を「そのまま移す」ときの build（仕組みは C# の XAML と同じ）、Studio が自分で作ったサブフォルダの XAML（ここでは生成器で作った XAML を Studio の形とみなして試した。Studio の `x:Class` の付け方には寄らない：`x:Class` はそのまま `workflow` に、場所は `file` に持つ）
+
+### サーバーレスで画面の操作が何分もかかる（録画・ライブ ストリーミングが無いとき）
+
+- 2026-11-19 に MoneyForward の月1繰越（Chrome）で確かめた。録画もライブ ストリーミングも無いプロセスでは、クリック1つ・画面に付く（`uiAutomation.Open`）1つに 2〜6 分かかり、15 分の時間切れや「Could not find target application」で落ちた
+- 同じ時間に、同じログインの手順を、録画（すべてのジョブ）とライブ ストリーミングがあるプロセスで動かすと、どれも 1 秒前後だった。月1繰越のプロセスにも付けたら、同じく 1 秒前後になった
+- 見られていない画面では、Chrome が描画や処理を間引くためと見ている（確かめてはいない）
+- サーバーレスで UI を操作するプロセスは、録画（すべてのジョブ）かライブ ストリーミングを有効にする（`uip or processes update` には無い。Orchestrator のプロセスの編集 → その他の設定 → ジョブの記録・ライブ ストリーミングを許可）。`uip or processes get <key> --all-fields` の `VideoRecordingSettings`・`RemoteControlAccess` で確かめられる
+- 10 秒ごとに画面を撮る（UIA の `TakeScreenshot` を別のスレッドで呼ぶ）と、画面の操作とぶつかって止まった。撮るのは始めと失敗のときだけにする

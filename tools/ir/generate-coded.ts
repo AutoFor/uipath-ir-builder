@@ -67,6 +67,37 @@ const NOT_TRACED_ACTIVITIES = new Set([
   "LogMessage", "Comment", "CommentOut", "Assign", "MultipleAssign", "AddToCollection", "InvokeCode",
 ]);
 
+// traceLog の呼び出し（Warn にしない。呼んだ先の合計なので）として扱うアクティビティ
+const CALL_ACTIVITIES = new Set(["InvokeWorkflowFile", "InvokeWorkflow", "RunWorkflow"]);
+// traceLog の手順名：Studio の既定の英語の名前を日本語にそろえる（knowledge/coded-output.md「ログの書き方」）。'…' の中（対象の名前）はそのまま
+const STEP_VERBS: [RegExp, string][] = [
+  [/^Check App State\b/, "状態を確認"], [/^Check State\b/, "状態を確認"], [/^Click\b/, "クリック"], [/^Type Into\b/, "文字を入力"],
+  [/^Hover\b/, "ホバー"], [/^Delay\b/, "待機"], [/^Get Text\b/, "テキストを取得"], [/^Get Attribute\b/, "属性を取得"],
+  [/^Go To URL\b/, "URL に移動"], [/^Navigate To\b/, "URL に移動"], [/^Extract Table Data\b/, "表データを抽出"], [/^Keyboard Shortcuts\b/, "キーボード ショートカット"],
+  [/^Select Item\b/, "項目を選択"], [/^Take Screenshot\b/, "スクリーンショットを撮る"], [/^Write CSV\b/, "CSV に書き込み"], [/^Read CSV\b/, "CSV を読み込み"],
+];
+// traceLog の手順名。画面を開く（NApplicationCard）は「画面に付く／画面を開く '名前'」、ワークフローの呼び出しは実際の呼び先（invokePath の後）
+function traceLabelOf(n: Node, className: string, invokePath?: (p: string) => string): string {
+  const name = stepName(n.name, className);
+  if (className === "NApplicationCard") return `${n.props?.OpenMode === "Never" ? "画面に付く" : "画面を開く"} '${name}'`;
+  if (className === "InvokeWorkflowFile") {
+    const f = n.props?.WorkflowFileName;
+    if (typeof f === "object" && f && "lit" in f) {
+      const path = invokePath ? invokePath(String(f.lit)) : String(f.lit);
+      return `ワークフローを呼ぶ '${path.replace(/\\+/g, "/")}'`;
+    }
+  }
+  return name;
+}
+export function stepName(name: string | undefined, className: string): string {
+  const n = (name ?? "").replace(/\r?\n/g, " ").trim();
+  if (!n) return className;
+  for (const [re, ja] of STEP_VERBS) if (re.test(n)) return n.replace(re, ja);
+  return n;
+}
+// traceLog の場所に入れない、Studio が付ける決まった名前（スコープの本体・分岐の枝など。場所の手がかりにならない）
+const GENERIC_CRUMBS = new Set(["実行", "Do", "Body", "Then", "Else", "Target appears", "Target does not appear", "要素が出現", "要素が出現しない", "Sequence", "シーケンス", "本体"]);
+
 // 読みやすい形でも、引数を1行に1つずつにしない呼び出し（短く読めるもの）
 const ONE_LINE_CALLS = new Set(["Log"]);
 
@@ -135,6 +166,13 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   const usings = new Set(baseUsings);
   const lines: string[] = [];
   let tmp = 0;
+  const traceLabel = (n: Node, className: string) => traceLabelOf(n, className, opt.invokePath);
+  // traceLog（node の説明を参照）
+  const crumbs: string[] = [];
+  const crumbSeen = new Map<string, number>();
+  let pendingEnd: string | undefined;
+  let swCount = 0;
+  const wfScope = !!opt.traceLog; // Execute の中身を Steps.Workflow で包む（ワークフローの始め・終わり・秒数、場所の道すじ）
   // Descriptors で開いた画面（内側ほど後ろ）と、いま組み立て中の呼び出しで渡した画面
   const screens: string[] = [];
   let openedScreen: string | undefined;
@@ -168,9 +206,11 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
   (wf.arguments ?? []).forEach((a, i) => keyword(a.name, `arguments[${i}]`));
   const scope = new Map((wf.arguments ?? []).map((a) => [a.name, a.type] as [string, string]));
   const d = 3;
+  if (wfScope) emit(d, `using var __wf = Steps.Workflow((m, l) => Log(m, l), ${csLit(wf.workflow)});`);
   for (const a of outs) emit(d, `${csType(a.type)} ${a.name} = default;`);
   for (const [i, v] of (wf.variables ?? []).entries()) declare(v.name, v.type, v.default, d, `variables[${i}]`, scope);
   wf.body.forEach((n, i) => node(n, d, `body[${i}]`, scope));
+  if (wfScope) emit(d, "__wf.Ok();");
   if (outs.length === 1) emit(d, `return ${outs[0].name};`);
   else if (outs.length > 1) emit(d, `return (${outs.map((a) => a.name).join(", ")});`);
   let body = lines.splice(0);
@@ -251,7 +291,35 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     (nodes ?? []).forEach((c, i) => node(c, depth, `${at}[${i}]`, new Map(sc)));
   }
 
+  // traceLog：手順の場所と、操作の終わりのログ
+  // - crumbs：いまの手順を囲む、名前のある手順（まとまり・分岐・スコープなど）。同じ場所に同じ名前が並ぶときは「（2回目）」を付ける
+  // - pendingEnd：いま出している操作の「…終わり（n秒）」のログ。ふつうは操作の直後に出す。
+  //   スコープ（using）と分岐（状態の確認）は、本体の前で出す（本体の時間を含めないため）
   function node(n: Node, depth: number, at: string, sc: Map<string, string>) {
+    const prev = pendingEnd;
+    pendingEnd = undefined;
+    const kids = !!(n.body?.length || n.then?.length || n.else?.length || Object.keys(n.slots ?? {}).length || Object.keys(n.cases ?? {}).length || n.catches?.length);
+    const here = opt.traceLog ? crumbs.join(" > ") : "";
+    let pushed = false;
+    if (opt.traceLog && n.name && kids && !GENERIC_CRUMBS.has(n.name.trim())) {
+      const name = stepName(n.name, "");
+      const key = `${crumbs.join(" > ")}|${name}`;
+      const k = (crumbSeen.get(key) ?? 0) + 1;
+      crumbSeen.set(key, k);
+      crumbs.push(k > 1 ? `${name}（${k}回目）` : name);
+      pushed = true;
+    }
+    nodeInner(n, depth, at, sc, here);
+    if (pushed) crumbs.pop();
+    takeEnd(depth);
+    pendingEnd = prev;
+  }
+  function takeEnd(depth: number) {
+    if (pendingEnd) emit(depth, pendingEnd);
+    pendingEnd = undefined;
+  }
+
+  function nodeInner(n: Node, depth: number, at: string, sc: Map<string, string>, here: string) {
     const r = resolve(cat, n.act, n.typeArg !== undefined);
     if ("error" in r) { add(at, "UNKNOWN_ACT", r.error); return; }
     const a = r.activity;
@@ -265,9 +333,24 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
     // そのときは同じ内容の // 手順名 は書かない。まとまり（Sequence）・分岐・繰り返し・ログ・代入などには入れない
     const traced = !!opt.traceLog && !NOT_TRACED_ACTIVITIES.has(a.className);
     // 名前の無い手順は、アクティビティの種類名（Delay など）を出す
-    if (traced) emit(depth, `Log(message: ${csLit((n.name ?? a.className).replace(/\r?\n/g, " "))}, level: UiPath.CodedWorkflows.LogLevel.Trace);`);
+    // 操作の前に Steps.Op / Steps.Call（「[場所] 手順名 …始め」）、後に .Ok()（「…終わり（n秒）」）。
+    // 場所は、Steps が持つワークフローをまたいだ道すじ ＋ ここで渡すワークフローの中の場所。遅いときの Warn は Steps が決める（tools/ir/templates/Steps.cs）
+    if (traced) {
+      const sw = `__step${++swCount}`; // tmp とは別に数える（app1 などほかの変数名を変えないため）
+      const kind = CALL_ACTIVITIES.has(a.className) ? "Call" : "Op";
+      emit(depth, `var ${sw} = Steps.${kind}(${csLit(here)}, ${csLit(traceLabel(n, a.className))});`);
+      pendingEnd = `${sw}.Ok();`;
+    }
     else if (n.name && !noComment) emit(depth, `// ${n.name.replace(/\r?\n/g, " ")}`);
-    if (!builtin.has(a.clrType)) return mapped(n, a.className, a.package, depth, at, sc);
+    if (!builtin.has(a.clrType)) {
+      const l0 = lines.length;
+      mapped(n, a.className, a.package, depth, at, sc);
+      // traceLog では、ログ（LogMessage）も [場所] を付けて Steps.Log で出す
+      if (opt.traceLog && a.className === "LogMessage")
+        for (let i = l0; i < lines.length; i++)
+          lines[i] = lines[i].replace(/^(\s*)Log\(message: (.*?)(?:, level: ([\w.]+))?\);$/, (_m, ind, msg, lv) => `${ind}Steps.Log(${csLit(here)}, ${msg}, ${lv ?? "UiPath.CodedWorkflows.LogLevel.Info"});`);
+      return;
+    }
 
     switch (a.className) {
       case "Sequence": {
@@ -402,7 +485,7 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
       case "MultipleAssign":
         (n.assigns ?? []).forEach((x, i) => emit(depth, `${lvalue(x.to, `${at}.assigns[${i}].to`, sc)} = ${expr(x.value, `${at}.assigns[${i}].value`, sc)};`));
         return;
-      case "Return": emit(depth, outs.length === 0 ? "return;" : outs.length === 1 ? `return ${outs[0].name};` : `return (${outs.map((x) => x.name).join(", ")});`); return;
+      case "Return": if (wfScope) emit(depth, "__wf.Ok();"); emit(depth, outs.length === 0 ? "return;" : outs.length === 1 ? `return ${outs[0].name};` : `return (${outs.map((x) => x.name).join(", ")});`); return;
       case "Comment": emit(depth, `// ${String(typeof p.Text === "object" && "lit" in p.Text ? p.Text.lit : p.Text ?? "").replace(/\r?\n/g, " ")}`); return;
       case "Placeholder": emit(depth, "// Placeholder"); return;
       case "CommentOut": emit(depth, "// CommentOut（中のアクティビティは実行されない）"); return; // Body は生成しない
@@ -705,12 +788,13 @@ export function generateCoded(wf: Workflow, cat: Catalog, maps: Map<string, Mapp
         const pushed = openedScreen !== undefined;
         if (pushed) screens.push(openedScreen!);
         openedScreen = undefined;
-        braces(d, () => block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)));
+        braces(d, () => { takeEnd(d + 1); block(n.body, d + 1, `${at}.body`, new Map(sc).set(name, type)); });
         if (pushed) screens.pop();
         slotsUsed.add("body");
       } else if (v.branches) {
         const r = `__state${++tmp}`;
         emit(d, `var ${r} = ${call};`);
+        takeEnd(d);
         if (target) emit(d, `${target} = ${r};`);
         const t = v.branches.true, f = v.branches.false;
         emit(d, `if (${r})`);
