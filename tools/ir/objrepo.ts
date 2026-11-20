@@ -18,7 +18,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Catalog, ObjType } from "./catalog.ts";
-import { objectTypes, resolve } from "./catalog.ts";
+import { objectTypes, objTypeFor, resolve } from "./catalog.ts";
 import { importXaml, parseXml, type El } from "./import-xaml.ts";
 import type { Node, ObjValue, Value, Workflow } from "./types.ts";
 import { isValue, objDefaults } from "./uia.ts";
@@ -38,7 +38,7 @@ export type RepoElement = {
   id?: string; // 22 文字の Id。無ければ build が付けて repository.json に書き戻す
   taxonomy?: string; // .metadata の TaxonomyType（入力欄なら "Input"）
   activityType?: string; // 取り込んだアクティビティ（"Click" など。.content の ActivityType）
-  target: ObjValue; // TargetAnchorable（objs.Target と同じ書き方。値はリテラルだけ）
+  target: ObjValue; // TargetAnchorable（objs.Target と同じ書き方。セレクター引数には VB 式も書ける）
   // ロケールごとのセレクター（"ja-JP": "<webctrl … aria-label='送信する' />"）。Playwright の pw/objects だけが使う（tools/pw/pw-objects.ts）。
   // UiPath（.objects）には入れない。target は両方の言語に当たる正規表現のまま
   locales?: Record<string, string>;
@@ -103,7 +103,11 @@ export const screenSearchHash = (t: ObjValue) => netHash(litOf(t.Selector) || li
 
 const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const escText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const attrText = (v: Value) => (typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb ?? v.cs);
+const attrText = (v: Value, p?: ObjType["props"][number]) => {
+  const expression = p && p.kind !== "prop" && !p.enum && (typeof v === "string" || (typeof v === "object" && ("vb" in v || "cs" in v)));
+  const text = typeof v === "boolean" ? (v ? "True" : "False") : typeof v === "number" ? String(v) : typeof v === "string" ? v : "lit" in v ? v.lit : v.vb ?? v.cs;
+  return expression ? `[${text}]` : text;
+};
 const itemType = (t: string) => {
   const m = t.match(/^System\.Collections\.Generic\.(?:IEnumerable|List|IList|ICollection)<(.+)>$/);
   return m ? (m[1] === "UiPath.UIAutomationNext.Contracts.ITarget" ? "UiPath.UIAutomationNext.Target" : m[1]) : undefined;
@@ -117,7 +121,7 @@ function serObj(t: ObjType, v: ObjValue, depth: number, out: string[], first: st
   for (const [k, x] of Object.entries(v)) {
     if (k === "$type" || k === "$typeArg") continue;
     if (k === "InformativeScreenshot" && image) continue;
-    if (isValue(x)) attrs.push([k, attrText(x)]);
+    if (isValue(x)) attrs.push([k, attrText(x, t.props.find((p) => p.name === k))]);
     else elems.push([k, x as ObjValue | ObjValue[]]);
   }
   for (const [k, d] of Object.entries(objDefaults[t.clrType] ?? {})) if (!(k in v) && d !== "guid") attrs.push([k, d]);
@@ -203,7 +207,7 @@ function parseContent(xml: string, kind: "element" | "screen", cat: Catalog, at:
   if (guid(el)) target.Guid = guid(el)!;
   const anchorsEl = el.kids.find((k) => k.local === `${tag}.Anchors`)?.kids[0];
   if (anchorsEl && Array.isArray(target.Anchors)) (target.Anchors as ObjValue[]).forEach((a, i) => { const g = guid(anchorsEl.kids[i]); if (g) a.Guid = g; });
-  if (image) target.InformativeScreenshot = image.name;
+  if (image) target.InformativeScreenshot = { lit: image.name };
   return { target, image, keyed, contentHash };
 }
 
@@ -287,7 +291,22 @@ export function readObjects(project: string, cat: Catalog): RepoState {
 
 export type Found = { app: RepoApp; screen?: RepoScreen; element?: RepoElement };
 
-export const refParts = (ref: string | string[]) => (Array.isArray(ref) ? ref : ref.split("/").map((s) => s.trim()));
+export const refParts = (ref: string | string[]) => {
+  if (Array.isArray(ref)) return ref;
+  const parts: string[] = [];
+  let part = "", escaped = false;
+  for (const ch of ref) {
+    if (escaped) {
+      part += ch === "/" || ch === "\\" ? ch : `\\${ch}`;
+      escaped = false;
+    } else if (ch === "\\") escaped = true;
+    else if (ch === "/") { parts.push(part); part = ""; }
+    else part += ch;
+  }
+  if (escaped) part += "\\";
+  parts.push(part);
+  return parts;
+};
 
 // "アプリ/画面/要素"、"画面/要素"、"要素"（後ろから合わせる。1 つに決まらなければエラー）
 export function findRef(repo: Repository, ref: string | string[], kind: "screen" | "element"): Found | string {
@@ -309,7 +328,10 @@ export function findRef(repo: Repository, ref: string | string[], kind: "screen"
   if (hits.length > 1) return `"${parts.join("/")}" に合う${what}が ${hits.length} 個ある。アプリ名・画面名から書く: ${hits.map(pathOf).join(", ")}`;
   return hits[0];
 }
-export const pathOf = (f: Found) => [f.app.name, f.screen?.name, f.element?.name].filter((x) => x !== undefined).join("/");
+export const pathOf = (f: Found) => [f.app.name, f.screen?.name, f.element?.name]
+  .filter((x) => x !== undefined)
+  .map((x) => x.replace(/\\/g, "\\\\").replace(/\//g, "\\/"))
+  .join("/");
 
 // ---- 検証 ----
 
@@ -363,7 +385,7 @@ export function checkRepository(repo: Repository): RepoIssue[] {
   return issues;
 }
 
-// リポジトリの値はリテラルだけ（式は書けない）。InArgument の文字列は { lit }
+// リポジトリは通常リテラルを使う。TargetAnchorable / TargetApp のセレクター引数だけは、Studio の .objects と同じ VB 式も許可する。
 function literalOnly(v: ObjValue, t: ObjType | undefined, at: string, add: (p: string, c: string, m: string) => void) {
   if (!t) return;
   for (const [k, x] of Object.entries(v)) {
@@ -373,8 +395,10 @@ function literalOnly(v: ObjValue, t: ObjType | undefined, at: string, add: (p: s
     if (k === "Reference" || k === "ContentHash") { add(`${at}.${k}`, "REPO_SHAPE", `${k} はリポジトリが付ける。書かない`); continue; }
     if (Array.isArray(x)) { const it = objectTypes.get(itemType(p.type) ?? ""); x.forEach((e, i) => typeof e === "object" && !isValue(e) && literalOnly(e as ObjValue, it, `${at}.${k}[${i}]`, add)); continue; }
     if (!isValue(x)) { literalOnly(x as ObjValue, objectTypes.get(p.type), `${at}.${k}`, add); continue; }
-    if (typeof x === "object" && ("vb" in x || "cs" in x)) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
-    if (typeof x === "string" && p.kind !== "prop" && !p.enum) add(`${at}.${k}`, "REPO_EXPR", `"${k}" に式 "${x}" は書けない。文字列なら { "lit": ... } で書く`);
+    const selectorArgument = (t.clrType === TA && ["FullSelectorArgument", "FuzzySelectorArgument", "ScopeSelectorArgument"].includes(k))
+      || (t.clrType === TAPP && ["Selector", "FilePath", "Url"].includes(k));
+    if (typeof x === "object" && ("vb" in x || "cs" in x) && !selectorArgument) add(`${at}.${k}`, "REPO_EXPR", `リポジトリには式を書けない。{ "lit": ... } で書く`);
+    if (typeof x === "string" && p.kind !== "prop" && !p.enum && !selectorArgument) add(`${at}.${k}`, "REPO_EXPR", `"${k}" に式 "${x}" は書けない。文字列なら { "lit": ... } で書く`);
   }
 }
 
@@ -415,6 +439,9 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
   const issues = checkRepository(repo);
   if (issues.some((i) => !REPO_NOTICES.has(i.code))) return { issues, changes, idsAdded: false };
   const state = readObjects(project, cat);
+  // Studio projects can contain metadata-only Element folders. They cannot be represented in repository.json,
+  // so leave those folders untouched rather than deleting them during an unrelated build.
+  const preservedIds = new Set([...state.nodes.values()].filter((n) => n.type === "Element" && !n.content).map((n) => n.id));
   // 読めないものがあっても build は進める（読めなかった中身は書き直す）
   let idsAdded = false;
   const ensure = <T extends { id?: string }>(x: T) => { if (!x.id) { x.id = mkId(); idsAdded = true; } return x.id; };
@@ -526,12 +553,13 @@ export function buildObjects(project: string, repo: Repository, cat: Catalog, op
     if (old && w.changedContent) changes.push(`中身 ${w.type} ${w.name}`);
     metas.set(w.id, meta);
   }
-  const wantIds = new Set(wants.map((w) => w.id));
+  const wantIds = new Set([...wants.map((w) => w.id), ...preservedIds]);
   for (const n of state.nodes.values()) if (!wantIds.has(n.id)) changes.push(`削除 ${n.type} ${n.meta.Name ?? n.id}`);
   if (opts.dryRun) return { issues, changes, idsAdded };
 
   // 書く。消えたもの・場所が変わったものの古いフォルダを先に消す（中のファイルは上で読んである）
   const wantDir = new Map(wants.map((w) => [w.id, join(base, w.dir)]));
+  for (const n of state.nodes.values()) if (preservedIds.has(n.id)) wantDir.set(n.id, n.dir);
   for (const n of state.nodes.values()) if (wantDir.get(n.id) !== n.dir && existsSync(n.dir)) rmSync(n.dir, { recursive: true, force: true });
   mkdirSync(base, { recursive: true });
   if (!state.libraryMeta) {
@@ -591,8 +619,30 @@ const isRef = (v: unknown): v is { $ref: string | string[] } => !!v && typeof v 
 
 export function hasRefs(wf: Workflow): boolean {
   let found = false;
-  walkNodes(wf.body, (n) => { if (Object.values(n.objs ?? {}).some(isRef)) found = true; });
+  const containsRef = (v: unknown): boolean => {
+    if (isRef(v)) return true;
+    if (Array.isArray(v)) return v.some(containsRef);
+    return !!v && typeof v === "object" && Object.values(v).some(containsRef);
+  };
+  walkNodes(wf.body, (n) => { if (Object.values(n.objs ?? {}).some(containsRef)) found = true; });
   return found;
+}
+
+// カタログのオブジェクト型をたどり、TargetApp / TargetAnchorable の $ref に処理を適用する。
+function mapTypedRefs(v: Value | ObjValue | ObjValue[], type: string, at: string, map: (ref: { $ref: string | string[] }, type: string, at: string) => Value | ObjValue | ObjValue[]): Value | ObjValue | ObjValue[] {
+  if (isRef(v)) return map(v, type, at);
+  if (Array.isArray(v)) {
+    const it = itemType(type);
+    return it ? v.map((x, i) => mapTypedRefs(x, it, `${at}[${i}]`, map) as ObjValue) : v;
+  }
+  if (isValue(v)) return v;
+  const t = objTypeFor(type, v);
+  if (!t) return v;
+  for (const p of t.props) {
+    const child = v[p.name];
+    if (child !== undefined) v[p.name] = mapTypedRefs(child, p.type, `${at}.${p.name}`, map);
+  }
+  return v;
 }
 
 // objs の { "$ref": ... } を、リポジトリの中身 ＋ Reference ＋ ContentHash にする（Studio が要素を結びつけたときと同じ）
@@ -600,20 +650,23 @@ export function resolveRefs(wf: Workflow, state: RepoState, cat: Catalog): { wf:
   const issues: RepoIssue[] = [];
   const copy: Workflow = structuredClone(wf);
   walkNodes(copy.body, (n, path) => {
+    const r = resolve(cat, n.act, n.typeArg !== undefined);
+    const a = "activity" in r ? r.activity : undefined;
+    if (!a) return;
     for (const [k, v] of Object.entries(n.objs ?? {})) {
-      if (!isRef(v)) continue;
-      const at = `${path}.objs.${k}`;
-      const extra = Object.keys(v).filter((x) => x !== "$ref");
-      if (extra.length) { issues.push({ path: at, code: "REPO_REF", message: `$ref と一緒に ${extra.join(", ")} は書けない（中身はリポジトリで直す）` }); continue; }
-      const r = resolve(cat, n.act, n.typeArg !== undefined);
-      const p = "activity" in r ? r.activity.props.find((x) => x.name === k) : undefined;
-      const kind = p?.type === TAPP ? "screen" : p?.type === TA ? "element" : undefined;
-      if (!kind) { issues.push({ path: at, code: "REPO_REF", message: `${n.act}.${k} はリポジトリから引けない（TargetApp と TargetAnchorable だけ）` }); continue; }
-      const f = findRef(state.repo, v.$ref, kind);
-      if (typeof f === "string") { issues.push({ path: at, code: "REPO_REF", message: f }); continue; }
-      const node = kind === "screen" ? f.screen! : f.element!;
-      const ns = state.nodes.get(node.id!);
-      n.objs![k] = { ...structuredClone(node.target), Reference: `${state.libraryId}/${node.id}`, ContentHash: ns?.contentHash ?? "" };
+      const p = a.props.find((x) => x.name === k);
+      if (!p) continue;
+      n.objs![k] = mapTypedRefs(v, p.type, `${path}.objs.${k}`, (ref, type, at) => {
+        const extra = Object.keys(ref).filter((x) => x !== "$ref");
+        if (extra.length) { issues.push({ path: at, code: "REPO_REF", message: `$ref と一緒に ${extra.join(", ")} は書けない（中身はリポジトリで直す）` }); return ref; }
+        const kind = type === TAPP ? "screen" : type === TA ? "element" : undefined;
+        if (!kind) { issues.push({ path: at, code: "REPO_REF", message: `${type} はリポジトリから引けない（TargetApp と TargetAnchorable だけ）` }); return ref; }
+        const f = findRef(state.repo, ref.$ref, kind);
+        if (typeof f === "string") { issues.push({ path: at, code: "REPO_REF", message: f }); return ref; }
+        const node = kind === "screen" ? f.screen! : f.element!;
+        const ns = state.nodes.get(node.id!);
+        return { ...structuredClone(node.target), Reference: `${state.libraryId}/${node.id}`, ContentHash: ns?.contentHash ?? "" };
+      });
     }
   });
   return { wf: copy, issues };
@@ -652,34 +705,49 @@ const sameFind = (a: ObjValue, b: ObjValue) => findKeys.every((k) => sameJson(a[
 
 export function registerTargets(wf: Workflow, repo: Repository, cat: Catalog, opts: RegisterOptions): RegisterResult {
   const res: RegisterResult = { linked: [], created: [], skipped: [] };
-  const visit = (list: Node[] | undefined, path: string, screen: Found | undefined) => {
+  const visit = (list: Node[] | undefined, path: string, screen: Found | undefined, targetAppHint?: ObjValue) => {
     (list ?? []).forEach((n, i) => {
-      const at = `${path}[${i}]`;
+      const at = path + "[" + i + "]";
       const r = resolve(cat, n.act, n.typeArg !== undefined);
       const a = "activity" in r ? r.activity : undefined;
       let inner = screen;
+      let hint = targetAppHint;
       if (a?.clrType === CARD) {
         const v = n.objs?.TargetApp;
-        if (isRef(v)) { const f = findRef(repo, v.$ref, "screen"); inner = typeof f === "string" ? undefined : f; }
-        else if (v && !Array.isArray(v) && !isValue(v)) {
-          inner = literalIssue(v as ObjValue, TAPP, `${at}.objs.TargetApp`) ? undefined : registerScreen(v as ObjValue);
-          if (inner) n.objs!.TargetApp = { $ref: pathOf(inner) } as unknown as ObjValue;
+        if (isRef(v)) {
+          const f = findRef(repo, v.$ref, "screen");
+          inner = typeof f === "string" ? undefined : f;
+          if (typeof f !== "string") hint = f.screen?.target ?? hint;
+        } else if (v && !Array.isArray(v) && !isValue(v)) {
+          const target = v as ObjValue;
+          hint = target;
+          const linked = byReference(target);
+          if (linked?.screen && !linked.element) {
+            inner = linked;
+            n.objs!.TargetApp = { $ref: pathOf(linked) } as unknown as ObjValue;
+          } else {
+            const hasLiteralLocator = ["Selector", "FilePath", "Url"].some((k) => !!litOf(target[k]));
+            const hasExpression = hasLiteralLocator && literalIssue(target, TAPP, at + ".objs.TargetApp");
+            if (hasLiteralLocator && !hasExpression) {
+              inner = registerScreen(target);
+              if (inner) n.objs!.TargetApp = { $ref: pathOf(inner) } as unknown as ObjValue;
+            } else {
+              inner = undefined;
+            }
+          }
         }
       } else if (a) {
         for (const [k, v] of Object.entries(n.objs ?? {})) {
           const p = a.props.find((x) => x.name === k);
-          if (p?.type !== TA || isRef(v) || !v || Array.isArray(v) || isValue(v)) continue;
-          if (!inner) { res.skipped.push({ path: `${at}.objs.${k}`, code: "REPO_NO_SCREEN", message: "リポジトリの画面につながった NApplicationCard の中に無いので登録しない" }); continue; }
-          if (literalIssue(v as ObjValue, TA, `${at}.objs.${k}`)) continue;
-          const f = registerElement(inner, v as ObjValue, n, a.className);
-          n.objs![k] = { $ref: pathOf(f) } as unknown as ObjValue;
+          if (!p || p.type === TAPP) continue;
+          n.objs![k] = registerTypedTargets(v, p.type, at + ".objs." + k, n, a.className, inner, hint);
         }
       }
-      visit(n.body, `${at}.body`, inner); visit(n.then, `${at}.then`, inner); visit(n.else, `${at}.else`, inner);
-      for (const [k, v] of Object.entries(n.slots ?? {})) visit(v, `${at}.slots.${k}`, inner);
-      for (const [k, v] of Object.entries(n.cases ?? {})) visit(v, `${at}.cases.${k}`, inner);
-      (n.catches ?? []).forEach((c, j) => visit(c.body, `${at}.catches[${j}].body`, inner));
-      for (const g of graphChildren(n)) visit(g.nodes, `${at}.${g.path}`, inner);
+      visit(n.body, at + ".body", inner, hint); visit(n.then, at + ".then", inner, hint); visit(n.else, at + ".else", inner, hint);
+      for (const [k, v] of Object.entries(n.slots ?? {})) visit(v, at + ".slots." + k, inner, hint);
+      for (const [k, v] of Object.entries(n.cases ?? {})) visit(v, at + ".cases." + k, inner, hint);
+      (n.catches ?? []).forEach((c, j) => visit(c.body, at + ".catches[" + j + "].body", inner, hint));
+      for (const g of graphChildren(n)) visit(g.nodes, at + "." + g.path, inner, hint);
     });
   };
 
@@ -754,6 +822,49 @@ export function registerTargets(wf: Workflow, repo: Repository, cat: Catalog, op
     return found.length > 0;
   }
 
+  // アクティビティ本体だけでなく、VerifyOptions などの型付きオブジェクト内にある Target も登録する。
+  function registerTypedTargets(value: Value | ObjValue | ObjValue[], type: string, at: string, n: Node, className: string, screen: Found | undefined, hint: ObjValue | undefined): Value | ObjValue | ObjValue[] {
+    if (type === TA) return registerTarget(value, at, n, className, screen, hint);
+    if (Array.isArray(value)) {
+      const it = itemType(type);
+      return it ? value.map((x, i) => registerTypedTargets(x, it, `${at}[${i}]`, n, className, screen, hint) as ObjValue) : value;
+    }
+    if (!value || isValue(value) || isRef(value)) return value;
+    const t = objTypeFor(type, value);
+    if (!t) return value;
+    for (const p of t.props) {
+      const child = value[p.name];
+      if (child !== undefined) value[p.name] = registerTypedTargets(child, p.type, `${at}.${p.name}`, n, className, screen, hint);
+    }
+    return value;
+  }
+
+  function registerTarget(value: Value | ObjValue | ObjValue[], at: string, n: Node, className: string, screen: Found | undefined, hint: ObjValue | undefined): Value | ObjValue | ObjValue[] {
+    if (!value || isValue(value) || isRef(value) || Array.isArray(value)) return value;
+    const target = value as ObjValue;
+    const linked = byReference(target);
+    if (linked?.element) {
+      res.linked.push(pathOf(linked));
+      return { $ref: pathOf(linked) };
+    }
+    if (literalIssue(target, TA, at)) return target;
+    let targetScreen = screen;
+    if (!targetScreen) {
+      const scope = target.ScopeSelectorArgument;
+      if (scope && isValue(scope)) {
+        const screenTarget: ObjValue = { Selector: structuredClone(scope) };
+        if (hint?.BrowserType && isValue(hint.BrowserType)) screenTarget.BrowserType = structuredClone(hint.BrowserType);
+        targetScreen = registerScreen(screenTarget);
+      }
+    }
+    if (!targetScreen) {
+      res.skipped.push({ path: at, code: "REPO_NO_SCREEN", message: "NApplicationCard の画面が無く、ScopeSelectorArgument から画面を作れないので登録しない" });
+      return target;
+    }
+    const f = registerElement(targetScreen, target, n, className);
+    return { $ref: pathOf(f) };
+  }
+
   visit(wf.body, "body", undefined);
   return res;
 }
@@ -773,18 +884,25 @@ export function rewriteRefs(wf: Workflow, before: Repository, after: Repository,
     return undefined;
   };
   walkNodes(wf.body, (n) => {
+    const r = resolve(cat, n.act, n.typeArg !== undefined);
+    const a = "activity" in r ? r.activity : undefined;
+    if (!a) return;
     for (const [k, v] of Object.entries(n.objs ?? {})) {
-      if (!isRef(v)) continue;
-      const r = resolve(cat, n.act, n.typeArg !== undefined);
-      const p = "activity" in r ? r.activity.props.find((x) => x.name === k) : undefined;
-      const kind = p?.type === TAPP ? "screen" : "element";
-      const f = findRef(before, v.$ref, kind);
-      if (typeof f === "string") continue;
-      const id = (kind === "screen" ? f.screen : f.element)!.id;
-      const g = id ? byId(after, id) : undefined;
-      if (!g) continue;
-      const path = pathOf(g);
-      if (refParts(v.$ref).join("/") !== path) { (n.objs![k] as unknown as { $ref: string }).$ref = path; count++; }
+      const p = a.props.find((x) => x.name === k);
+      if (!p) continue;
+      n.objs![k] = mapTypedRefs(v, p.type, `objs.${k}`, (ref, type) => {
+        const kind = type === TAPP ? "screen" : type === TA ? "element" : undefined;
+        if (!kind) return ref;
+        const f = findRef(before, ref.$ref, kind);
+        if (typeof f === "string") return ref;
+        const id = (kind === "screen" ? f.screen : f.element)!.id;
+        const g = id ? byId(after, id) : undefined;
+        if (!g) return ref;
+        const path = pathOf(g);
+        const currentParts = refParts(ref.$ref), nextParts = refParts(path);
+        if (currentParts.length !== nextParts.length || currentParts.some((part, i) => part !== nextParts[i])) { ref.$ref = path; count++; }
+        return ref;
+      });
     }
   });
   return count;
@@ -798,7 +916,7 @@ export const isDir = (p: string) => existsSync(p) && statSync(p).isDirectory();
 //   node tools/ir/objrepo.ts build    --project <P> [--dry-run] repository.json から .objects を作る。id の無いものには付けて書き戻す
 //   node tools/ir/objrepo.ts list     --project <P>            アプリ / 画面 / 要素の木
 //   node tools/ir/objrepo.ts register --project <P> <ir.json>... [--no-reuse]
-//        IR のその場のターゲット（NApplicationCard の TargetApp と、中のアクティビティの Target）をリポジトリに入れ、$ref にする。
+//        IR のその場のターゲット（NApplicationCard の TargetApp と、型付きオブジェクト内を含むアクティビティの Target）をリポジトリに入れ、$ref にする。
 //        既定は Studio の「リポジトリを再利用」と同じ（同じ探し方の要素があればそれを使う）。--no-reuse は名前に (1) を付けて別に作る
 //   node tools/ir/objrepo.ts rename   --project <P> <アプリ/画面[/要素]> <新しい名前>
 //   node tools/ir/objrepo.ts move     --project <P> <アプリ/画面/要素> <アプリ/画面>

@@ -38,10 +38,11 @@ node tools/ir/objrepo.ts move     --project <P> <アプリ/画面/要素> <ア�
 }
 ```
 
-- `target` は IR の `objs.TargetApp`（画面）/ `objs.Target`（要素）と同じ書き方。ただし**リテラルだけ**（式は `REPO_EXPR`）。`Reference` / `ContentHash` は書かない（リポジトリが付ける）
+- `target` は IR の `objs.TargetApp`（画面）/ `objs.Target`（要素）と同じ書き方。通常はリテラルを使う。`TargetAnchorable` の `FullSelectorArgument` / `FuzzySelectorArgument` / `ScopeSelectorArgument` と、`TargetApp` の `Selector` / `FilePath` / `Url` には VB 式も書ける（Studio の `.objects` と同じ XAML 式として保存する）。それ以外の式は `REPO_EXPR`。`Reference` / `ContentHash` は書かない（リポジトリが付ける）
 - 同じ親の下で名前が重なるとエラー（`REPO_NAME`）。Studio と同じく `名前(1)` にする
 - `InformativeScreenshot` は `<P>/.screenshots/<名前>` の画像。リポジトリにはその写しが入る
   - 無い画面・要素は、Studio のプレビューに「プレビューを利用できません」と出る（動きには関わらない）。`build` は `REPO_NO_SCREENSHOT` の注意を出し、`list` は「（画像なし）」を付ける。手で書いたターゲットには画像が無いので、画像が要るなら Studio でその要素を指定し直す（撮った画像が `.screenshots` に入る）
+- `.content` が無い要素フォルダーは `repository.json` に読み込めないため、`build` では既存フォルダーをそのまま残す
 
 ### ワークフローの IR から使う
 
@@ -50,17 +51,17 @@ node tools/ir/objrepo.ts move     --project <P> <アプリ/画面/要素> <ア�
   "body": [ { "act": "NClick", "objs": { "Target": { "$ref": "申請フォーム1/電話番号" } } } ] }
 ```
 
-- 名前は「アプリ/画面/要素」。後ろから合わせるので、1 つに決まるなら「画面/要素」や「要素」だけでもよい（決まらなければ `REPO_REF`）。名前に `/` があるなら配列で書く
+- 名前は「アプリ/画面/要素」。後ろから合わせるので、1 つに決まるなら「画面/要素」や「要素」だけでもよい（決まらなければ `REPO_REF`）。名前に `/` や `\` があるなら、文字列パスでは `\/` / `\\` とエスケープするか、区切りを含まない配列で書く
 - `$ref` と一緒にほかのプロパティは書けない。中身はリポジトリで直す
 - `gen.ts` / `gen-coded.ts` は `--project` の `.objects` から中身を写し、`Reference="<ライブラリ Id>/<Id>"` と `ContentHash` を足す。Studio がリポジトリの要素をアクティビティに結びつけたときと同じ XAML になる（Studio の XAML と比べて、属性は全部同じだった）
 
 ### register（その場のターゲットを登録する）
 
-- NApplicationCard の `TargetApp` → 画面、その中のアクティビティの `Target`（TargetAnchorable）→ 要素
+- NApplicationCard の `TargetApp` → 画面、その中のアクティビティの `Target`（TargetAnchorable）→ 要素。`VerifyOptions.Target` など、カタログに型がある入れ子オブジェクト内のターゲットも登録する
 - 既定は Studio の「リポジトリを再利用」がオンのときと同じ：探し方（SearchHash とセレクター）が同じ画面・要素があれば、それにつなぐ。`--no-reuse` はオフのときと同じで、名前に `(1)`、`(2)` を付けて別に作る
 - 新しいアプリの名前は「ブラウザー（または exe）＋ タイトル」、画面の名前はタイトル、要素の名前は `FriendlyName` → セレクターの `aaname` / `name` / `id` / `innertext` → 表示名の順
 - `Reference` のあるターゲット（Studio で結びつけて XAML から取り込んだもの）は、その Id の画面・要素の `$ref` にする
-- 式の入ったターゲット（`Url` が `New Uri(...)` など）は登録しないで、その場に残す。そのカードの中の要素も登録しない
+- セレクター引数の VB 式は要素・画面の `.content` に XAML 式として保存する。セレクター以外の未対応式はその場に残す。カード内で画面を見つけられない場合は、要素の `ScopeSelectorArgument` から画面を推定する
 
 ## .objects の形
 

@@ -50,7 +50,9 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
 | UiPath.CodedWorkflows | 24.10.0〜24.10.3 | 0（Coded の基底クラス `CodedWorkflowBase` のメソッドだけ。4つの版で同じ） |
 | UiPath.Excel.Activities | 3.6.1 | 128（Coded の `IExcelService` と、`--follow-returns` で取った handles / extensions / enums も） |
+| UiPath.Excel.Activities | 2.23.4 | 119 |
 | UiPath.Testing.Activities | 23.4.1 | 22（Coded API なし） |
+| UiPath.Testing.Activities | 23.10.0 | 22（Coded API なし） |
 | UiPath.Testing.Activities | 25.10.1 | 25 |
 | UiPath.Mail.Activities | 1.21.1 | 46（Coded API なし） |
 | UiPath.Mail.Activities | 2.12.10 | 49（Coded API なし） |

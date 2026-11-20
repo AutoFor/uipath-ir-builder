@@ -277,6 +277,14 @@ function toValue(raw: string, p: Prop, at: string, c: Ctx): Value | undefined {
   // 表示名で読む TypeConverter の付いた enum は、生成器が {x:Static 接頭辞:型.値} で書く（knowledge/testing.md）
   const st = p.enumConverter ? raw.match(/^\{x:Static\s+[\w.]+:(\w+)\.(\w+)\}$/) : null;
   if (st && p.type.endsWith(`.${st[1]}`) && p.enum?.includes(st[2])) return st[2];
+  // VB/C# の属性式に書かれた enum（[UiPath...Type.Member]）も、IR ではメンバー名に正規化する。
+  if (p.enum && isBracket(raw)) {
+    const e = raw.slice(1, -1).trim();
+    const type = p.type.replace(/\?$/, "");
+    const shortType = type.slice(type.lastIndexOf(".") + 1);
+    const qualified = e.match(/^(?:Global\.)?([\w.]+)\.(\w+)$/);
+    if (qualified && [type, shortType].includes(qualified[1].replace(/^Global\./, "")) && p.enum.includes(qualified[2])) return qualified[2];
+  }
   const t =/^\{(?!\})/.test(raw) ? raw : undefined;
   if (t) {
     c.err(at, "UNSUPPORTED_MARKUP", `"${p.name}" のマークアップ拡張 ${t} は IR に書けない`);
