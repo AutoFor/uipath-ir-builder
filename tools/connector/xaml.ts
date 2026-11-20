@@ -12,8 +12,8 @@
 //
 // 使い方:
 //   node tools/connector/xaml.ts <ir.json> --activity push_message --connection <接続の Id> --type-id <Insert Record の GUID>
-//        [--organization autofor] [--set to=@in_To] [--set 'text=こんにちは'] [--arg in_To] [--out Main.xaml]
-//   --set の値は、@ で始めると C# の式、そうでなければ文字列そのまま。--arg は Main の入力引数（String）
+//        [--organization autofor | --connector-key custom-…] [--set to=@in_To] [--set 'text=こんにちは'] [--arg in_To] [--out Main.xaml]
+//   --set の値は、@ で始めると C# の式、@@ で始めると @ で始まる文字列、そうでなければ文字列そのまま。--arg は Main の入力引数（String）
 // 終了コード: 0 = OK、1 = IR・指定の誤り、2 = 使い方の間違い
 
 import { gzipSync } from "node:zlib";
@@ -45,7 +45,7 @@ export function fieldId(name: string, output = false): string {
 const OPERATION: Record<ActivityIr["method"], string> = { POST: "Create", PUT: "Replace", PATCH: "Update", DELETE: "Delete", GET: "List" };
 
 /** ConnectorActivity の Configuration（JSON）。Studio で Insert Record を作って保存したものと同じ項目・並び */
-export function configuration(ir: ConnectorIr, act: ActivityIr, opt: { organization: string; language?: string; packageVersion?: string }) {
+export function configuration(ir: ConnectorIr, act: ActivityIr, opt: { organization: string; connectorKey?: string; language?: string; packageVersion?: string }) {
   const field = (f: FieldIr) => ({ Name: f.name, DisplayName: f.label ?? f.name, Description: f.description ?? `The ${f.name}`, Type: f.type ?? "string" });
   const operation = OPERATION[act.method];
   const label = act.displayName ?? act.name;
@@ -59,7 +59,8 @@ export function configuration(ir: ConnectorIr, act: ActivityIr, opt: { organizat
         ...field(f), Request: false, Response: true, ResponseCurated: true, FieldLocation: "Output", ...(i === 0 ? { IsMainResponseField: true } : {}),
       })),
     },
-    InstanceParameters: { Version: "1.0.0", ConnectorKey: connectorKey(ir, opt.organization), ActivityType: "Generic", Operation: operation },
+    // Version と ConnectorVersion は、どちらもコネクタの版（Studio が保存したもの（1.0.0）では両方とも同じ値だった）
+    InstanceParameters: { Version: ir.version ?? "1.0.0", ConnectorKey: opt.connectorKey ?? connectorKey(ir, opt.organization), ActivityType: "Generic", Operation: operation },
     LocalizedActivityName: "Insert Record",
     CachedLookupValues: { ObjectName: [{ Id: act.name, DisplayColumns: [label], StringFormatDisplayColumns: "{0}", DisplayName: label, Custom: false }] },
     CachedBrowserItems: {},
@@ -96,6 +97,7 @@ export type InsertRecordOpt = {
   connectionId: string;
   activityTypeId: string; // uip rpa activities find で引いた Insert Record の GUID
   organization: string;
+  connectorKey?: string; // 公開したコネクタのキー（uip is connectors list の custom-…）。組織と名前から組み立てたキーと違うときに渡す
   values: Record<string, FieldValue>; // 欄の名前（IR の request の name）→ 値
   displayName?: string;
   idRef?: number;
@@ -111,13 +113,39 @@ export function checkInsertRecord(ir: ConnectorIr, opt: InsertRecordOpt): Issue[
   if (act.method !== "POST") bad("activity", "Insert Record は POST のアクティビティだけ（List Records などはまだ扱っていない）");
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opt.connectionId)) bad("connectionId", "接続の Id（GUID）にする");
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opt.activityTypeId)) bad("activityTypeId", "uip rpa activities find で引いた GUID にする");
-  if (!/^[a-z0-9]+$/.test(opt.organization ?? "")) bad("organization", "組織の名前（英小文字・数字。例 autofor）");
+  if (opt.connectorKey !== undefined) {
+    if (!/^custom-[a-z0-9-]+$/.test(opt.connectorKey)) bad("connectorKey", "uip is connectors list に出るキー（custom-… の英小文字・数字・-）にする");
+  } else if (!/^[a-z0-9]+$/.test(opt.organization ?? "")) {
+    // 英小文字・数字だけのときは、キーを custom-{組織}-{名前} と組み立てられる。- などがあるときの組み立て方は確かめていないので、キーを直に渡す
+    bad("organization", "組織の名前（英小文字・数字。例 autofor）。それ以外の文字があるときは、uip is connectors list で引いたキーを --connector-key で渡す");
+  }
   const names = new Set((act.request ?? []).map((f) => f.name));
   for (const k of Object.keys(opt.values)) if (!names.has(k)) bad(`values.${k}`, `「${k}」は ${act.name} の request に無い`);
+  // 文字列のまま書く値は、欄の型に読めるかを見る（読めないと、ワークフローを読み込むときに初めて落ちる）
+  for (const f of act.request ?? []) {
+    const v = opt.values[f.name];
+    if (!v || !("lit" in v)) continue;
+    const why = literalProblem(f.type, v.lit);
+    if (why) bad(`values.${f.name}`, why);
+  }
   for (const f of act.request ?? []) if (f.required && !(f.name in opt.values)) bad(`values.${f.name}`, "必須の欄に値が無い");
   for (const f of act.request ?? []) if (f.name.includes("[*]")) bad(`values.${f.name}`, "配列の欄（[*]）は Studio が捨てる。フックで平らな欄から組み立てる（gen.ts の hooks）");
   return out;
 }
+
+/** 文字列のまま書いた値が、欄の型（XAML の型変換）で読めないときの理由。読めれば undefined */
+export function literalProblem(type: FieldIr["type"], s: string): string | undefined {
+  switch (type) {
+    case "number": return /^\s*-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?\s*$/.test(s) ? undefined : `数値の欄に「${s}」は入らない（C# の式なら @ を付ける）`;
+    case "integer": return /^\s*-?\d+\s*$/.test(s) ? undefined : `整数の欄に「${s}」は入らない（C# の式なら @ を付ける）`;
+    case "boolean": return /^\s*(true|false)\s*$/i.test(s) ? undefined : `真偽の欄は True か False（C# の式なら @ を付ける）`;
+    case "date": return /^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?)?$/.test(s.trim()) ? undefined : `日付の欄は 2026-11-20 や 2026-11-20T09:00:00 の形（C# の式なら @ を付ける）`;
+    default: return undefined;
+  }
+}
+
+/** --set の値：@式 は C# の式、@@… は @ で始まる文字列、それ以外は文字列そのまま */
+export const parseSetValue = (v: string): FieldValue => (v.startsWith("@@") ? { lit: v.slice(1) } : v.startsWith("@") ? { cs: v.slice(1) } : { lit: v });
 
 /** XAML の要素の中に文字のまま書くと変わってしまう文字列か（改行・タブ・前後の空白・連続した空白は、XAML の空白のまとめで消える・1つになる） */
 export const needsCsLiteral = (s: string) => /[\r\n\t]/.test(s) || /^\s|\s$/.test(s) || / {2,}/.test(s);
@@ -133,7 +161,7 @@ export function insertRecord(ir: ConnectorIr, opt: InsertRecordOpt, indent = "  
   const issues = checkInsertRecord(ir, opt);
   if (issues.length) throw new Error(issues.map((i) => `${i.path}: ${i.message}`).join("\n"));
   const act = ir.activities.find((a) => a.name === opt.activity)!;
-  const conf = encodeConfiguration(configuration(ir, act, { organization: opt.organization }));
+  const conf = encodeConfiguration(configuration(ir, act, { organization: opt.organization, connectorKey: opt.connectorKey }));
   const n = opt.idRef ?? 1;
   const i1 = indent + "  ", i2 = i1 + "  ", i3 = i2 + "  ", i4 = i3 + "  ";
   const objs: string[] = [];
@@ -190,22 +218,21 @@ function main() {
   const take = (f: string) => { const i = args.indexOf(f); if (i < 0) return undefined; const v = args[i + 1]; args.splice(i, 2); return v; };
   const takeAll = (f: string) => { const out: string[] = []; for (let v = take(f); v !== undefined; v = take(f)) out.push(v); return out; };
   const activity = take("--activity"), connectionId = take("--connection"), activityTypeId = take("--type-id");
-  const organization = take("--organization") ?? "autofor", out = take("--out");
+  const organization = take("--organization") ?? "autofor", connectorKey = take("--connector-key"), out = take("--out");
   const sets = takeAll("--set"), wfArgs = takeAll("--arg");
   const file = args.find((a) => !a.startsWith("--"));
   if (!file || !activity || !connectionId || !activityTypeId) {
-    console.error("使い方: node tools/connector/xaml.ts <ir.json> --activity <name> --connection <接続の Id> --type-id <GUID> [--organization <組織>] [--set 欄=値|欄=@C#の式]... [--arg <入力引数>]... [--out <file>]");
+    console.error("使い方: node tools/connector/xaml.ts <ir.json> --activity <name> --connection <接続の Id> --type-id <GUID> [--organization <組織> | --connector-key <custom-…>] [--set 欄=値|欄=@C#の式|欄=@@@で始まる文字列]... [--arg <入力引数>]... [--out <file>]");
     process.exit(2);
   }
   const values: Record<string, FieldValue> = {};
   for (const s of sets) {
     const i = s.indexOf("=");
     if (i < 1) { console.error(`--set は 欄=値：${s}`); process.exit(2); }
-    const v = s.slice(i + 1);
-    values[s.slice(0, i)] = v.startsWith("@") ? { cs: v.slice(1) } : { lit: v };
+    values[s.slice(0, i)] = parseSetValue(s.slice(i + 1));
   }
   const ir: ConnectorIr = JSON.parse(readFileSync(file, "utf8").replace(/^﻿/, ""));
-  const opt = { activity, connectionId, activityTypeId, organization, values, args: wfArgs };
+  const opt = { activity, connectionId, activityTypeId, organization, connectorKey, values, args: wfArgs };
   const issues = checkInsertRecord(ir, opt);
   if (issues.length) {
     console.error(`NG ${file}`);

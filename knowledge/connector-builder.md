@@ -146,6 +146,8 @@ Studio（C#・Portable のプロジェクト）で「LINE Messaging API」→「
 ```
 
 - **Configuration**：JSON を gzip して base64 にしたもの（`H4sI` で始まる）。中身は `FieldsContainer`（`InputFields`・`OutputFields`。名前・表示名・説明・型・`Design.Position`・`Required`・`FieldLocation`）、`InstanceParameters`（`ConnectorKey: custom-autofor-linemessagingapi`、`ActivityType: Generic`、`Operation: Create`）、`CachedLookupValues.ObjectName`、`ConnectorName`・`ConnectorVersion`、`ObjectName: push_message`、`HttpMethod: POST`、`Path: /push_message`（Integration Service の内部のパス。LINE のパスではない）、`Language: ja`、`PackageVersion: 1.36.0` など。**すべて IR とコネクタの版から組み立てられる**（生成器の結果は、Studio が保存したものと JSON として一致した。`xaml.test.ts`）。
+  - `InstanceParameters.Version` と `ConnectorVersion` は、どちらもコネクタの版にする（Studio が保存したもの（1.0.0）では同じ値だった。1.0.1 で Studio が保存したものとはまだ比べていない）。
+  - `ConnectorKey` は `custom-{組織}-{名前を小文字にして英数字だけ}`。組織の名前に英小文字・数字以外があるときの組み立て方は確かめていないので、`uip is connectors list` で引いたキーを `--connector-key` で直に渡す。
 - **欄の値**：`FieldObjects` の `<isactr:FieldObject Name="<識別子>" Type="FieldArgument">` に `InArgument` で入れる（C# の式は `<mca:CSharpValue>`）。項目があるときは `FieldObject` を直に並べる（空のときだけ `<sco:Collection x:TypeArguments="isactr:FieldObject" />`）。
   - 改行・タブ・前後や連続の空白のある文字列は、`<InArgument>` の中に文字のまま書かず、C# の文字列の式（`<mca:CSharpValue>"1行目\n2行目"</mca:CSharpValue>`）にする。要素の中の文字は XAML が空白をまとめるので、改行が空白になってしまうおそれがある（xaml.ts の `needsCsLiteral` / `csString`。LINE の通知は複数行になるため）
 - **識別子**：ランタイムの `NamingHelper.GetValidDesignPropertyName`。`.` → `_sub_`、`[*]` → `_array`、出力は先頭に `out_`。C# か VB で識別子にできない名前は先頭に `_` を付ける（`to` は VB の予約語なので `_to`、`text` はそのまま）。
@@ -169,13 +171,15 @@ DLL（`UiPath.IntegrationService.Activities.dll` 1.36.0。`ilspycmd` で逆コ�
 ```bash
 uip rpa activities find --query "LINE Messaging"      # Insert Record の activityTypeId を引く（プロジェクトに IS のパッケージが要る）
 node tools/connector/xaml.ts samples/connector/line-messaging.json --activity push_message \
-  --connection <接続の Id> --type-id <Insert Record の GUID> [--organization autofor] \
+  --connection <接続の Id> --type-id <Insert Record の GUID> [--organization autofor | --connector-key custom-…] \
   --set to=@in_To --set 'text=本文' --arg in_To --out Main.xaml
 ```
 
-- `--set 欄=値`：`@` で始めると C# の式、そうでなければ文字列そのまま。`--arg` は Main の String の入力引数。
+- `--set 欄=値`：`@` で始めると C# の式、`@@` で始めると `@` で始まる文字列（`@@here` → `@here`）、そうでなければ文字列そのまま。`--arg` は Main の String の入力引数。
+- 文字列で渡した値は、欄の型に読めるかを生成の前に見る（数値・整数・真偽（True / False）・日付（`2026-11-20`、`2026-11-20T09:00:00`））。読めないとワークフローを読み込むときに初めて落ちるため。C# の式（`@…`）は見ない。
 - 出すのは Insert Record（POST）を1つ持つ C# の Main。imports と AssemblyReference は Studio が保存したもの（`UiPath.IntegrationService.Activities.Runtime` など）。
-- 検査：必須の欄に値が無い・知らない欄・配列の欄（`[*]`。Studio が捨てる）・GUID の形。
+- 検査：必須の欄に値が無い・知らない欄・配列の欄（`[*]`。Studio が捨てる）・GUID の形・文字列の値の型。
+- フックの検査（gen.ts）は、コメントと文字列の中身を除いたコードに `done(` があるかを見る（`// done() で返す` だけでは通らない）。
 - 出力の欄（`out_…`）は値の無い FieldObject だけ置く（変数に受けるのはまだ扱っていない）。
 
 ### 実行（確かめた）

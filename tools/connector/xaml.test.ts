@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import type { ConnectorIr } from "./gen.ts";
-import { checkInsertRecord, configuration, connectorKey, encodeConfiguration, fieldId, insertRecord, workflow } from "./xaml.ts";
+import { checkInsertRecord, configuration, connectorKey, encodeConfiguration, fieldId, insertRecord, literalProblem, parseSetValue, workflow, type InsertRecordOpt } from "./xaml.ts";
 
 const root = join(import.meta.dirname, "..", "..");
 const line = JSON.parse(readFileSync(join(root, "samples", "connector", "line-messaging.json"), "utf8")) as ConnectorIr;
@@ -99,4 +99,48 @@ test("insertRecord：改行などのある文字列は C# の文字列の式で�
   assert.match(x, /<InArgument x:TypeArguments="x:String">Uxxx<\/InArgument>/, "改行の無い文字列はそのまま");
   assert.ok(x.includes(String.raw`<mca:CSharpValue x:TypeArguments="x:String">&quot;1行目\n2行目 &amp; &lt;3&gt;&quot;</mca:CSharpValue>`), "改行は \\n、\" & < は XAML のエスケープ");
   assert.doesNotMatch(x, /1行目\n2行目/, "要素の中に改行をそのまま書かない");
+});
+
+test("configuration：InstanceParameters.Version も ConnectorVersion と同じコネクタの版。キーは --connector-key で渡せる", () => {
+  const act = line.activities[0];
+  const c = configuration(line, act, { organization: "autofor" });
+  assert.equal(c.InstanceParameters.Version, "1.0.1");
+  assert.equal(c.ConnectorVersion, "1.0.1");
+  assert.equal(configuration(line, act, { organization: "x", connectorKey: "custom-auto-for-linemessagingapi" }).InstanceParameters.ConnectorKey, "custom-auto-for-linemessagingapi");
+});
+
+test("checkInsertRecord：組織の名前に - があるときはキーを直に渡す", () => {
+  const paths = (o: Partial<InsertRecordOpt>) => checkInsertRecord(line, { ...opt, ...o }).map((i) => i.path);
+  assert.deepEqual(paths({ organization: "auto-for" }), ["organization"]);
+  assert.deepEqual(paths({ organization: "auto-for", connectorKey: "custom-auto-for-linemessagingapi" }), []);
+  assert.deepEqual(paths({ connectorKey: "design-autofor-x" }), ["connectorKey"]);
+  const [c] = decode(insertRecord(line, { ...opt, organization: "auto-for", connectorKey: "custom-auto-for-linemessagingapi" }));
+  assert.equal(c.InstanceParameters.ConnectorKey, "custom-auto-for-linemessagingapi");
+});
+
+test("parseSetValue：@ は C# の式、@@ は @ で始まる文字列", () => {
+  assert.deepEqual(parseSetValue("@in_To"), { cs: "in_To" });
+  assert.deepEqual(parseSetValue("@@here"), { lit: "@here" });
+  assert.deepEqual(parseSetValue("@@@x"), { lit: "@@x" });
+  assert.deepEqual(parseSetValue("ふつう @ 途中"), { lit: "ふつう @ 途中" });
+});
+
+test("checkInsertRecord：文字列で渡した値が欄の型に読めるか", () => {
+  assert.equal(literalProblem("number", "1.5"), undefined);
+  assert.equal(literalProblem("number", "-2e3"), undefined);
+  assert.match(literalProblem("number", "abc")!, /数値/);
+  assert.equal(literalProblem("integer", "42"), undefined);
+  assert.match(literalProblem("integer", "4.2")!, /整数/);
+  assert.equal(literalProblem("boolean", "True"), undefined);
+  assert.match(literalProblem("boolean", "yes")!, /True か False/);
+  assert.equal(literalProblem("date", "2026-11-20"), undefined);
+  assert.equal(literalProblem("date", "2026-11-20T09:00:00"), undefined);
+  assert.match(literalProblem("date", "11/20")!, /日付/);
+  assert.equal(literalProblem("string", "なんでも"), undefined);
+  assert.equal(literalProblem(undefined, "なんでも"), undefined);
+  const ir: ConnectorIr = { ...line, activities: [{ ...line.activities[0], request: [...line.activities[0].request!, { name: "count", type: "integer" }] }] };
+  const paths = (count: { lit: string } | { cs: string }) => checkInsertRecord(ir, { ...opt, values: { ...opt.values, count } }).map((i) => i.path);
+  assert.deepEqual(paths({ lit: "abc" }), ["values.count"], "生成の前に止める");
+  assert.deepEqual(paths({ lit: "3" }), []);
+  assert.deepEqual(paths({ cs: "abc" }), [], "C# の式は見ない（型はコンパイルで分かる）");
 });

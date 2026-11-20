@@ -103,7 +103,7 @@ export function check(ir: ConnectorIr): Issue[] {
     }
     for (const [k, v] of Object.entries(act.hooks ?? {})) {
       if (k !== "preRequest" && k !== "postRequest") bad(`${p}.hooks.${k}`, "preRequest か postRequest");
-      else if (!/\bdone\s*\(/.test(hookCode(v))) bad(`${p}.hooks.${k}`, "done(...) を呼ぶ（return ではなく done で返す）");
+      else if (!/(?<![\w$.])done\s*\(/.test(codeOnly(hookCode(v)))) bad(`${p}.hooks.${k}`, "done(...) を呼ぶ（return ではなく done で返す。コメントや文字列の中の done( は数えない）");
     }
     if (act.method === "GET" && act.request?.length) bad(`${p}.request`, "GET に本文は無い（クエリの引数はまだ扱っていない）");
   });
@@ -111,6 +111,22 @@ export function check(ir: ConnectorIr): Issue[] {
 }
 
 export const hookCode = (v: string | string[] | undefined) => (Array.isArray(v) ? v.join("\n") : v ?? "");
+
+/** JS のコードから、コメントと文字列の中身を除いたもの（done( があるかを見るため。正規表現のリテラルまでは見分けない） */
+export function codeOnly(js: string): string {
+  let out = "";
+  for (let i = 0; i < js.length; i++) {
+    const c = js[i], d = js[i + 1];
+    if (c === "/" && d === "/") { while (i < js.length && js[i] !== "\n") i++; out += "\n"; }
+    else if (c === "/" && d === "*") { i += 2; while (i < js.length && !(js[i] === "*" && js[i + 1] === "/")) i++; i++; out += " "; }
+    else if (c === "'" || c === '"' || c === "`") {
+      // テンプレートの ${…} の中も文字列として飛ばす（done を ${} の中で呼ぶ書き方は想定しない）
+      for (i++; i < js.length && js[i] !== c; i++) if (js[i] === "\\") i++;
+      out += `${c}${c}`;
+    } else out += c;
+  }
+  return out;
+}
 
 /** アクティビティのフィールドを CLI の --fields-file の形にする（同じ名前の request と response は1つにまとめる） */
 export function fieldsOf(act: ActivityIr): Record<string, unknown>[] {

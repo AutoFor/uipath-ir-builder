@@ -31,6 +31,12 @@ test("check：よくある誤りを見つける", () => {
   assert.deepEqual(msgs({ ...base, version: "1.0" }), ["version"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "POST", path: "/a", hooks: { preRequest: "return 1;" } }] }), ["activities[0].hooks.preRequest"], "done で返す");
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "POST", path: "/a", hooks: { onError: "done();" } as never }] }), ["activities[0].hooks.onError"]);
+  const hook = (code: string | string[]) => msgs({ ...base, activities: [{ name: "a", method: "POST", path: "/a", hooks: { preRequest: code } }] });
+  assert.deepEqual(hook(["// done() で返す", "return 1;"]), ["activities[0].hooks.preRequest"], "コメントの中の done( は数えない");
+  assert.deepEqual(hook("/* done( */ return 1;"), ["activities[0].hooks.preRequest"]);
+  assert.deepEqual(hook("log('done(');"), ["activities[0].hooks.preRequest"], "文字列の中の done( は数えない");
+  assert.deepEqual(hook("x.done({});"), ["activities[0].hooks.preRequest"], "ほかのものの done は数えない");
+  assert.deepEqual(hook(["// 組み立てる", "const s = 'a // b';", "done({ request_vendor_body: { s } });"]), []);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "Items", method: "GET", path: "items" }] }), ["activities[0].name", "activities[0].path"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "GET", path: "/a" }, { name: "a", method: "POST", path: "/a" }] }), ["activities[1].name"]);
   assert.deepEqual(msgs({ ...base, activities: [{ name: "a", method: "GET", path: "/a", request: [{ name: "x" }] }] }), ["activities[0].request"]);
