@@ -84,8 +84,7 @@ node tools/ir/coverage.ts --activity ReadRangeX     # プロパティ、向き�
 }
 ```
 
-- 引数は `"arguments": [{ "name": "in_Name", "dir": "In", "type": "String" }]`
-。In の引数には既定値を書ける（`"default": { "lit": "太郎" }`、Boolean は true / false、数値は数。XAML ではルートの `this:<ワークフロー>.<引数>`、Coded では Execute の省略可能な引数。Studio で引数を渡さずにデバッグできる）
+- 引数は `"arguments": [{ "name": "in_Name", "dir": "In", "type": "String" }]`。In の引数には既定値を書ける（`"default": { "lit": "太郎" }`、Boolean は true / false、数値は数。XAML ではルートの `this:<ワークフロー>.<引数>`、Coded では Execute の省略可能な引数。Studio で引数を渡さずにデバッグできる）
 - サブフォルダに置くワークフローは `"file": "Sub/Greet.xaml"` を書く（gen.ts がそこに書き出す）。呼ぶ側の `WorkflowFileName` はプロジェクトからの相対パス（`{ "lit": "Sub\\Greet.xaml" }`）
 - テストケースにするなら `"testCase": true` を書き、`body` の代わりに `given` / `when` / `then` を書ける。XAML でも Coded（`[TestCase]`）でも作れる。XAML は `--out` のプロジェクトの project.json の `fileInfoCollection` に載る。データ駆動のテストは `"testCase": { "data": [ { "<In 引数>": 値 }, … ] }`（XAML だけ）（[knowledge/testing.md](knowledge/testing.md) の「テストケース」）
 - `props` の文字列は **VB の式**（C# のプロジェクトでも VB で書く。生成器が C# に直す）。文字列リテラルは `{ "lit": "..." }`、enum はメンバー名
