@@ -82,8 +82,16 @@ node tools/ir/project.ts check --project <P>               # IR にして作り�
 - XAML がまだ無いとき、`gen.ts --project` はルートの imports を project.ir.json の `rootImports` から取る（Studio の imports に GlobalVariablesNamespace などがあるため）
 - 手元の 5 プロジェクト（LongRunningAutomation・空のプロセス 1〜3・オブジェクトリポジトリ確認）で、IR から作り直したものが元と同じだった
 
-## 5. まだのもの
+## 5. 動かして確かめたこと（2026-11-21、DESKTOP の Unattended ロボット、窓口経由）
 
-- Studio で開いて図として崩れないか、と validate / run（ノードの大きさ ShapeSize は Manual Trigger の 40x40 以外は推測）
+- 生成器だけで作ったプロジェクト（`project.ts gen` ＋ `gen.ts`。`C:\Users\Public\lr-gen\LongRunningAutomation`）で、
+  `queue-run.mjs --use-project` の analyze・build・run が通った（Main と full の 2 本、22 秒）
+- full のログは `受け付けた: 1200` → `在庫あり` → `与信あり` → `終わり: 通常`。Decision の真、Split と MergeAll（両方の枝が走って合流）、
+  Switch の既定の道、EndNode の Action が、思ったとおりに動いた
+
+## 6. まだのもの
+
+- Studio で開いて図として崩れないか（ノードの大きさ ShapeSize は Manual Trigger の 40x40 以外は推測）
+- 通っていない道：境界のエラー（BoundaryNode）、Switch の cases の道、中間イベント
 - EventSubProcessNode の中身（Action に何を入れるか）、Human Approval・Business Rule・Invoke Workflow などの Task の中身（Studio で作った実物を見ていない）
 - `.bpmn` の取り込み・書き出し
