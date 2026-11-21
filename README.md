@@ -45,6 +45,8 @@ tools/catalog-extractor/bin/Release/net9.0/CatalogExtractor.exe --package UiPath
 | UiPath.System.Activities | 24.10.7 | 181（`.objects.json` も） |
 | UiPath.System.Activities | 26.2.6 | 185 |
 | UiPath.System.Activities | 26.10.0 | 186 |
+| UiPath.System.Activities | 25.10.2 | 185（`.objects.json` も） |
+| UiPath.FlowchartBuilder.Activities | 1.1.3 | 2（長時間実行の図。ノードの型は `.objects.json`。[knowledge/long-running.md](knowledge/long-running.md)） |
 | UiPath.UIAutomation.Activities | 25.10.33 | 202 |
 | UiPath.UIAutomation.Activities | 26.10.3 | 208（`.objects.json` も） |
 | UiPath.UIAutomation.Activities | 26.10.6 | 211 |
