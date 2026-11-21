@@ -229,6 +229,12 @@ export function projectRootImports(projectDir: string, platform: Platform = proj
     const r = readRootImports(readFileSync(join(projectDir, f), "utf8"));
     if (r) return { imports: platform === "Portable" ? { imports: r.imports, refs: refsForPlatform(r.refs, platform) } : r, notes: [] };
   }
+  // XAML がまだ無いとき（IR からプロジェクトを作るとき）は、プロジェクトの IR（ir/project.ir.json。tools/ir/project.ts）の rootImports
+  const irFile = join(projectDir, "ir", "project.ir.json");
+  if (existsSync(irFile)) {
+    const r = (JSON.parse(readFileSync(irFile, "utf8").replace(/^﻿/, "")) as { rootImports?: RootImports }).rootImports;
+    if (r?.imports?.length && r.refs?.length) return { imports: platform === "Portable" ? { imports: r.imports, refs: refsForPlatform(r.refs, platform) } : r, notes: [] };
+  }
   if (platform === "Portable") return { imports: templateRootImports(projectLanguage(projectDir), platform), notes: [`${projectDir} に imports のある XAML が無いので、ルートの imports はクロスプラットフォームの BlankTemplate の並びを使う`] };
   return { notes: [`${projectDir} に imports のある XAML が無いので、ルートの imports は BlankTemplate の並びを使う`] };
 }

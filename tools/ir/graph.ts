@@ -4,7 +4,8 @@
 // ノードに id を付け、矢印を行き先の id で書く（types.ts の FlowchartDecl / StateMachineDecl / BranchDecl）。
 // 子をたどる道具（検証、Coded、UI のスコープなど）は graphChildren / graphValues で図の中の子と式を受け取る。
 
-import type { Node, Value, VariableDecl, FlowNode, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl, StateDecl } from "./types.ts";
+import type { Node, Value, VariableDecl, FlowNode, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl, ProcessDecl, ProcessNodeDecl, StateDecl } from "./types.ts";
+import { anyProcessBase, processActions, processExprs } from "./process.ts";
 
 export type FlowKind = "step" | "decision" | "switch";
 
@@ -63,6 +64,7 @@ export function graphChildren(n: Node): GraphPart[] {
     if (b.trigger) list(`branches[${i}].trigger`, b.trigger, b.variables);
     if (b.action) list(`branches[${i}].action`, b.action, b.variables);
   });
+  if (n.process) for (const g of processActions(n.process)) list(g.path, g.nodes);
   return out;
 }
 
@@ -82,6 +84,7 @@ export function graphValues(n: Node): { path: string; value: Value; vars?: Varia
   n.stateMachine?.states.forEach((s, i) => s.transitions?.forEach((t, j) => {
     if (t.condition !== undefined) out.push({ path: `stateMachine.states[${i}].transitions[${j}].condition`, value: t.condition, vars: s.variables });
   }));
+  if (n.process) out.push(...processExprs(anyProcessBase(), n.process));
   return out;
 }
 
@@ -94,11 +97,19 @@ export function graphVariables(n: Node): { path: string; vars: VariableDecl[] }[
 }
 
 // 図を持つか
-export const hasGraph = (n: Node) => !!(n.flowchart || n.stateMachine || n.branches);
+export const hasGraph = (n: Node) => !!(n.flowchart || n.stateMachine || n.branches || n.process);
 
 // 図の中の子のノードを f で写した、新しい図（out に入れる）。FlowStep は id / next を残す
-export function mapGraph(n: Node, f: (list: Node[]) => Node[]): Pick<Node, "flowchart" | "stateMachine" | "branches"> {
-  const out: Pick<Node, "flowchart" | "stateMachine" | "branches"> = {};
+export function mapGraph(n: Node, f: (list: Node[]) => Node[]): Pick<Node, "flowchart" | "stateMachine" | "branches" | "process"> {
+  const out: Pick<Node, "flowchart" | "stateMachine" | "branches" | "process"> = {};
+  if (n.process) {
+    // ノードの action と、中に持つノード（boundaryNodes など。node のある要素の配列）を写す
+    const node = (x: ProcessNodeDecl): ProcessNodeDecl => Object.fromEntries(Object.entries(x).map(([k, v]) =>
+      [k, k === "action" && Array.isArray(v) ? f(v as Node[]) : Array.isArray(v) && v.length && typeof v[0] === "object" && v[0] !== null && "node" in (v[0] as object) ? (v as ProcessNodeDecl[]).map(node) : v])) as ProcessNodeDecl;
+    const p: ProcessDecl = { ...n.process, nodes: n.process.nodes.map(node) };
+    if (n.process.eventSubProcesses) p.eventSubProcesses = n.process.eventSubProcesses.map(node);
+    out.process = p;
+  }
   if (n.flowchart) out.flowchart = { ...n.flowchart, nodes: n.flowchart.nodes.map((x) => flowKind(x) === "step" ? { ...f([x as FlowStepDecl])[0], id: x.id, ...((x as FlowStepDecl).next !== undefined ? { next: (x as FlowStepDecl).next } : {}) } : x) };
   if (n.stateMachine) out.stateMachine = { ...n.stateMachine, states: n.stateMachine.states.map((s): StateDecl => ({
     ...s,

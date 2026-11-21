@@ -1,0 +1,28 @@
+{
+  "workflow": "LongRunningWorkflow",
+  "file": "Main.xaml",
+  "body": [
+    {
+      "act": "ProcessDiagram",
+      "name": "Long Running Workflow",
+      "process": {
+        "start": "Manual_Trigger",
+        "nodes": [
+          {
+            "id": "Manual_Trigger",
+            "node": "EventNode",
+            "behavior": {
+              "$type": "StartBehavior",
+              "DesignerMetadata": {
+                "NodeType": {
+                  "lit": "StartEvent.Interrupting.None"
+                }
+              }
+            },
+            "name": "Manual Trigger"
+          }
+        ]
+      }
+    }
+  ]
+}

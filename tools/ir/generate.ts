@@ -1,12 +1,13 @@
 // 検証済みの IR から XAML を作る。XAML の書式はすべてここで決める。
 
 import type { Catalog, Activity, Prop } from "./catalog.ts";
-import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue } from "./catalog.ts";
-import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue, CsExpr, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl } from "./types.ts";
+import { funcInfo, funcArgName, resolve, defaultSlot, delegateArgs, isArgumentList, argumentListElement, listElementType, objectTypes, objTypeFor, plainListElement, literalMapValue } from "./catalog.ts";
+import type { Workflow, Node, Value, VariableDecl, InvokeArg, Issue, CsExpr, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl, ObjValue, ProcessNodeDecl } from "./types.ts";
 import { flowKind, flowLinks, stepNode, layoutGraph, hasGraph } from "./graph.ts";
 import { toXamlType, EXPRESSION_IMPORTS } from "./types-xaml.ts";
 import { isUntypedArgument, argumentType, itemNames, isValueItem } from "./validate.ts";
-import { prepareUia, emitObjs, nextGuid, contentGuid, resetGuids } from "./uia.ts";
+import { prepareUia, emitObjs, emitObj, nextGuid, contentGuid, resetGuids } from "./uia.ts";
+import { processBase, processFields, processNodeType, processOwnedProps, processLinks, processShapeSize } from "./process.ts";
 import { excelPrefixes, excelVbForCs } from "./excel.ts";
 import { formLayoutLiteral } from "./persistence.ts";
 import { vbToCs, vbDefaultToCs, csKeywords } from "./vb2cs.ts";
@@ -23,6 +24,9 @@ const knownPrefixes: Record<string, string> = {
   "clr-namespace:UiPath.Testing.Activities.Coverage;assembly=UiPath.Testing.Activities": "utac",
   "clr-namespace:UiPath.Testing.Activities.Mocks;assembly=UiPath.Testing.Activities": "utam",
   "clr-namespace:UiPath.Testing.Activities.TestData;assembly=UiPath.Testing.Activities": "utat",
+  // 長時間実行の図（UiPath.FlowchartBuilder.Activities。Studio の Long Running Workflow と同じ接頭辞）
+  "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities": "upa",
+  "clr-namespace:UiPath.Process.Activities.Shared;assembly=UiPath.Process.Activities": "upas",
   // Form（Studio の既定 XAML と同じ接頭辞）
   "clr-namespace:UiPath.Forms.Activities;assembly=UiPath.Forms.Activities": "ufa",
 };
@@ -276,7 +280,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     for (const [k, v] of Object.entries(n.cases ?? {})) mark(v, `cases.${k}`);
 
     const hasContent =
-      elems.length || csElems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length || n.flowchart || n.stateMachine || n.branches?.length;
+      elems.length || csElems.length || slots.length || Object.keys(n.objs ?? {}).length || n.variables?.length || n.args?.length || Object.keys(n.dicts ?? {}).length || Object.keys(n.lists ?? {}).length || n.cases || n.catches?.length || n.assigns?.length || n.flowchart || n.stateMachine || n.branches?.length || n.process;
     if (!hasContent) { emit(depth, `<${tag}${attrText} />`); return; }
     emit(depth, `<${tag}${attrText}>`);
 
@@ -463,6 +467,7 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
     if (n.flowchart) flowchart(n, tag, depth + 1, scope, here);
     if (n.stateMachine) stateMachine(n, tag, depth + 1, scope, here);
     if (n.branches) pick(n, depth + 1, scope, here);
+    if (n.process) processDiagram(n, a, tag, depth + 1, scope, here);
     emit(depth, `</${tag}>`);
   }
 
@@ -594,6 +599,79 @@ export function generateChecked(wf: Workflow, cat: Catalog, opts: GenerateOption
       }
       emit(depth, `</State>`);
     });
+  }
+
+  // 長時間実行の図（ProcessDiagram。process.ts）。Studio と同じく、StartNode は <x:Reference>、ノードはコンテンツ（Nodes）に平らに並べる。
+  // ノードの中身はカタログのノードの型のプロパティから書く。位置は上から下へ：中心 x = 550 + 220 * 列、上端 y = 40 + 140 * 行
+  // （Studio の Main.xaml の Manual Trigger は 40x40 で (530, 40)）
+  function processDiagram(n: Node, a: Activity, tag: string, depth: number, scope: Map<string, string>, here: string) {
+    const pd = n.process!;
+    const base = processBase(a)!;
+    const byId = new Map(pd.nodes.map((x) => [x.id, x]));
+    const lay = layoutGraph(pd.nodes.map((x) => x.id), pd.start, (id) => (byId.has(id) ? processLinks(base, byId.get(id)!).map((l) => l.to) : []));
+    const csObj = cs ? { element: (v: Value, p: Prop, path: string, typeArg?: string) => csElement(v, p, typeArg, scope, sub(here, path)), content: (v: Value, t: string, path: string) => argBody(v, t, false, scope, sub(here, path)) } : undefined;
+    const ctx = { prefixFor, attrValue, esc, emit, typeText, cs: csObj };
+    ref(depth, `${tag}.StartNode`, pd.start);
+    const node = (x: ProcessNodeDecl, d: number, path: string, pos: [number, number] | undefined) => {
+      const t = processNodeType(base, x.node)!;
+      const nt = prefixFor(t.xmlns) + t.className;
+      const fields = processFields(base, t);
+      const attrs: [string, string][] = [];
+      const kids: (() => void)[] = [];
+      if (t.genericArity) attrs.push(["x:TypeArguments", typeText(x.typeArg ?? "Object")]);
+      attrs.push(["x:Name", x.id]);
+      for (const f of fields) {
+        const v = x[f.key];
+        if (v === undefined) continue;
+        const fat = `${path}.${f.key}`;
+        if (f.how === "name") attrs.push(["DisplayName", String(v)]);
+        else if (f.how === "value") attrs.push([f.prop.name, attrValue(v as Value, f.prop)]);
+        else if (f.how === "expr") {
+          const el = exprProp(v as Value, /<T>$/.test(f.prop.type) ? x.typeArg ?? "Object" : f.prop.type.replace(/^System\.Activities\.Activity<(.+)>$/, "$1").replace(/^System\./, ""), attrs, nt, f.prop.name, scope, fat);
+          if (el) kids.push(() => emit(d + 1, el));
+        } else if (f.how === "obj") {
+          kids.push(() => {
+            emit(d + 1, `<${nt}.${f.prop.name}>`);
+            emitObj(objTypeFor(f.prop.type, v)!, v as ObjValue, d + 2, ctx, fat);
+            emit(d + 1, `</${nt}.${f.prop.name}>`);
+          });
+        } else if (f.how === "action") kids.push(() => childSlot(d + 1, `${nt}.${f.prop.name}`, v as Node[], fat, scope));
+        else if (f.how === "link") kids.push(() => ref(d + 1, `${nt}.${f.prop.name}`, String(v)));
+        else if (f.how === "links") kids.push(() => {
+          emit(d + 1, `<${nt}.${f.prop.name}>`);
+          for (const to of v as string[]) emit(d + 2, `<x:Reference>${esc(to)}</x:Reference>`);
+          emit(d + 1, `</${nt}.${f.prop.name}>`);
+        });
+        else if (f.how === "cases") kids.push(() => {
+          emit(d + 1, `<${nt}.${f.prop.name}>`);
+          for (const [k, to] of Object.entries(v as Record<string, string>)) emit(d + 2, `<x:Reference x:Key="${esc(k)}">${esc(to)}</x:Reference>`);
+          emit(d + 1, `</${nt}.${f.prop.name}>`);
+        });
+        else if (f.how === "owned") kids.push(() => {
+          emit(d + 1, `<${nt}.${f.prop.name}>`);
+          (v as ProcessNodeDecl[]).forEach((c, i) => node(c, d + 2, `${fat}[${i}]`, pos ? [pos[0] + 40 * i, pos[1] + 60] : undefined));
+          emit(d + 1, `</${nt}.${f.prop.name}>`);
+        });
+      }
+      attrs.push(["sap2010:WorkflowViewState.IdRef", idRef(t.className)]);
+      emit(d, `<${nt}${attrLine(attrs)}>`);
+      for (const k of kids) k();
+      if (pos) { const [w, h] = processShapeSize(t); viewState(d + 1, [["ShapeLocation", "av:Point", `${pos[0]},${pos[1]}`], ["ShapeSize", "av:Size", `${w},${h}`]]); }
+      emit(d, `</${nt}>`);
+    };
+    pd.nodes.forEach((x, i) => {
+      const p = lay.get(x.id)!;
+      const [w] = processShapeSize(processNodeType(base, x.node)!);
+      node(x, depth, sub(here, `process.nodes[${i}]`), [550 + 220 * p.col - w / 2, 40 + 140 * p.level]);
+    });
+    for (const o of processOwnedProps(a, base)) {
+      const list = (pd as Record<string, unknown>)[o.key] as ProcessNodeDecl[] | undefined;
+      if (!list?.length) continue;
+      emit(depth, `<${tag}.${o.prop.name}>`);
+      const row = Math.max(0, ...[...lay.values()].map((p) => p.level)) + 1;
+      list.forEach((x, i) => node(x, depth + 1, sub(here, `process.${o.key}[${i}]`), [100 + 260 * i, 40 + 140 * row]));
+      emit(depth, `</${tag}.${o.prop.name}>`);
+    }
   }
 
   function pick(n: Node, depth: number, scope: Map<string, string>, here: string) {

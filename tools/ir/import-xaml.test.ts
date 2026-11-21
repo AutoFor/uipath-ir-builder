@@ -48,13 +48,17 @@ loadCatalog(root, CATALOG_FILES);
 
 for (const f of xamls(join(root, "samples", "generated"))) {
   test(`往復 ${rel(f)}`, () => {
-    const cat = pkgCats.get(relative(join(root, "samples", "generated"), f).split(/[\\/]/)[0]) ?? catDefault;
-    const xml = readFileSync(f, "utf8");
-    const r = importXaml(xml, cat);
-    assert.deepEqual(r.errors, [], "取り込めない");
-    assert.deepEqual(r.warnings, [], "取り込みの警告");
-    assert.deepEqual(validate(r.wf!, cat), [], "取り込んだ IR が検証を通らない");
-    assert.equal(normalizeXaml(generate(r.wf!, cat)), normalizeXaml(xml), "元の XAML に戻らない");
+    const pkg = relative(join(root, "samples", "generated"), f).split(/[\\/]/)[0];
+    // そのパッケージのカタログを読み直して、要素で書くオブジェクトの型（長時間実行の図のノードなど）を入れる。終わったら既定の版に戻す
+    const cat = pkgCats.has(pkg) ? loadCatalog(root, sampleCatalogFiles(root, pkg)) : catDefault;
+    try {
+      const xml = readFileSync(f, "utf8");
+      const r = importXaml(xml, cat);
+      assert.deepEqual(r.errors, [], "取り込めない");
+      assert.deepEqual(r.warnings, [], "取り込みの警告");
+      assert.deepEqual(validate(r.wf!, cat), [], "取り込んだ IR が検証を通らない");
+      assert.equal(normalizeXaml(generate(r.wf!, cat)), normalizeXaml(xml), "元の XAML に戻らない");
+    } finally { if (pkgCats.has(pkg)) loadCatalog(root, CATALOG_FILES); }
   });
 }
 
@@ -255,6 +259,29 @@ test("Studio が書く Flowchart（中身ごと書いたノード、__ReferenceI
   assert.equal((byId["種類を決める"] as { next?: string }).next, "正か");
   assert.deepEqual(byId["正か"], { id: "正か", decision: "in_Count > 0", name: "正か", true: "種類", false: "ほか" });
   assert.deepEqual(byId["種類"], { id: "種類", switch: "kind", name: "種類", cases: { many: "たくさん", one: "ほか" }, default: "ほか" });
+});
+
+test("Studio が書く長時間実行の図（Long Running Workflow の ProcessDiagram）を読み、作り直しても意味が同じ", () => {
+  const pcat = loadCatalog(root, sampleCatalogFiles(root, "UiPath.FlowchartBuilder.Activities"));
+  try {
+    const xml = fixture("StudioLongRunning.xaml");
+    const r = importAndCheck(xml, pcat);
+    assert.deepEqual(r.errors, []);
+    assert.deepEqual(r.validation, []);
+    assert.equal(r.roundTrip?.sameMeaning, true, r.warnings.map((w) => w.message).join("\n"));
+    // Studio が作ったままの Main.xaml は、見本の IR（ProcessDiagram.min.json）と同じ図になる
+    const min = JSON.parse(readFileSync(join(root, "samples", "ir", "UiPath.FlowchartBuilder.Activities", "ProcessDiagram.min.json"), "utf8"));
+    assert.deepEqual(r.wf!.body, min.body);
+    assert.equal(r.wf!.body[0].process!.start, "Manual_Trigger", "__ReferenceID の id は表示名から作る");
+    // 作り直した XAML は、Studio の XAML と（x:Name と ViewState を除いて）同じ
+    assert.deepEqual(canonLines(generate(r.wf!, pcat, { language: "CSharp" })).filter((l) => !/^Activity(\s|$)/.test(l)), canonLines(xml).filter((l) => !/^Activity(\s|$)/.test(l)));
+    // 図の検証：無いノードの型、無い行き先、たどり着けないノード
+    const bad = structuredClone(min);
+    bad.body[0].process.nodes.push({ id: "x", node: "NoSuchNode" }, { id: "y", node: "EndNode", name: "End" });
+    bad.body[0].process.nodes[0].next = "nowhere";
+    const codes = validate(bad, pcat).map((i) => i.code).sort();
+    assert.deepEqual(codes, ["GRAPH_BAD_NODE", "GRAPH_BAD_REF", "GRAPH_UNREACHABLE", "GRAPH_UNREACHABLE"]);
+  } finally { loadCatalog(root, CATALOG_FILES); }
 });
 
 test("Studio が書く StateMachine（Transition.To の中に書いた状態、{x:Reference}、VisualBasicValue の条件）を読む", () => {

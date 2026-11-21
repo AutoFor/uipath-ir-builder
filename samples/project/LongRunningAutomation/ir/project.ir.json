@@ -1,0 +1,68 @@
+{
+  "name": "LongRunningAutomation",
+  "kind": "longRunning",
+  "dependencies": {
+    "UiPath.FlowchartBuilder.Activities": "[1.1.3]",
+    "UiPath.System.Activities": "[25.10.2]"
+  },
+  "description": "Model your long running workflows using BPMN standard and implement them using RPA or API workflows. Use Studio version 24.10 or newer.",
+  "expressionLanguage": "CSharp",
+  "targetFramework": "Windows",
+  "studioVersion": "26.10.0.0",
+  "main": "Main.xaml",
+  "projectId": "692e6ded-46a0-47b9-ab55-b4b0b2301080",
+  "entryPoints": [
+    {
+      "filePath": "Main.xaml",
+      "uniqueId": "0633004a-2f3f-4d2a-98db-d7ca9ec161cf"
+    }
+  ],
+  "rootImports": {
+    "imports": [
+      "System.Activities",
+      "System.Activities.Statements",
+      "System.Activities.Expressions",
+      "System.Activities.Validation",
+      "System.Activities.XamlIntegration",
+      "Microsoft.VisualBasic",
+      "Microsoft.VisualBasic.Activities",
+      "System",
+      "System.Collections",
+      "System.Collections.Generic",
+      "System.Collections.ObjectModel",
+      "System.Data",
+      "System.Diagnostics",
+      "System.Linq",
+      "System.Net.Mail",
+      "System.Xml",
+      "System.Text",
+      "System.Xml.Linq",
+      "UiPath.Core",
+      "UiPath.Core.Activities",
+      "GlobalVariablesNamespace",
+      "GlobalConstantsNamespace"
+    ],
+    "refs": [
+      "Microsoft.CSharp",
+      "Microsoft.VisualBasic",
+      "System",
+      "System.Activities",
+      "System.ComponentModel.TypeConverter",
+      "System.Core",
+      "System.Data",
+      "System.Data.Common",
+      "System.Linq",
+      "System.Net.Mail",
+      "System.ObjectModel",
+      "System.Private.CoreLib",
+      "System.Runtime.Serialization",
+      "System.ServiceModel",
+      "System.ServiceModel.Activities",
+      "System.Xaml",
+      "System.Xml",
+      "System.Xml.Linq",
+      "UiPath.System.Activities",
+      "UiPath.UiAutomation.Activities"
+    ]
+  }
+}

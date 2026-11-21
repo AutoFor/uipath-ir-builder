@@ -43,6 +43,14 @@ for (const base of ["ir", "ir-unbuildable"])
 const cat = loadCatalog(root, DEFAULT_CATALOG_FILES);
 const noApi = noCodedApiPackages(root, DEFAULT_CATALOG_FILES);
 const catOf = (f: string, base = "ir") => pkgCats.get(relative(join(root, "samples", base), f).split(/[\\/]/)[0]) ?? { cat, noApi };
+// 既定の版に無いパッケージのサンプルは、そのカタログを読み直して要素で書くオブジェクトの型（objectTypes。長時間実行の図のノードなど）を入れ、
+// 終わったら既定の版に戻す
+const ownCatalog = (f: string, fn: () => void, base = "ir") => {
+  const pkg = relative(join(root, "samples", base), f).split(/[\\/]/)[0];
+  if (!pkgCats.has(pkg)) return fn();
+  loadCatalog(root, sampleCatalogFiles(root, pkg));
+  try { fn(); } finally { loadCatalog(root, DEFAULT_CATALOG_FILES); }
+};
 // 対応表の無いアクティビティは XAML 経由（coded/_xaml/）。対応表のある既存のサンプルの C# は、これで変わらない
 const viaXaml = (n: string[]) => ({ dir: "coded/_xaml", noApi: n });
 const { maps, errors: mapErrors } = loadMappings(root);
@@ -107,7 +115,7 @@ for (const dir of ["samples/ir", "samples/ir-csharp", "samples/ir-unbuildable", 
 
 for (const f of files("samples/ir", ".json")) {
   const sub = dirname(relative(join(root, "samples", "ir"), f));
-  test(`IR ${rel(f)}`, () => {
+  test(`IR ${rel(f)}`, () => ownCatalog(f, () => {
     const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     const { cat, noApi } = catOf(f);
     assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
@@ -126,7 +134,7 @@ for (const f of files("samples/ir", ".json")) {
     for (const x of r.xamls) snapshot(join(root, "samples", "generated-coded", sub, x.kind === "activity" ? "_activities" : "_xaml", `${x.wf.workflow}.xaml`), generate(x.wf, cat));
     const chk = checkSource(r.code, `${wf.workflow}.cs`, ctx);
     assert.deepEqual(chk.issues.filter((i) => i.severity === "error"), [], "生成した C# がチェッカーを通らない");
-  });
+  }));
 }
 
 // 式の言語が C# の XAML。直せない式（名前付き引数など）があるものは CS_EXPR、C# の予約語の変数名は CS_NAME になる。そのうち C# でも試すものは、両方を書いた版を samples/ir-csharp/ に置く
@@ -135,7 +143,7 @@ const csExprErrors: Record<string, string[]> = {
 };
 const csSnapshot = (f: string) => /^samples\/ir\/[^/]+$/.test(rel(f)) || rel(f).startsWith("samples/ir-csharp/");
 for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", ".json")]) {
-  test(`C# の XAML ${rel(f)}`, () => {
+  test(`C# の XAML ${rel(f)}`, () => ownCatalog(f, () => {
     const wf: Workflow = expandTestCase(JSON.parse(read(f))).wf;
     const { cat } = catOf(f);
     if (rel(f).startsWith("samples/ir-csharp/")) assert.deepEqual(validate(wf, cat), [], "検証で弾かれた");
@@ -146,7 +154,7 @@ for (const f of [...files("samples/ir", ".json"), ...files("samples/ir-csharp", 
     assert.doesNotMatch(r.xaml, /mva:|VisualBasic\.Settings|VisualBasicValue|VisualBasicReference/, "VB の設定や式が残っている");
     assert.doesNotMatch(r.xaml, /="\[[^"]*\]"|>\[[^<]*\]</, "[式]（VB の略記）が残っている");
     if (csSnapshot(f)) snapshot(join(root, "samples", "generated-csharp", `${wf.workflow}.xaml`), r.xaml);
-  });
+  }));
 }
 
 for (const f of files("samples/ir-unbuildable", ".json")) {

@@ -1,0 +1,58 @@
+{
+  "workflow": "ProcessDiagram_Full",
+  "body": [
+    {
+      "act": "ProcessDiagram",
+      "name": "受注の長時間処理",
+      "variables": [
+        { "name": "amount", "type": "Int32", "default": "1200" },
+        { "name": "kind", "type": "String", "default": "\"通常\"" }
+      ],
+      "process": {
+        "start": "start",
+        "nodes": [
+          { "id": "start", "node": "EventNode", "name": "Manual Trigger",
+            "behavior": { "$type": "StartBehavior", "DesignerMetadata": { "NodeType": { "lit": "StartEvent.Interrupting.None" } } },
+            "next": "receive" },
+          { "id": "receive", "node": "TaskNode", "name": "受け付ける",
+            "behavior": { "$type": "NodeBehavior", "DesignerMetadata": { "NodeType": { "lit": "Task.None" } } },
+            "action": [
+              { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"受け付けた: \" & amount.ToString()" } }
+            ],
+            "boundaryNodes": [
+              { "id": "onError", "node": "BoundaryNode", "name": "Error Handler",
+                "behavior": { "$type": "CatchMostSpecificErrorBehavior", "DesignerMetadata": { "NodeType": { "lit": "BoundaryEvent.Interrupting.Error" } } },
+                "action": [
+                  { "act": "LogMessage", "props": { "Level": "Error", "Message": { "lit": "受け付けで失敗した" } } }
+                ],
+                "next": "failed" }
+            ],
+            "next": "check" },
+          { "id": "check", "node": "DecisionNode", "name": "金額は千円を超えるか", "condition": "amount > 1000", "true": "split", "false": "byKind" },
+          { "id": "split", "node": "SplitNode", "name": "並行して確かめる", "branches": ["stock", "credit"] },
+          { "id": "stock", "node": "TaskNode", "name": "在庫を確かめる",
+            "behavior": { "$type": "NodeBehavior", "DesignerMetadata": { "NodeType": { "lit": "Task.None" } } },
+            "action": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "在庫あり" } } } ],
+            "next": "merge" },
+          { "id": "credit", "node": "TaskNode", "name": "与信を確かめる",
+            "behavior": { "$type": "NodeBehavior", "DesignerMetadata": { "NodeType": { "lit": "Task.None" } } },
+            "action": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": { "lit": "与信あり" } } } ],
+            "next": "merge" },
+          { "id": "merge", "node": "MergeNode", "name": "両方を待つ",
+            "behavior": { "$type": "MergeAllBehavior" },
+            "next": "byKind" },
+          { "id": "byKind", "node": "SwitchNode", "typeArg": "String", "name": "種類で分ける", "expression": "kind",
+            "cases": { "特急": "express" }, "default": "done" },
+          { "id": "express", "node": "EventNode", "name": "Event Placeholder",
+            "behavior": { "$type": "IntermediateBehavior", "DesignerMetadata": { "NodeType": { "lit": "IntermediateEvent.Throw.None" } } },
+            "next": "done" },
+          { "id": "done", "node": "EndNode", "name": "End",
+            "behavior": { "$type": "EndBehavior", "DesignerMetadata": { "NodeType": { "lit": "EndEvent.None" } } },
+            "action": [ { "act": "LogMessage", "props": { "Level": "Info", "Message": "\"終わり: \" & kind" } } ] },
+          { "id": "failed", "node": "EndNode", "name": "失敗で終わる",
+            "behavior": { "$type": "EndBehavior", "DesignerMetadata": { "NodeType": { "lit": "EndEvent.None" } } } }
+        ]
+      }
+    }
+  ]
+}

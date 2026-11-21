@@ -26,8 +26,9 @@ import { fileURLToPath } from "node:url";
 import type { Activity, Catalog, ObjType, Prop } from "./catalog.ts";
 import { argumentListElement, defaultSlot, delegateArgs, funcInfo, isArgumentList, isExpressionChild, listElementType, literalMapValue, loadCatalog, objectImpls, objectTypes, objTypeFor, plainListElement, resolve } from "./catalog.ts";
 import { generate } from "./generate.ts";
-import type { ArgumentDecl, AssignOp, BranchDecl, CatchDecl, FlowNode, InvokeArg, ListItem, Node, ObjValue, StateDecl, TransitionDecl, Value, VariableDecl, Workflow } from "./types.ts";
+import type { ArgumentDecl, AssignOp, BranchDecl, CatchDecl, FlowNode, InvokeArg, ListItem, Node, ObjValue, ProcessNodeDecl, StateDecl, TransitionDecl, Value, VariableDecl, Workflow } from "./types.ts";
 import { isGraphId } from "./graph.ts";
+import { processBase, processFields, processNodeTypes, processOwnedProps } from "./process.ts";
 import { isEntityNamespace, toXamlType, xamlTypeEntries } from "./types-xaml.ts";
 import { objDefaults } from "./uia.ts";
 import { isArgumentDict, isUntypedArgument, itemNames, validate, workflowFile } from "./validate.ts";
@@ -832,6 +833,7 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
   function graphOf(kind: GraphKind, a: Activity, attrs: Attr[], props: El[], content: El[], at: string, scope: Map<string, string>, guid: string | undefined): Partial<Node> {
     const ids = new IdMaker();
     const g: GraphCtx = { at, scope, guid, ids };
+    if (kind === "process") return processOf(a, attrs, props, content, g);
     if (kind === "branches") {
       const list = [...props.flatMap((k) => k.kids.filter((x) => !ignorableEl(x))), ...content];
       const flat = list.length === 1 && /^(List|Collection)$/.test(list[0].local) ? list[0].kids.filter((x) => !ignorableEl(x)) : list;
@@ -890,6 +892,143 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
     if (first === undefined) c.err(at, "GRAPH_NO_START", `${a.className} の ${startProp} が無い`);
     if (kind === "flowchart") return { flowchart: { start: first ?? "", nodes: seq.flatMap((e, i) => flowNodeOf(e, `${at}.Nodes[${i}]`, g)) } };
     return { stateMachine: { initial: first ?? "", states: seq.flatMap((e, i) => stateOf(e, `${at}.States[${i}]`, g)) } };
+  }
+
+  // 長時間実行の図（ProcessDiagram。process.ts）。ノードは Nodes に並ぶか、最初に指した場所（StartNode・Next など）に中身ごと書かれる。
+  // 中に持つノード（TaskNode.BoundaryNodes、ProcessDiagram.EventSubProcesses）は、図の nodes ではなく持ち主の下に置く
+  function processOf(a: Activity, attrs: Attr[], props: El[], content: El[], g: GraphCtx): Partial<Node> {
+    const at = g.at;
+    const base = processBase(a)!;
+    const types = processNodeTypes(base);
+    const typeOfEl = (e: El) => types.find((t) => t.className === e.local && t.xmlns === e.uri);
+    const owned = processOwnedProps(a, base);
+    const kidsOf = (k: El) => { const ks = k.kids.filter((x) => !ignorableEl(x)); return ks.length === 1 && /^(List|Collection|Dictionary)$/.test(ks[0].local) ? ks[0].kids.filter((x) => !ignorableEl(x)) : ks; };
+    const propEls = (e: El) => e.kids.filter((k) => !ignorableEl(k) && k.local.includes("."));
+    const pname = (k: El) => k.local.slice(k.local.indexOf(".") + 1);
+    // ノードの要素を集める。tops は図の nodes に並ぶもの、inner は持ち主の下に置くもの。Action の中（子のアクティビティ）は見ない
+    const byName = new Map<string, El>();
+    const tops: El[] = [];
+    const inner = new Set<El>();
+    const named = (e: El) => { const nm = e.attrs.find((x) => x.uri === X && x.local === "Name")?.value; if (nm) byName.set(nm, e); };
+    const collect = (e: El, own: boolean) => {
+      if (tops.includes(e) || inner.has(e)) return;
+      if (own) inner.add(e); else tops.push(e);
+      named(e);
+      const fields = processFields(base, typeOfEl(e)!);
+      for (const k of propEls(e)) {
+        const f = fields.find((x) => x.prop.name === pname(k));
+        if (!f || f.how === "action" || f.how === "expr" || f.how === "obj") continue;
+        for (const x of kidsOf(k)) if (typeOfEl(x)) collect(x, f.how === "owned");
+      }
+    };
+    let start: El | string | undefined;
+    for (const x of attrs) if (x.local === "StartNode") { if (x.value === "{x:Null}") c.drop(at, "値なし", "StartNode"); else start = refName(x.value, `${at}.StartNode`); }
+    const order: (El | string)[] = [];
+    const ownedEls = new Map<string, El[]>();
+    const listItem = (e: El, iat: string) => {
+      if (typeOfEl(e)) { collect(e, false); order.push(e); return; }
+      if (e.uri === X && e.local === "Reference") { const nm = refText(e); if (nm) order.push(nm); else c.err(iat, "UNSUPPORTED_ELEMENT", "x:Reference に名前が無い"); return; }
+      c.err(iat, "UNSUPPORTED_ELEMENT", `<${e.name}> は図のノードでない`);
+    };
+    for (const k of props) {
+      const pn = pname(k);
+      const kids = kidsOf(k);
+      if (pn === "StartNode") {
+        if (kids.length === 1 && !(kids[0].uri === X && kids[0].local === "Null")) { start = kids[0]; if (typeOfEl(kids[0])) collect(kids[0], false); }
+        else if (!kids.length) c.drop(at, "値なし", "StartNode");
+        continue;
+      }
+      const o = owned.find((x) => x.prop.name === pn);
+      if (o) {
+        const list: El[] = [];
+        kids.forEach((e, i) => { if (typeOfEl(e)) { collect(e, true); list.push(e); } else c.err(`${at}.${pn}[${i}]`, "UNSUPPORTED_ELEMENT", `<${e.name}> は ${pn} に置けない`); });
+        ownedEls.set(o.key, list);
+        continue;
+      }
+      kids.forEach((e, i) => listItem(e, `${at}.Nodes[${i}]`));
+    }
+    content.forEach((e, i) => listItem(e, `${at}.Nodes[${i}]`));
+    const seq: El[] = [];
+    for (const o of order) { const e = typeof o === "string" ? byName.get(o) : o; if (e && !inner.has(e) && !seq.includes(e)) seq.push(e); }
+    for (const e of tops) if (!seq.includes(e)) seq.push(e);
+    for (const o of order) if (typeof o === "string" && !byName.has(o)) c.err(`${at}.Nodes`, "GRAPH_BAD_REF", `x:Reference ${o} の要素が無い`);
+    const everyone = [...seq, ...inner];
+    for (const e of everyone) { const nm = e.attrs.find((x) => x.uri === X && x.local === "Name")?.value; if (nm && !/^__ReferenceID\d+$/.test(nm) && isGraphId(nm)) g.ids.claim(e, nm); }
+    for (const e of everyone) if (!g.ids.has(e)) g.ids.make(e, attr(e, "DisplayName"), "n");
+    g.target = (v: El | string, tat: string) => {
+      const e = typeof v === "string" ? byName.get(v) : v.uri === X && v.local === "Reference" ? byName.get(refText(v) ?? "") : v;
+      if (!e || !g.ids.has(e)) { c.err(tat, "GRAPH_BAD_REF", `行き先 ${typeof v === "string" ? v : v.name} が見つからない`); return undefined; }
+      return g.ids.get(e);
+    };
+    const first = start === undefined ? undefined : g.target(start, `${at}.StartNode`);
+    if (first === undefined) c.err(at, "GRAPH_NO_START", `${a.className} の StartNode が無い`);
+    const out: NonNullable<Node["process"]> = { start: first ?? "", nodes: seq.flatMap((e, i) => processNodeOf(e, `${at}.Nodes[${i}]`, g, base)) };
+    for (const o of owned) {
+      const list = ownedEls.get(o.key);
+      if (list?.length) (out as Record<string, unknown>)[o.key] = list.flatMap((e, i) => processNodeOf(e, `${at}.${o.prop.name}[${i}]`, g, base));
+    }
+    return { process: out };
+  }
+
+  function processNodeOf(e: El, at: string, g: GraphCtx, base: string): ProcessNodeDecl[] {
+    const t = processNodeTypes(base).find((x) => x.className === e.local && x.xmlns === e.uri);
+    if (!t) { c.err(at, "UNSUPPORTED_ELEMENT", `<${e.name}> は図のノードでない`); return []; }
+    const fields = processFields(base, t);
+    const out: ProcessNodeDecl = { id: g.ids.get(e), node: t.className };
+    const ta = e.attrs.find((x) => x.uri === X && x.local === "TypeArguments");
+    if (ta) { const tt = typeOf(ta.value, e, at); if (tt) out.typeArg = tt; }
+    const p = parts(e, at, fields.map((f) => f.prop.name));
+    for (const f of fields) {
+      const fat = `${at}.${f.prop.name}`;
+      const av = p.attrs.get(f.prop.name);
+      const el = p.props.get(f.prop.name);
+      if (av === undefined && !el) continue;
+      if (f.how === "name") { if (av !== undefined) out.name = av; continue; }
+      if (f.how === "link") { const to = graphLink(p, f.prop.name, at, g); if (to !== undefined) out[f.key] = to; continue; }
+      if (f.how === "expr") {
+        const prop: Prop = { ...f.prop, type: f.prop.type.replace(/<T>$/, `<${out.typeArg ?? "System.Object"}>`) };
+        const raw = av ?? argText(el!, fat, c);
+        const v = raw === undefined ? undefined : toValue(raw, prop, fat, c);
+        if (v !== undefined) out[f.key] = v;
+        continue;
+      }
+      if (f.how === "value") {
+        if (av === undefined) { c.err(fat, "UNSUPPORTED_ELEMENT", `${t.className}.${f.prop.name} を要素で書いたものは読めない`); continue; }
+        if (av === "{x:Null}") { c.drop(at, "値なし", f.prop.name); continue; }
+        if (f.prop.default !== undefined && f.prop.default.toLowerCase() === av.toLowerCase()) { c.drop(at, "既定値", f.prop.name, av); continue; }
+        const v = toValue(av, f.prop, fat, c);
+        if (v !== undefined) out[f.key] = v;
+        continue;
+      }
+      if (!el) { if (av === "{x:Null}") c.drop(at, "値なし", f.prop.name); else c.err(fat, "UNSUPPORTED_MARKUP", `${t.className}.${f.prop.name} は属性に書けない（${av}）`); continue; }
+      const kids = el.kids.filter((x) => !ignorableEl(x));
+      const items = kids.length === 1 && /^(List|Collection|Dictionary)$/.test(kids[0].local) ? kids[0].kids.filter((x) => !ignorableEl(x)) : kids;
+      if (f.how === "action") { const a = graphChild(el, f.prop.name, at, g.scope, g.guid); if (a) out.action = a; continue; }
+      if (f.how === "obj") {
+        if (!kids.length || (kids[0].uri === X && kids[0].local === "Null")) { c.drop(at, "値なし", f.prop.name); continue; }
+        const sub = objTypeForEl(f.prop, kids[0]);
+        if (!sub || kids.length !== 1) { c.err(fat, "UNSUPPORTED_ELEMENT", `${t.className}.${f.prop.name} の <${kids[0].name}> は読めない`); continue; }
+        const o = obj(sub, kids[0], fat);
+        if (objectImpls[f.prop.type]) out[f.key] = { $type: sub.className, ...o };
+        else out[f.key] = o;
+        continue;
+      }
+      if (f.how === "links") { out[f.key] = items.flatMap((x, i) => { const to = g.target!(x, `${fat}[${i}]`); return to === undefined ? [] : [to]; }); continue; }
+      if (f.how === "cases") {
+        const m: Record<string, string> = {};
+        items.forEach((x, i) => {
+          const key = x.attrs.find((y) => y.uri === X && y.local === "Key")?.value;
+          if (key === undefined) { c.err(`${fat}[${i}]`, "UNSUPPORTED_ELEMENT", "分岐に x:Key が無い"); return; }
+          const to = g.target!(x, `${fat}[${key}]`);
+          if (to !== undefined) m[key] = to;
+        });
+        out[f.key] = m;
+        continue;
+      }
+      if (f.how === "owned") { out[f.key] = items.flatMap((x, i) => processNodeOf(x, `${fat}[${i}]`, g, base)); continue; }
+    }
+    for (const k of p.content) c.err(at, "UNSUPPORTED_ELEMENT", `${t.className} の中の <${k.name}> は読めない`);
+    return [out];
   }
 
   // 図の要素の属性と子を分ける。表示用のもの（ViewState、IdRef）は捨て、知らない属性はエラー
@@ -1155,10 +1294,12 @@ export function importXaml(xml: string, cat: Catalog): ImportResult {
 
 // ---- 図の取り込みの部品 ----
 
-type GraphKind = "flowchart" | "stateMachine" | "branches";
+type GraphKind = "flowchart" | "stateMachine" | "branches" | "process";
 // 図を持つアクティビティか（カタログのプロパティで見分ける）。図のプロパティ名も返す
 function graphKindOf(a: Activity): { kind: GraphKind; props: string[] } | undefined {
   const has = (p: string) => a.props.some((q) => q.name === p);
+  const pb = processBase(a);
+  if (pb) return { kind: "process", props: ["Nodes", "StartNode", ...processOwnedProps(a, pb).map((x) => x.prop.name)] };
   if (has("Nodes") && has("StartNode")) return { kind: "flowchart", props: ["Nodes", "StartNode"] };
   if (has("States") && has("InitialState")) return { kind: "stateMachine", props: ["States", "InitialState"] };
   if (has("Branches") && a.props.find((q) => q.name === "Branches")!.type.includes("PickBranch")) return { kind: "branches", props: ["Branches"] };
@@ -1298,9 +1439,27 @@ function canonGraphs(el: El): El {
   return { ...el, attrs: el.attrs.filter((a) => !(a.local === g.start && !a.prefix)), kids: [...rest, linkEl(el, g.start, start), ...order.map(copy)] };
 }
 
+// canonGraphs が番号にしなかった図（長時間実行の図など、ノードを平らに並べて x:Reference で指すもの）の x:Name を、
+// 文書の中で出てきた順の番号にし、参照（<x:Reference>名前</x:Reference>、{x:Reference 名前}）もそれに合わせる。
+// Studio の __ReferenceID<n> と、生成器の id（表示名から作る）の違いを比べないため
+function canonNames(root: El): El {
+  const map = new Map<string, string>();
+  const find = (e: El) => { for (const a of e.attrs) if (a.uri === X && a.local === "Name" && !map.has(a.value)) map.set(a.value, `#${map.size}`); e.kids.forEach(find); };
+  find(root);
+  if (!map.size) return root;
+  const ref = (v: string) => v.replace(/^\{x:Reference\s+(?:Name=)?([^\s}]+)\s*\}$/, (m, n) => (map.has(n) ? `{x:Reference ${map.get(n)}}` : m));
+  const fix = (e: El): El => ({
+    ...e,
+    attrs: e.attrs.map((a) => (a.uri === X && a.local === "Name" ? { ...a, value: map.get(a.value) ?? a.value } : { ...a, value: ref(a.value) })),
+    text: e.uri === X && e.local === "Reference" && map.has(e.text.trim()) ? map.get(e.text.trim())! : e.text,
+    kids: e.kids.map(fix),
+  });
+  return fix(root);
+}
+
 export function canonLines(xml: string): string[] {
   const out: string[] = [];
-  const root = canonGraphs(parseXml(xml));
+  const root = canonNames(canonGraphs(parseXml(xml)));
   const norm = (v: string) => {
     let s = v.replace(/\r\n/g, "\n").replace(GUID, "<guid>");
     if (s.startsWith("{}")) s = s.slice(2);

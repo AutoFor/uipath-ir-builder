@@ -2,7 +2,8 @@
 
 import type { Catalog, Activity } from "./catalog.ts";
 import { funcInfo, funcArgName, resolve, defaultSlot, isExpressionChild, delegateArgs, writable, isArgumentList, argumentListElement, listElementType, objectTypes, plainListElement, literalMapValue, DAYS_OF_WEEK } from "./catalog.ts";
-import type { Workflow, Node, Issue, Value, VariableDecl, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl } from "./types.ts";
+import type { Workflow, Node, Issue, Value, VariableDecl, FlowStepDecl, FlowDecisionDecl, FlowSwitchDecl, ObjValue } from "./types.ts";
+import { processAllNodes, processBase, processFields, processLinks, processNodeType, processNodeTypes, processOwnedProps } from "./process.ts";
 import { flowKind, flowLinks, stepNode, isGraphId } from "./graph.ts";
 import { toXamlType } from "./types-xaml.ts";
 import { validateObjs, validateUiaTree } from "./uia.ts";
@@ -214,7 +215,7 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
     }
 
     // 図（Flowchart・StateMachine・Pick。graph.ts）
-    if (n.flowchart || n.stateMachine || n.branches) for (const k of checkGraph(n, a, path, scope)) given.add(k);
+    if (n.flowchart || n.stateMachine || n.branches || n.process) for (const k of checkGraph(n, a, path, scope)) given.add(k);
 
     // OverloadGroup（WriteTextFile の File / FileName など）は、どれか1つのグループがそろっていればよい
     const required = a.props.filter((p) => p.required);
@@ -331,6 +332,51 @@ export function validate(wf: Workflow, cat: Catalog): Issue[] {
       if (ids.has(sm.initial)) {
         const r = reach(sm.initial, (id) => (sm.states.find((s) => s.id === id)?.transitions ?? []).map((t) => t.to));
         sm.states.forEach((s, i) => { if (isGraphId(s.id) && !r.has(s.id)) add(`${at}.states[${i}]`, "GRAPH_UNREACHABLE", `状態 "${s.id}" に initial からたどり着けない`); });
+      }
+    }
+
+    if (n.process) {
+      const at = `${path}.process`;
+      const pd = n.process;
+      const base = processBase(a);
+      if (!base) { add(at, "BAD_SLOT", `process は長時間実行の図（ProcessDiagram）だけ`); return given; }
+      const owned = processOwnedProps(a, base);
+      given.push("Nodes", "StartNode", ...owned.map((o) => o.prop.name));
+      keys(pd, ["start", "nodes", ...owned.map((o) => o.key)], at);
+      if (!Array.isArray(pd.nodes) || !pd.nodes.length) { add(`${at}.nodes`, "GRAPH_EMPTY", "nodes に1つ以上のノードを書く"); return given; }
+      const all = processAllNodes(base, pd);
+      const ids = checkIds(all.map((x) => x.node), (i) => all[i].path.replace(/^process/, at));
+      if (!ids.has(pd.start)) add(`${at}.start`, "GRAPH_NO_START", `start "${pd.start ?? ""}" のノードが無い`);
+      const types = processNodeTypes(base);
+      for (const { path: p0, node: x } of all) {
+        const nat = p0.replace(/^process/, at);
+        const t = processNodeType(base, x.node);
+        if (!t) { add(`${nat}.node`, "GRAPH_BAD_NODE", `node "${x.node ?? ""}" は無い（書けるのは ${types.map((y) => y.className).join(", ")}）`); continue; }
+        const fields = processFields(base, t);
+        keys(x, ["id", "node", ...(t.genericArity ? ["typeArg"] : []), ...fields.map((f) => f.key)], nat);
+        if (t.genericArity && x.typeArg !== undefined) checkType(x.typeArg, `${nat}.typeArg`, add);
+        for (const f of fields) {
+          const v = x[f.key];
+          if (v === undefined) continue;
+          const fat = `${nat}.${f.key}`;
+          if (f.how === "name" && typeof v !== "string") add(fat, "GRAPH_BAD_NODE", "name は文字列で書く");
+          if (f.how === "link" && (typeof v !== "string" || !ids.has(v))) add(fat, "GRAPH_BAD_REF", `行き先 ${JSON.stringify(v)} のノードが無い`);
+          if (f.how === "links") { if (!Array.isArray(v)) add(fat, "GRAPH_BAD_NODE", `${f.key} は行き先の id の配列で書く`); else (v as unknown[]).forEach((to, i) => { if (typeof to !== "string" || !ids.has(to)) add(`${fat}[${i}]`, "GRAPH_BAD_REF", `行き先 ${JSON.stringify(to)} のノードが無い`); }); }
+          if (f.how === "cases") { if (typeof v !== "object" || v === null || Array.isArray(v)) add(fat, "GRAPH_BAD_NODE", `${f.key} は { 値: 行き先の id } で書く`); else for (const [k, to] of Object.entries(v)) if (typeof to !== "string" || !ids.has(to)) add(`${fat}.${k}`, "GRAPH_BAD_REF", `行き先 ${JSON.stringify(to)} のノードが無い`); }
+          if (f.how === "expr" && !isValueItem(v as Value)) add(fat, "GRAPH_BAD_NODE", `${f.key} は式で書く`);
+          if (f.how === "value" && !isValueItem(v as Value)) add(fat, "GRAPH_BAD_NODE", `${f.key} は値で書く`);
+          if (f.how === "action") { if (!Array.isArray(v)) add(fat, "GRAPH_BAD_NODE", "action はアクティビティの配列で書く"); else visitAll(v as Node[], fat, new Map(scope)); }
+          if (f.how === "owned" && !Array.isArray(v)) add(fat, "GRAPH_BAD_NODE", `${f.key} はノードの配列で書く`);
+          if (f.how === "obj") validateObjs({ act: t.className, objs: { [f.prop.name]: v as ObjValue } }, { ...t, props: [f.prop] } as unknown as Activity, nat, scope, add);
+        }
+      }
+      if (ids.has(pd.start)) {
+        // start と、中に持つノード（イベントのサブプロセス、境界のイベント）から始めて、nodes の全部にたどり着けること
+        const byId = new Map(all.map((x) => [x.node.id, x.node]));
+        const inner = all.filter((x) => !pd.nodes.includes(x.node)).map((x) => x.node.id);
+        const r = new Set<string>();
+        for (const s of [pd.start, ...inner]) for (const id of reach(s, (id) => (byId.has(id) ? processLinks(base, byId.get(id)!).map((l) => l.to) : []))) r.add(id);
+        pd.nodes.forEach((x, i) => { if (isGraphId(x.id) && !r.has(x.id)) add(`${at}.nodes[${i}]`, "GRAPH_UNREACHABLE", `ノード "${x.id}" に start からたどり着けない`); });
       }
     }
 

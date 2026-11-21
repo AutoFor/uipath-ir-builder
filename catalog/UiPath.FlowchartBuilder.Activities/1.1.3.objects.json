@@ -1,0 +1,824 @@
+{
+  "package": "UiPath.FlowchartBuilder.Activities",
+  "version": "1.1.3",
+  "objects": [
+    {
+      "className": "BoundaryBehavior",
+      "clrType": "UiPath.Process.Activities.BoundaryBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.NodeBehavior<UiPath.Process.Activities.BoundaryNode>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        },
+        {
+          "name": "IsInterruptingParent",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BoundaryBehavior"
+        }
+      ]
+    },
+    {
+      "className": "BoundaryNode",
+      "clrType": "UiPath.Process.Activities.BoundaryNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ActionNode",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNodeBase"
+        },
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Next",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNode"
+        }
+      ]
+    },
+    {
+      "className": "CatchMostSpecificErrorBehavior",
+      "clrType": "UiPath.Process.Activities.CatchMostSpecificErrorBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.BoundaryBehavior",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        },
+        {
+          "name": "ExceptionType",
+          "kind": "prop",
+          "type": "System.Type",
+          "required": false,
+          "default": "System.Exception",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "CatchMostSpecificErrorBehavior"
+        },
+        {
+          "name": "IsInterruptingParent",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "BoundaryBehavior"
+        }
+      ]
+    },
+    {
+      "className": "CompletionInfo",
+      "clrType": "UiPath.Process.Activities.CompletionInfo",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": []
+    },
+    {
+      "className": "DecisionNode",
+      "clrType": "UiPath.Process.Activities.DecisionNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.SwitchNodeBase<System.Boolean>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Condition",
+          "kind": "child",
+          "type": "System.Activities.Activity<System.Boolean>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DecisionNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "default": "DecisionNode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DecisionNode"
+        },
+        {
+          "name": "False",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DecisionNode"
+        },
+        {
+          "name": "True",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DecisionNode"
+        }
+      ]
+    },
+    {
+      "className": "EndBehavior",
+      "clrType": "UiPath.Process.Activities.EndBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.NodeBehavior<UiPath.Process.Activities.EndNode>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "EndNode",
+      "clrType": "UiPath.Process.Activities.EndNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ActionNodeBase",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNodeBase"
+        },
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        }
+      ]
+    },
+    {
+      "className": "EventNode",
+      "clrType": "UiPath.Process.Activities.EventNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ActionNode",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNodeBase"
+        },
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Next",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNode"
+        }
+      ]
+    },
+    {
+      "className": "EventSubProcessNode",
+      "clrType": "UiPath.Process.Activities.EventSubProcessNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ActionNodeBase",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNodeBase"
+        },
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        }
+      ]
+    },
+    {
+      "className": "IntermediateBehavior",
+      "clrType": "UiPath.Process.Activities.IntermediateBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.NodeBehavior<UiPath.Process.Activities.EventNode>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "MergeAllBehavior",
+      "clrType": "UiPath.Process.Activities.MergeAllBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.MergeBehavior",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "MergeFirstBehavior",
+      "clrType": "UiPath.Process.Activities.MergeFirstBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.MergeBehavior",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "MergeNode",
+      "clrType": "UiPath.Process.Activities.MergeNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ProcessNode",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "default": "MergeNode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergeNode"
+        },
+        {
+          "name": "Next",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "MergeNode"
+        }
+      ]
+    },
+    {
+      "className": "NodeBehavior",
+      "clrType": "UiPath.Process.Activities.NodeBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "ProcessDiagram",
+      "clrType": "UiPath.Process.Activities.ProcessDiagram",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EventSubProcesses",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.EventSubProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "Nodes",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.ProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "StartNode",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "ValidateUnconnectedNodes",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        }
+      ]
+    },
+    {
+      "className": "DesignerMetadata",
+      "clrType": "UiPath.Process.Activities.Shared.DesignerMetadata",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities.Shared;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Object",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "NodeType",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "DesignerMetadata"
+        }
+      ]
+    },
+    {
+      "className": "SplitNode",
+      "clrType": "UiPath.Process.Activities.SplitNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ProcessNode",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Branches",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.ProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SplitNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "default": "SplitNode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SplitNode"
+        }
+      ]
+    },
+    {
+      "className": "StartBehavior",
+      "clrType": "UiPath.Process.Activities.StartBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.NodeBehavior<UiPath.Process.Activities.EventNode>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        }
+      ]
+    },
+    {
+      "className": "StartOnParentErrorBehavior",
+      "clrType": "UiPath.Process.Activities.StartOnParentErrorBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.StartSubProcessBehavior",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        },
+        {
+          "name": "ExceptionType",
+          "kind": "prop",
+          "type": "System.Type",
+          "required": false,
+          "default": "System.Exception",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartOnParentErrorBehavior"
+        },
+        {
+          "name": "IsInterruptingParent",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartSubProcessBehavior"
+        }
+      ]
+    },
+    {
+      "className": "StartSubProcessBehavior",
+      "clrType": "UiPath.Process.Activities.StartSubProcessBehavior",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.StartBehavior",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DesignerMetadata",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.Shared.DesignerMetadata",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "NodeBehavior"
+        },
+        {
+          "name": "IsInterruptingParent",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "true",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "StartSubProcessBehavior"
+        }
+      ]
+    },
+    {
+      "className": "SwitchNode",
+      "clrType": "UiPath.Process.Activities.SwitchNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 1,
+      "baseType": "SwitchNodeBase<T>",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Cases",
+          "kind": "prop",
+          "type": "IDictionary<T, UiPath.Process.Activities.ProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SwitchNode"
+        },
+        {
+          "name": "Default",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SwitchNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "default": "SwitchNode",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SwitchNode"
+        },
+        {
+          "name": "Expression",
+          "kind": "child",
+          "type": "Activity<T>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "SwitchNode"
+        }
+      ]
+    },
+    {
+      "className": "TaskNode",
+      "clrType": "UiPath.Process.Activities.TaskNode",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "UiPath.Process.Activities.ActionNode",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "Action",
+          "kind": "child",
+          "type": "System.Activities.Activity",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNodeBase"
+        },
+        {
+          "name": "Behavior",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.NodeBehavior",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "BoundaryNodes",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.BoundaryNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "TaskNode"
+        },
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessNode"
+        },
+        {
+          "name": "Next",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ActionNode"
+        }
+      ]
+    },
+    {
+      "className": "TerminateProcessDiagram",
+      "clrType": "UiPath.Process.Activities.TerminateProcessDiagram",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

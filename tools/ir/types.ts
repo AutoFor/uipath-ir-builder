@@ -61,6 +61,18 @@ export type Node = {
   flowchart?: FlowchartDecl; // Flowchart の StartNode と Nodes
   stateMachine?: StateMachineDecl; // StateMachine の InitialState と States
   branches?: BranchDecl[]; // Pick の Branches（PickBranch）
+  process?: ProcessDecl; // 長時間実行の図（UiPath.FlowchartBuilder.Activities の ProcessDiagram）の StartNode・Nodes・EventSubProcesses
+};
+
+// 長時間実行の図（ProcessDiagram）。start は最初のノードの id。ノードの書き方は tools/ir/process.ts
+export type ProcessDecl = { start: string; nodes: ProcessNodeDecl[]; eventSubProcesses?: ProcessNodeDecl[] };
+// ノード。node はノードの型のクラス名（EventNode・TaskNode・DecisionNode など。カタログ *.objects.json）、name は DisplayName。
+// ほかのキーはノードの型のプロパティ名の先頭を小文字にしたもの：行き先（next・true・false・default）は id、行き先の一覧（branches）は id の配列、
+// 行き先の辞書（cases）は { 値: id }、式（condition・expression）は Value、behavior はオブジェクト（"$type" で型を選ぶ）、action は子、
+// 中に持つノードの一覧（boundaryNodes）はノードの配列
+export type ProcessNodeDecl = {
+  id: string; node: string; name?: string; typeArg?: string; behavior?: ObjValue; action?: Node[];
+  [prop: string]: string | string[] | Record<string, string> | Value | ObjValue | Node[] | ProcessNodeDecl[] | undefined;
 };
 
 // Flowchart。start は最初のノードの id

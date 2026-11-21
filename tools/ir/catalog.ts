@@ -36,14 +36,16 @@ export const objectImpls: Record<string, string[]> = {
   "UiPath.Excel.Activities.Business.ICellFormat": ["General","Text","Number","Currency","Percentage","Custom","Time","Date"].map((n) => `UiPath.Excel.Activities.Business.${n}Format`),
   "UiPath.Excel.Activities.Business.ICellFormat": ["UiPath.Excel.Activities.Business.GeneralFormat","UiPath.Excel.Activities.Business.TextFormat","UiPath.Excel.Activities.Business.NumberFormat","UiPath.Excel.Activities.Business.CurrencyFormat","UiPath.Excel.Activities.Business.PercentageFormat","UiPath.Excel.Activities.Business.CustomFormat","UiPath.Excel.Activities.Business.TimeFormat","UiPath.Excel.Activities.Business.DateFormat"],
   "UiPath.Activities.System.Collections.Filters.Operator": ["Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual", "Contains", "ContainsIgnoreCase"].map((n) => `UiPath.Activities.System.Collections.Filters.${n}Operator`),
+  // 長時間実行の図のノードの Behavior（UiPath.FlowchartBuilder.Activities）。NodeBehavior そのものも型としてあるので、"$type" があれば実装から選ぶ
+  "UiPath.Process.Activities.NodeBehavior": ["Start", "Intermediate", "End", "Boundary", "CatchMostSpecificError", "MergeAll", "MergeFirst", "StartSubProcess", "StartOnParentError", "Node"].map((n) => `UiPath.Process.Activities.${n}Behavior`),
   "System.IFormatProvider": ["UiPath.Core.GeneralNumberFormatProvider", "UiPath.Core.CurrencyNumberFormatProvider", "UiPath.Core.PercentageNumberFormatProvider", "UiPath.Core.DateTimeFormatProvider"],
 };
 export function objTypeFor(type: string, v?: unknown): ObjType | undefined {
-  const direct = objectTypes.get(type);
-  if (direct) return direct;
   const impls = objectImpls[type];
-  if (!impls) return undefined;
   const want = v && typeof v === "object" && "$type" in v ? String((v as Record<string, unknown>)["$type"]) : undefined;
+  const direct = objectTypes.get(type);
+  if (direct && (!impls || want === undefined || want === direct.className)) return direct;
+  if (!impls) return undefined;
   const clr = want === undefined ? impls[0] : impls.find((c) => c.endsWith("." + want));
   return clr ? objectTypes.get(clr) : undefined;
 }

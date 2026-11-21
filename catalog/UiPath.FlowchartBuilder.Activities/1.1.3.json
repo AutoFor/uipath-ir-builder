@@ -1,0 +1,99 @@
+{
+  "package": "UiPath.FlowchartBuilder.Activities",
+  "version": "1.1.3",
+  "assemblies": [
+    "UiPath.Process.Activities.dll"
+  ],
+  "activities": [
+    {
+      "className": "ProcessDiagram",
+      "clrType": "UiPath.Process.Activities.ProcessDiagram",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": true,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        },
+        {
+          "name": "EventSubProcesses",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.EventSubProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "Nodes",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<UiPath.Process.Activities.ProcessNode>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "StartNode",
+          "kind": "prop",
+          "type": "UiPath.Process.Activities.ProcessNode",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "ValidateUnconnectedNodes",
+          "kind": "prop",
+          "type": "System.Boolean",
+          "required": false,
+          "default": "false",
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        },
+        {
+          "name": "Variables",
+          "kind": "prop",
+          "type": "System.Collections.ObjectModel.Collection<System.Activities.Variable>",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "ProcessDiagram"
+        }
+      ]
+    },
+    {
+      "className": "TerminateProcessDiagram",
+      "clrType": "UiPath.Process.Activities.TerminateProcessDiagram",
+      "assembly": "UiPath.Process.Activities",
+      "xmlns": "clr-namespace:UiPath.Process.Activities;assembly=UiPath.Process.Activities",
+      "genericArity": 0,
+      "baseType": "System.Activities.NativeActivity",
+      "obsolete": false,
+      "browsable": false,
+      "props": [
+        {
+          "name": "DisplayName",
+          "kind": "prop",
+          "type": "System.String",
+          "required": false,
+          "browsable": true,
+          "obsolete": false,
+          "declaredOn": "Activity"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "format": 2
+}

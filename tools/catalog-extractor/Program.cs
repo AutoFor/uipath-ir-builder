@@ -528,9 +528,10 @@ static class ObjectTypes
                 try
                 {
                     var info = Activities.Describe(t, xmlnsMap, warnings);
+                    // 書けるのは setter のあるものと、XAML が既存のものに要素を足せるコレクション（ReadOnly が付かない）
                     var settable = t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                         .Where(p => p.SetMethod is { IsPublic: true }).Select(p => p.Name).ToHashSet();
-                    objects.Add(info with { Props = info.Props.Where(p => settable.Contains(p.Name)).ToList() });
+                    objects.Add(info with { Props = info.Props.Where(p => settable.Contains(p.Name) || p.ReadOnly != true).ToList() });
                 }
                 catch (Exception ex) { warnings.Add($"{t.FullName}: {ex.GetType().Name}: {ex.Message}"); }
             }

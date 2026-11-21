@@ -410,6 +410,7 @@ function collect(p) {
   if (!existsSync(p)) die(`見つからない: ${p}`);
   if (statSync(p).isDirectory()) { for (const e of readdirSync(p).sort()) collect(join(p, e)); return; }
   if (/\.(verify|expected|args)\.json$/i.test(p)) return;
+  if (/(^|[\\/])project\.ir\.json$/i.test(p)) return; // プロジェクトの IR（tools/ir/project.ts）。ワークフローではない
   if ([".json", ".cs", ".xaml"].includes(extname(p).toLowerCase()) && !files.includes(p)) files.push(p);
 }
 

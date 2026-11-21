@@ -249,7 +249,7 @@ export function emitObjs(n: Node, a: Activity, tag: string, depth: number, ctx: 
   }
 }
 
-function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx, path: string) {
+export function emitObj(t: ObjType, v: ObjValue, depth: number, ctx: XamlCtx, path: string) {
   const tag = ctx.prefixFor(t.xmlns) + t.className;
   const attrs: [string, string][] = [];
   const elems: [Prop, ObjValue | ObjValue[]][] = [];
